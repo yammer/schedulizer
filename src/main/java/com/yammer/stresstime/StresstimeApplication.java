@@ -8,6 +8,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class StresstimeApplication extends Application<StresstimeConfiguration> {
+
     public static void main(String[] args) throws Exception {
         new StresstimeApplication().run(args);
     }
@@ -17,9 +18,13 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
     }
 
+    public String getName() {
+        return "stresstime";
+    }
+
     @Override
-    public void run(StresstimeConfiguration configuration, Environment environment) throws Exception {
-        environment.jersey().setUrlPattern(configuration.getRootPath());
-        environment.jersey().register(new HelloWorldResource());
+    public void run(StresstimeConfiguration config, Environment env) throws Exception {
+        env.jersey().register(new HelloWorldResource());
+        env.jersey().setUrlPattern(config.getRootPath());
     }
 }
