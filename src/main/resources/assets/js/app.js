@@ -4,9 +4,28 @@ var StresstimeApp = {};
 
 var App = angular.module('StresstimeApp', ['ui.bootstrap', 'ngRoute']);
 
-
-App.controller("MainController", function($scope, $http, $log, $timeout, $modal) {
-    $scope.CALENDAR = "CALENDAR";
-    $scope.AVAILABILITY = "AVAILABILITY";
-    $scope.groupList = [{name: "group1"}, {name: "group2"}];
+App.directive('mycalendartab', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'directives/mycalendartab.html',
+        controller: 'MyCalendarTabController'
+    };
 });
+
+App.directive('availabilitytab', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'directives/availabilitytab.html',
+        controller: 'AvailabilityTabController'
+    };
+});
+
+App.directive('grouptab', function() {
+    return {
+        restrict: 'E',
+        scope: { group: '=' },
+        templateUrl: 'directives/grouptab.html',
+        controller: 'GroupTabController'
+    };
+});
+
