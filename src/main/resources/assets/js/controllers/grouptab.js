@@ -6,7 +6,7 @@ App.directive('grouptab', function() {
     return {
         restrict: 'E',
         scope: { group: '=' },
-        templateUrl: 'directives/grouptab.html',
+        templateUrl: 'html/partials/grouptab.html',
         controller: 'GroupTabController'
     };
 });
