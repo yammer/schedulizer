@@ -1,1 +1,11 @@
+/*
+    Handle  navbar
+*/
 body { padding-top: 70px; }
+
+/*
+    Set pointer cursor
+*/
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
