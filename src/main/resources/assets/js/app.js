@@ -15,7 +15,6 @@ App.constant('navigation', {
     availability: 'availability',
     groups: 'groups',
     groupmanager: 'groupmanager',
-    login: 'login'
 });
 
 

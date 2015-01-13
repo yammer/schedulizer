@@ -19,6 +19,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script type="text/javascript" data-app-id="9wv1laUqKRKkgTAncAzDA" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>
     <script src="../js/angular1.2.19.min.js"></script>
     <script src="../js/angular-route.js"></script>
 </head>
@@ -48,8 +49,8 @@
                 <li ng-class="{active: navigation.tab === navigation.GROUPS}">
                     <a ng-click="goToTab(navigation.GROUPS)">Groups</a>
                 </li>
-                <li ng-class="{active: navigation.tab === navigation.LOGIN}">
-                    <a ng-click="goToTab(navigation.LOGIN)">
+                <li>
+                    <a ng-click="dologin()">
                         <div ng-show="!isLogged()">Login</div>
                         <div ng-show="isLogged()">Logout</div>
                     </a>
@@ -72,9 +73,6 @@
     <div ng-show="navigation.tab === navigation.GROUPS">
         <grouptab></grouptab>
     </div>
-    <div ng-show="navigation.tab === navigation.LOGIN">
-        <logintab onlogin="dologin"></logintab>
-    </div>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -87,7 +85,6 @@
 <script src="../js/controllers/availabilitytab.js"></script>
 <script src="../js/controllers/grouptab.js"></script>
 <script src="../js/controllers/groupmanagertab.js"></script>
-<script src="../js/controllers/logintab.js"></script>
 
 </body>
 </html>
