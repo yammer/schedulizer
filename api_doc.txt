@@ -1,0 +1,63 @@
+================================================================= Group ========================================================================
+
+GET /groups                                         List groups
+	Response: [{name, id}]
+
+POST /groups                                        Create new Group
+	Resquest: {name, office}
+	Response: {group_id}
+
+DELETE /groups/{group_id}                            Delete specific Group
+
+
+============================================================= Group  Employees =================================================================
+
+GET /groups/{group_id}/employees                     List Group Employees
+	Response: [{yid, name, img, ...}]
+
+POST  /groups/{group_id}/employees                   Employee joins Group
+	Resquest: {yid, ...}
+
+DELETE /groups/{group_id}/employee/{employee_id}     Employee leaves Group
+
+GET /employees/{yid}/groups                          List Groups of an Employee
+	Response [{group_id, admin}]
+
+
+============================================================= Assignment Types =================================================================
+
+GET /groups/{group_id}/assignment_types              List AssignmentTypes
+	Response: [{id, name}]
+
+POST /groups/{group_id}/assignment_types             Create new Assignment Type
+	Request: {name}
+
+DELETE /groups/{group_id}/assignment_types/{assignment_type_id}  Delete Assignment Type
+
+
+=============================================================== GroupDay =======================================================================
+
+GET /assignments                                                      Get list of assignments for a certain period 
+	Request: {group_id, start_date, final_date}
+	Response: [{date, assignments: [{assignment_id, assignment_type, yid, ...}]]
+
+POST /assignments/                                                    Assignes an Employee to a Day(Group) with an AssignmentType
+	Request: {date, group_id, yid, assignment_type_id}
+	Response: {assignment_id}
+
+DELETE /assignments/{assignment_id}                                   Unassigns an Employee from a Day(Group) (of a particular AssignmentType)
+
+
+============================================================= Authentication ==================================================================
+
+POST /login
+	Request: {yid, ...}
+	Response: {ytoken?, admin_global?}
+
+POST /logout
+	Request: /* Session cookies */
+
+
+=========================================================== Authorization Roles ===============================================================
+
+// TODO:
