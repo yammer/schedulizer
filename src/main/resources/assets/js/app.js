@@ -10,16 +10,22 @@ var App = angular.module('StresstimeApp', ['ui.bootstrap', 'ngRoute']);
 /*
  Constants
  */
-App.constant('calendar', 'calendar');
-App.constant('availability', 'availability');
+App.constant('navigation', {
+    calendar: 'calendar',
+    availability: 'availability',
+    groups: 'groups',
+    groupmanager: 'groupmanager',
+    login: 'login'
+});
+
 
 /*
     Routes
  */
-App.config(['$routeProvider', 'calendar', function ($routeProvider, calendar) {
+App.config(['$routeProvider', 'navigation', function ($routeProvider, navigation) {
 
     $routeProvider.when('/:navigationTab', {});
-    $routeProvider.otherwise({ redirectTo: calendar });
+    $routeProvider.otherwise({ redirectTo: navigation.calendar });
 }]);
 
 /*
