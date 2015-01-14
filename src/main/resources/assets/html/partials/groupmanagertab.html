@@ -1,3 +1,36 @@
-<div>
-    Manage Groups!!!
+<div class="row">
+    <div ng-init="selectedGroup = {name: groupList[0].name}" class="col-sm-3 col-md-2 sidebar">
+        <ul class="list-unstyled">
+            <li>
+                <input type="text" ng-model="groupNameSearch" class="form-control" placeholder="Search Group">
+            </li>
+        </ul>
+        <ul class="nav nav-sidebar" role="navigation" ng-repeat="group in groupList | filter: groupNameSearch">
+            <li ng-class="{'active': group.name == selectedGroup.name}"><a ng-click="selectedGroup.name = group.name">{{group.name}}</a></li>
+        </ul>
+    </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div ng-repeat="group in groupList">
+            <div ng-show="group.name == selectedGroup.name">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 col-md-8">
+                        <h1>Calendar</h1>
+                    </div>
+                    <div class="col-xs-6 col-md-4">
+                        <div>
+                            <input type="text" ng-model="userSearch" class="form-control" placeholder="Search User">
+                        </div>
+                        <div style="padding-top: 15px">
+                            <div ng-repeat="user in userList | filter: userSearch">
+                                <usercard user="user"></usercard>
+                            </div>
+                            <div ng-show="loadingUserList">
+                                <img style="max-width:15%; display:block; margin:auto;" src="img/spinner.gif"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

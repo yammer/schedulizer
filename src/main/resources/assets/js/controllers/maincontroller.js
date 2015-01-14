@@ -51,7 +51,7 @@ App.controller("MainController", function($scope, $http, $timeout, $location, $r
         yammer.getLoginStatus(function (response) {
             $timeout(function () {
                 if (response.authResponse) {
-                    $scope.userStatus = $scope.STATUS.USER;
+                    $scope.userStatus = $scope.STATUS.GLOBALADMIN;
                     console.dir(response); //print user information to the console
                 }
                 $scope.checkNavTab();
@@ -71,7 +71,7 @@ App.controller("MainController", function($scope, $http, $timeout, $location, $r
                         console.dir(response); //print user information to the console
                     }
                 });
-                $scope.userStatus = $scope.STATUS.USER;
+                $scope.userStatus = $scope.STATUS.GLOBALADMIN;
                 $scope.goToTab($scope.navigation.CALENDAR);
             }
             else {
