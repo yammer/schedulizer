@@ -1,7 +1,8 @@
 package com.yammer.stresstime;
 
 import com.yammer.stresstime.config.StresstimeConfiguration;
-import com.yammer.stresstime.entities.Group;
+import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.resources.TestResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -14,7 +15,15 @@ import org.hibernate.SessionFactory;
 public class StresstimeApplication extends Application<StresstimeConfiguration> {
 
     private static final HibernateBundle<StresstimeConfiguration> HIBERNATE_BUNDLE = new StresstimeHibernateBundle(
-            Group.class);
+            AssignableDay.class,
+            Assignment.class,
+            AssignmentType.class,
+            DayRestriction.class,
+            Employee.class,
+            Group.class,
+            Membership.class);
+
+    private GroupManager mGroupManager;
 
     public static void main(String[] args) throws Exception {
         new StresstimeApplication().run(args);
@@ -32,8 +41,10 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
 
     @Override
     public void run(StresstimeConfiguration config, Environment env) throws Exception {
+        mGroupManager = new GroupManager(HIBERNATE_BUNDLE.getSessionFactory());
+
         env.jersey().setUrlPattern(config.getRootPath());
-        env.jersey().register(new TestResource());
+        env.jersey().register(new TestResource(mGroupManager));
     }
 
     // For tests
