@@ -1,6 +1,10 @@
-<table>
-    <tr ng-repeat="line in calendar">
-        <td ng-if="line.month.begins" class="rotate90deg" rowspan="{{line.month.nweeks}}">{{line.month.name}}</td>
-        <td class="calendarcell" ng-repeat="day in line.days">{{day.value}}</td>
-    </tr>
-</table>
+<div class="calendar-scroll-box"
+     scroller previous-chunk-method="loadPreviousMonth()"
+     next-chunk-method="loadNextMonth()">
+    <table>
+        <tr ng-repeat="line in calendar">
+            <td ng-if="line.month.begins" class="rotate90deg" rowspan="{{line.month.nweeks}}">{{line.month.name}}</td>
+            <td class="calendarcell" ng-repeat="day in line.days">{{day.value}}</td>
+        </tr>
+    </table>
+</div>

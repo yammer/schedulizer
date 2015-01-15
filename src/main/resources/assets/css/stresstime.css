@@ -178,3 +178,7 @@ td {
     height: 75px;
 }
 
+.calendar-scroll-box {
+    height: 500px;
+    overflow: auto;
+}
