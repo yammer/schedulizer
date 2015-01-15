@@ -158,28 +158,23 @@ td {
     font-weight: lighter;
 }
 
-.modal-header {
-    background: #eeeeee;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+/*
+    Text rotation
+*/
+
+.rotate90deg {
+    -ms-transform:rotate(-90deg); /* IE 9 */
+    -moz-transform:rotate(-90deg); /* Firefox */
+    -webkit-transform:rotate(-90deg); /* Safari and Chrome */
+    -o-transform:rotate(-90deg); /* Opera */
 }
 
-.modal-body {
-    background: #fff;
-    max-height: 500px;
-    overflow-y: scroll;
+/*
+    Calendar
+*/
+
+.calendarcell {
+    width: 75px;
+    height: 75px;
 }
 
-.modal-footer {
-    background: #fff;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-.modal {
-    display: block;
-}
-
-body.modal-open {
-    overflow: hidden;
-}

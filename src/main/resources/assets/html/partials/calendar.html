@@ -1,0 +1,6 @@
+<table>
+    <tr ng-repeat="line in calendar">
+        <td ng-if="line.month.begins" class="rotate90deg" rowspan="{{line.month.nweeks}}">{{line.month.name}}</td>
+        <td class="calendarcell" ng-repeat="day in line.days">{{day.value}}</td>
+    </tr>
+</table>
