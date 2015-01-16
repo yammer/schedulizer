@@ -17,12 +17,3 @@ App.controller('GroupManagerTabController', function ($scope, $timeout) {
         }, 500);
     });
 });
-
-App.directive('groupmanagertab', function() {
-    return {
-        restrict: 'E',
-        templateUrl: 'html/partials/groupmanagertab.html',
-        controller: 'GroupManagerTabController'
-    };
-});
-

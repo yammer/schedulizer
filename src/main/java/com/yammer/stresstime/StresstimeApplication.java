@@ -31,7 +31,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
 
     @Override
     public void initialize(Bootstrap<StresstimeConfiguration> bootstrap) {
-        bootstrap.addBundle(new AssetsBundle("/assets/", "/", "html/index.html"));
+        bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
         bootstrap.addBundle(HIBERNATE_BUNDLE);
     }
 

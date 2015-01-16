@@ -5,11 +5,3 @@ App.controller('GroupTabController', function ($scope, $timeout) {
     });
 
 });
-
-App.directive('grouptab', function() {
-    return {
-        restrict: 'E',
-        templateUrl: 'html/partials/grouptab.html',
-        controller: 'GroupTabController'
-    };
-});

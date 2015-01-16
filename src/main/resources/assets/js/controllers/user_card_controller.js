@@ -5,7 +5,7 @@ App.directive('usercard', function() {
     return {
         restrict: 'E',
         scope: { user: "=" },
-        templateUrl: 'html/partials/usercard.html',
+        templateUrl: 'views/usercard.html',
         controller: 'UserCardController'
     };
 });

@@ -120,7 +120,7 @@ App.controller('CalendarController', function ($scope) {
 App.directive('calendar', function() {
     return {
         restrict: 'E',
-        templateUrl: 'html/partials/calendar.html',
+        templateUrl: 'views/calendar.html',
         controller: 'CalendarController'
     };
 });
