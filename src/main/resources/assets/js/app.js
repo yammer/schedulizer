@@ -22,7 +22,6 @@ App.constant('navigation', {
     Routes
  */
 App.config(['$routeProvider', 'navigation', function ($routeProvider, navigation) {
-
     $routeProvider.when('/:navigationTab', {});
     $routeProvider.otherwise({ redirectTo: navigation.calendar });
 }]);
