@@ -1,3 +1,14 @@
+var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+// a and b are javascript Date objects
+function dateDiffInDays(a, b) {
+    // Discard the time and time-zone information.
+    var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
+
 function computeNWeeks(firstDay) {
     var lastDay = new Date(firstDay.getTime());
     /* Get first day of the next month */
@@ -10,7 +21,9 @@ function computeNWeeks(firstDay) {
         lastDay.setDate(lastDay.getDate() - 1);
     }
     /* Get number of days between two dates*/
-    var diff =  Math.floor(( Date.parse(lastDay) - Date.parse(firstDay) ) / 86400000);
+    var diff =  dateDiffInDays(firstDay, lastDay);
+
+
     return Math.ceil(diff/7.0);
 }
 
@@ -18,7 +31,7 @@ function initWeek(day){
     var currentWeek = {};
     currentWeek.month = {
         begins: false, // to be filled
-        name: day.getMonthName(),
+        name: day.getMonthYear(),
         nweeks: 0 // to be filled in case month begins
     };
     currentWeek.days = [];
@@ -27,7 +40,7 @@ function initWeek(day){
 
 function initMonth(day01) {
     var month = {};
-    month.name = day01.getMonthName();
+    month.name = day01.getMonthYear();
     month.begins = true;
     month.nweeks = computeNWeeks(new Date(day01.getTime()));
     return month;
@@ -39,6 +52,9 @@ App.controller('CalendarController', function ($scope) {
         var monthNames = [ "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December" ];
         return monthNames[this.getMonth()];
+    };
+    Date.prototype.getMonthYear = function() {
+        return this.getMonthName() + " / " + this.getFullYear();
     };
 
     $scope.firstDay = new Date();
@@ -71,7 +87,7 @@ App.controller('CalendarController', function ($scope) {
     $scope.loadNextMonth = function() {
         var isBegginingOfMonth = false;
         if($scope.calendar.length > 0 ) {
-            $scope.calendar[$scope.calendar.length - 1].month.name = $scope.lastDay.getMonthName();
+            $scope.calendar[$scope.calendar.length - 1].month.name = $scope.lastDay.getMonthYear();
         }
         do {
             var currentWeek = initWeek($scope.lastDay);
@@ -113,20 +129,30 @@ App.directive('scroller', function () {
         restrict: 'A',
         scope: {
             nextChunkMethod: "&",
-            previousChunkMethod: "&"
+            previousChunkMethod: "&",
+            numberOfLoadedChunksPerScroll: "="
         },
         link: function ($scope, elem, attrs) {
             rawElement = elem[0];
-
+            if ($scope.numberOfLoadedChunksPerScroll == undefined) {
+                $scope.numberOfLoadedChunksPerScroll = 1;
+            }
             elem.bind('scroll', function () {
                 if((rawElement.scrollTop + rawElement.offsetHeight+5) >= rawElement.scrollHeight &&
                     $scope.nextChunkMethod){
-                    $scope.$apply($scope.nextChunkMethod);
+                    $scope.$apply( function() {
+                        for(var i = 0; i < $scope.numberOfLoadedChunksPerScroll; i++) {
+                            $scope.nextChunkMethod();
+                        }
+                    });
                 }
                 if(rawElement.scrollTop == 0 &&
                     $scope.previousChunkMethod){
                     $scope.$apply(function() {
-                        var chunkSize = $scope.previousChunkMethod();
+                        var chunkSize = 0;
+                        for(var i = 0; i < $scope.numberOfLoadedChunksPerScroll; i++) {
+                            chunkSize += $scope.previousChunkMethod();
+                        }
                         if(chunkSize) {
                             rawElement.scrollTop = chunkSize;
                         }

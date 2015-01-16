@@ -1,6 +1,7 @@
 <div class="calendar-scroll-box"
      scroller previous-chunk-method="loadPreviousMonth()"
-     next-chunk-method="loadNextMonth()">
+     next-chunk-method="loadNextMonth()"
+     number-of-loaded-chunks-per-scroll=5>
     <table>
         <tr ng-repeat="line in calendar">
             <td ng-if="line.month.begins" class="rotate90deg" rowspan="{{line.month.nweeks}}">{{line.month.name}}</td>
