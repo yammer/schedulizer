@@ -1,11 +1,31 @@
 <div class="calendar-scroll-box"
-     scroller previous-chunk-method="loadPreviousMonth()"
+     scroller
+     previous-chunk-method="loadPreviousMonth()"
      next-chunk-method="loadNextMonth()"
-     number-of-loaded-chunks-per-scroll=5>
-    <table>
-        <tr ng-repeat="line in calendar">
-            <td ng-if="line.month.begins" class="rotate90deg" rowspan="{{line.month.nweeks}}">{{line.month.name}}</td>
-            <td class="calendarcell" ng-repeat="day in line.days">{{day.value}}</td>
+     number-of-loaded-chunks-per-scroll="1">
+    <table class="calendar">
+        <tr ng-repeat="week in calendar" ng-class="{
+            'first': week.firstOfTheMonth,
+            'week': true
+        }">
+            <td ng-repeat="day in week.days" ng-class="{
+                'day': true,
+                'even': day.month % 2 == 0,
+                'odd': day.month % 2 == 1,
+                'today': day.today
+            }" ng-mou>
+                {{day.value}}
+            </td>
+            <td ng-if="week.firstOfTheMonth" rowspan="{{week.month.nweeks}}" ng-class="{
+                'month': true,
+                'even': week.month.number % 2 == 0,
+                'odd': week.month.number % 2 == 1,
+            }">
+
+                {{week.month.name}}<br />
+                {{week.month.year}}
+
+            </td>
         </tr>
     </table>
 </div>

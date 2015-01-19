@@ -1,4 +1,10 @@
-var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+Date.prototype.getMonthName = function() {
+    var monthNames = [ "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December" ];
+    return monthNames[this.getMonth()];
+};
+
+var MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 // a and b are javascript Date objects
 function dateDiffInDays(a, b) {
@@ -6,7 +12,7 @@ function dateDiffInDays(a, b) {
     var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
     var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
 
-    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    return Math.floor((utc2 - utc1) / MS_PER_DAY);
 }
 
 function computeNWeeks(firstDay) {
@@ -27,93 +33,114 @@ function computeNWeeks(firstDay) {
     return Math.ceil(diff/7.0);
 }
 
-function initWeek(day){
-    var currentWeek = {};
-    currentWeek.month = {
-        begins: false, // to be filled
-        name: day.getMonthYear(),
-        nweeks: 0 // to be filled in case month begins
+function createMonth(day, nweeks) {
+    return {
+        number: day.getMonth(),
+        name: day.getMonthName(),
+        year: day.getFullYear(),
+        nweeks: nweeks
     };
-    currentWeek.days = [];
-    return currentWeek;
 }
 
-function initMonth(day01) {
-    var month = {};
-    month.name = day01.getMonthYear();
-    month.begins = true;
-    month.nweeks = computeNWeeks(new Date(day01.getTime()));
-    return month;
+function createWeek(day){
+    return {
+        month: createMonth(day, 0),
+        firstOfTheMonth: false,
+        days: []
+    };
 }
+
+function createMonthByFirstDay(day01) {
+    var nweeks = computeNWeeks(new Date(day01.getTime()));
+    return createMonth(day01, nweeks);
+}
+
+var TODAY = new Date();
+
+function pushDayIntoWeek(week, day) {
+    week.days.push({
+        value: day.getDate(),
+        month: day.getMonth(),
+        today: day.toDateString() == TODAY.toDateString()
+    });
+}
+
 
 App.controller('CalendarController', function ($scope) {
-    $scope.calendar = [];
-    Date.prototype.getMonthName = function() {
-        var monthNames = [ "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December" ];
-        return monthNames[this.getMonth()];
-    };
-    Date.prototype.getMonthYear = function() {
-        return this.getMonthName() + " / " + this.getFullYear();
-    };
 
+    var initialMonthsShown = 15;
+
+    $scope.calendar = []; // array of week object
     $scope.firstDay = new Date();
     $scope.firstDay.setDate(1); // beginning of the month
     $scope.firstDay.setDate($scope.firstDay.getDate() - $scope.firstDay.getDay()); // sunday
     $scope.lastDay = new Date($scope.firstDay.getTime())
 
+    var calendarCellHeight = null;
+
     $scope.loadPreviousMonth = function() {
-        var isBegginingOfMonth = false;
-        do {
+        var isBeginningOfMonth = false;
+        while (!isBeginningOfMonth) {
             $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
-            var currentWeek = initWeek($scope.firstDay);
-            for(var dayCount = 0; dayCount < 7; dayCount++) {
+            var currentWeek = createWeek($scope.firstDay);
+            for (var dayCount = 0; dayCount < 7; dayCount++) {
                 if($scope.firstDay.getDate() == 1) {
-                    isBegginingOfMonth = true;
-                    currentWeek.month = initMonth($scope.firstDay);
+                    isBeginningOfMonth = true;
+                    currentWeek.firstOfTheMonth = true;
+                    currentWeek.month = createMonthByFirstDay($scope.firstDay);
                 }
-                currentWeek.days.push({ value: $scope.firstDay.getDate() });
+                pushDayIntoWeek(currentWeek, $scope.firstDay);
                 $scope.firstDay.setDate($scope.firstDay.getDate() + 1);
             }
             $scope.calendar.unshift(currentWeek);
             $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
-        } while(!isBegginingOfMonth);
-        // TODO: CHANGE THE HARD CODED 75px AND STOP USING JQUERY (FIND A BETTER WAY)
-        var elemHeight = $(".calendarcell").outerHeight();
-        var h = (elemHeight > 0) ? elemHeight : 75;
-        return h * $scope.calendar[0].month.nweeks; // size of the chunk
+        }
+        if (calendarCellHeight === null) {
+            var h = $(".week").outerHeight();
+            if (h > 0) {
+                // +4 from border-spacing, TODO refactor
+                calendarCellHeight = h + 4;
+            }
+        }
+        // $scope.calendar[0].month.nweeks is the number of weeks (lines) added, so
+        // calendarCellHeight * it will give us the height
+        return calendarCellHeight * $scope.calendar[0].month.nweeks;
     }
 
     $scope.loadNextMonth = function() {
-        var isBegginingOfMonth = false;
-        if($scope.calendar.length > 0 ) {
-            $scope.calendar[$scope.calendar.length - 1].month.name = $scope.lastDay.getMonthYear();
+        var isBeginningOfMonth = false;
+        if ($scope.calendar.length > 0) {
+            lastWeek = $scope.calendar[$scope.calendar.length - 1];
+            lastWeek.month.name = $scope.lastDay.getMonthName();
+            lastWeek.month.year = $scope.lastDay.getFullYear();
         }
-        do {
-            var currentWeek = initWeek($scope.lastDay);
-            for(var dayCount = 0; dayCount < 7; dayCount++) {
-                if($scope.lastDay.getDate() == 1) {
-                    isBegginingOfMonth = true;
-                    currentWeek.month = initMonth($scope.lastDay);
+        while (!isBeginningOfMonth) {
+            var currentWeek = createWeek($scope.lastDay);
+            for (var dayCount = 0; dayCount < 7; dayCount++) {
+                if ($scope.lastDay.getDate() == 1) {
+                    isBeginningOfMonth = true;
+                    currentWeek.firstOfTheMonth = true;
+                    currentWeek.month = createMonthByFirstDay($scope.lastDay);
                 }
-                currentWeek.days.push({ value: $scope.lastDay.getDate() });
+                pushDayIntoWeek(currentWeek, $scope.lastDay);
                 $scope.lastDay.setDate($scope.lastDay.getDate() + 1);
             }
             $scope.calendar.push(currentWeek);
-        } while(!isBegginingOfMonth);
+        }
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
 
     $scope.initCalendar = function() {
-        $scope.loadNextMonth();
-        $scope.loadNextMonth();
-        $scope.loadNextMonth();
-        $scope.loadPreviousMonth();
-        $scope.loadPreviousMonth();
+        for (var i = 1; i <= initialMonthsShown; i++) {
+            if (i <= Math.ceil(initialMonthsShown / 2.0)) {
+                $scope.loadNextMonth();
+            } else {
+                $scope.loadPreviousMonth();
+            }
+        }
     }
 
     $scope.initCalendar();
-
 
 });
 
