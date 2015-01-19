@@ -37,3 +37,12 @@ App.config(['$routeProvider', 'NAV_TABS', function($routeProvider, NAV_TABS) {
     });
     $routeProvider.otherwise({redirectTo: NAV_TABS.calendar.route});
 }]);
+
+function resizeCalendar() {
+    // TODO
+}
+
+$(window).on('resize', function() {
+    resizeCalendar();
+})
+

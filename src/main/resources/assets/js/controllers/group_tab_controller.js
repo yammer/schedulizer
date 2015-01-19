@@ -4,4 +4,6 @@ App.controller('GroupTabController', function ($scope, $timeout) {
 
     });
 
+    // TODO: Ugly hack!
+    $timeout(resizeCalendar, 300)
 });
