@@ -29,6 +29,12 @@ public class Group {
     @OneToMany(mappedBy = "mGroup")
     private Set<Membership> mMemberships = new HashSet<>();
 
+    public Group(String name) {
+        setName(name);
+    }
+
+    public Group() {}
+
     public long getId() {
         return mId;
     }
