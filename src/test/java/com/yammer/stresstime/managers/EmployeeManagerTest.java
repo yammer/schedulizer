@@ -27,7 +27,7 @@ public class EmployeeManagerTest extends DatabaseTest {
         employee.setYammerId("lorem");
         mEmployeeManager.save(employee);
         refresh(employee);
-        Employee found = mEmployeeManager.findByYammerId("lorem");
+        Employee found = mEmployeeManager.getByYammerId("lorem");
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
