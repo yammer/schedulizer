@@ -26,8 +26,8 @@ public class GroupEmployeesResource {
 
     @GET
     @UnitOfWork
-    public Response getGroupsFromEmployee(@PathParam("employee_id") Long employee_id) {
-        Employee employee = mEmployeeManager.getById(employee_id);
+    public Response getGroupsFromEmployee(@PathParam("employee_id") Long employeeId) {
+        Employee employee = mEmployeeManager.getById(employeeId);
         if (employee == null) {
             return Response.status(400).entity(new ErrorJSON("Employee not found")).build();
         }

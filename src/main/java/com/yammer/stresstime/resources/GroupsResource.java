@@ -42,9 +42,10 @@ public class GroupsResource {
     }
 
     @DELETE
+    @Path("/{group_id}")
     @UnitOfWork
-    public Response deleteGroup(@FormParam("id") Long id) {
-        if(!mGroupManager.deleteById(id)) {
+    public Response deleteGroup(@PathParam("group_id") Long groupId) {
+        if(!mGroupManager.deleteById(groupId)) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
         return Response.ok().build();
@@ -54,8 +55,8 @@ public class GroupsResource {
     @GET
     @Path("/{group_id}")
     @UnitOfWork
-    public Response getGroupById(@PathParam("group_id") Long id) {
-        Group group = mGroupManager.getById(id);
+    public Response getGroupById(@PathParam("group_id") Long groupId) {
+        Group group = mGroupManager.getById(groupId);
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }

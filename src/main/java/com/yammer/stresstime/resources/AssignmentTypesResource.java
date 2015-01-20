@@ -26,10 +26,10 @@ public class AssignmentTypesResource {
 
     @POST
     @UnitOfWork
-    public Response createNewAssignementType(@PathParam("group_id") Long group_id,
+    public Response createNewAssignementType(@PathParam("group_id") Long groupId,
                                              @FormParam("name") String name,
                                              @FormParam("description") String description) {
-        Group group = mGroupManager.getById(group_id);
+        Group group = mGroupManager.getById(groupId);
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
@@ -43,8 +43,8 @@ public class AssignmentTypesResource {
 
     @GET
     @UnitOfWork
-    public Response getAssignmentTypesFromGroup(@PathParam("group_id") Long group_id) {
-        Group group = mGroupManager.getById(group_id);
+    public Response getAssignmentTypesFromGroup(@PathParam("group_id") Long groupId) {
+        Group group = mGroupManager.getById(groupId);
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
@@ -57,13 +57,13 @@ public class AssignmentTypesResource {
     @DELETE
     @Path("/{assignment_type_id}")
     @UnitOfWork
-    public Response getGroupsFromEmployee(@PathParam("group_id") Long group_id,
-                                          @PathParam("assignment_type_id") Long assignment_type_id) {
-        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignment_type_id);
+    public Response getGroupsFromEmployee(@PathParam("group_id") Long groupId,
+                                          @PathParam("assignment_type_id") Long assignmentTypeId) {
+        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignmentTypeId);
         if (assignmentType == null) {
             return Response.status(400).entity(new ErrorJSON("Assignment not found")).build();
         }
-        if (assignmentType.getGroup().getId() != group_id) {
+        if (assignmentType.getGroup().getId() != groupId) {
             return Response.status(400).entity(new ErrorJSON("Assignment doesn't belong to this group")).build();
         }
         mAssignmentTypeManager.delete(assignmentType);

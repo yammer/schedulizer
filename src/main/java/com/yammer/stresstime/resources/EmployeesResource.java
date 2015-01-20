@@ -36,19 +36,19 @@ public class EmployeesResource {
 
     @POST
     @UnitOfWork
-    public Response addEmployeeToGroup(@PathParam("group_id") Long group_id,
-                                       @FormParam("yid") String yammer_id) {
-        Group group = mGroupManager.getById(group_id);
+    public Response addEmployeeToGroup(@PathParam("group_id") Long groupId,
+                                       @FormParam("yid") String yammerId) {
+        Group group = mGroupManager.getById(groupId);
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
-        Employee employee = mEmployeeManager.getByYammerId(yammer_id);
+        Employee employee = mEmployeeManager.getByYammerId(yammerId);
         if (employee == null) {
             // new yammer id
-            employee = mEmployeeManager.createNewEmployee(yammer_id);
+            employee = mEmployeeManager.createNewEmployee(yammerId);
         }
 
-        Membership membership = mMembershipManager.getByEmployeeAndGroup(employee.getId(), group_id);
+        Membership membership = mMembershipManager.getByEmployeeAndGroup(employee.getId(), groupId);
         if (membership == null) {
             membership = new Membership();
             membership.setEmployee(employee);
@@ -61,9 +61,9 @@ public class EmployeesResource {
 
     @GET
     @UnitOfWork
-    public Response showEmployeesFromGroup(@PathParam("group_id") Long group_id) {
+    public Response showEmployeesFromGroup(@PathParam("group_id") Long groupId) {
 
-        Group group = mGroupManager.getById(group_id);
+        Group group = mGroupManager.getById(groupId);
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
@@ -74,9 +74,9 @@ public class EmployeesResource {
     @DELETE
     @Path("{employee_id}")
     @UnitOfWork
-    public Response addEmployeeToGroup(@PathParam("group_id") Long group_id,
-                                       @PathParam("employee_id") Long employee_id) {
-        if (!mMembershipManager.deleteByEmployeeAndGroup(employee_id, group_id)) {
+    public Response addEmployeeToGroup(@PathParam("group_id") Long groupId,
+                                       @PathParam("employee_id") Long employeeId) {
+        if (!mMembershipManager.deleteByEmployeeAndGroup(employeeId, groupId)) {
             return Response.status(400).entity(new ErrorJSON("This employee does not belong to this group")).build();
         }
         return Response.ok().build();
