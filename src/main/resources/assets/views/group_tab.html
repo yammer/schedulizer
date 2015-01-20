@@ -1,16 +1,16 @@
-<div id="group-tab" class="row">
+<div id="group-tab" class="dual-pane row">
     <div ng-init="selectedGroup = {name: groupList[0].name}" class="col-md-2 sidebar">
-        <ul class="list-unstyled">
-            <li>
-                <input type="text" ng-model="groupNameSearch" class="form-control" placeholder="Search Group">
-            </li>
-        </ul>
+        <div class="top-search">
+            <input class="form-control" type="text" ng-model="groupNameSearch" placeholder="Search Group">
+        </div>
         <ul class="nav nav-sidebar" role="navigation" ng-repeat="group in groupList | filter: groupNameSearch">
-            <li ng-class="{'active': group.name == selectedGroup.name}"><a ng-click="selectedGroup.name = group.name">{{group.name}}</a></li>
+            <li ng-class="{'active': group.name == selectedGroup.name}">
+                <a ng-click="selectedGroup.name = group.name">{{group.name}}</a>
+            </li>
         </ul>
     </div>
     <div class="col-md-10 main">
-        <h1>Calendar</h1>
+        <h1 class="header">Calendar</h1>
         <calendar></calendar>
     </div>
 </div>
