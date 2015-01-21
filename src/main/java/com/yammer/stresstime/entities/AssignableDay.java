@@ -1,10 +1,13 @@
 package com.yammer.stresstime.entities;
 
 import com.google.common.collect.ImmutableSet;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -26,6 +29,7 @@ public class AssignableDay {
     private Group mGroup;
 
     @OneToMany(mappedBy = "mAssignableDay")
+    @Cascade({CascadeType.DELETE})
     private Set<Assignment> mAssignments;
 
     public long getId() {

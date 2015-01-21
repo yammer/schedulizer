@@ -1,9 +1,13 @@
 package com.yammer.stresstime.entities;
 
 import com.google.common.collect.ImmutableSet;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,12 +25,15 @@ public class Group {
     private String mName;
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<AssignableDay> mAssignableDays = new HashSet<>();
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<AssignmentType> mAssignmentTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<Membership> mMemberships = new HashSet<>();
 
     public Group(String name) {
