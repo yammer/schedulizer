@@ -12,6 +12,7 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/assignment_types")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,7 +27,7 @@ public class AssignmentTypesResource {
 
     @POST
     @UnitOfWork
-    public Response createNewAssignementType(@PathParam("group_id") Long groupId,
+    public Response createNewAssignmentType(@PathParam("group_id") Long groupId,
                                              @FormParam("name") String name,
                                              @FormParam("description") String description) {
         Group group = mGroupManager.getById(groupId);
@@ -49,9 +50,8 @@ public class AssignmentTypesResource {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
 
-        return Response.ok().entity(
-                Lists.transform(Lists.newArrayList(group.getAssignmentTypes()), at -> new AssignmentTypeJSON(at))
-        ).build();
+        return Response.ok().entity(Lists.newArrayList(group.getAssignmentTypes())
+                        .stream().map(at -> new AssignmentTypeJSON(at)).collect(Collectors.toList())).build();
     }
 
     @DELETE

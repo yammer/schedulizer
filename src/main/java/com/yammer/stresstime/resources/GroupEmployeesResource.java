@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.stream.Collectors;
 
 @Path("/employees/{employee_id}/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,8 +32,8 @@ public class GroupEmployeesResource {
         if (employee == null) {
             return Response.status(400).entity(new ErrorJSON("Employee not found")).build();
         }
-        return Response.ok().entity(
-                Lists.transform(Lists.newArrayList(employee.getGroups()), g -> new GroupJSON(g))).build();
+        return Response.ok().entity(Lists.newArrayList(employee.getGroups())
+                        .stream().map(g -> new GroupJSON(g)).collect(Collectors.toList())).build();
     }
 
 

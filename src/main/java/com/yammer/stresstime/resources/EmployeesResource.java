@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/employees")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,8 +68,8 @@ public class EmployeesResource {
         if (group == null) {
             return Response.status(400).entity(new ErrorJSON("Group not found")).build();
         }
-        return Response.ok().entity(
-                Lists.transform(Lists.newArrayList(group.getEmployees()), e -> new EmployeeJSON(e))).build();
+        return Response.ok().entity(Lists.newArrayList(group.getEmployees())
+                .stream().map(e -> new EmployeeJSON(e)).collect(Collectors.toList())).build();
     }
 
     @DELETE

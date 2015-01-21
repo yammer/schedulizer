@@ -13,6 +13,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -28,8 +29,7 @@ public class GroupsResource {
     @UnitOfWork
     public List<GroupJSON> getAllGroups() {
         List<Group> groups = mGroupManager.all();
-        List<GroupJSON> groupJSONs = Lists.transform(groups, g -> new GroupJSON(g));
-        return groupJSONs;
+        return groups.stream().map(g -> new GroupJSON(g)).collect(Collectors.toList());
     }
 
     @POST
