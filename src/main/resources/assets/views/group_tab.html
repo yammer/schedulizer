@@ -3,8 +3,8 @@
         <div class="top-search">
             <input class="form-control" type="text" ng-model="groupSearch" placeholder="Search Group">
         </div>
-        <ul class="nav nav-sidebar" role="navigation" ng-repeat="group in groups | filter: groupSearch">
-            <li ng-class="{'active': isSelectedGroup(group)}">
+        <ul class="nav nav-sidebar" role="navigation">
+            <li ng-class="{'active': isSelectedGroup(group)}" ng-repeat="group in groups | filter: groupSearch">
                 <a href="/#/group/{{group.id}}">{{group.name}}</a>
             </li>
         </ul>
