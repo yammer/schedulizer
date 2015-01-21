@@ -190,3 +190,74 @@ body {
 .day-details .month-label {
     font-size: 19px;
 }
+
+/* Employee card */
+
+.employee-card {
+    padding: 6px 10px;
+    color: #828282;
+}
+
+.employee-card.hoverable:hover {
+    background-color: #EEEEEE;
+}
+
+.employee-card .avatar-wrapper {
+    float: left;
+    width: 50px;
+    height: 50px;
+    margin-left: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.employee-card .avatar-wrapper.with-image img {
+    border-radius: 50%;
+}
+
+.employee-card .avatar-wrapper.with-image .text-hover {
+    display: none;
+}
+
+.employee-card .avatar-wrapper.with-image:hover .text-hover {
+    font-size: 32px;
+    display: inline;
+    color: #FFF;
+}
+
+.employee-card .avatar-wrapper.with-image:hover img {
+    display: none;
+}
+
+.employee-card .avatar-wrapper.with-image:hover {
+    background-color: #CC5555;
+}
+
+.employee-card .avatar-wrapper.no-image, .employee-card .avatar-wrapper.with-image:hover {
+    font-size: 31px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.employee-card .avatar-wrapper.add {
+    color: #828282;
+    background-color: #D9D9D9;
+}
+
+.employee-card .avatar-wrapper.add:hover {
+    color: #E9E9E9;
+    background-color: #828282;
+}
+
+
+.employee-card .name {
+    display: table-cell;
+    height: 50px;
+    vertical-align: middle;
+    padding: 0 10px 0 10px;
+}
+
+.clear {
+    clear: both;
+}

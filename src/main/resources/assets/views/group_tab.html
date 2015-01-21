@@ -53,11 +53,21 @@
         <div class="top-search">
             <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
         </div>
-        <!--<ul class="nav nav-sidebar" role="navigation" ng-repeat="group in groupList | filter: groupNameSearch">-->
-            <!--<li ng-class="{'active': group.name == selectedGroup.name}">-->
-                <!--<a ng-click="selectedGroup.name = group.name">{{group.name}}</a>-->
-            <!--</li>-->
-        <!--</ul>-->
+        <ul class="nav nav-sidebar" role="navigation">
+            <employee-card
+                employee="employee"
+                ng-repeat="employee in employees | filter: employeeSearch"
+                remove="removeEmployee(employee)"
+                >
+            </employee-card>
+            <div class="employee-card">
+                <div class="avatar-wrapper no-image add" ng-click="addEmployee()">+</div>
+                <div class="name">
+                    <input class="form-control" type="text" ng-model="newEmployee.name" placeholder="Name" />
+                </div>
+                <div class="clear"></div>
+            </div>
+        </ul>
     </div>
 
 </div>

@@ -152,7 +152,6 @@ App.controller('CalendarController', function ($timeout, $scope) {
         if (duration == undefined) {
             duration = 'fast';
         }
-        console.log(duration)
         //var days = dateDiffInDays(getSunday($scope.firstDay), getSunday(date));
         var days = dateDiffInDays($scope.firstDay, getSunday(date));
         var weeks = days / 7 - WEEKS_OFFSET;
