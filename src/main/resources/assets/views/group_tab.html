@@ -32,6 +32,44 @@
 
             </calendar>
             <div class="right-bar">
+
+                <div ng-if="selectedDays.length > 0">
+                    <div ng-click="clearSelection()" class="stamp selection-stamp" >
+                        <div class="main-label">{{selectedDays.length}}</div>
+                        <div class="sub-label">Days Selected</div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="assignment-type-buckets">
+
+                        <div class="bucket">
+                            <div class="bucket-name">Primary</div>
+
+                        </div>
+
+                        <div class="bucket">
+                            <div class="bucket-name">Secondary</div>
+
+                        </div>
+
+                        <div class="bucket">
+                            <div class="bucket-name">P.S.</div>
+
+                        </div>
+
+                        <div class="bucket">
+                            <div class="bucket-name">Whatrweve</div>
+
+                        </div>
+
+                        <div class="bucket">
+                            <div class="bucket-name">Hello</div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
                 <table class="legend">
                     <tr>
                         <td class="day odd"></td>

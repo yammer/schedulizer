@@ -328,3 +328,19 @@ body {
 .clear {
     clear: both;
 }
+
+/* AssignmentType buckets */
+
+.bucket {
+    border: 4px dashed #DDD;
+    border-radius: 4px;
+    width: 150px;
+    height: 100px;
+    margin: 10px 0;
+}
+
+.bucket .bucket-name {
+    color: #AAA;
+    font-size: 16px;
+    margin: 5px;
+}
