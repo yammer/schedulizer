@@ -5,22 +5,43 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
 
     $scope.selectedGroup = EMPTY_GROUP;
 
-    $scope.groups = Group.query({}, function(groups, responseHeaders) {
-        if (groups.length > 0) {
-            if ($routeParams.groupId == 'default') {
-                // redirects
-                $location.path('group/' + groups[0].id)
+    $scope.getGroupsData = function() {
+        console.log("getting group");
+        $scope.groups = Group.query({}, function (groups, responseHeaders) {
+            if (groups.length > 0) {
+                if ($routeParams.groupId == 'default') {
+                    // redirects
+                    $location.path('group/' + groups[0].id)
+                }
             }
             $scope.selectedGroup = _.find(groups, function(g) {
                 return g.id == parseInt($routeParams.groupId);
             }) || EMPTY_GROUP;
-            if ($scope.selectedGroup != EMPTY_GROUP) {
-                $scope.employees = Employee.query({
-                    groupId: $scope.selectedGroup.id
-                })
+        });
+    }
+
+    $scope.createNewGroup = function(groupName) {
+        if(groupName == undefined || groupName == "") { return; }
+
+        var group = new Group();
+        group.name = groupName;
+        group.$save(function() {
+            if ($scope.groups.length == 0) {
+                $timeout( function(){
+                    $scope.getGroupsData();
+                },0);
             }
-        }
-    });
+            else {
+                $scope.groups.push(group);
+            }
+        });
+    }
+
+    $scope.deleteGroup = function(group) {
+        console.dir(group);
+        $scope.groups = _.without($scope.groups, _.findWhere($scope.groups, group));
+        group.$delete();
+    }
 
     $scope.isSelectedGroup = function(group) {
         return group && group.id == $scope.selectedGroup.id;
@@ -70,6 +91,8 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
     }
 
     $scope.selectedDays = [];
+    $scope.getGroupsData();
+    $scope.selectedDay = undefined;
 
     $scope.onSelectDays = function(days) {
         $scope.selectedDays = days;
