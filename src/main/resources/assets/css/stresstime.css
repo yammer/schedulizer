@@ -2,15 +2,6 @@ body {
     padding-top: 50px;
 }
 
-/* Sidebar */
-
-.sidebar {
-    padding: 15px 0 0 0;
-    background-color: #f5f5f5;
-    border-right: 1px solid #EEEEEE;
-    height: 100%;
-}
-
 /* Text rotation */
 
 .rotate90deg {
@@ -81,6 +72,13 @@ body {
 
 /* Dual pane */
 
+.sidebar {
+    padding: 15px 0 0 0;
+    background-color: #f5f5f5;
+    border-right: 1px solid #EEEEEE;
+    height: 100%;
+}
+
 .dual-pane {
     position: fixed;
     top: 51px;
@@ -89,7 +87,7 @@ body {
     height: 100%;
 }
 
-.dual-pane .calendar-scroll-box {
+.dual-pane .view-calendar-wrapper {
     /* height: Height defined on runtime */
     /* TODO: Remove scrolbar */
     height: 700px;
@@ -107,4 +105,62 @@ body {
 
 .dual-pane .sidebar ul {
     margin: 0 -20px;
+}
+
+.dual-pane .sidebar .active, .dual-pane .sidebar .active a {
+    color: #FFFFFF;
+    background-color: #428bca;
+}
+
+.left-bar {
+    float: left;
+    margin: 0 15px 0 0;
+}
+
+.right-bar {
+    float: right;
+    margin: 0 0 0 15px;
+    /* Making up space for the legend */
+    width: 200px;
+
+}
+
+.legend {
+    color: #828282;
+    position: absolute;
+    bottom: 0;
+}
+
+.legend .day {
+    width: 40px;
+    height: 35px;
+}
+
+.legend .description {
+    padding-left: 5px;
+}
+
+.tools {
+    text-align: right;
+    margin: 0 0 20px 0;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.day-details .stamp {
+    width: 106px;
+    float: right;
+    color: #FFF;
+    background-color: #2EC3E5;
+    font-size: 32px;
+    line-height: 100%;
+    padding: 6px 0 16px 0;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+}
+.day-details .month-label {
+    font-size: 19px;
 }
