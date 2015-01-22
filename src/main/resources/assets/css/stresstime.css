@@ -13,14 +13,14 @@ body {
 
 /* Calendar */
 
-.calendar {
+.view-calendar, .legend {
     border-collapse: separate;
     border-spacing: 4px;
 }
-.calendar-cell {
-}
-.calendar-scroll-box {
+.view-calendar-wrapper {
+    display: inline-block;
     overflow: auto;
+    margin-top: 54px; /* 50 + 4*/
 }
 .week:hover {
     background-color: #DDDDDD;
@@ -31,21 +31,25 @@ body {
 .month, .day {
     color: #8D8D8D;
     border-radius: 2px;
+    font-size: 15px;
+    cursor: default;
 }
 .month {
+    width: 85px;
     padding: 5px;
     text-align: left;
     vertical-align: top;
 }
 .day {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 50px;
     vertical-align: middle;
     text-align: center;
     cursor: default;
 }
 .day.odd, .month.odd {
-    background-color: #D5D5D5;
+    color: #828282;
+    background-color: #D9D9D9;
 }
 .day.even, .month.even {
     background-color: #EEEEEE;
@@ -54,9 +58,23 @@ body {
     color: #FFFFFF;
     background-color: #FFAA25;
 }
-.day:hover {
+.hoverable .day:hover, .day.hover {
     color: #FFFFFF;
     background-color: #2EC3E5;
+}
+.calendar-header {
+    margin-top: -54px;
+    border-spacing: 4px 0;
+    position: fixed;
+}
+.calendar-header .month {
+    vertical-align: middle;
+    text-align: center;
+    width: 85px;
+}
+.calendar-header .day, .calendar-header .month {
+    color: #E9E9E9;
+    background-color: #828282;
 }
 
 /* Header */
@@ -66,7 +84,7 @@ body {
     font-size: 22px;
     background-color: #F5F5F5;
     border-bottom: 1px solid #EEEEEE;
-    margin: 0 0 15px -15px;
+    margin: 0 -15px 15px -15px;
     padding: 18px 15px 17px 15px;
 }
 
@@ -110,6 +128,14 @@ body {
 .dual-pane .sidebar .active, .dual-pane .sidebar .active a {
     color: #FFFFFF;
     background-color: #428bca;
+}
+
+/* Group tab */
+
+#group-tab .calendar-wrap {
+    display: table;
+    margin: 0 auto;
+    position: relative;
 }
 
 .left-bar {

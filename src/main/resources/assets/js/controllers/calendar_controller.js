@@ -61,22 +61,44 @@ function pushDayIntoWeek(week, day) {
     week.days.push({
         value: day.getDate(),
         month: day.getMonth(),
+        date: new Date(day.getTime()),
         today: day.toDateString() == TODAY.toDateString()
     });
 }
 
+function getSunday(day) {
+    var ans = new Date(day.getTime());
+    ans.setDate(day.getDate() - day.getDay());
+    return ans;
+}
 
-App.controller('CalendarController', function ($scope) {
 
-    var initialMonthsShown = 15;
+App.controller('CalendarController', function ($timeout, $scope) {
+
+    var INITIAL_MONTHS_SHOWN = 15;
+    var WEEKS_OFFSET = 2;
+
+
+
 
     $scope.calendar = []; // array of week object
     $scope.firstDay = new Date();
     $scope.firstDay.setDate(1); // beginning of the month
-    $scope.firstDay.setDate($scope.firstDay.getDate() - $scope.firstDay.getDay()); // sunday
-    $scope.lastDay = new Date($scope.firstDay.getTime())
+    $scope.firstDay = getSunday($scope.firstDay);
+    $scope.lastDay = new Date($scope.firstDay.getTime());
 
     var calendarCellHeight = null;
+
+    function getCalendarCellHeight() {
+        if (calendarCellHeight === null) {
+            var h = $(".week").outerHeight();
+            if (h > 0) {
+                // +4 from border-spacing, TODO refactor
+                calendarCellHeight = h + 4;
+            }
+        }
+        return calendarCellHeight;
+    }
 
     $scope.loadPreviousMonth = function() {
         var isBeginningOfMonth = false;
@@ -95,16 +117,9 @@ App.controller('CalendarController', function ($scope) {
             $scope.calendar.unshift(currentWeek);
             $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
         }
-        if (calendarCellHeight === null) {
-            var h = $(".week").outerHeight();
-            if (h > 0) {
-                // +4 from border-spacing, TODO refactor
-                calendarCellHeight = h + 4;
-            }
-        }
         // $scope.calendar[0].month.nweeks is the number of weeks (lines) added, so
         // calendarCellHeight * it will give us the height
-        return calendarCellHeight * $scope.calendar[0].month.nweeks;
+        return getCalendarCellHeight() * $scope.calendar[0].month.nweeks;
     }
 
     $scope.loadNextMonth = function() {
@@ -130,14 +145,53 @@ App.controller('CalendarController', function ($scope) {
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
 
+    $scope.scrollAt = 0;
+
+    $scope.goToDate = function(date, duration) {
+        console.log(duration)
+        if (duration == undefined) {
+            duration = 'fast';
+        }
+        console.log(duration)
+        //var days = dateDiffInDays(getSunday($scope.firstDay), getSunday(date));
+        var days = dateDiffInDays($scope.firstDay, getSunday(date));
+        var weeks = days / 7 - WEEKS_OFFSET;
+        if (weeks < 0) {
+            // TODO: Create on demand
+        } else if (weeks >= $scope.calendar.length) {
+            // TODO: Create on demand
+        } else {
+            // TODO: Find an angular way of doing this
+            var calendar = $(".view-calendar-wrapper");
+            var scroll = getCalendarCellHeight() * weeks;
+            if (duration != 0) {
+                calendar.animate({scrollTop: scroll}, duration);
+            } else {
+                calendar[0].scrollTop = scroll;
+            }
+        }
+    }
+
+    $scope.goToToday = function(duration) {
+        $scope.goToDate(TODAY, duration);
+    }
+
+    $scope.showCalendar = false;
+
     $scope.initCalendar = function() {
-        for (var i = 1; i <= initialMonthsShown; i++) {
-            if (i <= Math.ceil(initialMonthsShown / 2.0)) {
+        for (var i = 1; i <= INITIAL_MONTHS_SHOWN; i++) {
+            if (i <= Math.ceil(INITIAL_MONTHS_SHOWN / 2.0)) {
                 $scope.loadNextMonth();
             } else {
                 $scope.loadPreviousMonth();
             }
         }
+        // Wait some time so that getCalendarCellHeight() can return
+        // something useful, since this function is used inside goToToday(...)
+        $timeout(function() {
+            $scope.goToToday(0);
+            $scope.showCalendar = true;
+        });
     }
 
     $scope.initCalendar();

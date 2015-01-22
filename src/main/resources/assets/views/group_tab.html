@@ -9,8 +9,55 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-10 main">
-        <h1 class="header">Calendar</h1>
-        <calendar></calendar>
+    <div class="col-md-8 main">
+        <h1 class="header">{{selectedGroup.name}}</h1>
+        <div class="calendar-wrap">
+            <div class="left-bar">
+                <div class="tools">
+                    <button type="button" ng-click="goToToday()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                        &nbsp; Today
+                    </button>
+                </div>
+
+                <div ng-class="{'invisible': !selectedDay}" class="day-details">
+
+                    <div class="stamp">
+                        <span class="month-label">{{selectedDay.date.getMonthName()}}</span><br />
+                        <span class="day-label">{{selectedDay.value}}</span>
+                    </div>
+                </div>
+            </div>
+            <calendar class="calendar"></calendar>
+            <div class="right-bar">
+                <table class="legend">
+                    <tr>
+                        <td class="day odd"></td>
+                        <td class="day even"></td>
+                        <td class="description">Empty days</td>
+                    </tr>
+                    <tr ng-click="goToToday()">
+                        <td class="day today"></td>
+                        <td class="description" colspan="2">Today</td>
+                    </tr>
+                    <tr>
+                        <td class="day hover"></td>
+                        <td class="description" colspan="2">Selected</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
     </div>
+    <div class="col-md-2 sidebar right-sidebar">
+        <div class="top-search">
+            <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
+        </div>
+        <!--<ul class="nav nav-sidebar" role="navigation" ng-repeat="group in groupList | filter: groupNameSearch">-->
+            <!--<li ng-class="{'active': group.name == selectedGroup.name}">-->
+                <!--<a ng-click="selectedGroup.name = group.name">{{group.name}}</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+    </div>
+
 </div>
