@@ -19,16 +19,18 @@
                         &nbsp; Today
                     </button>
                 </div>
-
-                <div ng-class="{'invisible': !selectedDay}" class="day-details">
-
-                    <div class="stamp">
-                        <span class="month-label">{{selectedDay.date.getMonthName()}}</span><br />
-                        <span class="day-label">{{selectedDay.value}}</span>
-                    </div>
+                <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
+                    <div class="sub-label">{{dayStamp.getMonthName()}}</div>
+                    <div class="main-label">{{dayStamp.getDate()}}</div>
                 </div>
             </div>
-            <calendar class="calendar"></calendar>
+            <calendar
+                class="calendar"
+                on-select-days="onSelectDays"
+                on-hover-day="onHoverDay"
+                >
+
+            </calendar>
             <div class="right-bar">
                 <table class="legend">
                     <tr>

@@ -13,6 +13,15 @@ body {
 
 /* Calendar */
 
+.view-calendar td, .view-calendar th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .view-calendar, .legend {
     border-collapse: separate;
     border-spacing: 4px;
@@ -52,16 +61,48 @@ body {
     background-color: #D9D9D9;
 }
 .day.even, .month.even {
+    color: #8D8D8D;
     background-color: #EEEEEE;
 }
 .day.today {
     color: #FFFFFF;
     background-color: #FFAA25;
 }
+.hoverable .day.today:hover {
+    color: #FFFFFF;
+    background-color: #FFBB38;
+}
 .hoverable .day:hover, .day.hover {
     color: #FFFFFF;
     background-color: #2EC3E5;
 }
+
+.day.selected {
+    color: #FFFFFF;
+    background-color: #2EC3E5;
+}
+
+.day.today.selected {
+    background-color: #97B785;
+}
+
+.hoverable .day.today.selected:hover {
+    background-color: #A7C795;
+}
+
+.hoverable .day.selected:hover {
+    background-color: #3ED3F5;
+}
+
+/*.hoverable .day.odd.selected:hover {
+    color: #828282;
+    background-color: #D9D9D9;
+}
+.hoverable .day.even.selected:hover {
+    color: #8D8D8D;
+    background-color: #EEEEEE;
+}*/
+
 .calendar-header {
     margin-top: -54px;
     border-spacing: 4px 0;
@@ -148,7 +189,7 @@ body {
     margin: 0 0 0 15px;
     /* Making up space for the legend */
     width: 200px;
-
+    height: 50px;
 }
 
 .legend {
@@ -175,20 +216,46 @@ body {
     visibility: hidden;
 }
 
-.day-details .stamp {
+/* Stamps */
+
+.stamp {
     width: 106px;
-    float: right;
-    color: #FFF;
-    background-color: #2EC3E5;
-    font-size: 32px;
-    line-height: 100%;
-    padding: 6px 0 16px 0;
+    padding: 12px 0 12px 0;
     border-radius: 4px;
     text-align: center;
     position: relative;
 }
-.day-details .month-label {
+
+.stamp .sub-label {
     font-size: 19px;
+}
+.stamp .main-label {
+    font-size: 32px;
+    line-height: 38px;
+}
+
+.day-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: right;
+}
+
+.day-stamp.today {
+    color: #FFFFFF;
+    background-color: #FFAA25;
+}
+
+
+
+.selection-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: left;
+    cursor: pointer;
+}
+
+.selection-stamp:hover {
+    background-color: #FE9395;
 }
 
 /* Employee card */

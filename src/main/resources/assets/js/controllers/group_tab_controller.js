@@ -46,17 +46,33 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         $scope.employees.splice(i, 1);
     }
 
-    $scope.goToToday = function() {
+    function getCalendar() {
         // TODO: Find another way to do this
-        var calendar = angular.element($("#group-tab .calendar")[0]).scope();
-        calendar.goToToday();
+        return angular.element($("#group-tab .view-calendar-wrapper")[0]).scope();
     }
 
-    $scope.selectedDay = undefined;
+    $scope.goToToday = function() {
+        // TODO: Find another way to do this
+        var calendar = getCalendar();
+        calendar.goToToday();
+        $scope.dayStamp = new Date();
+    }
 
-    // TODO: expose method in directive not this way
-    $scope.selectDay = function(day) {
-        $scope.selectedDay = day;
+    $scope.dayStamp = new Date(); /* Extract TODAY constant from calendar stuff */
+
+    $scope.onHoverDay = function(day) {
+        $scope.dayStamp = day.date;
+    }
+
+    $scope.clearSelection = function() {
+        getCalendar().clearSelectedDays();
+        $scope.selectedDays = [];
+    }
+
+    $scope.selectedDays = [];
+
+    $scope.onSelectDays = function(days) {
+        $scope.selectedDays = days;
     }
 
     // TODO: Ugly hack!

@@ -1,7 +1,7 @@
 <div class="view-calendar-wrapper"
     scroller
-    previous-chunk-method="loadPreviousMonth()"
-    next-chunk-method="loadNextMonth()"
+    previous-chunk-method="loadPreviousMonth"
+    next-chunk-method="loadNextMonth"
     number-of-loaded-chunks-per-scroll="1"
     ng-class="{'invisible': !showCalendar}">
 
@@ -23,12 +23,19 @@
             'first': week.firstOfTheMonth,
             'week': true
         }">
-            <td ng-repeat="day in week.days" ng-class="{
-                'day': true,
-                'even': day.month % 2 == 0,
-                'odd': day.month % 2 == 1,
-                'today': day.today
-            }" ng-mouseover="selectDay(day)">
+            <td
+                ng-repeat="day in week.days"
+                ng-class="{
+                    'day': true,
+                    'even': day.month % 2 == 0,
+                    'odd': day.month % 2 == 1,
+                    'today': day.today,
+                    'selected': day.selected
+                }"
+                ng-mousedown="onMouseDown(day, $event)"
+                ng-mouseup="onMouseUp(day, $event)"
+                ng-mouseenter="onMouseEnter(day, $event)"
+                >
                 {{day.value}}
             </td>
             <td ng-if="week.firstOfTheMonth" rowspan="{{week.month.nweeks}}" ng-class="{

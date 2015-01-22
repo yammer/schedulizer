@@ -62,7 +62,7 @@ function pushDayIntoWeek(week, day) {
         value: day.getDate(),
         month: day.getMonth(),
         date: new Date(day.getTime()),
-        today: day.toDateString() == TODAY.toDateString()
+        today: day.isToday()
     });
 }
 
@@ -77,9 +77,6 @@ App.controller('CalendarController', function ($timeout, $scope) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
-
-
-
 
     $scope.calendar = []; // array of week object
     $scope.firstDay = new Date();
@@ -106,7 +103,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
             $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
             var currentWeek = createWeek($scope.firstDay);
             for (var dayCount = 0; dayCount < 7; dayCount++) {
-                if($scope.firstDay.getDate() == 1) {
+                if ($scope.firstDay.getDate() == 1) {
                     isBeginningOfMonth = true;
                     currentWeek.firstOfTheMonth = true;
                     currentWeek.month = createMonthByFirstDay($scope.firstDay);
@@ -148,13 +145,10 @@ App.controller('CalendarController', function ($timeout, $scope) {
     $scope.scrollAt = 0;
 
     $scope.goToDate = function(date, duration) {
-        console.log(duration)
         if (duration == undefined) {
             duration = 'fast';
         }
-        //var days = dateDiffInDays(getSunday($scope.firstDay), getSunday(date));
-        var days = dateDiffInDays($scope.firstDay, getSunday(date));
-        var weeks = days / 7 - WEEKS_OFFSET;
+        var weeks = getWeekIndex(date) - WEEKS_OFFSET;
         if (weeks < 0) {
             // TODO: Create on demand
         } else if (weeks >= $scope.calendar.length) {
@@ -175,7 +169,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         $scope.goToDate(TODAY, duration);
     }
 
-    $scope.showCalendar = false;
+    $scope.showCalendar = true;
 
     $scope.initCalendar = function() {
         for (var i = 1; i <= INITIAL_MONTHS_SHOWN; i++) {
@@ -185,21 +179,225 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 $scope.loadPreviousMonth();
             }
         }
+
         // Wait some time so that getCalendarCellHeight() can return
         // something useful, since this function is used inside goToToday(...)
         $timeout(function() {
             $scope.goToToday(0);
-            $scope.showCalendar = true;
+            // BUG: A piece of the screen is cut
+            //$scope.showCalendar = true;
         });
     }
 
     $scope.initCalendar();
+
+    function getDay(date) {
+        var w = getWeekIndex(date);
+        var day = $scope.calendar[w].days[date.getDay()];
+        if (!date.equalsDate(day.date)) {
+            console.log("Error! CalendarController getDay() not working")
+        }
+        return day;
+    }
+
+    function getWeekIndex(date) {
+        var d = dateDiffInDays(getSunday($scope.firstDay), date);
+        return Math.floor(d / 7);
+    }
+
+    function dayRange(a, b) {
+        a = a.date;
+        b = b.date;
+        var d = Date.min(a, b);
+        var b = Date.max(a, b);
+        var range = []
+        while (d < b) {
+            var day = getDay(d);
+            range.push(day);
+            d = d.tomorrow();
+        }
+        if (d.equalsDate(b)) {
+            // Because Date holds a moment (timestamp) the last iteration relies on the time of each
+            // date object, hence we make sure to include the last day here (remember d contains a
+            // value which failed the loop condition)
+            var day = getDay(d);
+            range.push(day);
+        }
+        return range;
+    }
+
+    function selectDays(days) {
+        _.each(days, function(day) {
+            day.previousSelectedState = day.selected;
+            day.selected = true;
+            if (!_.contains(selectedDays, day)) {
+                selectedDays.push(day);
+            }
+        });
+    }
+
+    function resetDays(days) {
+        _.each(days, function(day) {
+            day.selected = day.previousSelectedState;
+            if (day.selected && !_.contains(selectedDays, day)) {
+                selectedDays.push(day);
+            } else if (!day.selected && _.contains(selectedDays, day)) {
+                selectedDays.remove(day);
+            }
+        });
+    }
+
+    function unselectDays(days) {
+        _.each(days, function(day) {
+            day.previousSelectedState = day.selected;
+            day.selected = false;
+            selectedDays.remove(day);
+        })
+    }
+
+    function clearSelectedDays() {
+        _.each(selectedDays, function(day) {
+            day.previousSelectedState = true;
+            day.selected = false;
+        });
+        selectedDays.clear();
+    }
+
+    $scope.clearSelectedDays = function() {
+        clearSelectedDays();
+        twoStepStart = undefined;
+    };
+
+    function isSelected(day) {
+        return _.contains(selectedDays, day);
+    }
+
+    function onSelectDays() {
+        $scope.onSelectDaysParent(_.map(selectedDays, function(day) {
+            return day.date;
+        }));
+    }
+
+    function isCtrl(e) {
+        return e.ctrlKey || e.metaKey; // metaKey is apple's cmd
+    }
+
+    var selectedDays = [];
+    var twoStepStart = undefined;
+
+    // State Machine regarding one mouse operation (down, move, up), not across operations
+    var States = {
+        IDLE: {},
+        DOWN: {day: undefined, event: undefined},
+        CLICKED: {event: undefined, day: undefined},
+        DRAGGING: {start: undefined, current: undefined, previous: undefined},
+        DRAGGED: {start: undefined, end: undefined}
+    }
+    var state = States.IDLE
+
+    function onStateUpdate() {
+        switch (state) {
+            case States.DOWN:
+                var e = state.event;
+                if (!isCtrl(e)) {
+                    clearSelectedDays();
+                    selectDays([state.day]);
+                }
+                break;
+            case States.CLICKED:
+                //onDayClick(state.day, state.event);
+                var e = state.event;
+                var day = state.day;
+                if (e.shiftKey) {
+                    if (twoStepStart != undefined) {
+                        var range = dayRange(twoStepStart, day);
+                        selectDays(range);
+                    } else {
+                        selectDays([day]);
+                        twoStepStart = day;
+                    }
+                } else {
+                    if (isSelected(day) && isCtrl(e)) {
+                        unselectDays([day]);
+                        twoStepStart = undefined;
+                    } else {
+                        selectDays([day]);
+                        twoStepStart = day;
+                    }
+                }
+                state = States.IDLE;
+                break;
+            case States.DRAGGED:
+                // They are already selected (see States.DRAGGING)
+                state = States.IDLE;
+                break;
+            case States.DRAGGING:
+                if (state.previous != undefined) {
+                    var previousRange = dayRange(state.start, state.previous);
+                    resetDays(previousRange);
+                }
+                var currentRange = dayRange(state.start, state.current);
+                selectDays(currentRange);
+                twoStepStart = undefined;
+                break;
+        }
+        onSelectDays();
+    }
+
+    $scope.onMouseDown = function(day, $event) {
+        if (state == States.IDLE) {
+            state = States.DOWN;
+            state.day = day;
+            state.event = $event;
+            onStateUpdate();
+        }
+    }
+
+    $scope.onMouseEnter = function(day) {
+        $scope.onHoverDayParent(day);
+        if (state == States.DOWN) {
+            if (state.day != day) {
+                var start = state.day
+                state = States.DRAGGING;
+                state.start = start;
+                state.current = day;
+                state.previous = undefined;
+                onStateUpdate();
+            }
+        } else if (state == States.DRAGGING) {
+            if (state.current != day) {
+                state.previous = state.current;
+                state.current = day;
+                onStateUpdate();
+            }
+        }
+    }
+
+    $scope.onMouseUp = function(day, $event) {
+        if (state == States.DOWN) {
+            state = States.CLICKED;
+            state.event = $event;
+            state.day = day;
+            onStateUpdate();
+        } else if (state == States.DRAGGING) {
+            if (state.current != day) throw "Invalid state";
+            var start = state.day;
+            state = States.DRAGGED;
+            state.start = start;
+            state.end = day;
+            onStateUpdate();
+        }
+    }
 
 });
 
 App.directive('calendar', function() {
     return {
         restrict: 'E',
+        scope: {
+            onSelectDaysParent: '=onSelectDays',
+            onHoverDayParent: '=onHoverDay'
+        },
         templateUrl: 'views/calendar.html',
         controller: 'CalendarController'
     };

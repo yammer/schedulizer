@@ -2,8 +2,8 @@ App.directive('scroller', function () {
     return {
         restrict: 'A',
         scope: {
-            nextChunkMethod: "&",
-            previousChunkMethod: "&", // return the height of the chunk if you don't want a flash on the screen
+            nextChunkMethod: "=",
+            previousChunkMethod: "=", // return the height of the chunk if you don't want a flash on the screen
             numberOfLoadedChunksPerScroll: "="
         },
         // Make scroll even if it does not have scroll (increase height to test)
