@@ -1,11 +1,12 @@
-App.controller('GroupTabController', function($scope, $timeout, $location, $routeParams, Group, Employee) {
+App.controller('GroupTabController', function($scope, $timeout, $location, $routeParams, Group, GroupEmployee) {
+    console.log($routeParams);
 
     var EMPTY_GROUP = {id: undefined, name: "-"}
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
     $scope.selectedGroup = EMPTY_GROUP;
 
-    $scope.getGroupsData = function() {
+     function initGroupsData (callback) {
         console.log("getting group");
         $scope.groups = Group.query({}, function (groups, responseHeaders) {
             if (groups.length > 0) {
@@ -17,6 +18,7 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
             $scope.selectedGroup = _.find(groups, function(g) {
                 return g.id == parseInt($routeParams.groupId);
             }) || EMPTY_GROUP;
+            callback();
         });
     }
 
@@ -28,7 +30,7 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         group.$save(function() {
             if ($scope.groups.length == 0) {
                 $timeout( function(){
-                    $scope.getGroupsData();
+                    $scope.groups = Group.query({});
                 },0);
             }
             else {
@@ -38,9 +40,26 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
     }
 
     $scope.deleteGroup = function(group) {
-        console.dir(group);
         $scope.groups = _.without($scope.groups, _.findWhere($scope.groups, group));
         group.$delete();
+    }
+
+    $scope.getGroupEmployeesData = function(group) {
+        group.employees = GroupEmployee.query({ group_id: group.id });
+    }
+
+    $scope.addEmployee = function (yid, group) {
+        if (yid == undefined || yid == "") { return; }
+        var employee = new GroupEmployee({ groupId: group.id });
+        employee.yid = yid;
+        employee.$save();
+        group.employees.push(employee);
+    }
+
+    $scope.deleteEmployee = function (group, employee) {
+        group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
+        employee.groupId = group.id;
+        employee.$delete();
     }
 
     $scope.isSelectedGroup = function(group) {
@@ -85,13 +104,16 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         $scope.dayStamp = day.date;
     }
 
+    $scope.initGroupsData(function() {
+        $scope.getGroupEmployeesData($scope.selectedGroup);
+    });
+
     $scope.clearSelection = function() {
         getCalendar().clearSelectedDays();
         $scope.selectedDays = [];
     }
 
     $scope.selectedDays = [];
-    $scope.getGroupsData();
     $scope.selectedDay = undefined;
 
     $scope.onSelectDays = function(days) {

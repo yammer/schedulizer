@@ -35,8 +35,8 @@ var urlencodedTransformRequest = function(data) {
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
 };
 
-services.factory('Group', ['$resource', function($resource, $http) {
-    Group = $resource('service/groups/:group_id',{},{
+services.factory('Group', ['$resource', function($resource) {
+    var Group = $resource('service/groups/:group_id',{},{
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -49,5 +49,22 @@ services.factory('Group', ['$resource', function($resource, $http) {
             headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
         }
     });
+    Group.prototype.employees = [];
     return Group;
+}]);
+
+services.factory('GroupEmployee', ['$resource', function($resource) {
+    return $resource('service/groups/:group_id/employees/:employee_id', { group_id: "@groupId" },{
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+        },
+        delete: {
+            method: 'DELETE',
+            params: { employee_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+        }
+    });
 }]);
