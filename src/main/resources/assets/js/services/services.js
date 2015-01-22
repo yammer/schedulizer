@@ -50,6 +50,7 @@ services.factory('Group', ['$resource', function($resource) {
         }
     });
     Group.prototype.employees = [];
+    Group.prototype.assignmentTypes = [];
     return Group;
 }]);
 
@@ -66,5 +67,22 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
             transformRequest: [urlencodedTransformRequest],
             headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
         }
+    });
+}]);
+
+
+services.factory('AssignmentType', ['$resource', function($resource) {
+    return $resource('service/groups/:group_id/assignment_types/:assignment_type_id', { group_id: "@groupId" }, {
+            save: {
+                method: 'POST',
+                transformRequest: [urlencodedTransformRequest],
+                headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            },
+            delete: {
+                method: 'DELETE',
+                params: { assignment_type_id: "@id" },
+                transformRequest: [urlencodedTransformRequest],
+                headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            }
     });
 }]);

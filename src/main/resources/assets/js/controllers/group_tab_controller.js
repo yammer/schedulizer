@@ -1,4 +1,5 @@
-App.controller('GroupTabController', function($scope, $timeout, $location, $routeParams, Group, GroupEmployee) {
+App.controller('GroupTabController', function($scope, $timeout, $location, $routeParams,
+                                              Group, GroupEmployee, AssignmentType) {
     console.log($routeParams);
 
     var EMPTY_GROUP = {id: undefined, name: "-"}
@@ -62,6 +63,24 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         employee.$delete();
     }
 
+    $scope.getAssignmentTypeData = function(group) {
+        group.assignmentTypes = AssignmentType.query({ group_id: group.id });
+    }
+
+    $scope.addAssignmentType = function (name, group) {
+        if (name == undefined || name == "") { return; }
+        var assignmentType = new AssignmentType({ groupId: group.id });
+        assignmentType.name = name;
+        assignmentType.$save();
+        group.assignmentTypes.push(assignmentType);
+    }
+
+    $scope.deleteAssignmentType = function (group, assignmentType) {
+        group.assignmentTypes = _.without(group.assignmentTypes, _.findWhere(group.assignmentTypes, assignmentType));
+        assignmentType.groupId = group.id;
+        assignmentType.$delete();
+    }
+
     $scope.isSelectedGroup = function(group) {
         return group && group.id == $scope.selectedGroup.id;
     }
@@ -104,8 +123,9 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         $scope.dayStamp = day.date;
     }
 
-    $scope.initGroupsData(function() {
+    initGroupsData(function() {
         $scope.getGroupEmployeesData($scope.selectedGroup);
+        $scope.getAssignmentTypeData($scope.selectedGroup);
     });
 
     $scope.clearSelection = function() {
