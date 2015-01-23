@@ -21,6 +21,18 @@ public class EntityManager<E> extends AbstractDAO<E> {
         currentSession().delete(entity);
     }
 
+    public boolean safeDelete(E entity) {
+        try {
+            delete(entity);
+            return true;
+        } catch (Exception e) {
+            /* TODO: Logging to proper stream  */
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public E getById(long id) {
         return (E) currentSession().get(mEntityClass, id);
     }
