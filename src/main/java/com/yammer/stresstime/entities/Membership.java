@@ -7,12 +7,13 @@ import javax.validation.constraints.NotNull;
 @Table(name = "memberships")
 public class Membership {
 
-    public Membership() {
+    /* package private */ Membership() {
         // Required by Hibernate
     }
+
     public Membership(Employee employee, Group group) {
-        setEmployee(employee);
-        setGroup(group);
+        mEmployee = employee;
+        mGroup = group;
     }
 
     @Id
