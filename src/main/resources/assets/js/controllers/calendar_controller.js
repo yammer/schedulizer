@@ -1,148 +1,118 @@
-Date.prototype.getMonthName = function() {
-    var monthNames = [ "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December" ];
-    return monthNames[this.getMonth()];
-};
-
-var MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-// a and b are javascript Date objects
-function dateDiffInDays(a, b) {
-    // Discard the time and time-zone information.
-    var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-    var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-
-    return Math.floor((utc2 - utc1) / MS_PER_DAY);
-}
-
-function computeNWeeks(firstDay) {
-    var lastDay = new Date(firstDay.getTime());
-    /* Get first day of the next month */
-    lastDay.setDate(lastDay.getDate() + 27);
-    while(lastDay.getDate() != 1) {
-        lastDay.setDate(lastDay.getDate() + 1);
-    }
-    /* Get last sunday */
-    while(lastDay.getDay() != 0) {
-        lastDay.setDate(lastDay.getDate() - 1);
-    }
-    /* Get number of days between two dates*/
-    var diff =  dateDiffInDays(firstDay, lastDay);
-
-
-    return Math.ceil(diff/7.0);
-}
-
-function createMonth(day, nweeks) {
-    return {
-        number: day.getMonth(),
-        name: day.getMonthName(),
-        year: day.getFullYear(),
-        nweeks: nweeks
-    };
-}
-
-function createWeek(day){
-    return {
-        month: createMonth(day, 0),
-        firstOfTheMonth: false,
-        days: []
-    };
-}
-
-function createMonthByFirstDay(day01) {
-    var nweeks = computeNWeeks(new Date(day01.getTime()));
-    return createMonth(day01, nweeks);
-}
-
-var TODAY = new Date();
-
-function pushDayIntoWeek(week, day) {
-    week.days.push({
-        value: day.getDate(),
-        month: day.getMonth(),
-        date: new Date(day.getTime()),
-        today: day.isToday()
-    });
-}
-
-function getSunday(day) {
-    var ans = new Date(day.getTime());
-    ans.setDate(day.getDate() - day.getDay());
-    return ans;
-}
-
-
 App.controller('CalendarController', function ($timeout, $scope) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
 
-    $scope.calendar = []; // array of week object
-    $scope.firstDay = new Date();
-    $scope.firstDay.setDate(1); // beginning of the month
-    $scope.firstDay = getSunday($scope.firstDay);
-    $scope.lastDay = new Date($scope.firstDay.getTime());
+    $scope.calendar = [];
+    var firstDay = Date.firstDayOfThisMonth().lastSunday();
+    var lastDay = firstDay.clone();
 
-    var calendarCellHeight = null;
+    var cellHeight = null;
 
-    function getCalendarCellHeight() {
-        if (calendarCellHeight === null) {
+    function getCellHeight() {
+        if (cellHeight === null) {
             var h = $(".week").outerHeight();
             if (h > 0) {
                 // +4 from border-spacing, TODO refactor
-                calendarCellHeight = h + 4;
+                cellHeight = h + 4;
             }
         }
-        return calendarCellHeight;
+        return cellHeight;
+    }
+
+    function computeNumberOfWeeks(firstDay) {
+        // Get first day of the next month
+        var lastDay = firstDay.plusDays(27);
+        while (lastDay.getDate() != 1) {
+            lastDay = lastDay.next();
+        }
+        lastDay = lastDay.lastSunday();
+        var days = Date.differenceInDays(firstDay, lastDay);
+        return Math.ceil(days / 7.0);
+    }
+
+    function createMonth(day, nweeks) {
+        return {
+            number: day.getMonth(),
+            name: day.getMonthName(),
+            year: day.getFullYear(),
+            nweeks: nweeks
+        };
+    }
+
+    function createWeek(day){
+        return {
+            month: createMonth(day, 0),
+            firstOfTheMonth: false,
+            days: []
+        };
+    }
+
+    function createMonthByFirstDay(day01) {
+        var nweeks = computeNumberOfWeeks(day01);
+        return createMonth(day01, nweeks);
+    }
+
+    function pushDayIntoWeek(week, date) {
+        week.days.push({
+            selected: false,
+            previousSelectedState: false,
+            date: date.clone()
+        });
     }
 
     $scope.loadPreviousMonth = function() {
+        console.log("loadNextMonth");
+
         var isBeginningOfMonth = false;
         while (!isBeginningOfMonth) {
-            $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
-            var currentWeek = createWeek($scope.firstDay);
-            for (var dayCount = 0; dayCount < 7; dayCount++) {
-                if ($scope.firstDay.getDate() == 1) {
+            firstDay = firstDay.plusWeeks(-1);
+            var currentWeek = createWeek(firstDay);
+
+            for (var i = 0; i < 7; i++) {
+                if (firstDay.getDate() == 1) {
                     isBeginningOfMonth = true;
                     currentWeek.firstOfTheMonth = true;
-                    currentWeek.month = createMonthByFirstDay($scope.firstDay);
+                    currentWeek.month = createMonthByFirstDay(firstDay);
                 }
-                pushDayIntoWeek(currentWeek, $scope.firstDay);
-                $scope.firstDay.setDate($scope.firstDay.getDate() + 1);
+                pushDayIntoWeek(currentWeek, firstDay);
+                firstDay = firstDay.next();
             }
+
             $scope.calendar.unshift(currentWeek);
-            $scope.firstDay.setDate($scope.firstDay.getDate() - 7);
+            firstDay = firstDay.plusWeeks(-1);
         }
-        // $scope.calendar[0].month.nweeks is the number of weeks (lines) added, so
-        // calendarCellHeight * it will give us the height
-        return getCalendarCellHeight() * $scope.calendar[0].month.nweeks;
+        // calendar[0].month.nweeks is the number of weeks (lines) added, so
+        // cellHeight * it will give us the height
+        return getCellHeight() * $scope.calendar[0].month.nweeks;
     }
 
     $scope.loadNextMonth = function() {
+        console.log("loadNextMonth");
+
         var isBeginningOfMonth = false;
         if ($scope.calendar.length > 0) {
             lastWeek = $scope.calendar[$scope.calendar.length - 1];
-            lastWeek.month.name = $scope.lastDay.getMonthName();
-            lastWeek.month.year = $scope.lastDay.getFullYear();
+            lastWeek.month.name = lastDay.getMonthName();
+            lastWeek.month.year = lastDay.getFullYear();
         }
         while (!isBeginningOfMonth) {
-            var currentWeek = createWeek($scope.lastDay);
-            for (var dayCount = 0; dayCount < 7; dayCount++) {
-                if ($scope.lastDay.getDate() == 1) {
+            var currentWeek = createWeek(lastDay);
+
+            for (var i = 0; i < 7; i++) {
+                if (lastDay.getDate() == 1) {
                     isBeginningOfMonth = true;
                     currentWeek.firstOfTheMonth = true;
-                    currentWeek.month = createMonthByFirstDay($scope.lastDay);
+                    currentWeek.month = createMonthByFirstDay(lastDay);
                 }
-                pushDayIntoWeek(currentWeek, $scope.lastDay);
-                $scope.lastDay.setDate($scope.lastDay.getDate() + 1);
+                pushDayIntoWeek(currentWeek, lastDay);
+                lastDay = lastDay.next();
             }
+
             $scope.calendar.push(currentWeek);
         }
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
-
-    $scope.scrollAt = 0;
 
     $scope.goToDate = function(date, duration) {
         if (duration == undefined) {
@@ -155,23 +125,23 @@ App.controller('CalendarController', function ($timeout, $scope) {
             // TODO: Create on demand
         } else {
             // TODO: Find an angular way of doing this
-            var calendar = $(".view-calendar-wrapper");
-            var scroll = getCalendarCellHeight() * weeks;
+            var calendarElement = $(".view-calendar-wrapper");
+            var scroll = getCellHeight() * weeks;
             if (duration != 0) {
-                calendar.animate({scrollTop: scroll}, duration);
+                calendarElement.animate({scrollTop: scroll}, duration);
             } else {
-                calendar[0].scrollTop = scroll;
+                calendarElement[0].scrollTop = scroll;
             }
         }
     }
 
     $scope.goToToday = function(duration) {
-        $scope.goToDate(TODAY, duration);
+        $scope.goToDate(Date.TODAY, duration);
     }
 
     $scope.showCalendar = true;
 
-    $scope.initCalendar = function() {
+    function initializeCalendar() {
         for (var i = 1; i <= INITIAL_MONTHS_SHOWN; i++) {
             if (i <= Math.ceil(INITIAL_MONTHS_SHOWN / 2.0)) {
                 $scope.loadNextMonth();
@@ -180,7 +150,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
             }
         }
 
-        // Wait some time so that getCalendarCellHeight() can return
+        // Wait some time so that getCellHeight() can return
         // something useful, since this function is used inside goToToday(...)
         $timeout(function() {
             $scope.goToToday(0);
@@ -189,7 +159,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         });
     }
 
-    $scope.initCalendar();
+    initializeCalendar();
 
     function getDay(date) {
         var w = getWeekIndex(date);
@@ -201,144 +171,101 @@ App.controller('CalendarController', function ($timeout, $scope) {
     }
 
     function getWeekIndex(date) {
-        var d = dateDiffInDays(getSunday($scope.firstDay), date);
-        return Math.floor(d / 7);
+        var days = Date.differenceInDays(firstDay.lastSunday(), date);
+        return Math.floor(days / 7);
     }
 
     function dayRange(a, b) {
-        a = a.date;
-        b = b.date;
-        var d = Date.min(a, b);
-        var b = Date.max(a, b);
-        var range = []
-        while (d < b) {
-            var day = getDay(d);
-            range.push(day);
-            d = d.tomorrow();
-        }
-        if (d.equalsDate(b)) {
-            // Because Date holds a moment (timestamp) the last iteration relies on the time of each
-            // date object, hence we make sure to include the last day here (remember d contains a
-            // value which failed the loop condition)
-            var day = getDay(d);
-            range.push(day);
-        }
-        return range;
-    }
-
-    function selectDays(days) {
-        _.each(days, function(day) {
-            day.previousSelectedState = day.selected;
-            day.selected = true;
-            if (!_.contains(selectedDays, day)) {
-                selectedDays.push(day);
-            }
+        var dates = DaysSelection.dateRange(a.date, b.date);
+        return _.map(dates, function(date) {
+            return getDay(date);
         });
-    }
-
-    function resetDays(days) {
-        _.each(days, function(day) {
-            day.selected = day.previousSelectedState;
-            if (day.selected && !_.contains(selectedDays, day)) {
-                selectedDays.push(day);
-            } else if (!day.selected && _.contains(selectedDays, day)) {
-                selectedDays.remove(day);
-            }
-        });
-    }
-
-    function unselectDays(days) {
-        _.each(days, function(day) {
-            day.previousSelectedState = day.selected;
-            day.selected = false;
-            selectedDays.remove(day);
-        })
-    }
-
-    function clearSelectedDays() {
-        _.each(selectedDays, function(day) {
-            day.previousSelectedState = true;
-            day.selected = false;
-        });
-        selectedDays.clear();
     }
 
     $scope.clearSelectedDays = function() {
-        clearSelectedDays();
-        twoStepStart = undefined;
+        selection.clear();
+        twoStepStart = null;
     };
 
-    function isSelected(day) {
-        return _.contains(selectedDays, day);
-    }
-
     function onSelectDays() {
-        $scope.onSelectDaysParent(_.map(selectedDays, function(day) {
-            return day.date;
-        }));
+        $scope.onSelectDaysParent(selection.dates());
     }
 
     function isCtrl(e) {
         return e.ctrlKey || e.metaKey; // metaKey is apple's cmd
     }
 
-    var selectedDays = [];
-    var twoStepStart = undefined;
+    var selection = new DaysSelection();
+    var twoStepStart = null;
 
     // State Machine regarding one mouse operation (down, move, up), not across operations
     var States = {
         IDLE: {},
-        DOWN: {day: undefined, event: undefined},
-        CLICKED: {event: undefined, day: undefined},
-        DRAGGING: {start: undefined, current: undefined, previous: undefined},
-        DRAGGED: {start: undefined, end: undefined}
+        DOWN: {day: null, event: null},
+        CLICKED: {event: null, day: null},
+        DRAGGING: {start: null, current: null, previous: null},
+        DRAGGED: {start: null, end: null}
     }
     var state = States.IDLE
 
     function onStateUpdate() {
         switch (state) {
             case States.DOWN:
+                console.log('DOWN')
                 var e = state.event;
                 if (!isCtrl(e)) {
-                    clearSelectedDays();
-                    selectDays([state.day]);
+                    selection.clear();
                 }
                 break;
             case States.CLICKED:
+                console.log('CLICKED')
                 //onDayClick(state.day, state.event);
                 var e = state.event;
                 var day = state.day;
                 if (e.shiftKey) {
-                    if (twoStepStart != undefined) {
+                    console.log('shift')
+                    if (twoStepStart != null) {
+                        console.log('2 step != null')
                         var range = dayRange(twoStepStart, day);
-                        selectDays(range);
+                        console.log('<range>')
+                        console.log(range)
+                        console.log('</range>')
+                        selection.select(range);
                     } else {
-                        selectDays([day]);
+                        console.log('2 step == null')
+                        selection.select([day]);
                         twoStepStart = day;
                     }
                 } else {
-                    if (isSelected(day) && isCtrl(e)) {
-                        unselectDays([day]);
-                        twoStepStart = undefined;
-                    } else {
-                        selectDays([day]);
+                    console.log('no shift')
+                    if (day.selected && isCtrl(e)) {
+                        selection.unselect([day]);
+                        console.log('2 step = null')
+                        twoStepStart = null;
+                    } else if (!day.selected) {
+                        selection.select([day]);
+                        console.log('2 step = ', day)
                         twoStepStart = day;
+                    } else {
+                        console.log('nothing', day)
                     }
                 }
                 state = States.IDLE;
                 break;
             case States.DRAGGED:
+                console.log('DRAGGED')
                 // They are already selected (see States.DRAGGING)
                 state = States.IDLE;
                 break;
             case States.DRAGGING:
-                if (state.previous != undefined) {
+                console.log('DRAGGING')
+                if (state.previous != null) {
                     var previousRange = dayRange(state.start, state.previous);
-                    resetDays(previousRange);
+                    selection.resetToPreviousState(previousRange);
                 }
                 var currentRange = dayRange(state.start, state.current);
-                selectDays(currentRange);
-                twoStepStart = undefined;
+                selection.select(currentRange);
+                twoStepStart = null;
                 break;
         }
         onSelectDays();
@@ -361,7 +288,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 state = States.DRAGGING;
                 state.start = start;
                 state.current = day;
-                state.previous = undefined;
+                state.previous = null;
                 onStateUpdate();
             }
         } else if (state == States.DRAGGING) {

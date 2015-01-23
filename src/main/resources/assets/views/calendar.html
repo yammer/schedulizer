@@ -27,16 +27,16 @@
                 ng-repeat="day in week.days"
                 ng-class="{
                     'day': true,
-                    'even': day.month % 2 == 0,
-                    'odd': day.month % 2 == 1,
-                    'today': day.today,
+                    'even': day.date.getMonth() % 2 == 0,
+                    'odd': day.date.getMonth() % 2 == 1,
+                    'today': day.date.isToday(),
                     'selected': day.selected
                 }"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"
                 ng-mouseenter="onMouseEnter(day, $event)"
                 >
-                {{day.value}}
+                {{day.date.getDate()}}
             </td>
             <td ng-if="week.firstOfTheMonth" rowspan="{{week.month.nweeks}}" ng-class="{
                 'month': true,
