@@ -6,6 +6,6 @@ import org.hibernate.SessionFactory;
 public class AssignmentManager extends EntityManager<Assignment> {
 
     public AssignmentManager(SessionFactory sessionFactory) {
-        super(sessionFactory);
+        super(sessionFactory, Assignment.class);
     }
 }

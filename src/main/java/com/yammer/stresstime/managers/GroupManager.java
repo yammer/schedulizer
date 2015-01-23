@@ -11,7 +11,7 @@ public class GroupManager extends EntityManager<Group> {
     private static final Random RANDOM = new Random();
 
     public GroupManager(SessionFactory sessionFactory) {
-        super(sessionFactory);
+        super(sessionFactory, Group.class);
     }
 
     public List<Group> all() {

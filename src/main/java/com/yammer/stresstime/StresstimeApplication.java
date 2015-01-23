@@ -2,8 +2,8 @@ package com.yammer.stresstime;
 
 import com.yammer.stresstime.config.StresstimeConfiguration;
 import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.managers.GroupManager;
-import com.yammer.stresstime.resources.TestResource;
+import com.yammer.stresstime.managers.*;
+import com.yammer.stresstime.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -24,6 +24,11 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
             Membership.class);
 
     private GroupManager mGroupManager;
+    private EmployeeManager mEmployeeManager;
+    private MembershipManager mMembershipManager;
+    private AssignmentTypeManager mAssignmentTypeManager;
+    private AssignmentManager mAssignmentManager;
+    private AssignableDayManager mAssignableDayManager;
 
     public static void main(String[] args) throws Exception {
         new StresstimeApplication().run(args);
@@ -42,9 +47,19 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
     @Override
     public void run(StresstimeConfiguration config, Environment env) throws Exception {
         mGroupManager = new GroupManager(HIBERNATE_BUNDLE.getSessionFactory());
+        mEmployeeManager = new EmployeeManager(HIBERNATE_BUNDLE.getSessionFactory());
+        mMembershipManager = new MembershipManager(HIBERNATE_BUNDLE.getSessionFactory());
+        mAssignmentTypeManager = new AssignmentTypeManager(HIBERNATE_BUNDLE.getSessionFactory());
+        mAssignmentManager = new AssignmentManager(HIBERNATE_BUNDLE.getSessionFactory());
+        mAssignableDayManager = new AssignableDayManager(HIBERNATE_BUNDLE.getSessionFactory());
 
         env.jersey().setUrlPattern(config.getRootPath());
-        env.jersey().register(new TestResource(mGroupManager));
+        env.jersey().register(new GroupsResource(mGroupManager));
+        env.jersey().register(new EmployeesResource(mEmployeeManager, mGroupManager, mMembershipManager));
+        env.jersey().register(new GroupEmployeesResource(mEmployeeManager));
+        env.jersey().register(new AssignmentTypesResource(mAssignmentTypeManager, mGroupManager));
+        env.jersey().register(new AssignmentsResource(mAssignmentManager,mGroupManager,mEmployeeManager,
+                mAssignmentTypeManager,mAssignableDayManager));
     }
 
     // For tests

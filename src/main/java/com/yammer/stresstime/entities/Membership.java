@@ -7,6 +7,14 @@ import javax.validation.constraints.NotNull;
 @Table(name = "memberships")
 public class Membership {
 
+    public Membership() {
+        // Required by Hibernate
+    }
+    public Membership(Employee employee, Group group) {
+        setEmployee(employee);
+        setGroup(group);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long mId;

@@ -1,9 +1,15 @@
 package com.yammer.stresstime.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import com.google.common.collect.ImmutableSet;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +17,14 @@ import java.util.Set;
 @Entity
 @Table(name = "groups")
 public class Group {
+
+    public Group(String name) {
+        setName(name);
+    }
+
+    public Group() {
+        // Required by Hibernate
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +35,15 @@ public class Group {
     private String mName;
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<AssignableDay> mAssignableDays = new HashSet<>();
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<AssignmentType> mAssignmentTypes = new HashSet<>();
 
     @OneToMany(mappedBy = "mGroup")
+    @Cascade({CascadeType.DELETE})
     private Set<Membership> mMemberships = new HashSet<>();
 
     public long getId() {
@@ -41,6 +58,7 @@ public class Group {
         mName = name;
     }
 
+    @JsonIgnore
     public Set<AssignableDay> getAssignableDays() {
         return ImmutableSet.copyOf(mAssignableDays);
     }
@@ -49,6 +67,7 @@ public class Group {
         mAssignableDays = ImmutableSet.copyOf(mAssignableDays);
     }
 
+    @JsonIgnore
     public Set<AssignmentType> getAssignmentTypes() {
         return ImmutableSet.copyOf(mAssignmentTypes);
     }
@@ -57,10 +76,12 @@ public class Group {
         mAssignmentTypes = ImmutableSet.copyOf(assignmentTypes);
     }
 
+    @JsonIgnore
     public Set<Membership> getMemberships() {
         return ImmutableSet.copyOf(mMemberships);
     }
 
+    @JsonIgnore
     public Set<Employee> getEmployees() {
         ImmutableSet.Builder<Employee> employees = new ImmutableSet.Builder<>();
         for (Membership membership : mMemberships) {

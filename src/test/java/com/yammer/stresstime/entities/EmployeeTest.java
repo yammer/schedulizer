@@ -22,9 +22,7 @@ public class EmployeeTest extends DatabaseTest {
 
     @Test
     public void testNewHasEmptyAssignmentsAfterRetrievedFromDb() {
-        Employee employee = new Employee();
-        employee.setName("John Doe");
-        employee.setYammerId("lorem");
+        Employee employee = new Employee("John Doe", "lorem");
         mEmployeeManager.save(employee);
         refresh(employee);
 

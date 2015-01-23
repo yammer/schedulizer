@@ -22,12 +22,10 @@ public class EmployeeManagerTest extends DatabaseTest {
 
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
-        Employee employee = new Employee();
-        employee.setName("John Doe");
-        employee.setYammerId("lorem");
+        Employee employee = new Employee("John Doe", "lorem");
         mEmployeeManager.save(employee);
         refresh(employee);
-        Employee found = mEmployeeManager.findByYammerId("lorem");
+        Employee found = mEmployeeManager.getByYammerId("lorem");
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));

@@ -28,13 +28,11 @@ public class AssignableDayTest extends DatabaseTest {
 
     @Test
     public void testDateFieldEqualityIsTimeAgnostic() {
-        AssignableDay day = new AssignableDay();
-        day.setDate(new LocalDate(1985, 2, 24));
+        AssignableDay day = new AssignableDay(mGroup, new LocalDate(1985, 2, 24));
 
         assertThat(day.getDate(), equalTo(new LocalDate(1985, 2, 24)));
         assertThat(day.getDate(), equalTo(new LocalDateTime(1985, 2, 24, 2, 30).toLocalDate()));
 
-        day.setGroup(mGroup);
         mAssignableDayManager.save(day);
         refresh(day);
 
