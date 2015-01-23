@@ -23,12 +23,25 @@ public class EmployeeManager extends EntityManager<Employee> {
                 .uniqueResult();
     }
 
-    public Employee createNewEmployee(String yammerId) {
+    public Employee getOrCreateByYammerId(String yammerId) {
+        Employee employee = getByYammerId(yammerId);
+        if (employee == null) {
+            employee = createByYammerId(yammerId);
+        }
+        return employee;
+    }
+
+    private Employee createByYammerId(String yammerId) {
+        /* TODO */
         Employee employee = new Employee("name retrieved from yammer", yammerId);
         employee.setYammerId(yammerId);
         employee.setGlobalAdmin(false);
         // TODO: set name, image and other information
         save(employee);
+        if (employee.getId() == 0) {
+            /* TODO: Remove this */
+            throw new AssertionError();
+        }
         return employee;
     }
 }
