@@ -1,5 +1,6 @@
 package com.yammer.stresstime.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
@@ -7,6 +8,15 @@ import javax.persistence.*;
 @Entity
 @Table(name = "assignment_types")
 public class AssignmentType {
+
+    public AssignmentType() {
+        // Required by Hibernate
+    }
+
+    public AssignmentType(String name, Group group) {
+        setName(name);
+        setGroup(group);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +53,7 @@ public class AssignmentType {
         mDescription = description;
     }
 
+    @JsonIgnore
     public Group getGroup() {
         return mGroup;
     }

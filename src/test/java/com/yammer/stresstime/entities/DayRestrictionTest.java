@@ -31,7 +31,7 @@ public class DayRestrictionTest extends DatabaseTest {
 
     @Test
     public void testHasEmptyAssignmentTypesAfterInstantiated() {
-        DayRestriction restriction = new DayRestriction();
+        DayRestriction restriction = new DayRestriction(null);
 
         assertNotNull(restriction.getAssignmentTypes());
         assertThat(restriction.getAssignmentTypes(), empty());
@@ -39,8 +39,7 @@ public class DayRestrictionTest extends DatabaseTest {
 
     @Test
     public void testHasEmptyAssignmentTypesAfterRetrievedFromDb() {
-        DayRestriction restriction = new DayRestriction();
-        restriction.setDate(new LocalDate(2015, 3, 23));
+        DayRestriction restriction = new DayRestriction(new LocalDate(2015, 3, 23));
         mDayRestrictionManager.save(restriction);
         refresh(restriction);
 
@@ -52,12 +51,10 @@ public class DayRestrictionTest extends DatabaseTest {
 
     @Test
     public void testRetrieveAssignmentTypeAfterBeingAdded() {
-        AssignmentType type = new AssignmentType();
-        type.setName("Primary");
+        AssignmentType type = new AssignmentType("Primary", null);
         mAssignmentTypeManager.save(type);
 
-        DayRestriction restriction = new DayRestriction();
-        restriction.setDate(new LocalDate(2015, 3, 23));
+        DayRestriction restriction = new DayRestriction(new LocalDate(2015, 3, 23));
         Set<AssignmentType> assignmentTypes = new ImmutableSet.Builder<AssignmentType>()
                 .addAll(restriction.getAssignmentTypes())
                 .add(type).build();

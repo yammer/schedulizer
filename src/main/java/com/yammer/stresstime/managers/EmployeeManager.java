@@ -23,13 +23,12 @@ public class EmployeeManager extends EntityManager<Employee> {
                 .uniqueResult();
     }
 
-    public Employee createNewEmployee(String yammer_id) {
-        Employee employee = new Employee();
-        employee.setYammerId(yammer_id);
+    public Employee createNewEmployee(String yammerId) {
+        Employee employee = new Employee("name retrieved from yammer", yammerId);
+        employee.setYammerId(yammerId);
         employee.setGlobalAdmin(false);
-        employee.setName("name retrieved from yammer");
         // TODO: set name, image and other information
-        employee = save(employee);
+        save(employee);
         return employee;
     }
 }

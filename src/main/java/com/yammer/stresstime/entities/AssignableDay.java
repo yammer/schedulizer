@@ -1,5 +1,8 @@
 package com.yammer.stresstime.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
@@ -15,6 +18,14 @@ import java.util.Set;
 @Table(name = "assignable_days")
 public class AssignableDay {
 
+    public  AssignableDay() {
+        // Required by Hibernate
+    }
+
+    public AssignableDay(Group group, LocalDate date) {
+        setGroup(group);
+        setDate(date);
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long mId;
@@ -36,14 +47,21 @@ public class AssignableDay {
         return mId;
     }
 
+    @JsonIgnore
     public LocalDate getDate() {
         return mDate;
+    }
+
+    @JsonProperty("date")
+    public String getDateStr() {
+        return mDate.toString();
     }
 
     public void setDate(LocalDate date) {
         mDate = date;
     }
 
+    @JsonIgnore
     public Group getGroup() {
         return mGroup;
     }

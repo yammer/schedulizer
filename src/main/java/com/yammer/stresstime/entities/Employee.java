@@ -1,5 +1,6 @@
 package com.yammer.stresstime.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
@@ -16,6 +17,15 @@ import java.util.Set;
 @Entity
 @Table(name = "employees")
 public class Employee {
+
+    public Employee() {
+        // Required by Hibernate
+    }
+
+    public Employee(String name, String yammerId) {
+        setName(name);
+        setYammerId(yammerId);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,10 +89,12 @@ public class Employee {
         mImageUrlTemplate = imageUrlTemplate;
     }
 
+    @JsonIgnore
     public Set<Membership> getMemberships() {
         return ImmutableSet.copyOf(mMemberships);
     }
 
+    @JsonIgnore
     public Set<Group> getGroups() {
         ImmutableSet.Builder<Group> groups = new ImmutableSet.Builder<>();
         for (Membership membership : mMemberships) {
@@ -91,6 +103,7 @@ public class Employee {
         return groups.build();
     }
 
+    @JsonIgnore
     public Set<Assignment> getAssignments() {
         return ImmutableSet.copyOf(mAssignments);
     }

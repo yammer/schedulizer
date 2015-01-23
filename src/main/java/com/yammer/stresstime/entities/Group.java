@@ -1,5 +1,7 @@
 package com.yammer.stresstime.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
@@ -15,6 +17,14 @@ import java.util.Set;
 @Entity
 @Table(name = "groups")
 public class Group {
+
+    public Group(String name) {
+        setName(name);
+    }
+
+    public Group() {
+        // Required by Hibernate
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +46,6 @@ public class Group {
     @Cascade({CascadeType.DELETE})
     private Set<Membership> mMemberships = new HashSet<>();
 
-    public Group(String name) {
-        setName(name);
-    }
-
-    public Group() {}
-
     public long getId() {
         return mId;
     }
@@ -54,6 +58,7 @@ public class Group {
         mName = name;
     }
 
+    @JsonIgnore
     public Set<AssignableDay> getAssignableDays() {
         return ImmutableSet.copyOf(mAssignableDays);
     }
@@ -62,6 +67,7 @@ public class Group {
         mAssignableDays = ImmutableSet.copyOf(mAssignableDays);
     }
 
+    @JsonIgnore
     public Set<AssignmentType> getAssignmentTypes() {
         return ImmutableSet.copyOf(mAssignmentTypes);
     }
@@ -70,10 +76,12 @@ public class Group {
         mAssignmentTypes = ImmutableSet.copyOf(assignmentTypes);
     }
 
+    @JsonIgnore
     public Set<Membership> getMemberships() {
         return ImmutableSet.copyOf(mMemberships);
     }
 
+    @JsonIgnore
     public Set<Employee> getEmployees() {
         ImmutableSet.Builder<Employee> employees = new ImmutableSet.Builder<>();
         for (Membership membership : mMemberships) {

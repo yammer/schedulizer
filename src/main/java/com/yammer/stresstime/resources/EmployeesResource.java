@@ -5,8 +5,6 @@ import com.google.common.collect.Sets;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.Membership;
-import com.yammer.stresstime.json.EmployeeJSON;
-import com.yammer.stresstime.json.ErrorJSON;
 import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.managers.MembershipManager;
@@ -37,11 +35,11 @@ public class EmployeesResource {
 
     @POST
     @UnitOfWork
-    public Response addEmployeeToGroup(@PathParam("group_id") Long groupId,
+    public Response addEmployeeToGroup(@PathParam("group_id") long groupId,
                                        @FormParam("yid") String yammerId) {
         Group group = mGroupManager.getById(groupId);
         if (group == null) {
-            return Response.status(400).entity(new ErrorJSON("Group not found")).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
         Employee employee = mEmployeeManager.getByYammerId(yammerId);
         if (employee == null) {
@@ -51,34 +49,34 @@ public class EmployeesResource {
 
         Membership membership = mMembershipManager.getByEmployeeAndGroup(employee.getId(), groupId);
         if (membership == null) {
-            membership = new Membership();
-            membership.setEmployee(employee);
-            membership.setGroup(group);
+            membership = new Membership(employee, group);
             membership.setAdmin(false);
             mMembershipManager.save(membership);
         }
-        return Response.ok().entity(new EmployeeJSON(employee)).build();
+        return Response.ok().entity(employee).build();
     }
 
     @GET
     @UnitOfWork
-    public Response showEmployeesFromGroup(@PathParam("group_id") Long groupId) {
+    public Response showEmployeesFromGroup(@PathParam("group_id") long groupId) {
 
         Group group = mGroupManager.getById(groupId);
         if (group == null) {
-            return Response.status(400).entity(new ErrorJSON("Group not found")).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
-        return Response.ok().entity(Lists.newArrayList(group.getEmployees())
-                .stream().map(e -> new EmployeeJSON(e)).collect(Collectors.toList())).build();
+        return Response.ok().entity(group.getEmployees()).build();
     }
 
     @DELETE
     @Path("{employee_id}")
     @UnitOfWork
-    public Response addEmployeeToGroup(@PathParam("group_id") Long groupId,
-                                       @PathParam("employee_id") Long employeeId) {
+    public Response addEmployeeToGroup(@PathParam("group_id") long groupId,
+                                       @PathParam("employee_id") long employeeId) {
         if (!mMembershipManager.deleteByEmployeeAndGroup(employeeId, groupId)) {
-            return Response.status(400).entity(new ErrorJSON("This employee does not belong to this group")).build();
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity("This employee does not belong to this group")
+                    .build();
         }
         return Response.ok().build();
     }

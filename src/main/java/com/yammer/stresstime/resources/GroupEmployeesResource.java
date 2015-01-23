@@ -2,8 +2,6 @@ package com.yammer.stresstime.resources;
 
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
-import com.yammer.stresstime.json.ErrorJSON;
-import com.yammer.stresstime.json.GroupJSON;
 import com.yammer.stresstime.managers.EmployeeManager;
 import io.dropwizard.hibernate.UnitOfWork;
 
@@ -27,13 +25,12 @@ public class GroupEmployeesResource {
 
     @GET
     @UnitOfWork
-    public Response getGroupsFromEmployee(@PathParam("employee_id") Long employeeId) {
+    public Response getGroupsFromEmployee(@PathParam("employee_id") long employeeId) {
         Employee employee = mEmployeeManager.getById(employeeId);
         if (employee == null) {
-            return Response.status(400).entity(new ErrorJSON("Employee not found")).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Employee not found").build();
         }
-        return Response.ok().entity(Lists.newArrayList(employee.getGroups())
-                        .stream().map(g -> new GroupJSON(g)).collect(Collectors.toList())).build();
+        return Response.ok().entity(employee.getGroups()).build();
     }
 
 

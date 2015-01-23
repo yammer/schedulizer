@@ -11,9 +11,11 @@ public class MembershipManager extends EntityManager<Membership> {
     }
 
     public Membership getByEmployeeAndGroup(Long employeeId, Long groupId) {
-        Membership membership = (Membership) currentSession().createCriteria(Membership.class)
+        Membership membership = (Membership) currentSession()
+                .createCriteria(Membership.class)
                 .add(Restrictions.eq("mEmployee.mId", employeeId))
-                .add(Restrictions.eq("mGroup.mId", groupId)).uniqueResult();
+                .add(Restrictions.eq("mGroup.mId", groupId))
+                .uniqueResult();
         return membership;
     }
 

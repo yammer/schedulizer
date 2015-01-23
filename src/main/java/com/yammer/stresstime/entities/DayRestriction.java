@@ -13,6 +13,14 @@ import java.util.Set;
 @Table(name = "day_restrictions")
 public class DayRestriction {
 
+    public DayRestriction() {
+        // Required by Hibernate
+    }
+
+    public DayRestriction(LocalDate date) {
+        setDate(date);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long mId;

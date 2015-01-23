@@ -21,7 +21,7 @@ public class GroupTest extends DatabaseTest {
 
     @Test
     public void testNewGroupHasEmptyAssignableDays() {
-        Group group = new Group();
+        Group group = new Group("");
         assertNotNull(group.getAssignableDays());
         assertThat(group.getAssignableDays(), empty());
     }

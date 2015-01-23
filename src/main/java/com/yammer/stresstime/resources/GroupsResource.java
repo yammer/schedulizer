@@ -3,8 +3,6 @@ package com.yammer.stresstime.resources;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Group;
-import com.yammer.stresstime.json.GroupJSON;
-import com.yammer.stresstime.json.ErrorJSON;
 import com.yammer.stresstime.managers.GroupManager;
 import io.dropwizard.hibernate.UnitOfWork;
 
@@ -27,26 +25,25 @@ public class GroupsResource {
 
     @GET
     @UnitOfWork
-    public List<GroupJSON> getAllGroups() {
+    public Response getAllGroups() {
         List<Group> groups = mGroupManager.all();
-        return groups.stream().map(g -> new GroupJSON(g)).collect(Collectors.toList());
+        return Response.ok().entity(groups).build();
     }
 
     @POST
     @UnitOfWork
-    public GroupJSON createGroup(@FormParam("name") String name) {
-        Group group = new Group();
-        group.setName(name);
+    public Response createGroup(@FormParam("name") String name) {
+        Group group = new Group(name);
         mGroupManager.save(group);
-        return new GroupJSON(group);
+        return Response.ok().entity(group).build();
     }
 
     @DELETE
     @Path("/{group_id}")
     @UnitOfWork
-    public Response deleteGroup(@PathParam("group_id") Long groupId) {
-        if(!mGroupManager.deleteById(groupId)) {
-            return Response.status(400).entity(new ErrorJSON("Group not found")).build();
+    public Response deleteGroup(@PathParam("group_id") long groupId) {
+        if (!mGroupManager.deleteById(groupId)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
         return Response.ok().build();
     }
@@ -55,12 +52,12 @@ public class GroupsResource {
     @GET
     @Path("/{group_id}")
     @UnitOfWork
-    public Response getGroupById(@PathParam("group_id") Long groupId) {
+    public Response getGroupById(@PathParam("group_id") long groupId) {
         Group group = mGroupManager.getById(groupId);
         if (group == null) {
-            return Response.status(400).entity(new ErrorJSON("Group not found")).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
-        return Response.ok().entity(new GroupJSON(group)).build();
+        return Response.ok().entity(group).build();
     }
 
     @POST

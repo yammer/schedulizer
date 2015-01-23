@@ -5,15 +5,15 @@ import org.hibernate.SessionFactory;
 
 public class EntityManager<E> extends AbstractDAO<E> {
 
-    private final Class<?> mEntityClass;
+    private final Class<? extends E> mEntityClass;
 
-    public EntityManager(SessionFactory sessionFactory, Class<?> entityClass) {
+    public EntityManager(SessionFactory sessionFactory, Class<? extends E> entityClass) {
         super(sessionFactory);
         mEntityClass = entityClass;
     }
 
-    public E save(E entity) {
-        return persist(entity);
+    public void save(E entity) {
+         persist(entity);
     }
 
     // needs to be a valid entity
@@ -26,7 +26,7 @@ public class EntityManager<E> extends AbstractDAO<E> {
     }
 
     // issues two queries but deletes only if id exists
-    public boolean deleteById(Long id) {
+    public boolean deleteById(long id) {
         Object persistentInstance = getById(id);
         if (persistentInstance != null) {
             currentSession().delete(persistentInstance);
