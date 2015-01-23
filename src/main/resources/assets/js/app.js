@@ -5,7 +5,7 @@
  */
 var StresstimeApp = {};
 
-var App = angular.module('StresstimeApp', ['ui.bootstrap', 'ngRoute']);
+var App = angular.module('StresstimeApp', ['ui.bootstrap', 'ngRoute', 'services']);
 
 App.constant('NAV_TABS', {
     calendar: {

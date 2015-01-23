@@ -13,16 +13,18 @@ DELETE /groups/{group_id}                            Delete specific Group
 ============================================================= Group  Employees =================================================================
 
 GET /groups/{group_id}/employees                     List Group Employees
-	Response: [{yid, name, img, ...}]
+	Request: {start_date, end_date}
+	Response: [{yid, name, img, assignments: [{assignment_type, times}]}]
 
 POST  /groups/{group_id}/employees                   Employee joins Group
 	Resquest: {yid, ...}
 
-DELETE /groups/{group_id}/employee/{employee_id}     Employee leaves Group
+DELETE /groups/{group_id}/employees/{employee_id}     Employee leaves Group
 
 GET /employees/{yid}/groups                          List Groups of an Employee
 	Response [{group_id, admin}]
 
+GET /groups/{group_id}/employees
 
 ============================================================= Assignment Types =================================================================
 

@@ -1,30 +1,50 @@
-<div class="calendar-scroll-box"
-     scroller
-     previous-chunk-method="loadPreviousMonth()"
-     next-chunk-method="loadNextMonth()"
-     number-of-loaded-chunks-per-scroll="1">
-    <table class="calendar">
+<div class="view-calendar-wrapper"
+    scroller
+    previous-chunk-method="loadPreviousMonth"
+    next-chunk-method="loadNextMonth"
+    number-of-loaded-chunks-per-scroll="1"
+    ng-class="{'invisible': !showCalendar}">
+
+    <table class="calendar-header view-calendar">
+        <tr>
+            <th class="day">Sun</th>
+            <th class="day">Mon</th>
+            <th class="day">Tue</th>
+            <th class="day">Wed</th>
+            <th class="day">Thu</th>
+            <th class="day">Fri</th>
+            <th class="day">Sat</th>
+            <th class="month">Month</th>
+        </tr>
+    </table>
+
+    <table class="view-calendar hoverable">
         <tr ng-repeat="week in calendar" ng-class="{
             'first': week.firstOfTheMonth,
             'week': true
         }">
-            <td ng-repeat="day in week.days" ng-class="{
-                'day': true,
-                'even': day.month % 2 == 0,
-                'odd': day.month % 2 == 1,
-                'today': day.today
-            }" ng-mou>
-                {{day.value}}
+            <td
+                ng-repeat="day in week.days"
+                ng-class="{
+                    'day': true,
+                    'even': day.date.getMonth() % 2 == 0,
+                    'odd': day.date.getMonth() % 2 == 1,
+                    'today': day.date.isToday(),
+                    'selected': day.selected
+                }"
+                ng-mousedown="onMouseDown(day, $event)"
+                ng-mouseup="onMouseUp(day, $event)"
+                ng-mouseenter="onMouseEnter(day, $event)"
+                >
+                {{day.date.getDate()}}
             </td>
             <td ng-if="week.firstOfTheMonth" rowspan="{{week.month.nweeks}}" ng-class="{
                 'month': true,
                 'even': week.month.number % 2 == 0,
                 'odd': week.month.number % 2 == 1,
             }">
-
                 {{week.month.name}}<br />
                 {{week.month.year}}
-
             </td>
         </tr>
     </table>

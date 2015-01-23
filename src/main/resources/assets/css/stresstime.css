@@ -2,14 +2,6 @@ body {
     padding-top: 50px;
 }
 
-/* Sidebar */
-
-.sidebar {
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-right: 1px solid #eee;
-}
-
 /* Text rotation */
 
 .rotate90deg {
@@ -21,14 +13,23 @@ body {
 
 /* Calendar */
 
-.calendar {
+.view-calendar td, .view-calendar th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.view-calendar, .legend {
     border-collapse: separate;
     border-spacing: 4px;
 }
-.calendar-cell {
-}
-.calendar-scroll-box {
+.view-calendar-wrapper {
+    display: inline-block;
     overflow: auto;
+    margin-top: 54px; /* 50 + 4*/
 }
 .week:hover {
     background-color: #DDDDDD;
@@ -39,43 +40,307 @@ body {
 .month, .day {
     color: #8D8D8D;
     border-radius: 2px;
+    font-size: 15px;
+    cursor: default;
 }
 .month {
+    width: 85px;
     padding: 5px;
     text-align: left;
     vertical-align: top;
 }
 .day {
-    width: 33px;
-    height: 33px;
+    width: 60px;
+    height: 50px;
     vertical-align: middle;
     text-align: center;
     cursor: default;
 }
 .day.odd, .month.odd {
-    background-color: #D5D5D5;
+    color: #828282;
+    background-color: #D9D9D9;
 }
 .day.even, .month.even {
+    color: #8D8D8D;
     background-color: #EEEEEE;
 }
 .day.today {
     color: #FFFFFF;
     background-color: #FFAA25;
 }
-.day:hover {
+.hoverable .day.today:hover {
+    color: #FFFFFF;
+    background-color: #FFBB38;
+}
+.hoverable .day:hover, .day.hover {
     color: #FFFFFF;
     background-color: #2EC3E5;
 }
 
-/* Group */
-#group-tab {
+.day.selected {
+    color: #FFFFFF;
+    background-color: #2EC3E5;
+}
+
+.day.today.selected {
+    background-color: #97B785;
+}
+
+.hoverable .day.today.selected:hover {
+    background-color: #A7C795;
+}
+
+.hoverable .day.selected:hover {
+    background-color: #3ED3F5;
+}
+
+/*.hoverable .day.odd.selected:hover {
+    color: #828282;
+    background-color: #D9D9D9;
+}
+.hoverable .day.even.selected:hover {
+    color: #8D8D8D;
+    background-color: #EEEEEE;
+}*/
+
+.calendar-header {
+    margin-top: -54px;
+    border-spacing: 4px 0;
+    position: fixed;
+}
+.calendar-header .month {
+    vertical-align: middle;
+    text-align: center;
+    width: 85px;
+}
+.calendar-header .day, .calendar-header .month {
+    color: #E9E9E9;
+    background-color: #828282;
+}
+
+/* Header */
+
+.header {
+    color: #8D8D8D;
+    font-size: 22px;
+    background-color: #F5F5F5;
+    border-bottom: 1px solid #EEEEEE;
+    margin: 0 -15px 15px -15px;
+    padding: 18px 15px 17px 15px;
+}
+
+/* Dual pane */
+
+.sidebar {
+    padding: 15px 0 0 0;
+    background-color: #f5f5f5;
+    border-right: 1px solid #EEEEEE;
+    height: 100%;
+}
+
+.dual-pane {
     position: fixed;
     top: 51px;
     bottom: 0;
     width: 100%;
+    height: 100%;
 }
-#group-tab .calendar-scroll-box {
+
+.dual-pane .view-calendar-wrapper {
     /* height: Height defined on runtime */
     /* TODO: Remove scrolbar */
     height: 700px;
+}
+
+.dual-pane .sidebar {
+    padding: 20px;
+}
+
+.dual-pane .sidebar .top-search {
+    margin: -20px -20px 0 -20px;
+    padding: 13px 12px 13px 12px;
+    background-color: #E8E8E8;
+}
+
+.dual-pane .sidebar ul {
+    margin: 0 -20px;
+}
+
+.dual-pane .sidebar .active, .dual-pane .sidebar .active a {
+    color: #FFFFFF;
+    background-color: #428bca;
+}
+
+/* Group tab */
+
+#group-tab .calendar-wrap {
+    display: table;
+    margin: 0 auto;
+    position: relative;
+}
+
+.left-bar {
+    float: left;
+    margin: 0 15px 0 0;
+}
+
+.right-bar {
+    float: right;
+    margin: 0 0 0 15px;
+    /* Making up space for the legend */
+    width: 200px;
+    height: 50px;
+}
+
+.legend {
+    color: #828282;
+    position: absolute;
+    bottom: 0;
+}
+
+.legend .day {
+    width: 40px;
+    height: 35px;
+}
+
+.legend .description {
+    padding-left: 5px;
+}
+
+.tools {
+    text-align: right;
+    margin: 0 0 20px 0;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* Stamps */
+
+.stamp {
+    width: 106px;
+    padding: 12px 0 12px 0;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+}
+
+.stamp .sub-label {
+    font-size: 19px;
+}
+.stamp .main-label {
+    font-size: 32px;
+    line-height: 38px;
+}
+
+.day-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: right;
+}
+
+.day-stamp.today {
+    color: #FFFFFF;
+    background-color: #FFAA25;
+}
+
+
+
+.selection-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: left;
+    cursor: pointer;
+}
+
+.selection-stamp:hover {
+    background-color: #FE9395;
+}
+
+/* Employee card */
+
+.employee-card {
+    padding: 6px 10px;
+    color: #828282;
+}
+
+.employee-card.hoverable:hover {
+    background-color: #EEEEEE;
+}
+
+.employee-card .avatar-wrapper {
+    float: left;
+    width: 50px;
+    height: 50px;
+    margin-left: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.employee-card .avatar-wrapper.with-image img {
+    border-radius: 50%;
+}
+
+.employee-card .avatar-wrapper.with-image .text-hover {
+    display: none;
+}
+
+.employee-card .avatar-wrapper.with-image:hover .text-hover {
+    font-size: 32px;
+    display: inline;
+    color: #FFF;
+}
+
+.employee-card .avatar-wrapper.with-image:hover img {
+    display: none;
+}
+
+.employee-card .avatar-wrapper.with-image:hover {
+    background-color: #CC5555;
+}
+
+.employee-card .avatar-wrapper.no-image, .employee-card .avatar-wrapper.with-image:hover {
+    font-size: 31px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+}
+
+.employee-card .avatar-wrapper.add {
+    color: #828282;
+    background-color: #D9D9D9;
+}
+
+.employee-card .avatar-wrapper.add:hover {
+    color: #E9E9E9;
+    background-color: #828282;
+}
+
+
+.employee-card .name {
+    display: table-cell;
+    height: 50px;
+    vertical-align: middle;
+    padding: 0 10px 0 10px;
+}
+
+.clear {
+    clear: both;
+}
+
+/* AssignmentType buckets */
+
+.bucket {
+    border: 4px dashed #DDD;
+    border-radius: 4px;
+    width: 150px;
+    height: 100px;
+    margin: 10px 0;
+}
+
+.bucket .bucket-name {
+    color: #AAA;
+    font-size: 16px;
+    margin: 5px;
 }
