@@ -1,7 +1,6 @@
 package com.yammer.stresstime.resources;
 
 
-import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.managers.*;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -11,7 +10,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/assignments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -45,7 +43,7 @@ public class AssignmentsResource {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
         }
-        Group group = mGroupManager.getById(groupId);
+        Group group = mGroupManager.safeGetById(groupId);
         if (group == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
@@ -72,11 +70,11 @@ public class AssignmentsResource {
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
         }
-        Employee employee = mEmployeeManager.getById(employeeId);
+        Employee employee = mEmployeeManager.safeGetById(employeeId);
         if (employee == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Employee not found").build();
         }
-        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignmentTypeId);
+        AssignmentType assignmentType = mAssignmentTypeManager.safeGetById(assignmentTypeId);
         if (assignmentType == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid assignment type id").build();
         }

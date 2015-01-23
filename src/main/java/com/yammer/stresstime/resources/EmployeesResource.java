@@ -34,7 +34,7 @@ public class EmployeesResource {
             @PathParam("group_id") long groupId,
             @FormParam("yammerId") String yammerId) {
 
-        Group group = mGroupManager.getById(groupId);
+        Group group = mGroupManager.safeGetById(groupId);
         Employee employee = mEmployeeManager.getOrCreateByYammerId(yammerId);
         mMembershipManager.join(group, employee);
         return Response.ok().entity(employee).build();
@@ -45,7 +45,7 @@ public class EmployeesResource {
     public Response getGroupEmployees(
             @PathParam("group_id") long groupId) {
 
-        Group group = mGroupManager.getById(groupId);
+        Group group = mGroupManager.safeGetById(groupId);
         if (group == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }

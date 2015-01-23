@@ -1,17 +1,13 @@
 package com.yammer.stresstime.resources;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.GroupManager;
 import io.dropwizard.hibernate.UnitOfWork;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +49,7 @@ public class GroupsResource {
     @Path("/{group_id}")
     @UnitOfWork
     public Response getGroupById(@PathParam("group_id") long groupId) {
-        Group group = mGroupManager.getById(groupId);
+        Group group = mGroupManager.safeGetById(groupId);
         if (group == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }

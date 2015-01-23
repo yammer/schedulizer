@@ -1,5 +1,6 @@
 package com.yammer.stresstime.managers;
 
+import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 
@@ -33,13 +34,21 @@ public class EntityManager<E> extends AbstractDAO<E> {
     }
 
     @SuppressWarnings("unchecked")
-    public E getById(long id) {
+    public E safeGetById(long id) {
         return (E) currentSession().get(mEntityClass, id);
+    }
+
+    public E getById(long id) {
+        E entity = safeGetById(id);
+        if (entity == null) {
+            throw new EntityNotFoundException(mEntityClass, id);
+        }
+        return entity;
     }
 
     // issues two queries but deletes only if id exists
     public boolean deleteById(long id) {
-        Object persistentInstance = getById(id);
+        Object persistentInstance = safeGetById(id);
         if (persistentInstance != null) {
             currentSession().delete(persistentInstance);
             return true;

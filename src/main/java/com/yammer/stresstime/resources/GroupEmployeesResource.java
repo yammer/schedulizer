@@ -1,6 +1,5 @@
 package com.yammer.stresstime.resources;
 
-import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.managers.EmployeeManager;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -11,7 +10,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.stream.Collectors;
 
 @Path("/employees/{employee_id}/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,7 +24,7 @@ public class GroupEmployeesResource {
     @GET
     @UnitOfWork
     public Response getGroupsFromEmployee(@PathParam("employee_id") long employeeId) {
-        Employee employee = mEmployeeManager.getById(employeeId);
+        Employee employee = mEmployeeManager.safeGetById(employeeId);
         if (employee == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Employee not found").build();
         }
