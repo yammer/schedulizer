@@ -1,6 +1,7 @@
 package com.yammer.stresstime.managers;
 
 import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
+import com.yammer.stresstime.managers.exceptions.StresstimeException;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 
@@ -14,11 +15,13 @@ public class EntityManager<E> extends AbstractDAO<E> {
     }
 
     public void save(E entity) {
-         persist(entity);
+        /* TODO: Proper exception handling (Create custom exception for hibernate failure */
+        persist(entity);
     }
 
-    // needs to be a valid entity
+    // Needs to be a valid entity
     public void delete(E entity) {
+        /* TODO: Proper exception handling */
         currentSession().delete(entity);
     }
 
@@ -46,13 +49,16 @@ public class EntityManager<E> extends AbstractDAO<E> {
         return entity;
     }
 
-    // issues two queries but deletes only if id exists
-    public boolean deleteById(long id) {
-        Object persistentInstance = safeGetById(id);
-        if (persistentInstance != null) {
-            currentSession().delete(persistentInstance);
+    public void deleteById(long id) {
+        delete(getById(id));
+    }
+
+    public boolean safeDeleteById(long id) {
+        try {
+            deleteById(id);
             return true;
+        } catch (StresstimeException e) {
+            return false;
         }
-        return false;
     }
 }

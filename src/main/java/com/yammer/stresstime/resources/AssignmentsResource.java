@@ -100,7 +100,7 @@ public class AssignmentsResource {
     @Path("/{assignment_id}")
     @UnitOfWork
     public Response deleteAssignment(@PathParam("assignment_id") long assignmentId) {
-        if (!mAssignmentManager.deleteById(assignmentId)) {
+        if (!mAssignmentManager.safeDeleteById(assignmentId)) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Assignment not found").build();
         }
         return Response.ok().build();

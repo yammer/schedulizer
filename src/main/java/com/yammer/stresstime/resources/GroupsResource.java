@@ -38,7 +38,7 @@ public class GroupsResource {
     @Path("/{group_id}")
     @UnitOfWork
     public Response deleteGroup(@PathParam("group_id") long groupId) {
-        if (!mGroupManager.deleteById(groupId)) {
+        if (!mGroupManager.safeDeleteById(groupId)) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
         }
         return Response.ok().build();
