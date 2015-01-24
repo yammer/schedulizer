@@ -1,8 +1,10 @@
 package com.yammer.stresstime.managers;
 
 import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
+import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
 import com.yammer.stresstime.managers.exceptions.StresstimeException;
 import io.dropwizard.hibernate.AbstractDAO;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
 public class EntityManager<E> extends AbstractDAO<E> {
@@ -15,13 +17,25 @@ public class EntityManager<E> extends AbstractDAO<E> {
     }
 
     public void save(E entity) {
-        /* TODO: Proper exception handling (Create custom exception for hibernate failure */
-        persist(entity);
+        try {
+            persist(entity);
+        } catch (HibernateException e) {
+            throw new HibernateUncaughtException(e);
+        }
+    }
+
+    public boolean safeSave(E entity) {
+        try {
+            save(entity);
+            return true;
+        } catch (StresstimeException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // Needs to be a valid entity
     public void delete(E entity) {
-        /* TODO: Proper exception handling */
         currentSession().delete(entity);
     }
 
@@ -29,16 +43,10 @@ public class EntityManager<E> extends AbstractDAO<E> {
         try {
             delete(entity);
             return true;
-        } catch (Exception e) {
-            /* TODO: Logging to proper stream  */
+        } catch (StresstimeException e) {
             e.printStackTrace();
             return false;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public E safeGetById(long id) {
-        return (E) currentSession().get(mEntityClass, id);
     }
 
     public E getById(long id) {
@@ -47,6 +55,11 @@ public class EntityManager<E> extends AbstractDAO<E> {
             throw new EntityNotFoundException(mEntityClass, id);
         }
         return entity;
+    }
+
+    @SuppressWarnings("unchecked")
+    public E safeGetById(long id) {
+        return (E) currentSession().get(mEntityClass, id);
     }
 
     public void deleteById(long id) {
@@ -58,6 +71,7 @@ public class EntityManager<E> extends AbstractDAO<E> {
             deleteById(id);
             return true;
         } catch (StresstimeException e) {
+            e.printStackTrace();
             return false;
         }
     }
