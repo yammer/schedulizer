@@ -17,5 +17,4 @@ public class EntityNotFoundException extends StresstimeException {
                 .entity(String.format("%s with id %d not found", klass.getSimpleName(), id))
                 .build());
     }
-
 }

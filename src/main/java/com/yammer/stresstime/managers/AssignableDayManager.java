@@ -27,6 +27,7 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
         return currentSession()
                 .createCriteria(AssignableDay.class)
                 .add(Restrictions.ge("mDate", startDate))
-                .add(Restrictions.le("mDate", endDate)).list();
+                .add(Restrictions.le("mDate", endDate))
+                .list();
     }
 }

@@ -21,9 +21,10 @@ public class EmployeesResource {
     private GroupManager mGroupManager;
     private MembershipManager mMembershipManager;
 
-    public EmployeesResource(EmployeeManager employeeManager,
-                             GroupManager groupManager,
-                             MembershipManager membershipManager) {
+    public EmployeesResource(
+            EmployeeManager employeeManager,
+             GroupManager groupManager,
+             MembershipManager membershipManager) {
         mEmployeeManager = employeeManager;
         mGroupManager = groupManager;
         mMembershipManager = membershipManager;

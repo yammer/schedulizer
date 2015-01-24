@@ -21,9 +21,13 @@ public class AssignmentsResource {
     private final AssignmentTypeManager mAssignmentTypeManager;
     private final AssignableDayManager mAssignableDayManager;
 
-    public AssignmentsResource(AssignmentManager assignmentManager, GroupManager groupManager,
-                               EmployeeManager employeeManager, AssignmentTypeManager assignmentTypeManager,
-                               AssignableDayManager assignableDayManager) {
+    public AssignmentsResource(
+            AssignmentManager assignmentManager,
+            GroupManager groupManager,
+            EmployeeManager employeeManager,
+            AssignmentTypeManager assignmentTypeManager,
+            AssignableDayManager assignableDayManager) {
+
         mAssignmentManager = assignmentManager;
         mGroupManager = groupManager;
         mEmployeeManager = employeeManager;
