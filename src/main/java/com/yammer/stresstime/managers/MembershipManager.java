@@ -4,6 +4,7 @@ import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.Membership;
 import com.yammer.stresstime.managers.exceptions.EntityNonUniqueException;
+import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -27,13 +28,18 @@ public class MembershipManager extends EntityManager<Membership> {
                 .createCriteria(Membership.class)
                 .add(Restrictions.eq("mEmployee.mId", employeeId))
                 .add(Restrictions.eq("mGroup.mId", groupId));
+        Membership membership;
         try {
-            return (Membership) criteria.uniqueResult();
+            membership = (Membership) criteria.uniqueResult();
         } catch (HibernateException e) {
             EntityNonUniqueException error = new EntityNonUniqueException(Membership.class);
             error.initCause(e);
             throw error;
         }
+        if (membership == null) {
+            throw new EntityNotFoundException(Membership.class);
+        }
+        return membership;
     }
 
 }

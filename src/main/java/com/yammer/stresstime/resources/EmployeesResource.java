@@ -11,6 +11,7 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Set;
 
 @Path("/groups/{group_id}/employees")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,7 +35,7 @@ public class EmployeesResource {
             @PathParam("group_id") long groupId,
             @FormParam("yammerId") String yammerId) {
 
-        Group group = mGroupManager.safeGetById(groupId);
+        Group group = mGroupManager.getById(groupId);
         Employee employee = mEmployeeManager.getOrCreateByYammerId(yammerId);
         mMembershipManager.join(group, employee);
         return Response.ok().entity(employee).build();
@@ -45,11 +46,9 @@ public class EmployeesResource {
     public Response getGroupEmployees(
             @PathParam("group_id") long groupId) {
 
-        Group group = mGroupManager.safeGetById(groupId);
-        if (group == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
-        }
-        return Response.ok().entity(group.getEmployees()).build();
+        Group group = mGroupManager.getById(groupId);
+        Set<Employee> employees = group.getEmployees();
+        return Response.ok().entity(employees).build();
     }
 
     @DELETE
@@ -60,12 +59,7 @@ public class EmployeesResource {
             @PathParam("employee_id") long employeeId) {
 
         Membership membership = mMembershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
-        if (membership == null) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        if (!mMembershipManager.safeDelete(membership)) {
-            return Response.serverError().build();
-        }
-        return Response.ok().build();
+        mMembershipManager.delete(membership);
+        return Response.noContent().build();
     }
 }
