@@ -8,10 +8,12 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
     $scope.selectedGroup = EMPTY_GROUP;
 
      function initGroupsData (callback) {
-        console.log("getting group");
         $scope.groups = Group.query({}, function (groups, responseHeaders) {
             if (groups.length > 0) {
-                if ($routeParams.groupId == 'default') {
+                var foundGroup = _.any($scope.groups, function(g) {
+                    return g.id == $routeParams.groupId
+                });
+                if (!foundGroup) {
                     // redirects
                     $location.path('group/' + groups[0].id)
                 }
@@ -23,7 +25,8 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         });
     }
 
-    $scope.createNewGroup = function(groupName) {
+    $scope.createNewGroup = function() {
+        var groupName = $scope.newGroupName;
         if(groupName == undefined || groupName == "") { return; }
 
         var group = new Group();
@@ -37,33 +40,59 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
             else {
                 $scope.groups.push(group);
             }
+            $scope.newGroupName = "";
         });
     }
 
     $scope.deleteGroup = function(group) {
-        $scope.groups = _.without($scope.groups, _.findWhere($scope.groups, group));
-        group.$delete();
+        group.$delete({}, function() {
+            $scope.groups = _.without($scope.groups, _.findWhere($scope.groups, group));
+            if ($scope.isSelectedGroup(group)) {
+                if ($scope.groups.length == 0) {
+                    $scope.selectGroup(EMPTY_GROUP);
+                }
+                else {
+                    $scope.selectGroup($scope.groups[0]);
+                }
+            }
+        });
+
     }
 
     $scope.getGroupEmployeesData = function(group) {
+        if (group == EMPTY_GROUP) {
+            group.employees = [];
+            return;
+        }
         group.employees = GroupEmployee.query({ group_id: group.id });
     }
 
-    $scope.addEmployee = function (yid, group) {
+    $scope.addEmployee = function () {
+        var group = $scope.selectedGroup;
+        var yid = $scope.newEmployeeName; // TODO: retrieve from yammer
         if (yid == undefined || yid == "") { return; }
+
         var employee = new GroupEmployee({ groupId: group.id });
         employee.yid = yid;
-        employee.$save();
-        group.employees.push(employee);
+        employee.$save({}, function(response) {
+            group.employees.push(employee);
+            $scope.newEmployeeName = "";
+        });
+
     }
 
-    $scope.deleteEmployee = function (group, employee) {
+    $scope.deleteEmployee = function (employee) {
+        var group = $scope.selectedGroup;
         group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
         employee.groupId = group.id;
         employee.$delete();
     }
 
     $scope.getAssignmentTypeData = function(group) {
+        if (group == EMPTY_GROUP) {
+            group.assignmentTypes = [];
+            return;
+        }
         group.assignmentTypes = AssignmentType.query({ group_id: group.id });
     }
 
@@ -85,26 +114,6 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         return group && group.id == $scope.selectedGroup.id;
     }
 
-    // TODO: Extract concerns (has to link groups and employees either way)
-    $scope.employees = [];
-
-    $scope.newEmployee = new Employee();
-
-    $scope.addEmployee = function() {
-        // TODO: Use yammer auto-complete, hit backend for saving
-        var employee = $scope.newEmployee;
-        $scope.newEmployee = new Employee();
-        employee.image = "https://mug0.assets-yammer.com/mugshot/images/75x75/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm";
-        $scope.employees.push(employee);
-        //employee.$save();
-    }
-
-    $scope.removeEmployee = function(employee) {
-        //employee.$delete();
-        var i = $scope.employees.indexOf(employee);
-        $scope.employees.splice(i, 1);
-    }
-
     function getCalendar() {
         // TODO: Find another way to do this
         return angular.element($("#group-tab .view-calendar-wrapper")[0]).scope();
@@ -123,9 +132,14 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $rout
         $scope.dayStamp = day.date;
     }
 
-    initGroupsData(function() {
+    $scope.selectGroup = function (group) {
+        $scope.selectedGroup = group;
         $scope.getGroupEmployeesData($scope.selectedGroup);
         $scope.getAssignmentTypeData($scope.selectedGroup);
+    }
+
+    initGroupsData(function() {
+        $scope.selectGroup($scope.selectedGroup);
     });
 
     $scope.clearSelection = function() {

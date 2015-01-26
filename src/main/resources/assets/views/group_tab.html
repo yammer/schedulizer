@@ -4,8 +4,33 @@
             <input class="form-control" type="text" ng-model="groupSearch" placeholder="Search Group">
         </div>
         <ul class="nav nav-sidebar" role="navigation">
-            <li ng-class="{'active': isSelectedGroup(group)}" ng-repeat="group in groups | filter: groupSearch">
-                <a href="/#/group/{{group.id}}">{{group.name}}</a>
+            <li
+                ng-class="{'active': isSelectedGroup(group)}"
+                ng-repeat="group in groups | filter: groupSearch"
+                class="deletable-card"
+                >
+                <a class="content" href="/#/group/{{group.id}}">
+                    {{group.name}}
+                    <div class="delete" ng-click="deleteGroup(group); $event.preventDefault();">
+                        <div>-</div>
+                    </div>
+                </a>
+
+
+            </li>
+            <li>
+                <div class="input-group new-group-form">
+                    <input
+                        type="text"
+                        ng-model="newGroupName"
+                        class="form-control"
+                        placeholder="Name"
+                        ng-enter="createNewGroup()"
+                        />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="createNewGroup()">+</button>
+                    </span>
+                </div>
             </li>
         </ul>
     </div>
@@ -96,14 +121,20 @@
         <ul class="nav nav-sidebar" role="navigation">
             <employee-card
                 employee="employee"
-                ng-repeat="employee in employees | filter: employeeSearch"
-                remove="removeEmployee(employee)"
+                ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
+                remove="deleteEmployee(employee)"
                 >
             </employee-card>
             <div class="employee-card">
                 <div class="avatar-wrapper no-image add" ng-click="addEmployee()">+</div>
                 <div class="name">
-                    <input class="form-control" type="text" ng-model="newEmployee.name" placeholder="Name" />
+                    <input
+                            class="form-control"
+                            type="text"
+                            ng-model="newEmployeeName"
+                            placeholder="Name"
+                            ng-enter="addEmployee()"
+                            />
                 </div>
                 <div class="clear"></div>
             </div>

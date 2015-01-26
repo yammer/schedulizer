@@ -9,7 +9,6 @@ DaysSelection.prototype.each = function(f) {
 }
 
 DaysSelection.prototype.select = function(days) {
-    console.log("selection.select(", days.length, days, ")")
     _.each(days, function(day) {
         day.previousSelectedState = day.selected;
         day.selected = true;
@@ -20,7 +19,6 @@ DaysSelection.prototype.select = function(days) {
 };
 
 DaysSelection.prototype.unselect = function(days) {
-    console.log("selection.unselect(", days.length, days, ")")
     _.each(days, function(day) {
         day.previousSelectedState = day.selected;
         day.selected = false;
@@ -31,7 +29,6 @@ DaysSelection.prototype.unselect = function(days) {
 };
 
 DaysSelection.prototype.clear = function() {
-    console.log("selection.clear()")
     _.each(this.days, function(day) {
         day.previousSelectedState = true;
         day.selected = false;
@@ -44,7 +41,6 @@ DaysSelection.prototype.contains = function(day) {
 };
 
 DaysSelection.prototype.resetToPreviousState = function(days) {
-    console.log("selection.resetToPreviousState(", days.length, days, ")")
     _.each(days, function(day) {
         day.selected = day.previousSelectedState;
         if (day.selected && !this.contains(day)) {
