@@ -171,6 +171,10 @@ body {
     background-color: #428bca;
 }
 
+.dual-pane .span-height {
+    height: 100%;
+}
+
 /* Group tab */
 
 #group-tab .calendar-wrap {

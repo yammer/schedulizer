@@ -13,14 +13,14 @@ App.factory('yammer', ['$window', function($window) {
     }
 }]);
 
-App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location, $route, yammer) {
+App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location) {
     /* injecting constants into scope */
     // $route.routes contains the elements of NAV_TABS augmented
-    $scope.tabs = angular.copy($route.routes);
+    $scope.tabs = angular.copy(NAV_TABS);
 
     $scope.isActiveTab = function(tab) {
         try {
-            return tab.regexp.test($location.path());
+            return $location.path().indexOf(tab.url) == 0;  // the path should start with url
         } catch (e) {
             return false
         }
