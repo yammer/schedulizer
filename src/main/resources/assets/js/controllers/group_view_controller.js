@@ -89,6 +89,13 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         $scope.selectedDays = days;
     }
 
+    $scope.$watch('selectedGroup', loadGroupData);
+
+    $scope.onDrop = function (dragEl, dropEl) {
+
+    }
+
     // TODO: Ugly hack!
     $timeout(resizeCalendar, 300)
 });
+var k;

@@ -391,3 +391,27 @@ body {
     background-color: #DC143C;
 }
 
+/* drag and drop */
+
+.drag-over {
+    border: 2px dashed black !important;
+}
+
+.drop-target {
+    background-color: #ddd;
+    opacity: .5;
+}
+
+.drag-in-progress * {
+    pointer-events: none !important; /* prevent children to interfere with drag and drop */
+}
+
+[draggable] {
+    cursor: move;
+}
+
+.ghost-image {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
