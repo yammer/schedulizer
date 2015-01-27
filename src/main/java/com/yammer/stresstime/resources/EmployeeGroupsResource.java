@@ -15,11 +15,11 @@ import java.util.Set;
 
 @Path("/employees/{employee_id}/groups")
 @Produces(MediaType.APPLICATION_JSON)
-public class GroupEmployeesResource {
+public class EmployeeGroupsResource {
 
     EmployeeManager mEmployeeManager;
 
-    public GroupEmployeesResource(EmployeeManager employeeManager) {
+    public EmployeeGroupsResource(EmployeeManager employeeManager) {
         mEmployeeManager = employeeManager;
     }
 

@@ -56,7 +56,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         env.jersey().setUrlPattern(config.getRootPath());
         env.jersey().register(new GroupsResource(mGroupManager));
         env.jersey().register(new EmployeesResource(mEmployeeManager, mGroupManager, mMembershipManager));
-        env.jersey().register(new GroupEmployeesResource(mEmployeeManager));
+        env.jersey().register(new EmployeeGroupsResource(mEmployeeManager));
         env.jersey().register(new AssignmentTypesResource(mAssignmentTypeManager, mGroupManager));
         env.jersey().register(new AssignmentsResource(mAssignmentManager,mGroupManager,mEmployeeManager,
                 mAssignmentTypeManager,mAssignableDayManager));
