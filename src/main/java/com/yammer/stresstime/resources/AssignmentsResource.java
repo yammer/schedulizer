@@ -56,37 +56,18 @@ public class AssignmentsResource {
 
     @POST
     @UnitOfWork
-    public Response createNewAssignment(@FormParam("group_id") long groupId,
-                                        @FormParam("employee_id") long employeeId,
-                                        @FormParam("assignment_type_id") long assignmentTypeId,
-                                        @FormParam("date") String dateStr) {
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr);
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
-        }
-        Employee employee = mEmployeeManager.safeGetById(employeeId);
-        if (employee == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Employee not found").build();
-        }
-        AssignmentType assignmentType = mAssignmentTypeManager.safeGetById(assignmentTypeId);
-        if (assignmentType == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid assignment type id").build();
-        }
-        Group group = assignmentType.getGroup();
-        if (group.getId() != groupId) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("This assignment does not belong to this group")
-                    .build();
-        }
-        AssignableDay assignableDay = mAssignableDayManager.getByGroupDate(group, date);
-        if (assignableDay == null) {
-            assignableDay = new AssignableDay(group, date);
-            mAssignableDayManager.save(assignableDay);
-        }
+    public Response createAssignment(
+            @FormParam("group_id") long groupId,
+            @FormParam("employee_id") long employeeId,
+            @FormParam("assignment_type_id") long assignmentTypeId,
+            @FormParam("date") String dateString) {
 
+        LocalDate date = LocalDate.parse(dateString);
+        Employee employee = mEmployeeManager.getById(employeeId);
+        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignmentTypeId);
+        Group group = assignmentType.getGroup();
+        ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+        AssignableDay assignableDay = mAssignableDayManager.getOrCreateByGroupDate(group, date);
         Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
         mAssignmentManager.save(assignment);
         return Response.ok().entity(assignment).build();
@@ -96,9 +77,7 @@ public class AssignmentsResource {
     @Path("/{assignment_id}")
     @UnitOfWork
     public Response deleteAssignment(@PathParam("assignment_id") long assignmentId) {
-        if (!mAssignmentManager.safeDeleteById(assignmentId)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Assignment not found").build();
-        }
+        mAssignmentManager.deleteById(assignmentId);
         return Response.ok().build();
     }
 }
