@@ -9,18 +9,18 @@ import javax.validation.constraints.NotNull;
 
 public class StresstimeConfiguration extends Configuration {
 
-    private final String mRootPath;
+    private final String rootPath;
 
     @Valid
     @NotNull
     private DataSourceFactory database = new DataSourceFactory();
 
     public StresstimeConfiguration(@JsonProperty("rootPath") String rootPath) {
-        mRootPath = rootPath;
+        this.rootPath = rootPath;
     }
 
     public String getRootPath() {
-        return mRootPath;
+        return rootPath;
     }
 
     @JsonProperty("database")

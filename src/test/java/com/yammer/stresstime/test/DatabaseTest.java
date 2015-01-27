@@ -17,20 +17,20 @@ public class DatabaseTest {
     public static final DropwizardAppRule<StresstimeConfiguration> RULE =
             new DropwizardAppRule<>(StresstimeApplication.class, "app.yml");
 
-    private SessionFactory mSessionFactory;
-    private Session mSession;
+    private SessionFactory sessionFactory;
+    private Session session;
 
     public DatabaseTest() {
         StresstimeApplication app = RULE.getApplication();
-        mSessionFactory = app.getSessionFactory();
+        sessionFactory = app.getSessionFactory();
     }
 
     public SessionFactory getSessionFactory() {
-        return mSessionFactory;
+        return sessionFactory;
     }
 
     public Session currentSession() {
-        return mSessionFactory.getCurrentSession();
+        return sessionFactory.getCurrentSession();
     }
 
     public void refresh(Object... entities) {
@@ -42,14 +42,14 @@ public class DatabaseTest {
 
     @Before
     public void setUp() throws Exception {
-        mSession = mSessionFactory.openSession();
-        ManagedSessionContext.bind(mSession);
+        session = sessionFactory.openSession();
+        ManagedSessionContext.bind(session);
     }
 
     @After
     public void tearDown() throws Exception {
-        mSession.flush();
-        mSession.close();
-        ManagedSessionContext.unbind(mSessionFactory);
+        session.flush();
+        session.close();
+        ManagedSessionContext.unbind(sessionFactory);
     }
 }

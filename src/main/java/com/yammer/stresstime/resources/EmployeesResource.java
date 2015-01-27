@@ -17,17 +17,18 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 public class EmployeesResource {
 
-    private EmployeeManager mEmployeeManager;
-    private GroupManager mGroupManager;
-    private MembershipManager mMembershipManager;
+    private EmployeeManager employeeManager;
+    private GroupManager groupManager;
+    private MembershipManager membershipManager;
 
     public EmployeesResource(
             EmployeeManager employeeManager,
-             GroupManager groupManager,
-             MembershipManager membershipManager) {
-        mEmployeeManager = employeeManager;
-        mGroupManager = groupManager;
-        mMembershipManager = membershipManager;
+            GroupManager groupManager,
+            MembershipManager membershipManager) {
+
+        this.employeeManager = employeeManager;
+        this.groupManager = groupManager;
+        this.membershipManager = membershipManager;
     }
 
     @POST
@@ -36,9 +37,9 @@ public class EmployeesResource {
             @PathParam("group_id") long groupId,
             @FormParam("yammerId") String yammerId) {
 
-        Group group = mGroupManager.getById(groupId);
-        Employee employee = mEmployeeManager.getOrCreateByYammerId(yammerId);
-        mMembershipManager.join(group, employee);
+        Group group = groupManager.getById(groupId);
+        Employee employee = employeeManager.getOrCreateByYammerId(yammerId);
+        membershipManager.join(group, employee);
         return Response.ok().entity(employee).build();
     }
 
@@ -47,7 +48,7 @@ public class EmployeesResource {
     public Response getGroupEmployees(
             @PathParam("group_id") long groupId) {
 
-        Group group = mGroupManager.getById(groupId);
+        Group group = groupManager.getById(groupId);
         Set<Employee> employees = group.getEmployees();
         return Response.ok().entity(employees).build();
     }
@@ -59,8 +60,8 @@ public class EmployeesResource {
             @PathParam("group_id") long groupId,
             @PathParam("employee_id") long employeeId) {
 
-        Membership membership = mMembershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
-        mMembershipManager.delete(membership);
+        Membership membership = membershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
+        membershipManager.delete(membership);
         return Response.noContent().build();
     }
 }

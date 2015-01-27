@@ -11,25 +11,25 @@ import static org.junit.Assert.assertNotNull;
 
 public class EmployeeManagerTest extends DatabaseTest {
 
-    private EmployeeManager mEmployeeManager;
+    private EmployeeManager employeeManager;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mEmployeeManager = new EmployeeManager(getSessionFactory());
+        employeeManager = new EmployeeManager(getSessionFactory());
     }
 
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
         Employee employee = new Employee("John Doe", "lorem");
-        mEmployeeManager.save(employee);
+        employeeManager.save(employee);
         refresh(employee);
-        Employee found = mEmployeeManager.getByYammerId("lorem");
+        Employee found = employeeManager.getByYammerId("lorem");
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
 
-        mEmployeeManager.delete(employee);
+        employeeManager.delete(employee);
     }
 }

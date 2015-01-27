@@ -13,16 +13,16 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class GroupsResource {
 
-    private GroupManager mGroupManager;
+    private GroupManager groupManager;
 
     public GroupsResource(GroupManager groupManager) {
-        mGroupManager = groupManager;
+        this.groupManager = groupManager;
     }
 
     @GET
     @UnitOfWork
     public Response getGroups() {
-        List<Group> groups = mGroupManager.all();
+        List<Group> groups = groupManager.all();
         return Response.ok().entity(groups).build();
     }
 
@@ -30,7 +30,7 @@ public class GroupsResource {
     @UnitOfWork
     public Response createGroup(@FormParam("name") String name) {
         Group group = new Group(name);
-        mGroupManager.save(group);
+        groupManager.save(group);
         return Response.ok().entity(group).build();
     }
 
@@ -38,7 +38,7 @@ public class GroupsResource {
     @Path("/{group_id}")
     @UnitOfWork
     public Response deleteGroup(@PathParam("group_id") long groupId) {
-        mGroupManager.deleteById(groupId);
+        groupManager.deleteById(groupId);
         return Response.noContent().build();
     }
 
@@ -47,7 +47,7 @@ public class GroupsResource {
     @Path("/{group_id}")
     @UnitOfWork
     public Response getGroup(@PathParam("group_id") long groupId) {
-        Group group = mGroupManager.getById(groupId);
+        Group group = groupManager.getById(groupId);
         return Response.ok().entity(group).build();
     }
 

@@ -11,24 +11,24 @@ import static org.junit.Assert.assertNotNull;
 
 public class EmployeeTest extends DatabaseTest {
 
-    private EmployeeManager mEmployeeManager;
+    private EmployeeManager employeeManager;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mEmployeeManager = new EmployeeManager(getSessionFactory());
+        employeeManager = new EmployeeManager(getSessionFactory());
     }
 
     @Test
     public void testNewHasEmptyAssignmentsAfterRetrievedFromDb() {
         Employee employee = new Employee("John Doe", "lorem");
-        mEmployeeManager.save(employee);
+        employeeManager.save(employee);
         refresh(employee);
 
         assertNotNull(employee.getAssignments());
         assertThat(employee.getAssignments(), empty());
 
-        mEmployeeManager.delete(employee);
+        employeeManager.delete(employee);
     }
 }

@@ -11,11 +11,11 @@ import org.hibernate.SessionFactory;
 
 public class EntityManager<E> extends AbstractDAO<E> {
 
-    private final Class<? extends E> mEntityClass;
+    private final Class<? extends E> entityClass;
 
     public EntityManager(SessionFactory sessionFactory, Class<? extends E> entityClass) {
         super(sessionFactory);
-        mEntityClass = entityClass;
+        this.entityClass = entityClass;
     }
 
     public void save(E entity) {
@@ -54,14 +54,14 @@ public class EntityManager<E> extends AbstractDAO<E> {
     public E getById(long id) {
         E entity = safeGetById(id);
         if (entity == null) {
-            throw new EntityNotFoundException(mEntityClass, id);
+            throw new EntityNotFoundException(entityClass, id);
         }
         return entity;
     }
 
     @SuppressWarnings("unchecked")
     public E safeGetById(long id) {
-        return (E) currentSession().get(mEntityClass, id);
+        return (E) currentSession().get(entityClass, id);
     }
 
     public void deleteById(long id) {
@@ -81,7 +81,7 @@ public class EntityManager<E> extends AbstractDAO<E> {
     protected E getExactOne(Criteria criteria) {
         E entity = getUnique(criteria);
         if (entity == null) {
-            throw new EntityNotFoundException(mEntityClass);
+            throw new EntityNotFoundException(entityClass);
         }
         return entity;
     }
@@ -91,7 +91,7 @@ public class EntityManager<E> extends AbstractDAO<E> {
         try {
             return (E) criteria.uniqueResult();
         } catch (HibernateException e) {
-            EntityNonUniqueException error = new EntityNonUniqueException(mEntityClass);
+            EntityNonUniqueException error = new EntityNonUniqueException(entityClass);
             error.initCause(e);
             throw error;
         }

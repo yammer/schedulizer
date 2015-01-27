@@ -16,11 +16,11 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class AssignmentsResource {
 
-    private final AssignmentManager mAssignmentManager;
-    private final GroupManager mGroupManager;
-    private final EmployeeManager mEmployeeManager;
-    private final AssignmentTypeManager mAssignmentTypeManager;
-    private final AssignableDayManager mAssignableDayManager;
+    private AssignmentManager assignmentManager;
+    private GroupManager groupManager;
+    private EmployeeManager employeeManager;
+    private AssignmentTypeManager assignmentTypeManager;
+    private AssignableDayManager assignableDayManager;
 
     public AssignmentsResource(
             AssignmentManager assignmentManager,
@@ -29,11 +29,11 @@ public class AssignmentsResource {
             AssignmentTypeManager assignmentTypeManager,
             AssignableDayManager assignableDayManager) {
 
-        mAssignmentManager = assignmentManager;
-        mGroupManager = groupManager;
-        mEmployeeManager = employeeManager;
-        mAssignmentTypeManager = assignmentTypeManager;
-        mAssignableDayManager = assignableDayManager;
+        this.assignmentManager = assignmentManager;
+        this.groupManager = groupManager;
+        this.employeeManager = employeeManager;
+        this.assignmentTypeManager = assignmentTypeManager;
+        this.assignableDayManager = assignableDayManager;
     }
 
     @GET
@@ -46,10 +46,10 @@ public class AssignmentsResource {
         ResourceUtils.checkParameter(startDateString != null, "start_date");
         ResourceUtils.checkParameter(endDateString != null, "end_date");
 
-        Group group = mGroupManager.getById(groupId);
+        Group group = groupManager.getById(groupId);
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
-        List<AssignableDay> assignableDays = mAssignableDayManager.getByGroupPeriod(group, startDate, endDate);
+        List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
 
         // TODO: Testst
         // Avoid hibernate lazy eval problems with premature session closing
@@ -68,13 +68,13 @@ public class AssignmentsResource {
         ResourceUtils.checkParameter(dateString != null, "date");
 
         LocalDate date = LocalDate.parse(dateString);
-        Employee employee = mEmployeeManager.getById(employeeId);
-        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignmentTypeId);
+        Employee employee = employeeManager.getById(employeeId);
+        AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
         Group group = assignmentType.getGroup();
         ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
-        AssignableDay assignableDay = mAssignableDayManager.getOrCreateByGroupDate(group, date);
+        AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
         Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-        mAssignmentManager.save(assignment);
+        assignmentManager.save(assignment);
         return Response.ok().entity(assignment).build();
     }
 
@@ -85,9 +85,9 @@ public class AssignmentsResource {
             @PathParam("group_id") long groupId,
             @PathParam("assignment_id") long assignmentId) {
 
-        Assignment assignment = mAssignmentManager.getById(assignmentId);
+        Assignment assignment = assignmentManager.getById(assignmentId);
         ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
-        mAssignmentManager.delete(assignment);
+        assignmentManager.delete(assignment);
         return Response.noContent().build();
     }
 }

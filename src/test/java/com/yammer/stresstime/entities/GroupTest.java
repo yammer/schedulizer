@@ -10,13 +10,13 @@ import static org.junit.Assert.*;
 
 public class GroupTest extends DatabaseTest {
 
-    private GroupManager mGroupManager;
+    private GroupManager groupManager;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mGroupManager = new GroupManager(getSessionFactory());
+        groupManager = new GroupManager(getSessionFactory());
     }
 
     @Test

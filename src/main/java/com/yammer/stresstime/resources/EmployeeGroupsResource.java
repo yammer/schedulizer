@@ -17,16 +17,16 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 public class EmployeeGroupsResource {
 
-    EmployeeManager mEmployeeManager;
+    private EmployeeManager employeeManager;
 
     public EmployeeGroupsResource(EmployeeManager employeeManager) {
-        mEmployeeManager = employeeManager;
+        this.employeeManager = employeeManager;
     }
 
     @GET
     @UnitOfWork
     public Response getEmployeeGroups(@PathParam("employee_id") long employeeId) {
-        Employee employee = mEmployeeManager.getById(employeeId);
+        Employee employee = employeeManager.getById(employeeId);
         Set<Group> groups = employee.getGroups();
         return Response.ok().entity(groups).build();
     }

@@ -18,15 +18,15 @@ import static org.junit.Assert.assertNotNull;
 
 public class DayRestrictionTest extends DatabaseTest {
 
-    private DayRestrictionManager mDayRestrictionManager;
-    private AssignmentTypeManager mAssignmentTypeManager;
+    private DayRestrictionManager dayRestrictionManager;
+    private AssignmentTypeManager assignmentTypeManager;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mDayRestrictionManager = new DayRestrictionManager(getSessionFactory());
-        mAssignmentTypeManager = new AssignmentTypeManager(getSessionFactory());
+        dayRestrictionManager = new DayRestrictionManager(getSessionFactory());
+        assignmentTypeManager = new AssignmentTypeManager(getSessionFactory());
     }
 
     @Test
@@ -40,26 +40,26 @@ public class DayRestrictionTest extends DatabaseTest {
     @Test
     public void testHasEmptyAssignmentTypesAfterRetrievedFromDb() {
         DayRestriction restriction = new DayRestriction(new LocalDate(2015, 3, 23));
-        mDayRestrictionManager.save(restriction);
+        dayRestrictionManager.save(restriction);
         refresh(restriction);
 
         assertNotNull(restriction.getAssignmentTypes());
         assertThat(restriction.getAssignmentTypes(), empty());
 
-        mDayRestrictionManager.delete(restriction);
+        dayRestrictionManager.delete(restriction);
     }
 
     @Test
     public void testRetrieveAssignmentTypeAfterBeingAdded() {
         AssignmentType type = new AssignmentType("Primary", null);
-        mAssignmentTypeManager.save(type);
+        assignmentTypeManager.save(type);
 
         DayRestriction restriction = new DayRestriction(new LocalDate(2015, 3, 23));
         Set<AssignmentType> assignmentTypes = new ImmutableSet.Builder<AssignmentType>()
                 .addAll(restriction.getAssignmentTypes())
                 .add(type).build();
         restriction.setAssignmentTypes(assignmentTypes);
-        mDayRestrictionManager.save(restriction);
+        dayRestrictionManager.save(restriction);
 
         refresh(type, restriction);
 
