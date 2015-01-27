@@ -1,9 +1,11 @@
 package com.yammer.stresstime.managers;
 
+import com.yammer.stresstime.managers.exceptions.EntityNonUniqueException;
 import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
 import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
 import com.yammer.stresstime.managers.exceptions.StresstimeException;
 import io.dropwizard.hibernate.AbstractDAO;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
@@ -73,6 +75,25 @@ public class EntityManager<E> extends AbstractDAO<E> {
         } catch (StresstimeException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    protected E getExactOne(Criteria criteria) {
+        E entity = getUnique(criteria);
+        if (entity == null) {
+            throw new EntityNotFoundException(mEntityClass);
+        }
+        return entity;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected E getUnique(Criteria criteria) {
+        try {
+            return (E) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            EntityNonUniqueException error = new EntityNonUniqueException(mEntityClass);
+            error.initCause(e);
+            throw error;
         }
     }
 }
