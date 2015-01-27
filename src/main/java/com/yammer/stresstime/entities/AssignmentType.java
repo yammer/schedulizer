@@ -20,45 +20,45 @@ public class AssignmentType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @Column(name = "name")
     @NotBlank
-    private String mName;
+    private String name;
 
     @Column(name = "description")
-    private String mDescription;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group mGroup;
+    private Group group;
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public void setDescription(String description) {
-        mDescription = description;
+        this.description = description;
     }
 
     @JsonIgnore
     public Group getGroup() {
-        return mGroup;
+        return group;
     }
 
     public void setGroup(Group group) {
-        mGroup = group;
+        this.group = group;
     }
 }

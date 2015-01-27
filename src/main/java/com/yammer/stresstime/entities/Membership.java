@@ -7,55 +7,56 @@ import javax.validation.constraints.NotNull;
 @Table(name = "memberships")
 public class Membership {
 
-    public Membership() {
+    /* package private */ Membership() {
         // Required by Hibernate
     }
+
     public Membership(Employee employee, Group group) {
-        setEmployee(employee);
-        setGroup(group);
+        this.employee = employee;
+        this.group = group;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private Employee mEmployee;
+    private Employee employee;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group mGroup;
+    private Group group;
 
     @Column(name = "admin")
     @NotNull
-    private boolean mAdmin = false;
+    private boolean admin = false;
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public Employee getEmployee() {
-        return mEmployee;
+        return employee;
     }
 
     public void setEmployee(Employee employee) {
-        mEmployee = employee;
+        this.employee = employee;
     }
 
     public Group getGroup() {
-        return mGroup;
+        return group;
     }
 
     public void setGroup(Group group) {
-        mGroup = group;
+        this.group = group;
     }
 
     public boolean isAdmin() {
-        return mAdmin;
+        return admin;
     }
 
     public void setAdmin(boolean admin) {
-        mAdmin = admin;
+        this.admin = admin;
     }
 }

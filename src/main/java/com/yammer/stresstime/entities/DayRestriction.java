@@ -23,48 +23,48 @@ public class DayRestriction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @Column(name = "date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     @NotNull
-    private LocalDate mDate;
+    private LocalDate date;
 
     @Column(name = "comment")
-    private String mComment;
+    private String comment;
 
     @ManyToMany
     @JoinTable(name = "day_restriction_assignment_type",
             joinColumns = { @JoinColumn(name = "day_restriction_id") },
             inverseJoinColumns = { @JoinColumn(name = "assignment_type_id") })
-    private Set<AssignmentType> mAssignmentTypes = new HashSet<>();
+    private Set<AssignmentType> assignmentTypes = new HashSet<>();
     // ^ This represents the assignment types the employee cannot fulfill
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public LocalDate getDate() {
-        return mDate;
+        return date;
     }
 
     public void setDate(LocalDate date) {
-        mDate = date;
+        this.date = date;
     }
 
     public String getComment() {
-        return mComment;
+        return comment;
     }
 
     public void setComment(String comment) {
-        mComment = comment;
+        this.comment = comment;
     }
 
     public Set<AssignmentType> getAssignmentTypes() {
-        return ImmutableSet.copyOf(mAssignmentTypes);
+        return ImmutableSet.copyOf(assignmentTypes);
     }
 
     public void setAssignmentTypes(Set<AssignmentType> assignmentTypes) {
-        mAssignmentTypes = ImmutableSet.copyOf(assignmentTypes);
+        this.assignmentTypes = ImmutableSet.copyOf(assignmentTypes);
     }
 }

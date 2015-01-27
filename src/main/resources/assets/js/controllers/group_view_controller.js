@@ -17,7 +17,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         if (yid == undefined || yid == "") { return; }
 
         var employee = new GroupEmployee({ groupId: group.id });
-        employee.yid = yid;
+        employee.yammerId = yid;
         employee.$save({}, function(response) {
             group.employees.push(employee);
             $scope.newEmployeeName = "";

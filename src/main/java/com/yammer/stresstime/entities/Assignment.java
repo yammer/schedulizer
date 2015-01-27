@@ -20,49 +20,49 @@ public class Assignment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "assignment_type_id")
-    private AssignmentType mAssignmentType;
+    private AssignmentType assignmentType;
 
     @ManyToOne
     @JoinColumn(name = "assignable_day_id")
-    private AssignableDay mAssignableDay;
+    private AssignableDay assignableDay;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private Employee mEmployee;
+    private Employee employee;
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     @JsonIgnore
     public AssignmentType getAssignmentType() {
-        return mAssignmentType;
+        return assignmentType;
     }
 
     public void setAssignmentType(AssignmentType assignmentType) {
-        mAssignmentType = assignmentType;
+        this.assignmentType = assignmentType;
     }
 
     @JsonIgnore
     public AssignableDay getAssignableDay() {
-        return mAssignableDay;
+        return assignableDay;
     }
 
     public void setAssignableDay(AssignableDay assignableDay) {
-        mAssignableDay = assignableDay;
+        this.assignableDay = assignableDay;
     }
 
     @JsonIgnore
     public Employee getEmployee() {
-        return mEmployee;
+        return employee;
     }
 
     public void setEmployee(Employee employee) {
-        mEmployee = employee;
+        this.employee = employee;
     }
 
     public long getAssignmentTypeId() { return getAssignmentType().getId(); }

@@ -23,12 +23,12 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
             Group.class,
             Membership.class);
 
-    private GroupManager mGroupManager;
-    private EmployeeManager mEmployeeManager;
-    private MembershipManager mMembershipManager;
-    private AssignmentTypeManager mAssignmentTypeManager;
-    private AssignmentManager mAssignmentManager;
-    private AssignableDayManager mAssignableDayManager;
+    private GroupManager groupManager;
+    private EmployeeManager employeeManager;
+    private MembershipManager membershipManager;
+    private AssignmentTypeManager assignmentTypeManager;
+    private AssignmentManager assignmentManager;
+    private AssignableDayManager assignableDayManager;
 
     public static void main(String[] args) throws Exception {
         new StresstimeApplication().run(args);
@@ -46,20 +46,21 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
 
     @Override
     public void run(StresstimeConfiguration config, Environment env) throws Exception {
-        mGroupManager = new GroupManager(HIBERNATE_BUNDLE.getSessionFactory());
-        mEmployeeManager = new EmployeeManager(HIBERNATE_BUNDLE.getSessionFactory());
-        mMembershipManager = new MembershipManager(HIBERNATE_BUNDLE.getSessionFactory());
-        mAssignmentTypeManager = new AssignmentTypeManager(HIBERNATE_BUNDLE.getSessionFactory());
-        mAssignmentManager = new AssignmentManager(HIBERNATE_BUNDLE.getSessionFactory());
-        mAssignableDayManager = new AssignableDayManager(HIBERNATE_BUNDLE.getSessionFactory());
+        SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
+        groupManager = new GroupManager(sessionFactory);
+        employeeManager = new EmployeeManager(sessionFactory);
+        membershipManager = new MembershipManager(sessionFactory);
+        assignmentTypeManager = new AssignmentTypeManager(sessionFactory);
+        assignmentManager = new AssignmentManager(sessionFactory);
+        assignableDayManager = new AssignableDayManager(sessionFactory);
 
         env.jersey().setUrlPattern(config.getRootPath());
-        env.jersey().register(new GroupsResource(mGroupManager));
-        env.jersey().register(new EmployeesResource(mEmployeeManager, mGroupManager, mMembershipManager));
-        env.jersey().register(new GroupEmployeesResource(mEmployeeManager));
-        env.jersey().register(new AssignmentTypesResource(mAssignmentTypeManager, mGroupManager));
-        env.jersey().register(new AssignmentsResource(mAssignmentManager,mGroupManager,mEmployeeManager,
-                mAssignmentTypeManager,mAssignableDayManager));
+        env.jersey().register(new GroupsResource(groupManager));
+        env.jersey().register(new EmployeesResource(employeeManager, groupManager, membershipManager));
+        env.jersey().register(new EmployeeGroupsResource(employeeManager));
+        env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
+        env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
+                assignmentTypeManager, assignableDayManager));
     }
 
     // For tests

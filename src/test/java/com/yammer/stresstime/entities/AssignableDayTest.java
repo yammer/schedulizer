@@ -13,32 +13,32 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class AssignableDayTest extends DatabaseTest {
 
-    private AssignableDayManager mAssignableDayManager;
-    private GroupManager mGroupManager;
-    private Group mGroup;
+    private AssignableDayManager assignableDayManager;
+    private GroupManager groupManager;
+    private Group group;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mAssignableDayManager = new AssignableDayManager(getSessionFactory());
-        mGroupManager = new GroupManager(getSessionFactory());
-        mGroup = mGroupManager.random();
+        assignableDayManager = new AssignableDayManager(getSessionFactory());
+        groupManager = new GroupManager(getSessionFactory());
+        group = groupManager.random();
     }
 
     @Test
     public void testDateFieldEqualityIsTimeAgnostic() {
-        AssignableDay day = new AssignableDay(mGroup, new LocalDate(1985, 2, 24));
+        AssignableDay day = new AssignableDay(group, new LocalDate(1985, 2, 24));
 
         assertThat(day.getDate(), equalTo(new LocalDate(1985, 2, 24)));
         assertThat(day.getDate(), equalTo(new LocalDateTime(1985, 2, 24, 2, 30).toLocalDate()));
 
-        mAssignableDayManager.save(day);
+        assignableDayManager.save(day);
         refresh(day);
 
         assertThat(day.getDate(), equalTo(new LocalDate(1985, 2, 24)));
         assertThat(day.getDate(), equalTo(new LocalDateTime(1985, 2, 24, 1, 15).toLocalDate()));
 
-        mAssignableDayManager.delete(day);
+        assignableDayManager.delete(day);
     }
 }

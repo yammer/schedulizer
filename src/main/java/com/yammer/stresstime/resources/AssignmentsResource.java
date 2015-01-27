@@ -1,9 +1,9 @@
 package com.yammer.stresstime.resources;
 
 
-import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.managers.*;
+import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.joda.time.LocalDate;
 
@@ -11,100 +11,83 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Path("/assignments")
+@Path("/groups/{group_id}/assignments")
 @Produces(MediaType.APPLICATION_JSON)
 public class AssignmentsResource {
 
-    private final AssignmentManager mAssignmentManager;
-    private final GroupManager mGroupManager;
-    private final EmployeeManager mEmployeeManager;
-    private final AssignmentTypeManager mAssignmentTypeManager;
-    private final AssignableDayManager mAssignableDayManager;
+    private AssignmentManager assignmentManager;
+    private GroupManager groupManager;
+    private EmployeeManager employeeManager;
+    private AssignmentTypeManager assignmentTypeManager;
+    private AssignableDayManager assignableDayManager;
 
-    public AssignmentsResource(AssignmentManager assignmentManager, GroupManager groupManager,
-                               EmployeeManager employeeManager, AssignmentTypeManager assignmentTypeManager,
-                               AssignableDayManager assignableDayManager) {
-        mAssignmentManager = assignmentManager;
-        mGroupManager = groupManager;
-        mEmployeeManager = employeeManager;
-        mAssignmentTypeManager = assignmentTypeManager;
-        mAssignableDayManager = assignableDayManager;
+    public AssignmentsResource(
+            AssignmentManager assignmentManager,
+            GroupManager groupManager,
+            EmployeeManager employeeManager,
+            AssignmentTypeManager assignmentTypeManager,
+            AssignableDayManager assignableDayManager) {
+
+        this.assignmentManager = assignmentManager;
+        this.groupManager = groupManager;
+        this.employeeManager = employeeManager;
+        this.assignmentTypeManager = assignmentTypeManager;
+        this.assignableDayManager = assignableDayManager;
     }
 
     @GET
     @UnitOfWork
-    public Response getListOfAssignments(@QueryParam("group_id") long groupId,
-                                         @QueryParam("start_date") String startDateStr,
-                                         @QueryParam("end_date") String endDateStr) {
-        LocalDate startDate, endDate;
-        try {
-            startDate = LocalDate.parse(startDateStr);
-            endDate = LocalDate.parse(endDateStr);
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
-        }
-        Group group = mGroupManager.getById(groupId);
-        if (group == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
-        }
+    public Response getAssignableDays(
+            @PathParam("group_id") long groupId,
+            @QueryParam("start_date") String startDateString,
+            @QueryParam("end_date") String endDateString) {
 
-        List<AssignableDay> assignableDayList = mAssignableDayManager.getByGroupPeriod(group, startDate, endDate);
-        for (AssignableDay assignableDay : assignableDayList) {
-            for (Assignment assignment : assignableDay.getAssignments()) {
-                assignment.getAssignmentType(); // prevent hibernate's lazy initialization
-                assignment.getEmployee();
-            }
-        }
-        return Response.ok().entity(assignableDayList).build();
+        ResourceUtils.checkParameter(startDateString != null, "start_date");
+        ResourceUtils.checkParameter(endDateString != null, "end_date");
+
+        Group group = groupManager.getById(groupId);
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
+
+        // TODO: Testst
+        // Avoid hibernate lazy eval problems with premature session closing
+        String response = ResourceUtils.preProcessResponse(assignableDays);
+        return Response.ok().entity(response).build();
     }
 
     @POST
     @UnitOfWork
-    public Response createNewAssignment(@FormParam("group_id") long groupId,
-                                        @FormParam("employee_id") long employeeId,
-                                        @FormParam("assignment_type_id") long assignmentTypeId,
-                                        @FormParam("date") String dateStr) {
-        LocalDate date;
-        try {
-            date = LocalDate.parse(dateStr);
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
-        }
-        Employee employee = mEmployeeManager.getById(employeeId);
-        if (employee == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Employee not found").build();
-        }
-        AssignmentType assignmentType = mAssignmentTypeManager.getById(assignmentTypeId);
-        if (assignmentType == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid assignment type id").build();
-        }
-        Group group = assignmentType.getGroup();
-        if (group.getId() != groupId) {
-            return Response
-                    .status(Response.Status.BAD_REQUEST)
-                    .entity("This assignment does not belong to this group")
-                    .build();
-        }
-        AssignableDay assignableDay = mAssignableDayManager.getByGroupDate(group, date);
-        if (assignableDay == null) {
-            assignableDay = new AssignableDay(group, date);
-            mAssignableDayManager.save(assignableDay);
-        }
+    public Response createAssignment(
+            @PathParam("group_id") long groupId,
+            @FormParam("employee_id") long employeeId,
+            @FormParam("assignment_type_id") long assignmentTypeId,
+            @FormParam("date") String dateString) {
 
+        ResourceUtils.checkParameter(dateString != null, "date");
+
+        LocalDate date = LocalDate.parse(dateString);
+        Employee employee = employeeManager.getById(employeeId);
+        AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
+        Group group = assignmentType.getGroup();
+        ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+        AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
         Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-        mAssignmentManager.save(assignment);
+        assignmentManager.save(assignment);
         return Response.ok().entity(assignment).build();
     }
 
     @DELETE
     @Path("/{assignment_id}")
     @UnitOfWork
-    public Response deleteAssignment(@PathParam("assignment_id") long assignmentId) {
-        if (!mAssignmentManager.deleteById(assignmentId)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Assignment not found").build();
-        }
-        return Response.ok().build();
+    public Response deleteAssignment(
+            @PathParam("group_id") long groupId,
+            @PathParam("assignment_id") long assignmentId) {
+
+        Assignment assignment = assignmentManager.getById(assignmentId);
+        ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
+        assignmentManager.delete(assignment);
+        return Response.noContent().build();
     }
 }
