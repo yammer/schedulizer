@@ -344,3 +344,46 @@ body {
     font-size: 16px;
     margin: 5px;
 }
+
+/* New Group form */
+
+.new-group-form {
+    padding: 10px 10px 0px 10px;
+}
+
+/* Deletable card */
+
+.deletable-card a {
+    position: relative;
+}
+
+.deletable-card .delete {
+    position: absolute;
+    top: 23%;
+    right: 15px;
+    display: none;
+    font-size: 30px;
+    color: white;
+    height: 21px;
+    width: 23px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #CC5555;
+}
+
+.deletable-card .delete div {
+    text-align: center;
+    position: absolute;
+    top: -62%;
+    width: 23px;
+}
+
+.deletable-card .content:hover .delete {
+    display: block;
+}
+
+.deletable-card .delete:hover {
+    display: block;
+    background-color: #DC143C;
+}
+

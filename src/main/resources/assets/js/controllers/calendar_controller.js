@@ -62,8 +62,6 @@ App.controller('CalendarController', function ($timeout, $scope) {
     }
 
     $scope.loadPreviousMonth = function() {
-        console.log("loadNextMonth");
-
         var isBeginningOfMonth = false;
         while (!isBeginningOfMonth) {
             firstDay = firstDay.plusWeeks(-1);
@@ -88,8 +86,6 @@ App.controller('CalendarController', function ($timeout, $scope) {
     }
 
     $scope.loadNextMonth = function() {
-        console.log("loadNextMonth");
-
         var isBeginningOfMonth = false;
         if ($scope.calendar.length > 0) {
             lastWeek = $scope.calendar[$scope.calendar.length - 1];
@@ -211,54 +207,39 @@ App.controller('CalendarController', function ($timeout, $scope) {
     function onStateUpdate() {
         switch (state) {
             case States.DOWN:
-                console.log('DOWN')
                 var e = state.event;
                 if (!isCtrl(e)) {
                     selection.clear();
                 }
                 break;
             case States.CLICKED:
-                console.log('CLICKED')
                 //onDayClick(state.day, state.event);
                 var e = state.event;
                 var day = state.day;
                 if (e.shiftKey) {
-                    console.log('shift')
                     if (twoStepStart != null) {
-                        console.log('2 step != null')
                         var range = dayRange(twoStepStart, day);
-                        console.log('<range>')
-                        console.log(range)
-                        console.log('</range>')
                         selection.select(range);
                     } else {
-                        console.log('2 step == null')
                         selection.select([day]);
                         twoStepStart = day;
                     }
                 } else {
-                    console.log('no shift')
                     if (day.selected && isCtrl(e)) {
                         selection.unselect([day]);
-                        console.log('2 step = null')
                         twoStepStart = null;
                     } else if (!day.selected) {
                         selection.select([day]);
-                        console.log('2 step = ', day)
                         twoStepStart = day;
-                    } else {
-                        console.log('nothing', day)
                     }
                 }
                 state = States.IDLE;
                 break;
             case States.DRAGGED:
-                console.log('DRAGGED')
                 // They are already selected (see States.DRAGGING)
                 state = States.IDLE;
                 break;
             case States.DRAGGING:
-                console.log('DRAGGING')
                 if (state.previous != null) {
                     var previousRange = dayRange(state.start, state.previous);
                     selection.resetToPreviousState(previousRange);
