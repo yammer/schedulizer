@@ -23,5 +23,4 @@ public class GroupManager extends EntityManager<Group> {
         List<Group> groups = all();
         return groups.get(RANDOM.nextInt(groups.size()));
     }
-
 }

@@ -28,6 +28,7 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
 
     @SuppressWarnings("unchecked")
     public List<AssignableDay> getByGroupPeriod(Group group, LocalDate startDate, LocalDate endDate) {
+        /* TODO: Group! */
         return currentSession()
                 .createCriteria(AssignableDay.class)
                 .add(Restrictions.ge("mDate", startDate))
