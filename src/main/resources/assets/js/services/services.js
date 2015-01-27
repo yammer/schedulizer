@@ -35,18 +35,20 @@ var urlencodedTransformRequest = function(data) {
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
 };
 
+var SHARED_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'};
+
 services.factory('Group', ['$resource', function($resource) {
     var Group = $resource('service/groups/:group_id',{},{
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
-            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            headers: SHARED_HEADERS
         },
         delete: {
             method: 'DELETE',
             params: { group_id: "@id" },
             transformRequest: [urlencodedTransformRequest],
-            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            headers: SHARED_HEADERS
         }
     });
     Group.prototype.employees = [];
@@ -59,30 +61,30 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
-            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            headers: SHARED_HEADERS
         },
         delete: {
             method: 'DELETE',
             params: { employee_id: "@id" },
             transformRequest: [urlencodedTransformRequest],
-            headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+            headers: SHARED_HEADERS
         }
     });
 }]);
 
 
 services.factory('AssignmentType', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/assignment_types/:assignment_type_id', { group_id: "@groupId" }, {
+    return $resource('service/groups/:group_id/assignment-types/:assignment_type_id', { group_id: "@groupId" }, {
             save: {
                 method: 'POST',
                 transformRequest: [urlencodedTransformRequest],
-                headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+                headers: SHARED_HEADERS
             },
             delete: {
                 method: 'DELETE',
                 params: { assignment_type_id: "@id" },
                 transformRequest: [urlencodedTransformRequest],
-                headers : {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'}
+                headers: SHARED_HEADERS
             }
     });
 }]);
