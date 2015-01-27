@@ -3,6 +3,7 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.managers.*;
+import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.joda.time.LocalDate;
 
@@ -37,29 +38,20 @@ public class AssignmentsResource {
 
     @GET
     @UnitOfWork
-    public Response getListOfAssignments(@QueryParam("group_id") long groupId,
-                                         @QueryParam("start_date") String startDateStr,
-                                         @QueryParam("end_date") String endDateStr) {
-        LocalDate startDate, endDate;
-        try {
-            startDate = LocalDate.parse(startDateStr);
-            endDate = LocalDate.parse(endDateStr);
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid date").build();
-        }
-        Group group = mGroupManager.safeGetById(groupId);
-        if (group == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
-        }
+    public Response getAssignableDays(
+            @QueryParam("group_id") long groupId,
+            @QueryParam("start_date") String startDateStr,
+            @QueryParam("end_date") String endDateStr) {
 
-        List<AssignableDay> assignableDayList = mAssignableDayManager.getByGroupPeriod(group, startDate, endDate);
-        for (AssignableDay assignableDay : assignableDayList) {
-            for (Assignment assignment : assignableDay.getAssignments()) {
-                assignment.getAssignmentType(); // prevent hibernate's lazy initialization
-                assignment.getEmployee();
-            }
-        }
-        return Response.ok().entity(assignableDayList).build();
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+        Group group = mGroupManager.getById(groupId);
+        List<AssignableDay> assignableDays = mAssignableDayManager.getByGroupPeriod(group, startDate, endDate);
+
+        // TODO: Test
+        // Avoid hibernate lazy eval problems with premature session closing
+        String response = ResourceUtils.preProcessResponse(assignableDays);
+        return Response.ok().entity(response).build();
     }
 
     @POST

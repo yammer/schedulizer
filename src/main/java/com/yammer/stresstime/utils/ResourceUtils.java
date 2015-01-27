@@ -1,0 +1,40 @@
+package com.yammer.stresstime.utils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+public class ResourceUtils {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    // Method used in cases where you need to pre-process the response before returning from a resource
+    // method, most probably b/c of lazy db evaluation from hibernate that will happen after the
+    // session was closed. (dropwizard-hibernate closes the session before the response is processed)
+    // Avoid using this method b/c it has been created with Jersey implementation in mind, and it
+    // doesn't do any housekeeping tasks as Jersey does, like handling/propagating exceptions properly.
+    public static <E> String preProcessResponse(E response) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            OBJECT_MAPPER.writeValue(out, response);
+            // Jackson writes in UTF-8 by default
+            return out.toString(StandardCharsets.UTF_8.name());
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                // Swallow, we are closing
+            }
+        }
+    }
+
+    // Prevents instantiation
+    private ResourceUtils() {
+        throw new AssertionError("Cannot instantiate object from " + this.getClass());
+    }
+}
