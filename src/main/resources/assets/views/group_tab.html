@@ -9,9 +9,9 @@
                 ng-repeat="group in groups | filter: groupSearch"
                 class="deletable-card"
                 >
-                <a class="content" href="/#/group/{{group.id}}">
+                <a class="content" ui-sref="groups.view({groupId: {{group.id}}})">
                     {{group.name}}
-                    <div class="delete" ng-click="deleteGroup(group); $event.preventDefault();">
+                    <div class="delete" ng-click="deleteGroup(group); $event.preventDefault(); $event.stopPropagation();">
                         <div>-</div>
                     </div>
                 </a>
@@ -34,111 +34,7 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-8 main">
-        <h1 class="header">{{selectedGroup.name}}</h1>
-        <div class="calendar-wrap">
-            <div class="left-bar">
-                <div class="tools">
-                    <button type="button" ng-click="goToToday()" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                        &nbsp; Today
-                    </button>
-                </div>
-                <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
-                    <div class="sub-label">{{dayStamp.getMonthName()}}</div>
-                    <div class="main-label">{{dayStamp.getDate()}}</div>
-                </div>
-            </div>
-            <calendar
-                class="calendar"
-                on-select-days="onSelectDays"
-                on-hover-day="onHoverDay"
-                >
 
-            </calendar>
-            <div class="right-bar">
-
-                <div ng-if="selectedDays.length > 0">
-                    <div ng-click="clearSelection()" class="stamp selection-stamp" >
-                        <div class="main-label">{{selectedDays.length}}</div>
-                        <div class="sub-label">Days Selected</div>
-                    </div>
-                    <div class="clear"></div>
-                    <div class="assignment-type-buckets">
-
-                        <div class="bucket">
-                            <div class="bucket-name">Primary</div>
-
-                        </div>
-
-                        <div class="bucket">
-                            <div class="bucket-name">Secondary</div>
-
-                        </div>
-
-                        <div class="bucket">
-                            <div class="bucket-name">P.S.</div>
-
-                        </div>
-
-                        <div class="bucket">
-                            <div class="bucket-name">Whatrweve</div>
-
-                        </div>
-
-                        <div class="bucket">
-                            <div class="bucket-name">Hello</div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <table class="legend">
-                    <tr>
-                        <td class="day odd"></td>
-                        <td class="day even"></td>
-                        <td class="description">Empty days</td>
-                    </tr>
-                    <tr ng-click="goToToday()">
-                        <td class="day today"></td>
-                        <td class="description" colspan="2">Today</td>
-                    </tr>
-                    <tr>
-                        <td class="day hover"></td>
-                        <td class="description" colspan="2">Selected</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-    </div>
-    <div class="col-md-2 sidebar right-sidebar">
-        <div class="top-search">
-            <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
-        </div>
-        <ul class="nav nav-sidebar" role="navigation">
-            <employee-card
-                employee="employee"
-                ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
-                remove="deleteEmployee(employee)"
-                >
-            </employee-card>
-            <div class="employee-card">
-                <div class="avatar-wrapper no-image add" ng-click="addEmployee()">+</div>
-                <div class="name">
-                    <input
-                            class="form-control"
-                            type="text"
-                            ng-model="newEmployeeName"
-                            placeholder="Name"
-                            ng-enter="addEmployee()"
-                            />
-                </div>
-                <div class="clear"></div>
-            </div>
-        </ul>
-    </div>
+    <div ui-view class="span-height"></div>
 
 </div>
