@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 
-@Path("/groups/{group_id}/assignment_types")
+@Path("/groups/{group_id}/assignment-types")
 @Produces(MediaType.APPLICATION_JSON)
 public class AssignmentTypesResource {
     private GroupManager mGroupManager;

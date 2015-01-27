@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/assignments")
+@Path("/groups/{group_id}/assignments")
 @Produces(MediaType.APPLICATION_JSON)
 public class AssignmentsResource {
 
@@ -39,16 +39,19 @@ public class AssignmentsResource {
     @GET
     @UnitOfWork
     public Response getAssignableDays(
-            @QueryParam("group_id") long groupId,
-            @QueryParam("start_date") String startDateStr,
-            @QueryParam("end_date") String endDateStr) {
+            @PathParam("group_id") long groupId,
+            @QueryParam("start_date") String startDateString,
+            @QueryParam("end_date") String endDateString) {
 
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        LocalDate endDate = LocalDate.parse(endDateStr);
+        ResourceUtils.checkParameter(startDateString != null, "start_date");
+        ResourceUtils.checkParameter(endDateString != null, "end_date");
+
         Group group = mGroupManager.getById(groupId);
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = mAssignableDayManager.getByGroupPeriod(group, startDate, endDate);
 
-        // TODO: Test
+        // TODO: Testst
         // Avoid hibernate lazy eval problems with premature session closing
         String response = ResourceUtils.preProcessResponse(assignableDays);
         return Response.ok().entity(response).build();
@@ -57,10 +60,12 @@ public class AssignmentsResource {
     @POST
     @UnitOfWork
     public Response createAssignment(
-            @FormParam("group_id") long groupId,
+            @PathParam("group_id") long groupId,
             @FormParam("employee_id") long employeeId,
             @FormParam("assignment_type_id") long assignmentTypeId,
             @FormParam("date") String dateString) {
+
+        ResourceUtils.checkParameter(dateString != null, "date");
 
         LocalDate date = LocalDate.parse(dateString);
         Employee employee = mEmployeeManager.getById(employeeId);
@@ -76,8 +81,13 @@ public class AssignmentsResource {
     @DELETE
     @Path("/{assignment_id}")
     @UnitOfWork
-    public Response deleteAssignment(@PathParam("assignment_id") long assignmentId) {
-        mAssignmentManager.deleteById(assignmentId);
-        return Response.ok().build();
+    public Response deleteAssignment(
+            @PathParam("group_id") long groupId,
+            @PathParam("assignment_id") long assignmentId) {
+
+        Assignment assignment = mAssignmentManager.getById(assignmentId);
+        ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
+        mAssignmentManager.delete(assignment);
+        return Response.noContent().build();
     }
 }

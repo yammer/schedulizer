@@ -3,6 +3,7 @@ package com.yammer.stresstime.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.yammer.stresstime.managers.exceptions.DataConflictException;
+import com.yammer.stresstime.managers.exceptions.ParameterException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,6 +38,12 @@ public class ResourceUtils {
     public static void checkConflictFree(boolean condition, Class<?> klass) {
         if (!condition) {
             throw new DataConflictException(klass);
+        }
+    }
+
+    public static void checkParameter(boolean condition, String name) {
+        if (!condition) {
+            throw new ParameterException(name);
         }
     }
 
