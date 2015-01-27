@@ -17,10 +17,9 @@ public class EmployeeManager extends EntityManager<Employee> {
     }
 
     public Employee getByYammerId(String yammerId) {
-        return (Employee) currentSession()
+        return getUnique(currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("mYammerId", yammerId))
-                .uniqueResult();
+                .add(Restrictions.eq("mYammerId", yammerId)));
     }
 
     public Employee getOrCreateByYammerId(String yammerId) {
