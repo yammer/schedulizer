@@ -33,7 +33,6 @@ public class EmployeeManager extends EntityManager<Employee> {
     private Employee createByYammerId(String yammerId) {
         /* TODO */
         Employee employee = new Employee("name retrieved from yammer", yammerId);
-        employee.setYammerId(yammerId);
         employee.setGlobalAdmin(false);
         // TODO: set name, image and other information
         save(employee);
