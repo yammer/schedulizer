@@ -21,7 +21,7 @@ public class GroupsResource {
 
     @GET
     @UnitOfWork
-    public Response getAllGroups() {
+    public Response getGroups() {
         List<Group> groups = mGroupManager.all();
         return Response.ok().entity(groups).build();
     }
@@ -38,21 +38,16 @@ public class GroupsResource {
     @Path("/{group_id}")
     @UnitOfWork
     public Response deleteGroup(@PathParam("group_id") long groupId) {
-        if (!mGroupManager.safeDeleteById(groupId)) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
-        }
-        return Response.ok().build();
+        mGroupManager.deleteById(groupId);
+        return Response.noContent().build();
     }
 
 
     @GET
     @Path("/{group_id}")
     @UnitOfWork
-    public Response getGroupById(@PathParam("group_id") long groupId) {
-        Group group = mGroupManager.safeGetById(groupId);
-        if (group == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Group not found").build();
-        }
+    public Response getGroup(@PathParam("group_id") long groupId) {
+        Group group = mGroupManager.getById(groupId);
         return Response.ok().entity(group).build();
     }
 
