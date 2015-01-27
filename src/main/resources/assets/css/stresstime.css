@@ -259,7 +259,7 @@ body {
 }
 
 .selection-stamp:hover {
-    background-color: #FE9395;
+    background-color: #e06969;
 }
 
 /* Employee card */
@@ -373,7 +373,7 @@ body {
     width: 23px;
     border-radius: 50%;
     cursor: pointer;
-    background-color: #CC5555;
+    background-color: #e06969;
 }
 
 .deletable-card .delete div {
@@ -389,7 +389,7 @@ body {
 
 .deletable-card .delete:hover {
     display: block;
-    background-color: #DC143C;
+    background-color: #CC5555;
 }
 
 /* drag and drop */
@@ -409,4 +409,34 @@ body {
 [draggable] {
     cursor: move;
     cursor: -webkit-grab; // hand for chrome and safari
+}
+
+/* Assignment types */
+
+.assignment-type-label {
+    background-color: #e06969;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 7px 5px 7px 25px;
+    margin-left: 20px;
+    color: white;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.assignment-type-label:hover {
+    background-color: #CC5555;
+    padding: 7px 5px 7px 17px;
+}
+
+.assignment-type-label .delete {
+    padding-left: 7px;
+    padding-right: 8px;
+    visibility: hidden;
+}
+
+.assignment-type-label:hover .delete {
+    visibility: visible;
+    padding-left: 11px;
+    padding-right: 12px;
 }

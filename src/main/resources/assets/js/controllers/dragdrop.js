@@ -26,7 +26,6 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
             }
 
             el.bind("dragstart", function(e) {
-
                 if (scope.ghostElement) {
                     try {
                         var img = $(el).find(scope.ghostElement)[0];
