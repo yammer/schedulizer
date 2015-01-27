@@ -2,6 +2,7 @@ package com.yammer.stresstime.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
+import com.yammer.stresstime.managers.exceptions.DataConflictException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,6 +31,12 @@ public class ResourceUtils {
             } catch (IOException e) {
                 // Swallow, we are closing
             }
+        }
+    }
+
+    public static void checkConflictFree(boolean condition, Class<?> klass) {
+        if (!condition) {
+            throw new DataConflictException(klass);
         }
     }
 
