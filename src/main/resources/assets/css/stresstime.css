@@ -336,11 +336,12 @@ body {
 /* AssignmentType buckets */
 
 .bucket {
-    border: 4px dashed #DDD;
+    border: 2px dashed #8B8484;
     border-radius: 4px;
     width: 150px;
     height: 100px;
     margin: 10px 0;
+    background-color: #ddd;
 }
 
 .bucket .bucket-name {
@@ -398,7 +399,6 @@ body {
 }
 
 .drop-target {
-    background-color: #ddd;
     opacity: .5;
 }
 
