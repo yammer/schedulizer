@@ -2,15 +2,13 @@ package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.collect.ImmutableSet;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -28,53 +26,53 @@ public class AssignableDay {
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @Column(name = "date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     @NotNull
-    private LocalDate mDate;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Group mGroup;
+    private Group group;
 
-    @OneToMany(mappedBy = "mAssignableDay")
+    @OneToMany(mappedBy = "assignableDay")
     @Cascade({CascadeType.DELETE})
-    private Set<Assignment> mAssignments;
+    private Set<Assignment> assignments;
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     @JsonIgnore
     public LocalDate getDate() {
-        return mDate;
+        return date;
     }
 
     @JsonProperty("date")
     public String getDateStr() {
-        return mDate.toString();
+        return date.toString();
     }
 
     public void setDate(LocalDate date) {
-        mDate = date;
+        this.date = date;
     }
 
     @JsonIgnore
     public Group getGroup() {
-        return mGroup;
+        return group;
     }
 
     public void setGroup(Group group) {
-        mGroup = group;
+        this.group = group;
     }
 
     public Set<Assignment> getAssignments() {
-        return ImmutableSet.copyOf(mAssignments);
+        return ImmutableSet.copyOf(assignments);
     }
 
     public void setAssignments(Set<Assignment> assignments) {
-        mAssignments = ImmutableSet.copyOf(assignments);
+        this.assignments = ImmutableSet.copyOf(assignments);
     }
 }

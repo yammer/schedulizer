@@ -22,8 +22,8 @@ public class MembershipManager extends EntityManager<Membership> {
     public Membership getByEmployeeIdAndGroupId(long employeeId, long groupId) {
         return getExactOne(currentSession()
                 .createCriteria(Membership.class)
-                .add(Restrictions.eq("mEmployee.mId", employeeId))
-                .add(Restrictions.eq("mGroup.mId", groupId)));
+                .add(Restrictions.eq("employee.id", employeeId))
+                .add(Restrictions.eq("group.id", groupId)));
     }
 
 }

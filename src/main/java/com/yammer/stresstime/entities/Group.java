@@ -1,7 +1,6 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
@@ -28,63 +27,63 @@ public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @Column(name = "name")
     @NotBlank
-    private String mName;
+    private String name;
 
-    @OneToMany(mappedBy = "mGroup")
+    @OneToMany(mappedBy = "group")
     @Cascade({CascadeType.DELETE})
-    private Set<AssignableDay> mAssignableDays = new HashSet<>();
+    private Set<AssignableDay> assignableDays = new HashSet<>();
 
-    @OneToMany(mappedBy = "mGroup")
+    @OneToMany(mappedBy = "group")
     @Cascade({CascadeType.DELETE})
-    private Set<AssignmentType> mAssignmentTypes = new HashSet<>();
+    private Set<AssignmentType> assignmentTypes = new HashSet<>();
 
-    @OneToMany(mappedBy = "mGroup")
+    @OneToMany(mappedBy = "group")
     @Cascade({CascadeType.DELETE})
-    private Set<Membership> mMemberships = new HashSet<>();
+    private Set<Membership> memberships = new HashSet<>();
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     @JsonIgnore
     public Set<AssignableDay> getAssignableDays() {
-        return ImmutableSet.copyOf(mAssignableDays);
+        return ImmutableSet.copyOf(assignableDays);
     }
 
     public void setAssignableDays(Set<AssignableDay> assignableDays) {
-        mAssignableDays = ImmutableSet.copyOf(mAssignableDays);
+        this.assignableDays = ImmutableSet.copyOf(this.assignableDays);
     }
 
     @JsonIgnore
     public Set<AssignmentType> getAssignmentTypes() {
-        return ImmutableSet.copyOf(mAssignmentTypes);
+        return ImmutableSet.copyOf(assignmentTypes);
     }
 
     public void setAssignmentTypes(Set<AssignmentType> assignmentTypes) {
-        mAssignmentTypes = ImmutableSet.copyOf(assignmentTypes);
+        this.assignmentTypes = ImmutableSet.copyOf(assignmentTypes);
     }
 
     @JsonIgnore
     public Set<Membership> getMemberships() {
-        return ImmutableSet.copyOf(mMemberships);
+        return ImmutableSet.copyOf(memberships);
     }
 
     @JsonIgnore
     public Set<Employee> getEmployees() {
         ImmutableSet.Builder<Employee> employees = new ImmutableSet.Builder<>();
-        for (Membership membership : mMemberships) {
+        for (Membership membership : memberships) {
             employees.add(membership.getEmployee());
         }
         return employees.build();

@@ -29,75 +29,75 @@ public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mId;
+    private long id;
 
     @Column(name = "yammer_id")
     @NotEmpty
-    private String mYammerId;
+    private String yammerId;
 
     @Column(name = "name")
     @NotBlank
-    private String mName;
+    private String name;
 
     @Column(name = "global_admin")
     @NotNull
-    private boolean mGlobalAdmin = false;
+    private boolean globalAdmin = false;
 
     @Column(name = "image_url_template")
-    private String mImageUrlTemplate;
+    private String imageUrlTemplate;
 
-    @OneToMany(mappedBy = "mEmployee")
+    @OneToMany(mappedBy = "employee")
     @Cascade({CascadeType.DELETE})
-    private Set<Membership> mMemberships = new HashSet<>();
+    private Set<Membership> memberships = new HashSet<>();
 
-    @OneToMany(mappedBy = "mEmployee")
-    private Set<Assignment> mAssignments = new HashSet<>();
+    @OneToMany(mappedBy = "employee")
+    private Set<Assignment> assignments = new HashSet<>();
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getYammerId() {
-        return mYammerId;
+        return yammerId;
     }
 
     public void setYammerId(String yammerId) {
-        mYammerId = yammerId;
+        this.yammerId = yammerId;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     public boolean isGlobalAdmin() {
-        return mGlobalAdmin;
+        return globalAdmin;
     }
 
     public void setGlobalAdmin(boolean globalAdmin) {
-        mGlobalAdmin = globalAdmin;
+        this.globalAdmin = globalAdmin;
     }
 
     public String getImageUrlTemplate() {
-        return mImageUrlTemplate;
+        return imageUrlTemplate;
     }
 
     public void setImageUrlTemplate(String imageUrlTemplate) {
-        mImageUrlTemplate = imageUrlTemplate;
+        this.imageUrlTemplate = imageUrlTemplate;
     }
 
     @JsonIgnore
     public Set<Membership> getMemberships() {
-        return ImmutableSet.copyOf(mMemberships);
+        return ImmutableSet.copyOf(memberships);
     }
 
     @JsonIgnore
     public Set<Group> getGroups() {
         ImmutableSet.Builder<Group> groups = new ImmutableSet.Builder<>();
-        for (Membership membership : mMemberships) {
+        for (Membership membership : memberships) {
             groups.add(membership.getGroup());
         }
         return groups.build();
@@ -105,10 +105,10 @@ public class Employee {
 
     @JsonIgnore
     public Set<Assignment> getAssignments() {
-        return ImmutableSet.copyOf(mAssignments);
+        return ImmutableSet.copyOf(assignments);
     }
 
     public void setAssignments(Set<Assignment> assignments) {
-        mAssignments = ImmutableSet.copyOf(assignments);
+        this.assignments = ImmutableSet.copyOf(assignments);
     }
 }

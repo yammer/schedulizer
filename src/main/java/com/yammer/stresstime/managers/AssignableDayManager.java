@@ -17,8 +17,8 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
     public AssignableDay getOrCreateByGroupDate(Group group, LocalDate date) {
         AssignableDay assignableDay = getUnique(currentSession()
                 .createCriteria(AssignableDay.class)
-                .add(Restrictions.eq("mDate", date))
-                .add(Restrictions.eq("mGroup", group)));
+                .add(Restrictions.eq("date", date))
+                .add(Restrictions.eq("group", group)));
         if (assignableDay == null) {
             assignableDay = new AssignableDay(group, date);
             save(assignableDay);
@@ -31,8 +31,8 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
         /* TODO: Group! */
         return currentSession()
                 .createCriteria(AssignableDay.class)
-                .add(Restrictions.ge("mDate", startDate))
-                .add(Restrictions.le("mDate", endDate))
+                .add(Restrictions.ge("date", startDate))
+                .add(Restrictions.le("date", endDate))
                 .list();
     }
 }
