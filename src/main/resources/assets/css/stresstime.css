@@ -408,6 +408,7 @@ body {
 
 [draggable] {
     cursor: move;
+    cursor: -webkit-grab; // hand for chrome and safari
 }
 
 .ghost-image {
