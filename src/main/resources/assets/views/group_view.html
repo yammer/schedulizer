@@ -1,9 +1,25 @@
 <div class="col-md-8 main">
     <h1 class="header">
         {{selectedGroup.name}}
-        <span class="assignment-type-label">Primary <span class="delete">x</span></span>
-        <span class="assignment-type-label">Primary Support <span class="delete">x</span></span>
-        <span class="assignment-type-label">Secondary <span class="delete">x</span></span>
+        <div class="assignment-types-wrapper">
+            <span
+                ng-repeat="assignmentType in selectedGroup.assignmentTypes"
+                class="assignment-type-label">
+                {{assignmentType.name}}
+                <span class="delete">x</span>
+            </span>
+            <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
+        </div>
+        <span class="add-assignment-type" ng-click="isCreatingAssignmentType = true;">+</span>
+        <div class="assignment-type-form">
+            <input ng-show="isCreatingAssignmentType"
+                   ng-focus="isCreatingAssignmentType"
+                   class="form-control"
+                   type="text"
+                   ng-model="newAssignmentName"
+                   placeholder="Name"
+                   ng-enter="addAssignmentType()"/>
+        </div>
     </h1>
     <div class="calendar-wrap">
         <div class="left-bar">

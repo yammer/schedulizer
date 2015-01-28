@@ -11,3 +11,19 @@ App.directive('ngEnter', function () {
         });
     };
 });
+
+App.directive('ngFocus', function($timeout) {
+    return {
+        replace: true,
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            scope.$watch(attr.ngFocus, function(value) {
+                if(value) {
+                    $timeout(function() {
+                        element[0].focus();
+                    });
+                }
+            });
+        }
+    };
+});
