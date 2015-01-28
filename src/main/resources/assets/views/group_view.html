@@ -6,7 +6,7 @@
                 ng-repeat="assignmentType in selectedGroup.assignmentTypes"
                 class="assignment-type-label">
                 {{assignmentType.name}}
-                <span class="delete">x</span>
+                <span class="delete" ng-click="deleteAssignmentType(assignmentType)">x</span>
             </span>
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
@@ -18,7 +18,7 @@
                    type="text"
                    ng-model="newAssignmentName"
                    placeholder="Name"
-                   ng-enter="addAssignmentType()"/>
+                   ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"/>
         </div>
     </h1>
     <div class="calendar-wrap">

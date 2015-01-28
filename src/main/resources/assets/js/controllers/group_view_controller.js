@@ -41,19 +41,20 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     }
 
     $scope.addAssignmentType = function () {
-        name = $scope.newAssignmentName;
-        group = $scope.selectedGroup;
+        var name = $scope.newAssignmentName;
+        var group = $scope.selectedGroup;
         if (name == undefined || name == "") { return; }
         var assignmentType = new AssignmentType({ groupId: group.id });
         assignmentType.name = name;
         assignmentType.$save({}, function() {
-            group.assignmentTypes.push(assignmentType);
+            group.assignmentTypes.unshift(assignmentType);
             $scope.newAssignmentName = "";
         });
 
     }
 
-    $scope.deleteAssignmentType = function (group, assignmentType) {
+    $scope.deleteAssignmentType = function (assignmentType) {
+        var group = $scope.selectedGroup;
         group.assignmentTypes = _.without(group.assignmentTypes, _.findWhere(group.assignmentTypes, assignmentType));
         assignmentType.groupId = group.id;
         assignmentType.$delete();
