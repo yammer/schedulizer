@@ -75,16 +75,33 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
 
 services.factory('AssignmentType', ['$resource', function($resource) {
     return $resource('service/groups/:group_id/assignment-types/:assignment_type_id', { group_id: "@groupId" }, {
-            save: {
-                method: 'POST',
-                transformRequest: [urlencodedTransformRequest],
-                headers: SHARED_HEADERS
-            },
-            delete: {
-                method: 'DELETE',
-                params: { assignment_type_id: "@id" },
-                transformRequest: [urlencodedTransformRequest],
-                headers: SHARED_HEADERS
-            }
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            params: { assignment_type_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
+}]);
+
+services.factory('AssignableDay', ['$resource', function($resource) {
+    return $resource('service/groups/:group_id/assignments/:assignment_id', { group_id: "@groupId" }, {
+        save: {
+            method: 'POST',
+            isArray: true,
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            params: { assignment_type_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
     });
 }]);

@@ -1,5 +1,5 @@
 App.controller('GroupViewController', function($scope, $timeout, $location,  $stateParams,
-                                              Group, GroupEmployee, AssignmentType, EMPTY_GROUP) {
+                                              Group, GroupEmployee, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
@@ -41,14 +41,15 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     }
 
     $scope.addAssignmentType = function () {
-        var name = $scope.newAssignmentName;
+        var name = $scope.newAssignmentTypeName;
         var group = $scope.selectedGroup;
         if (name == undefined || name == "") { return; }
         var assignmentType = new AssignmentType({ groupId: group.id });
         assignmentType.name = name;
         assignmentType.$save({}, function() {
             group.assignmentTypes.unshift(assignmentType);
-            $scope.newAssignmentName = "";
+            $scope.newAssignmentTypeName = "";
+            console.log(assignmentType.id);
         });
 
     }
@@ -97,8 +98,21 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     $scope.$watch('selectedGroup', loadGroupData);
 
-    $scope.onDrop = function (dragEl, dropEl) {
+    function addAssignment(employee, assignmentType) {
+        var group = $scope.selectedGroup;
+        var days = $scope.selectedDays;
+        AssignableDay.save({
+            groupId: group.id,
+            employee_id:employee.id,
+            assignment_type_id:assignmentType.id,
+            dates: days.map(function(d) { return d.toISOLocalDateString() }).join()
+        }, function(assignableDays) {
 
+        });
+    }
+
+    $scope.onDrop = function (dragEl, dropEl, employee, assignmentType) {
+        addAssignment(employee, assignmentType);
     }
 
     // TODO: Ugly hack!

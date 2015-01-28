@@ -63,6 +63,10 @@ Date.prototype.getMonthName = function() {
     return monthNames[this.getMonth()];
 };
 
+Date.prototype.toISOLocalDateString = function() {
+    return this.toISOString().slice(0, 10);
+}
+
 Array.prototype.remove = function(item) {
     this.splice(this.indexOf(item), 1);
 };

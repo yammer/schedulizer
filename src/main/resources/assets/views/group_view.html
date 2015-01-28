@@ -16,7 +16,7 @@
                    ng-focus="isCreatingAssignmentType"
                    class="form-control"
                    type="text"
-                   ng-model="newAssignmentName"
+                   ng-model="newAssignmentTypeName"
                    placeholder="Name"
                    ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"/>
         </div>
@@ -50,32 +50,12 @@
                 </div>
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Primary</div>
-
+                    <div class="bucket"
+                         ng-repeat="assignmentType in selectedGroup.assignmentTypes"
+                         ng-droppable
+                         ng-on-drop="onDrop(dragEl, dropEl, data, assignmentType)">
+                        <div class="bucket-name">{{assignmentType.name}}</div>
                     </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Secondary</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">P.S.</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Whatever</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Hello</div>
-
-                    </div>
-
                 </div>
 
             </div>
@@ -106,7 +86,8 @@
     <ul class="nav nav-sidebar" role="navigation">
         <div ng-draggable
              ghost-element=".avatar-wrapper"
-             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch">
+             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
+             drag-data=employee>
             <employee-card
                     employee="employee"
                     remove="deleteEmployee(employee)"
