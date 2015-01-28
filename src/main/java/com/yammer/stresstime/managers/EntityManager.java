@@ -9,9 +9,12 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 
+import java.util.List;
+
 public class EntityManager<E> extends AbstractDAO<E> {
 
     private final Class<? extends E> entityClass;
+    private static final int MAX_BATCH_SIZE = 20; // should be the same as hibernate.jdbc.batch_size property in app.yml
 
     public EntityManager(SessionFactory sessionFactory, Class<? extends E> entityClass) {
         super(sessionFactory);
@@ -21,6 +24,21 @@ public class EntityManager<E> extends AbstractDAO<E> {
     public void save(E entity) {
         try {
             persist(entity);
+        } catch (HibernateException e) {
+            throw new HibernateUncaughtException(e);
+        }
+    }
+
+    public void save(List<E> entities) {
+        try {
+            for (int i = 0; i < entities.size(); i++) {
+                persist(entities.get(i));
+                if (i % MAX_BATCH_SIZE == MAX_BATCH_SIZE - 1) {
+                    currentSession().flush();
+                    currentSession().clear();
+                }
+            }
+
         } catch (HibernateException e) {
             throw new HibernateUncaughtException(e);
         }

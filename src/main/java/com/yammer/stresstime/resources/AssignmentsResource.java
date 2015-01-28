@@ -10,6 +10,7 @@ import org.joda.time.LocalDate;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/groups/{group_id}/assignments")
@@ -63,19 +64,25 @@ public class AssignmentsResource {
             @PathParam("group_id") long groupId,
             @FormParam("employee_id") long employeeId,
             @FormParam("assignment_type_id") long assignmentTypeId,
-            @FormParam("date") String dateString) {
-
-        ResourceUtils.checkParameter(dateString != null, "date");
-
-        LocalDate date = LocalDate.parse(dateString);
+            @FormParam("dates") String datesString) {
         Employee employee = employeeManager.getById(employeeId);
         AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
         Group group = assignmentType.getGroup();
         ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
-        AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
-        Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-        assignmentManager.save(assignment);
-        return Response.ok().entity(assignment).build();
+
+        List<Assignment> assignments = new ArrayList<>();
+        String[] dateStringList = datesString.split(",");
+        for(String dateString : dateStringList) {
+            ResourceUtils.checkParameter(dateString != null, "date");
+            LocalDate date = LocalDate.parse(dateString);
+
+            AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
+            Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
+            assignments.add(assignment);
+        }
+        assignmentManager.save(assignments);
+
+        return Response.ok().entity(assignments).build();
     }
 
     @DELETE
