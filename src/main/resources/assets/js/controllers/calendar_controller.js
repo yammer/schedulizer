@@ -249,6 +249,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 twoStepStart = null;
                 break;
         }
+        if (state == States.DOWN) { return; } // we should just update the parent when mouse is up or dragging
         onSelectDays();
     }
 
