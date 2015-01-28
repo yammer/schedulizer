@@ -10,6 +10,7 @@ import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -70,6 +71,13 @@ public class AssignableDay {
 
     public Set<Assignment> getAssignments() {
         return ImmutableSet.copyOf(assignments);
+    }
+
+    public void addAssignment(Assignment assignment) {
+        if (assignments == null) {
+            assignments = new HashSet<>();
+        }
+        assignments.add(assignment);
     }
 
     public void setAssignments(Set<Assignment> assignments) {

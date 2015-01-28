@@ -78,11 +78,18 @@ public class AssignmentsResource {
 
             AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
             Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
+            assignableDay.addAssignment(assignment);
             assignments.add(assignment);
         }
         assignmentManager.save(assignments);
 
-        return Response.ok().entity(assignments).build();
+        List<AssignableDay> assignableDays = new ArrayList<>();
+        for (Assignment assignment : assignments) {
+            assignableDays.add(assignment.getAssignableDay());
+        }
+        // Avoid hibernate lazy eval problems with premature session closing
+        String response = ResourceUtils.preProcessResponse(assignableDays);
+        return Response.ok().entity(response).build();
     }
 
     @DELETE
