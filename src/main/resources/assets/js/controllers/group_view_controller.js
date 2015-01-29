@@ -120,7 +120,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
                 var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
                 var employeeId = assignableDays[i].assignments[j].employeeId;
                 var employee = $scope.selectedGroup.employeeMap[employeeId];
-                if($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
+                if ($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
                     $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] = {
                         employee: employee,
                         assignments: []
@@ -147,6 +147,44 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         getGroupEmployeesData($scope.selectedGroup);
         getAssignmentTypeData($scope.selectedGroup);
     });
+
+    var GroupViewDayContent = function(assignments) {
+        this.assignments = assignments;
+    }
+
+    GroupViewDayContent.prototype.assignments = [];
+
+    GroupViewDayContent.prototype.numberOfRoles = function() {
+        return _.uniq(_.map(this.assignments, function(assignment) {
+            return assignment.assignmentTypeId;
+        })).length;
+    }
+
+    $scope.onLoadDayContent = function(days) {
+        var startDate = days[0].date;
+        var endDate = days[days.length - 1].date;
+        days = _.indexBy(days, function(day) {
+            return day.date.toISOLocalDateString();
+        });
+
+        console.log('trigger request from ' + startDate + ' to ' + endDate + ' of ' + days.length+ ' days');
+
+        assignableDays = AssignableDay.query(
+            {
+                group_id: $scope.selectedGroup.id,
+                start_date: startDate.toISOLocalDateString(),
+                end_date: endDate.toISOLocalDateString()
+            }, function(assignableDays) {
+                console.log('returned');
+                _.each(assignableDays, function(assignableDay) {
+                    days[assignableDay.date].content = {
+                        assignments: assignableDay.assignments
+                    }
+                });
+            }
+        );
+
+    }
 
     var GroupViewDayContent = function(assignments) {
         this.assignments = assignments;
@@ -219,4 +257,3 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     // TODO: Ugly hack!
     $timeout(resizeCalendar, 300)
 });
-var k;
