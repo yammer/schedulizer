@@ -78,7 +78,6 @@ public class AssignmentsResource {
 
             AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
             Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-            assignableDay.addAssignment(assignment);
             assignments.add(assignment);
         }
         assignmentManager.save(assignments);

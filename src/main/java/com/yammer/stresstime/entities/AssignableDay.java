@@ -40,7 +40,7 @@ public class AssignableDay {
 
     @OneToMany(mappedBy = "assignableDay")
     @Cascade({CascadeType.DELETE})
-    private Set<Assignment> assignments;
+    private Set<Assignment> assignments = new HashSet<>();
 
     public long getId() {
         return id;
@@ -75,13 +75,6 @@ public class AssignableDay {
 
     public Set<Assignment> getAssignments() {
         return ImmutableSet.copyOf(assignments);
-    }
-
-    public void addAssignment(Assignment assignment) {
-        if (assignments == null) {
-            assignments = new HashSet<>();
-        }
-        assignments.add(assignment);
     }
 
     public void setAssignments(Set<Assignment> assignments) {

@@ -1,9 +1,15 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "assignment_types")
@@ -32,6 +38,10 @@ public class AssignmentType {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @OneToMany(mappedBy = "assignmentType")
+    @Cascade({CascadeType.DELETE})
+    private Set<Assignment> assignments = new HashSet<>();
 
     public long getId() {
         return id;
