@@ -118,6 +118,18 @@ body {
     background-color: #828282;
 }
 
+/* Group View Calendar */
+
+.day.even.assigned {
+    background-color: #33DD33;
+    color: #FFF;
+}
+.day.odd.assigned {
+    background-color: #33DD33;
+    color: #FFF;
+}
+
+
 /* Header */
 
 .header {

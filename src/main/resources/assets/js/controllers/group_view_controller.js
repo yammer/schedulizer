@@ -3,17 +3,13 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
-    var employeesMap = {};
-
-    $scope.getGroupEmployeesData = function(group) {
+    function getGroupEmployeesData(group) {
         if (group == EMPTY_GROUP) {
             group.employees = [];
             return;
         }
-        group.employees = GroupEmployee.query({ group_id: group.id }, function() {
-            employeesMap = _.object(_.map(group.employees, function(item) {
-                return [item.id, item]
-            }));
+        group.employees = GroupEmployee.query({group_id: group.id}, function(employees) {
+            group.employeeMap = _.indexBy(employees, 'id');
         });
     }
 
@@ -27,7 +23,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         employee.$save({}, function(response) {
             group.employees.push(employee);
             $scope.newEmployeeName = "";
-            employeesMap[employee.id] = employee;
+            group.employeeMap[employee.id] = employee;
         });
 
     }
@@ -39,7 +35,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         employee.$delete();
     }
 
-    $scope.getAssignmentTypeData = function(group) {
+    function getAssignmentTypeData(group) {
         if (group == EMPTY_GROUP) {
             group.assignmentTypes = [];
             return;
@@ -86,11 +82,6 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         $scope.dayStamp = day.date;
     }
 
-    function loadGroupData () {
-        $scope.getGroupEmployeesData($scope.selectedGroup);
-        $scope.getAssignmentTypeData($scope.selectedGroup);
-    }
-
     $scope.clearSelection = function() {
         getCalendar().clearSelectedDays();
         $scope.selectedDays = [];
@@ -127,7 +118,48 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         console.log($scope.assignmentTypeBuckets);
     }
 
-    $scope.$watch('selectedGroup', loadGroupData);
+    $scope.$watch('selectedGroup', function() {
+        getGroupEmployeesData($scope.selectedGroup);
+        getAssignmentTypeData($scope.selectedGroup);
+    });
+
+    var GroupViewDayContent = function(assignments) {
+        this.assignments = assignments;
+    }
+
+    GroupViewDayContent.prototype.assignments = [];
+
+    GroupViewDayContent.prototype.numberOfRoles = function() {
+        return _.uniq(_.map(this.assignments, function(assignment) {
+            return assignment.assignmentTypeId;
+        })).length;
+    }
+
+    $scope.onLoadDayContent = function(days) {
+        var startDate = days[0].date;
+        var endDate = days[days.length - 1].date;
+        days = _.indexBy(days, function(day) {
+            return day.date.toISOLocalDateString();
+        });
+
+        console.log('trigger request from ' + startDate + ' to ' + endDate + ' of ' + days.length+ ' days');
+
+        assignableDays = AssignableDay.query(
+            {
+                group_id: $scope.selectedGroup.id,
+                start_date: startDate.toISOLocalDateString(),
+                end_date: endDate.toISOLocalDateString()
+            }, function(assignableDays) {
+                console.log('returned');
+                _.each(assignableDays, function(assignableDay) {
+                    days[assignableDay.date].content = {
+                        assignments: assignableDay.assignments
+                    }
+                });
+            }
+        );
+
+    }
 
     function addAssignment(employee, assignmentType) {
         var group = $scope.selectedGroup;

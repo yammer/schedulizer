@@ -34,9 +34,9 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
         });
     }
 
-    $scope.deleteGroup = function(group) {
+    $scope.deleteGroup = function(group, $event) {
         group.$delete({}, function() {
-            $scope.groups = _.without($scope.groups, _.findWhere($scope.groups, group));
+            $scope.groups.remove(group);
             if ($scope.isSelectedGroup(group)) {
                 if ($scope.groups.length == 0) {
                     $state.go('.', { groupId: 'default' });
@@ -46,7 +46,8 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
                 }
             }
         });
-
+        $event.preventDefault();
+        $event.stopPropagation();
     }
 
     $scope.isSelectedGroup = function(group) {

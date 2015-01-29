@@ -46,18 +46,22 @@ public class AssignableDay {
         return id;
     }
 
+    @JsonProperty("date")
+    public String getDateString() {
+        return date.toString();
+    }
+
     @JsonIgnore
     public LocalDate getDate() {
         return date;
     }
 
-    @JsonProperty("date")
-    public String getDateStr() {
-        return date.toString();
-    }
-
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public long getGroupId() {
+        return group.getId();
     }
 
     @JsonIgnore

@@ -35,10 +35,11 @@ var urlencodedTransformRequest = function(data) {
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
 };
 
+var PREFIX = 'service/';
 var SHARED_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'};
 
 services.factory('Group', ['$resource', function($resource) {
-    var Group = $resource('service/groups/:group_id',{},{
+    var Group = $resource(PREFIX + 'groups/:group_id', {}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -57,7 +58,7 @@ services.factory('Group', ['$resource', function($resource) {
 }]);
 
 services.factory('GroupEmployee', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/employees/:employee_id', { group_id: "@groupId" },{
+    return $resource(PREFIX + 'groups/:group_id/employees/:employee_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -74,7 +75,7 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
 
 
 services.factory('AssignmentType', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/assignment-types/:assignment_type_id', { group_id: "@groupId" }, {
+    return $resource(PREFIX + 'groups/:group_id/assignment-types/:assignment_type_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -90,7 +91,7 @@ services.factory('AssignmentType', ['$resource', function($resource) {
 }]);
 
 services.factory('AssignableDay', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/assignments/:assignment_id', { group_id: "@groupId" }, {
+    return $resource(PREFIX + 'groups/:group_id/assignments/:assignment_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             isArray: true,

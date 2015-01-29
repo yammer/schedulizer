@@ -64,7 +64,13 @@ Date.prototype.getMonthName = function() {
 };
 
 Date.prototype.toISOLocalDateString = function() {
-    return this.toISOString().slice(0, 10);
+    var pad = function(n) {
+        if (n < 10) return '0' + n;
+        return n;
+    }
+    return this.getFullYear() +
+        '-' + pad(this.getMonth() + 1) +
+        '-' + pad(this.getDate());
 }
 
 Array.prototype.remove = function(item) {
