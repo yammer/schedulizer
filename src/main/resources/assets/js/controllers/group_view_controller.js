@@ -3,12 +3,18 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
+    var employeesMap = {};
+
     $scope.getGroupEmployeesData = function(group) {
         if (group == EMPTY_GROUP) {
             group.employees = [];
             return;
         }
-        group.employees = GroupEmployee.query({ group_id: group.id });
+        group.employees = GroupEmployee.query({ group_id: group.id }, function() {
+            employeesMap = _.object(_.map(group.employees, function(item) {
+                return [item.id, item]
+            }));
+        });
     }
 
     $scope.addEmployee = function () {
@@ -21,6 +27,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         employee.$save({}, function(response) {
             group.employees.push(employee);
             $scope.newEmployeeName = "";
+            employeesMap[employee.id] = employee;
         });
 
     }
@@ -92,8 +99,32 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     $scope.selectedDays = [];
     $scope.selectedDay = undefined;
 
+    function updateAssignmentTypeBuckets(assignableDays) {
+        for (var i = 0; i < assignableDays.length; i++) {
+            for (var j = 0; j < assignableDays[i].assignments.length; j++) {
+                var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
+                var employeeId = assignableDays[i].assignments[j].employeeId;
+                var employee = employeesMap[employeeId];
+                $scope.assignmentTypeBuckets[assignmentTypeId].employeeList.push(employee);
+                $scope.assignmentTypeBuckets[assignmentTypeId].employeeList =
+                    _.uniq($scope.assignmentTypeBuckets[assignmentTypeId].employeeList, function(e) {
+                        return e.id;
+                    });
+            }
+        }
+    }
+
     $scope.onSelectDays = function(days) {
         $scope.selectedDays = days;
+        $scope.assignmentTypeBuckets = {};
+        var assignmentTypes = $scope.selectedGroup.assignmentTypes;
+        for (var i = 0; i < assignmentTypes.length; i++) {
+            $scope.assignmentTypeBuckets[assignmentTypes[i].id] = {
+                employeeList: [], // TODO get this information from days
+                assignmentType: assignmentTypes[i]
+            };
+        }
+        console.log($scope.assignmentTypeBuckets);
     }
 
     $scope.$watch('selectedGroup', loadGroupData);
@@ -107,7 +138,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             assignment_type_id:assignmentType.id,
             dates: days.map(function(d) { return d.toISOLocalDateString() }).join()
         }, function(assignableDays) {
-
+            updateAssignmentTypeBuckets(assignableDays);
         });
     }
 

@@ -51,10 +51,21 @@
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
                     <div class="bucket"
-                         ng-repeat="assignmentType in selectedGroup.assignmentTypes"
+                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets"
                          ng-droppable
-                         ng-on-drop="onDrop(dragEl, dropEl, data, assignmentType)">
-                        <div class="bucket-name">{{assignmentType.name}}</div>
+                         ng-on-drop="onDrop(dragEl, dropEl, data, assignmentTypeBucket.assignmentType)">
+                        <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
+                        <div class="bucket-content">
+                            <div
+                                ng-repeat="employee in assignmentTypeBucket.employeeList"
+                                class="assigned-employee">
+                                <img
+                                    ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
+                                    width="100%"
+                                    height="100%"/>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
