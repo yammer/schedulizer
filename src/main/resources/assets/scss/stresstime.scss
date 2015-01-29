@@ -13,6 +13,29 @@ body {
 
 /* Calendar */
 
+$light-fg: #FFFFFF;
+$dark-fg: #828282;
+
+$selected-bg: #2EC3E5;
+$odd-bg: #D9D9D9;
+$even-bg: #EEEEEE;
+$today-bg: #F99A4A;
+$assigned-bg: #6FDF6F;
+$mid-assigned-bg: #F2D253;
+
+@mixin colorize-day($color) {
+    background-color: $color;
+    &.even { background-color: mix($color, $even-bg, 85%); }
+    &.odd { background-color: mix($color, $odd-bg, 85%); }
+    .hoverable &:hover { background-color: lighten($color, 10%); }
+    &.selected {
+        background-color: mix($selected-bg, $color, 60%);
+        .hoverable &:hover {
+            background-color: lighten(mix($selected-bg, $color, 60%), 10%);
+        }
+    }
+}
+
 .view-calendar td, .view-calendar th {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -57,56 +80,36 @@ body {
     cursor: default;
 }
 .day.odd, .month.odd {
-    color: #828282;
-    background-color: #D9D9D9;
+    color: $dark-fg;
+    background-color: $odd-bg;
 }
 .day.even, .month.even {
-    color: #8D8D8D;
-    background-color: #EEEEEE;
-}
-.day.today {
-    color: #FFFFFF;
-    background-color: #FFAA25;
-}
-.hoverable .day.today:hover {
-    color: #FFFFFF;
-    background-color: #FFBB38;
+    color: $dark-fg;
+    background-color: $even-bg;
 }
 .hoverable .day:hover, .day.hover {
-    color: #FFFFFF;
-    background-color: #2EC3E5;
+    color: $light-fg;
+    background-color: $selected-bg;
 }
-
 .day.selected {
-    color: #FFFFFF;
-    background-color: #2EC3E5;
+    color: $light-fg;
+    background-color: $selected-bg;
+    &.odd { background-color: mix($selected-bg, $odd-bg, 90%); }
+    &.even { background-color: mix($selected-bg, $even-bg, 90%); }
+    .hoverable &:hover {
+        background-color: lighten($selected-bg, 10%);
+    }
 }
 
-.day.today.selected {
-    background-color: #97B785;
+.day.today {
+    color: $light-fg;
+    @include colorize-day($today-bg);
 }
-
-.hoverable .day.today.selected:hover {
-    background-color: #A7C795;
-}
-
-.hoverable .day.selected:hover {
-    background-color: #3ED3F5;
-}
-
-/*.hoverable .day.odd.selected:hover {
-    color: #828282;
-    background-color: #D9D9D9;
-}
-.hoverable .day.even.selected:hover {
-    color: #8D8D8D;
-    background-color: #EEEEEE;
-}*/
 
 .calendar-header {
     margin-top: -54px;
     border-spacing: 4px 0;
-    position: fixed;
+    position: absolute;
 }
 .calendar-header .month {
     vertical-align: middle;
@@ -120,14 +123,15 @@ body {
 
 /* Group View Calendar */
 
-.day.even.assigned {
-    background-color: #33DD33;
-    color: #FFF;
+.day.assigned {
+    color: $light-fg;
+    @include colorize-day($assigned-bg);
 }
-.day.odd.assigned {
-    background-color: #33DD33;
-    color: #FFF;
+.day.mid-assigned {
+    color: $light-fg;
+    @include colorize-day($mid-assigned-bg);
 }
+
 
 
 /* Header */
