@@ -111,7 +111,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             for (var j = 0; j < assignableDays[i].assignments.length; j++) {
                 var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
                 var employeeId = assignableDays[i].assignments[j].employeeId;
-                var employee = employeesMap[employeeId];
+                var employee = $scope.selectedGroup.employeeMap[employeeId];
                 if($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
                     $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] = {
                         employee: employee,
