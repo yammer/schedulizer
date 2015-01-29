@@ -291,7 +291,6 @@ body {
     height: 50px;
     margin-left: 8px;
     border-radius: 50%;
-    cursor: pointer;
 }
 
 .employee-card .avatar-wrapper.with-image img {
@@ -308,15 +307,7 @@ body {
     color: #FFF;
 }
 
-.employee-card .avatar-wrapper.with-image:hover img {
-    display: none;
-}
-
-.employee-card .avatar-wrapper.with-image:hover {
-    background-color: #CC5555;
-}
-
-.employee-card .avatar-wrapper.no-image, .employee-card .avatar-wrapper.with-image:hover {
+.employee-card .avatar-wrapper.no-image {
     font-size: 31px;
     font-weight: bold;
     text-align: center;
@@ -421,7 +412,7 @@ body {
 
 /* Deletable card */
 
-.deletable-card a {
+.deletable-card {
     position: relative;
 }
 
@@ -446,13 +437,21 @@ body {
     width: 23px;
 }
 
-.deletable-card .content:hover .delete {
+.deletable-card:hover .delete {
     display: block;
 }
 
 .deletable-card .delete:hover {
     display: block;
     background-color: #CC5555;
+}
+
+.deletable-card.employee-card .delete div {
+    top: -65%;
+}
+
+.deletable-card.employee-card .delete {
+    top: 36%;
 }
 
 /* drag and drop */

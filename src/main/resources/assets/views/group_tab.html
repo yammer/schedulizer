@@ -9,7 +9,7 @@
                 ng-repeat="group in groups | filter: groupSearch"
                 class="deletable-card"
                 >
-                <a class="content" ui-sref="groups.view({groupId: {{group.id}}})">
+                <a ui-sref="groups.view({groupId: {{group.id}}})">
                     {{group.name}}
                     <div class="delete" ng-click="deleteGroup(group, $event);">
                         <div>-</div>
