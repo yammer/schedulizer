@@ -90,6 +90,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     $scope.onHoverDay = function(day) {
         $scope.dayStamp = day.date;
+        $scope.hoveredDay = day;
     }
 
     $scope.clearSelection = function() {
@@ -149,15 +150,30 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     });
 
     var GroupViewDayContent = function(assignments) {
-        this.assignments = assignments;
+        this.assignments = _.groupBy(assignments, function(assignment) {
+            return assignment.assignmentTypeId;
+        });
+        this.assignments = _.object(_.map(this.assignments, function(assignments, id) {
+            var employees = _.uniq(_.map(assignments, function(assignment) {
+                return $scope.selectedGroup.employeeFor(assignment.employeeId);
+            }));
+            return [id, employees]
+        }));
     }
 
-    GroupViewDayContent.prototype.assignments = [];
+    GroupViewDayContent.prototype.assignments = {};
 
     GroupViewDayContent.prototype.numberOfRoles = function() {
-        return _.uniq(_.map(this.assignments, function(assignment) {
-            return assignment.assignmentTypeId;
-        })).length;
+        return _.size(this.assignments);
+    }
+
+    GroupViewDayContent.prototype.isMidAssigned = function() {
+        var roles = this.numberOfRoles();
+        return 0 < roles && roles < $scope.selectedGroup.assignmentTypes.length;
+    }
+
+    GroupViewDayContent.prototype.isAssigned = function() {
+        return this.numberOfRoles() == $scope.selectedGroup.assignmentTypes.length;
     }
 
     $scope.onLoadDayContent = function(days) {
@@ -177,9 +193,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             }, function(assignableDays) {
                 console.log('returned');
                 _.each(assignableDays, function(assignableDay) {
-                    days[assignableDay.date].content = {
-                        assignments: assignableDay.assignments
-                    }
+                    days[assignableDay.date].content = new GroupViewDayContent(assignableDay.assignments);
                 });
             }
         );

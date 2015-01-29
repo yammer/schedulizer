@@ -37,6 +37,19 @@
                 <div class="sub-label">{{dayStamp.getMonthName()}}</div>
                 <div class="main-label">{{dayStamp.getDate()}}</div>
             </div>
+            <div ng-if="hoveredDay && hoveredDay.content && hoveredDay.content.assignments" class="day-assignments">
+                <div ng-repeat="(roleId, employees) in hoveredDay.content.assignments" class="day-assignment">
+                    <div class="day-assignment-role">
+                        <span>{{selectedGroup.assignmentTypeFor(roleId).name}}</span>
+                    </div>
+                    <div class="day-assignment-avatars">
+                        <img
+                            ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
+                            ng-repeat="employee in employees">
+                    </div>
+                </div>
+            </div>
+
         </div>
         <calendar
                 class="calendar"
@@ -91,6 +104,14 @@
                 <tr>
                     <td class="day hover"></td>
                     <td class="description" colspan="2">Selected</td>
+                </tr>
+                <tr>
+                    <td class="day mid-assigned"></td>
+                    <td class="description" colspan="2">Partially Assigned</td>
+                </tr>
+                <tr>
+                    <td class="day assigned"></td>
+                    <td class="description" colspan="2">Fully Assigned</td>
                 </tr>
             </table>
         </div>

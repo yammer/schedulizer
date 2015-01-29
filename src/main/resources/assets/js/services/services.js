@@ -53,7 +53,20 @@ services.factory('Group', ['$resource', function($resource) {
         }
     });
     Group.prototype.employees = [];
+    Group.prototype.employeeFor = function(id) {
+        return _.find(this.employees, function(employee) {
+            return employee.id == id;
+        })
+    }
+
     Group.prototype.assignmentTypes = [];
+    Group.prototype.assignmentTypeFor = function(id) {
+        return _.find(this.assignmentTypes, function(assignmentType) {
+            return assignmentType.id == id;
+        });
+    }
+
+
     return Group;
 }]);
 
