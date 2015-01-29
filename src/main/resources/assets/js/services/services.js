@@ -100,7 +100,7 @@ services.factory('AssignableDay', ['$resource', function($resource) {
         },
         delete: {
             method: 'DELETE',
-            params: { assignment_type_id: "@id" },
+            params: { assignment_id: "@id" },
             transformRequest: [urlencodedTransformRequest],
             headers: SHARED_HEADERS
         }

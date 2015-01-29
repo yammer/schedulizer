@@ -353,8 +353,8 @@ body {
     width: 150px;
     height: 100px;
     margin: 10px 0;
-    background-color: #ddd;
-    padding: 35px 5px 5px 5px;
+    background-color: #eee;
+    padding: 32px 5px 5px 5px;
     position: relative;
 }
 
@@ -363,7 +363,7 @@ body {
     font-size: 16px;
     margin: 5px;
     position: absolute;
-    top: 5px;
+    top: 3px;
     left: 5px;
 }
 
@@ -374,14 +374,44 @@ body {
 
 .bucket .bucket-content .assigned-employee {
     display: inline-block;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
     margin: 5px;
+    border-radius: 14%;
+    position: relative;
 }
 
 .bucket .bucket-content .assigned-employee img {
     max-width: 35px;
     max-height: 35px;
-    border-radius: 50%;
+    border-radius: 14%;
+    opacity: 0.75;
 }
+
+.bucket .bucket-content .assigned-employee .minus-span {
+    font-size: 30px;
+    color: white;
+    visibility: hidden;
+    position: absolute;
+    top: -6px;
+    left: 12px;
+}
+
+.bucket .bucket-content .assigned-employee:hover img {
+    visibility: hidden;
+}
+
+.bucket .bucket-content .assigned-employee:hover .minus-span {
+    visibility: visible;
+}
+
+.bucket .bucket-content .assigned-employee:hover {
+    background-color: #e06969;
+}
+
+
+
 
 /* New Group form */
 

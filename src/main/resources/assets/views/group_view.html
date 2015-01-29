@@ -54,16 +54,18 @@
                     <div class="bucket"
                          ng-repeat="assignmentTypeBucket in assignmentTypeBuckets"
                          ng-droppable
-                         ng-on-drop="onDrop(dragEl, dropEl, data, assignmentTypeBucket.assignmentType)">
+                         ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
                         <div class="bucket-content">
                             <div
                                 ng-repeat="employee in assignmentTypeBucket.employeeList"
-                                class="assigned-employee">
+                                class="assigned-employee"
+                                ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)">
                                 <img
                                     ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
                                     width="100%"
                                     height="100%"/>
+                                <span class="minus-span">-</span>
                             </div>
                         </div>
 

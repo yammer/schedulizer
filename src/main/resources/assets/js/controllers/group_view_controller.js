@@ -52,16 +52,18 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         assignmentType.$save({}, function() {
             group.assignmentTypes.unshift(assignmentType);
             $scope.newAssignmentTypeName = "";
-            console.log(assignmentType.id);
+            initAssignmentTypeBucket(assignmentType);
         });
 
     }
 
     $scope.deleteAssignmentType = function (assignmentType) {
         var group = $scope.selectedGroup;
-        group.assignmentTypes = _.without(group.assignmentTypes, _.findWhere(group.assignmentTypes, assignmentType));
         assignmentType.groupId = group.id;
-        assignmentType.$delete();
+        assignmentType.$delete({}, function() {
+            group.assignmentTypes.remove(assignmentType);
+            delete $scope.assignmentTypeBuckets[assignmentType.id];
+        });
     }
 
     function getCalendar() {
@@ -90,17 +92,39 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     $scope.selectedDays = [];
     $scope.selectedDay = undefined;
 
+    function initAssignmentTypeBucket(assignmentType) {
+        $scope.assignmentTypeBuckets[assignmentType.id] = {
+            employeeList: {},
+            assignmentType: assignmentType
+        };
+    }
+
+    function initAssignmentBuckets() {
+        var assignmentTypes = $scope.selectedGroup.assignmentTypes;
+        for (var i = 0; i < assignmentTypes.length; i++) {
+            initAssignmentTypeBucket(assignmentTypes[i]);
+        }
+    }
+
     function updateAssignmentTypeBuckets(assignableDays) {
         for (var i = 0; i < assignableDays.length; i++) {
             for (var j = 0; j < assignableDays[i].assignments.length; j++) {
                 var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
                 var employeeId = assignableDays[i].assignments[j].employeeId;
                 var employee = employeesMap[employeeId];
-                $scope.assignmentTypeBuckets[assignmentTypeId].employeeList.push(employee);
-                $scope.assignmentTypeBuckets[assignmentTypeId].employeeList =
-                    _.uniq($scope.assignmentTypeBuckets[assignmentTypeId].employeeList, function(e) {
-                        return e.id;
-                    });
+                if($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
+                    $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] = {
+                        employee: employee,
+                        assignments: []
+                    };
+                }
+                $scope
+                    .assignmentTypeBuckets[assignmentTypeId]
+                    .employeeList[employeeId]
+                    .assignments.push(assignableDays[i].assignments[j].id);
+
+                $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId].assignments =
+                    _.unique($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId].assignments);
             }
         }
     }
@@ -108,14 +132,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     $scope.onSelectDays = function(days) {
         $scope.selectedDays = days;
         $scope.assignmentTypeBuckets = {};
-        var assignmentTypes = $scope.selectedGroup.assignmentTypes;
-        for (var i = 0; i < assignmentTypes.length; i++) {
-            $scope.assignmentTypeBuckets[assignmentTypes[i].id] = {
-                employeeList: [], // TODO get this information from days
-                assignmentType: assignmentTypes[i]
-            };
-        }
-        console.log($scope.assignmentTypeBuckets);
+        initAssignmentBuckets();
     }
 
     $scope.$watch('selectedGroup', function() {
@@ -161,7 +178,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     }
 
-    function addAssignment(employee, assignmentType) {
+    $scope.addAssignment = function (employee, assignmentType) {
         var group = $scope.selectedGroup;
         var days = $scope.selectedDays;
         AssignableDay.save({
@@ -174,9 +191,22 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         });
     }
 
-    $scope.onDrop = function (dragEl, dropEl, employee, assignmentType) {
-        addAssignment(employee, assignmentType);
+    $scope.deleteAssignments = function(bucketEmployee, bucketEmployeeList) {
+        var count = 0;
+        var total = bucketEmployee.assignments.length;
+        angular.forEach(bucketEmployee.assignments, function(assignmentId) {
+            AssignableDay.delete({
+                assignment_id: assignmentId,
+                group_id: $scope.selectedGroup.id
+            }, function() {
+                count++;
+                if (count == total) {
+                    delete bucketEmployeeList[bucketEmployee.employee.id];
+                }
+            });
+        });
     }
+
 
     // TODO: Ugly hack!
     $timeout(resizeCalendar, 300)
