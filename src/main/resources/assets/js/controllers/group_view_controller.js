@@ -138,10 +138,17 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         }
     }
 
-    $scope.onSelectDays = function(days) {
-        $scope.selectedDays = days;
+    $scope.onSelectDays = function(selection) {
+        $scope.selectedDays = selection.dates();
         $scope.assignmentTypeBuckets = {};
         initAssignmentBuckets();
+
+        var assignableDays = _.filter(selection.days, function(day){
+            return day.content != null && day.content.assignableDay != null
+        }).map(function(day){
+            return day.content.assignableDay;
+        });
+        updateAssignmentTypeBuckets(assignableDays)
     }
 
     $scope.$watch('selectedGroup', function() {
@@ -149,8 +156,9 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         getAssignmentTypeData($scope.selectedGroup);
     });
 
-    var GroupViewDayContent = function(assignments) {
-        this.assignments = _.groupBy(assignments, function(assignment) {
+    var GroupViewDayContent = function(assignableDay) {
+        this.assignableDay = assignableDay;
+        this.assignments = _.groupBy(assignableDay.assignments, function(assignment) {
             return assignment.assignmentTypeId;
         });
         this.assignments = _.object(_.map(this.assignments, function(assignments, id) {
@@ -160,6 +168,8 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             return [id, employees]
         }));
     }
+
+    GroupViewDayContent.prototype.assignableDay = null;
 
     GroupViewDayContent.prototype.assignments = {};
 
@@ -211,7 +221,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         }
 
         _.each(assignableDays, function(assignableDay) {
-            daysMap[assignableDay.date].content = new GroupViewDayContent(assignableDay.assignments);
+            daysMap[assignableDay.date].content = new GroupViewDayContent(assignableDay);
         });
     }
 

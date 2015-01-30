@@ -247,7 +247,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
     };
 
     function onSelectDays() {
-        $scope.onSelectDaysParent(selection.dates());
+        $scope.onSelectDaysParent(selection);
     }
 
     function isCtrl(e) {
