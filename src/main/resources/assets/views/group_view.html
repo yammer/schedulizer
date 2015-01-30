@@ -10,7 +10,11 @@
             </span>
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
-        <span class="add-assignment-type" ng-click="isCreatingAssignmentType = true;">+</span>
+        <span class="add-assignment-type"
+              ng-click="maybeAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
+                >
+            +
+        </span>
         <div class="assignment-type-form">
             <input ng-show="isCreatingAssignmentType"
                    ng-focus="isCreatingAssignmentType"

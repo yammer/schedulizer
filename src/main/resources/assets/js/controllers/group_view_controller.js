@@ -3,6 +3,8 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
+    $scope.assignmentTypeBuckets = {};
+
     function getGroupEmployeesData(group) {
         if (group == EMPTY_GROUP) {
             group.employees = [];
@@ -55,6 +57,12 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             initAssignmentTypeBucket(assignmentType);
         });
 
+    }
+
+    $scope.maybeAddAssignmentType = function() {
+        if ($scope.isCreatingAssignmentType) {
+            $scope.addAssignmentType();
+        }
     }
 
     $scope.deleteAssignmentType = function (assignmentType) {
