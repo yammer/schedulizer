@@ -104,7 +104,7 @@ services.factory('AssignmentType', ['$resource', function($resource) {
 }]);
 
 services.factory('AssignableDay', ['$resource', function($resource) {
-    return $resource(PREFIX + 'groups/:group_id/assignments/:assignment_id', {group_id: '@groupId'}, {
+    var AssignableDay = $resource(PREFIX + 'groups/:group_id/assignments/:assignment_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             isArray: true,
@@ -118,4 +118,10 @@ services.factory('AssignableDay', ['$resource', function($resource) {
             headers: SHARED_HEADERS
         }
     });
+
+    AssignableDay.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    }
+
+    return AssignableDay;
 }]);

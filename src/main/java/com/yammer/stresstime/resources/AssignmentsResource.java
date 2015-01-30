@@ -100,7 +100,11 @@ public class AssignmentsResource {
 
         Assignment assignment = assignmentManager.getById(assignmentId);
         ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
+        AssignableDay assignableDay = assignment.getAssignableDay();
         assignmentManager.delete(assignment);
-        return Response.noContent().build();
+        assignmentManager.flush();
+        assignableDayManager.refresh(assignableDay);
+        String response = ResourceUtils.preProcessResponse(assignableDay);
+        return Response.ok().entity(response).build();
     }
 }

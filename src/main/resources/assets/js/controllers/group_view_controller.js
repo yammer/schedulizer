@@ -176,14 +176,19 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         return this.numberOfRoles() == $scope.selectedGroup.assignmentTypes.length;
     }
 
+    GroupViewDayContent.prototype.assign = function() {
+    }
+
+    function indexDaysByISOString(days) {
+        return _.indexBy(days, function(day) {
+            return day.date.toISOLocalDateString();
+        })
+    }
+
     $scope.onLoadDayContent = function(days) {
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
-        days = _.indexBy(days, function(day) {
-            return day.date.toISOLocalDateString();
-        });
-
-        console.log('trigger request from ' + startDate + ' to ' + endDate + ' of ' + days.length+ ' days');
+        var daysMap = indexDaysByISOString(days);
 
         assignableDays = AssignableDay.query(
             {
@@ -191,62 +196,36 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
             }, function(assignableDays) {
-                console.log('returned');
-                _.each(assignableDays, function(assignableDay) {
-                    days[assignableDay.date].content = new GroupViewDayContent(assignableDay.assignments);
-                });
+                updateDayAssignments(assignableDays, daysMap);
             }
         );
 
     }
 
-    var GroupViewDayContent = function(assignments) {
-        this.assignments = assignments;
-    }
+    function updateDayAssignments(assignableDays, daysMap) {
+        if (daysMap == null) {
+            var dates = _.map(assignableDays, function(assignableDay) {
+                return assignableDay.getDate();
+            });
+            daysMap = indexDaysByISOString(getCalendar().getDays(dates));
+        }
 
-    GroupViewDayContent.prototype.assignments = [];
-
-    GroupViewDayContent.prototype.numberOfRoles = function() {
-        return _.uniq(_.map(this.assignments, function(assignment) {
-            return assignment.assignmentTypeId;
-        })).length;
-    }
-
-    $scope.onLoadDayContent = function(days) {
-        var startDate = days[0].date;
-        var endDate = days[days.length - 1].date;
-        days = _.indexBy(days, function(day) {
-            return day.date.toISOLocalDateString();
+        _.each(assignableDays, function(assignableDay) {
+            daysMap[assignableDay.date].content = new GroupViewDayContent(assignableDay.assignments);
         });
-
-        console.log('trigger request from ' + startDate + ' to ' + endDate + ' of ' + days.length+ ' days');
-
-        assignableDays = AssignableDay.query(
-            {
-                group_id: $scope.selectedGroup.id,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
-            }, function(assignableDays) {
-                console.log('returned');
-                _.each(assignableDays, function(assignableDay) {
-                    days[assignableDay.date].content = {
-                        assignments: assignableDay.assignments
-                    }
-                });
-            }
-        );
-
     }
 
-    $scope.addAssignment = function (employee, assignmentType) {
+    $scope.addAssignment = function(employee, assignmentType) {
         var group = $scope.selectedGroup;
         var days = $scope.selectedDays;
+        var daysString = days.map(function(d) {return d.toISOLocalDateString();}).join();
         AssignableDay.save({
             groupId: group.id,
             employee_id:employee.id,
             assignment_type_id:assignmentType.id,
-            dates: days.map(function(d) { return d.toISOLocalDateString() }).join()
+            dates: daysString
         }, function(assignableDays) {
+            updateDayAssignments(assignableDays);
             updateAssignmentTypeBuckets(assignableDays);
         });
     }
@@ -258,7 +237,8 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             AssignableDay.delete({
                 assignment_id: assignmentId,
                 group_id: $scope.selectedGroup.id
-            }, function() {
+            }, function(assignableDay) {
+                updateDayAssignments([assignableDay]);
                 count++;
                 if (count == total) {
                     delete bucketEmployeeList[bucketEmployee.employee.id];

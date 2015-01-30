@@ -151,6 +151,12 @@ App.controller('CalendarController', function ($timeout, $scope) {
         }
     }
 
+    $scope.getDays = function(dates) {
+        return _.map(dates, function(date) {
+            return getDay(date);
+        })
+    }
+
     function nextUnloadedWeek(i) {
         for (var n = $scope.calendar.length; i < n; i++) {
             if (!$scope.calendar[i].loaded) return i;

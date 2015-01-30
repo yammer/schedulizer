@@ -10,6 +10,14 @@ Date.max = function(a, b) {
  return (a > b) ? a : b;
 };
 
+Date.fromISOLocalString = function(string) {
+    var parts = string.split("-");
+    var d = new Date();
+    d.setMonth(parseInt(parts[1]) - 1, parseInt(parts[2]));
+    d.setYear(parseInt(parts[0]));
+    return d;
+}
+
 Date.firstDayOfThisMonth = function() {
     var d = new Date();
     d.setDate(1);

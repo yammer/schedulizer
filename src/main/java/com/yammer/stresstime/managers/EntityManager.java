@@ -54,6 +54,16 @@ public class EntityManager<E> extends AbstractDAO<E> {
         }
     }
 
+    public void flush() {
+        currentSession().flush();
+    }
+
+    public void refresh(E... entities) {
+        for (E entity : entities) {
+            currentSession().refresh(entity);
+        }
+    }
+
     // Needs to be a valid entity
     public void delete(E entity) {
         currentSession().delete(entity);
