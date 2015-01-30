@@ -14,10 +14,6 @@ public class GroupManager extends EntityManager<Group> {
         super(sessionFactory, Group.class);
     }
 
-    public List<Group> all() {
-        return list(currentSession().createQuery("from Group"));
-    }
-
     public Group random() {
         /* TODO: Hit db directly */
         List<Group> groups = all();

@@ -10,8 +10,9 @@ import org.joda.time.LocalDate;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/assignments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -64,28 +65,28 @@ public class AssignmentsResource {
             @PathParam("group_id") long groupId,
             @FormParam("employee_id") long employeeId,
             @FormParam("assignment_type_id") long assignmentTypeId,
-            @FormParam("dates") String datesString) {
+            @FormParam("dates") String dates) {
+
+        ResourceUtils.checkParameter(dates != null, "dates");
+
         Employee employee = employeeManager.getById(employeeId);
         AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
         Group group = assignmentType.getGroup();
         ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
 
-        List<Assignment> assignments = new ArrayList<>();
-        String[] dateStringList = datesString.split(",");
-        for(String dateString : dateStringList) {
-            ResourceUtils.checkParameter(dateString != null, "date");
-            LocalDate date = LocalDate.parse(dateString);
+        List<AssignableDay> assignableDays = Arrays.stream(dates.split(","))
+                .map(LocalDate::parse)
+                .map(d -> assignableDayManager.getOrCreateByGroupDate(group, d))
+                .collect(Collectors.toList());
 
-            AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
-            Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-            assignments.add(assignment);
-        }
+        List<Assignment> assignments = assignableDays.stream()
+                .map(a -> new Assignment(employee, a, assignmentType))
+                .filter(a -> !assignmentManager.exists(a))
+                .collect(Collectors.toList());
+
         assignmentManager.save(assignments);
+        assignableDayManager.refresh(assignableDays);
 
-        List<AssignableDay> assignableDays = new ArrayList<>();
-        for (Assignment assignment : assignments) {
-            assignableDays.add(assignment.getAssignableDay());
-        }
         // Avoid hibernate lazy eval problems with premature session closing
         String response = ResourceUtils.preProcessResponse(assignableDays);
         return Response.ok().entity(response).build();
@@ -102,7 +103,6 @@ public class AssignmentsResource {
         ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
         AssignableDay assignableDay = assignment.getAssignableDay();
         assignmentManager.delete(assignment);
-        assignmentManager.flush();
         assignableDayManager.refresh(assignableDay);
         String response = ResourceUtils.preProcessResponse(assignableDay);
         return Response.ok().entity(response).build();
