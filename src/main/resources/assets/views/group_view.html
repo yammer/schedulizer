@@ -2,27 +2,29 @@
     <h1 class="header">
         {{selectedGroup.name}}
         <div class="assignment-types-wrapper">
-            <span
+            <div
                 ng-repeat="assignmentType in selectedGroup.assignmentTypes"
                 class="assignment-type-label">
                 {{assignmentType.name}}
-                <span class="delete" ng-click="deleteAssignmentType(assignmentType)">x</span>
-            </span>
+                <div class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
+            </div>
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
         <span class="add-assignment-type"
-              ng-click="maybeAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
-                >
+            ng-click="maybeAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
+            >
             +
         </span>
         <div class="assignment-type-form">
-            <input ng-show="isCreatingAssignmentType"
-                   ng-focus="isCreatingAssignmentType"
-                   class="form-control"
-                   type="text"
-                   ng-model="newAssignmentTypeName"
-                   placeholder="Name"
-                   ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"/>
+            <input
+                ng-show="isCreatingAssignmentType"
+                ng-focus="isCreatingAssignmentType"
+                class="form-control"
+                type="text"
+                ng-model="newAssignmentTypeName"
+                placeholder="Name"
+                ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"
+                />
         </div>
     </h1>
     <div class="calendar-wrap">

@@ -2,6 +2,8 @@ body {
     padding-top: 50px;
 }
 
+$light-grey: #F5F5F5;
+
 /* Text rotation */
 
 .rotate90deg {
@@ -137,7 +139,7 @@ $mid-assigned-bg: #F2D253;
 /* Header */
 
 .header {
-    color: #8D8D8D;
+    color: $light-grey;
     font-size: 22px;
     background-color: #F5F5F5;
     border-bottom: 1px solid #EEEEEE;
@@ -484,55 +486,74 @@ $mid-assigned-bg: #F2D253;
 $role-bg: #E06969;
 
 .assignment-type-label {
+    float: right;
+    text-align: center;
     background-color: $role-bg;
     border-radius: 4px;
     font-size: 12px;
-    padding: 7px 5px 7px 25px;
+    padding: 7px 30px 7px 25px;
     margin-left: 20px;
     color: white;
+
     font-weight: normal;
     cursor: pointer;
+    position: relative;
+
+    .delete {
+        position: absolute;
+        right: -6px;
+        top: 6px;
+        border-radius: 8px;
+        color: darken($role-bg, 20%);
+        background-color: $light-grey;
+        padding: 0px 3px 1px 3px;
+        font-size: 18px;
+        line-height: 12px;
+        border: 1px solid darken($role-bg, 20%);
+        visibility: hidden;
+
+    }
 
     &:hover {
         background-color: darken($role-bg, 20%);
-        padding: 7px 5px 7px 17px;
+
+        .delete {
+            visibility: visible;
+
+            &:hover {
+                color: #FFFFFF;
+                background-color: darken($role-bg, 20%);
+            }
+        }
     }
+
 }
 
-.assignment-type-label .delete {
-    padding-left: 7px;
-    padding-right: 8px;
-    visibility: hidden;
-}
-
-.assignment-type-label:hover .delete {
-    visibility: visible;
-    padding-left: 11px;
-    padding-right: 12px;
-}
+$add-assignment-type-color: #C9C9C9;
 
 .add-assignment-type {
     cursor: pointer;
     float: right;
     font-size: 38px;
-    margin-top: -14px;
-    color: #c9c9c9;
+    margin-top: -13px;
+    color: $add-assignment-type-color;
 }
 
 .add-assignment-type:hover {
-    color: inherit;
+    color: darken($add-assignment-type-color, 20%);
 }
 
 .assignment-types-wrapper {
     float: right;
-    margin-top: -4px;
+    margin-top: -1px;
 }
 
 .assignment-type-form {
     float: right !important;
     width: 150px;
     margin-right: 20px;
-    margin-top: -4px;
+    margin-top: -5px;
+    font-weight: normal;
 }
 
 /* Assignments details on hovered day (column to the left of calendar) */
