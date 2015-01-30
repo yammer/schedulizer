@@ -3,6 +3,7 @@ body {
 }
 
 $light-grey: #F5F5F5;
+$dark-grey: #A6A6A6;
 
 /* Text rotation */
 
@@ -139,9 +140,9 @@ $mid-assigned-bg: #F2D253;
 /* Header */
 
 .header {
-    color: $light-grey;
+    color: $dark-grey;
     font-size: 22px;
-    background-color: #F5F5F5;
+    background-color: $light-grey;
     border-bottom: 1px solid #EEEEEE;
     margin: 0 -15px 15px -15px;
     padding: 18px 15px 17px 15px;
@@ -529,18 +530,16 @@ $role-bg: #E06969;
 
 }
 
-$add-assignment-type-color: #C9C9C9;
-
 .add-assignment-type {
     cursor: pointer;
     float: right;
     font-size: 38px;
     margin-top: -13px;
-    color: $add-assignment-type-color;
+    color: $dark-grey;
 }
 
 .add-assignment-type:hover {
-    color: darken($add-assignment-type-color, 20%);
+    color: darken($dark-grey, 20%);
 }
 
 .assignment-types-wrapper {
