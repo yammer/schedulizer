@@ -6,14 +6,17 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
     function selectGroup() {
         $scope.selectedGroup = _.find($scope.groups, function(g) {
             return g.id == parseInt($state.params.groupId);
-        }) || EMPTY_GROUP;
+        });
+        if ($scope.selectedGroup == null) {
+            // Changing the location path instead of $state.go because
+            // I want to go to a parent state, so it wouldn't change the url
+            $location.path('groups')
+        }
     }
 
     $rootScope.$on('$stateChangeSuccess', selectGroup);
 
-    $scope.groups = Group.query({}, function() {
-        selectGroup();
-    });
+    $scope.groups = Group.query({}, selectGroup);
 
     $scope.createNewGroup = function() {
         var groupName = $scope.newGroupName;
@@ -22,14 +25,10 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
         var group = new Group();
         group.name = groupName;
         group.$save(function() {
-            if ($scope.groups.length == 0) {
-                $timeout( function(){
-                    $scope.groups = Group.query({});
-                },0);
-            }
-            else {
+            $scope.groups.$promise.then(function() {
                 $scope.groups.push(group);
-            }
+                $state.go('groups.view', {groupId: group.id});
+            })
             $scope.newGroupName = "";
         });
     }
@@ -39,10 +38,9 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
             $scope.groups.remove(group);
             if ($scope.isSelectedGroup(group)) {
                 if ($scope.groups.length == 0) {
-                    $state.go('.', { groupId: 'default' });
-                }
-                else {
-                    $state.go('.', { groupId: $scope.groups[0].id });
+                    $state.go('groups');
+                } else {
+                    $state.go('.', {groupId: $scope.groups[0].id});
                 }
             }
         });
@@ -51,6 +49,6 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
     }
 
     $scope.isSelectedGroup = function(group) {
-        return group && group.id == $scope.selectedGroup.id;
+        return group && $scope.selectedGroup && group.id == $scope.selectedGroup.id;
     }
 });
