@@ -10,7 +10,9 @@ import org.joda.time.LocalDate;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/assignments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,19 +65,31 @@ public class AssignmentsResource {
             @PathParam("group_id") long groupId,
             @FormParam("employee_id") long employeeId,
             @FormParam("assignment_type_id") long assignmentTypeId,
-            @FormParam("date") String dateString) {
+            @FormParam("dates") String dates) {
 
-        ResourceUtils.checkParameter(dateString != null, "date");
+        ResourceUtils.checkParameter(dates != null, "dates");
 
-        LocalDate date = LocalDate.parse(dateString);
         Employee employee = employeeManager.getById(employeeId);
         AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
         Group group = assignmentType.getGroup();
         ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
-        AssignableDay assignableDay = assignableDayManager.getOrCreateByGroupDate(group, date);
-        Assignment assignment = new Assignment(employee, assignableDay, assignmentType);
-        assignmentManager.save(assignment);
-        return Response.ok().entity(assignment).build();
+
+        List<AssignableDay> assignableDays = Arrays.stream(dates.split(","))
+                .map(LocalDate::parse)
+                .map(d -> assignableDayManager.getOrCreateByGroupDate(group, d))
+                .collect(Collectors.toList());
+
+        List<Assignment> assignments = assignableDays.stream()
+                .map(a -> new Assignment(employee, a, assignmentType))
+                .filter(a -> !assignmentManager.exists(a))
+                .collect(Collectors.toList());
+
+        assignmentManager.save(assignments);
+        assignableDayManager.refresh(assignableDays);
+
+        // Avoid hibernate lazy eval problems with premature session closing
+        String response = ResourceUtils.preProcessResponse(assignableDays);
+        return Response.ok().entity(response).build();
     }
 
     @DELETE
@@ -87,7 +101,10 @@ public class AssignmentsResource {
 
         Assignment assignment = assignmentManager.getById(assignmentId);
         ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
+        AssignableDay assignableDay = assignment.getAssignableDay();
         assignmentManager.delete(assignment);
-        return Response.noContent().build();
+        assignableDayManager.refresh(assignableDay);
+        String response = ResourceUtils.preProcessResponse(assignableDay);
+        return Response.ok().entity(response).build();
     }
 }

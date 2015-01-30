@@ -10,6 +10,14 @@ Date.max = function(a, b) {
  return (a > b) ? a : b;
 };
 
+Date.fromISOLocalString = function(string) {
+    var parts = string.split("-");
+    var d = new Date();
+    d.setMonth(parseInt(parts[1]) - 1, parseInt(parts[2]));
+    d.setYear(parseInt(parts[0]));
+    return d;
+}
+
 Date.firstDayOfThisMonth = function() {
     var d = new Date();
     d.setDate(1);
@@ -62,6 +70,16 @@ Date.prototype.getMonthName = function() {
         "October", "November", "December"];
     return monthNames[this.getMonth()];
 };
+
+Date.prototype.toISOLocalDateString = function() {
+    var pad = function(n) {
+        if (n < 10) return '0' + n;
+        return n;
+    }
+    return this.getFullYear() +
+        '-' + pad(this.getMonth() + 1) +
+        '-' + pad(this.getDate());
+}
 
 Array.prototype.remove = function(item) {
     this.splice(this.indexOf(item), 1);

@@ -1,5 +1,32 @@
 <div class="col-md-8 main">
-    <h1 class="header">{{selectedGroup.name}}</h1>
+    <h1 class="header">
+        {{selectedGroup.name}}
+        <div class="assignment-types-wrapper">
+            <div
+                ng-repeat="assignmentType in selectedGroup.assignmentTypes"
+                class="assignment-type-label">
+                {{assignmentType.name}}
+                <div class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
+            </div>
+            <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
+        </div>
+        <span class="add-assignment-type"
+            ng-click="maybeAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
+            >
+            +
+        </span>
+        <div class="assignment-type-form">
+            <input
+                ng-show="isCreatingAssignmentType"
+                ng-focus="isCreatingAssignmentType"
+                class="form-control"
+                type="text"
+                ng-model="newAssignmentTypeName"
+                placeholder="Name"
+                ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"
+                />
+        </div>
+    </h1>
     <div class="calendar-wrap">
         <div class="left-bar">
             <div class="tools">
@@ -12,11 +39,25 @@
                 <div class="sub-label">{{dayStamp.getMonthName()}}</div>
                 <div class="main-label">{{dayStamp.getDate()}}</div>
             </div>
+            <div ng-if="hoveredDay && hoveredDay.content && hoveredDay.content.assignments" class="day-assignments">
+                <div ng-repeat="(roleId, employees) in hoveredDay.content.assignments" class="day-assignment">
+                    <div class="day-assignment-role">
+                        <span>{{selectedGroup.assignmentTypeFor(roleId).name}}</span>
+                    </div>
+                    <div class="day-assignment-avatars">
+                        <img
+                            ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
+                            ng-repeat="employee in employees">
+                    </div>
+                </div>
+            </div>
+
         </div>
         <calendar
                 class="calendar"
                 on-select-days="onSelectDays"
                 on-hover-day="onHoverDay"
+                on-load-day-content="onLoadDayContent"
                 >
 
         </calendar>
@@ -29,32 +70,25 @@
                 </div>
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Primary</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Secondary</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">P.S.</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Whatever</div>
-
-                    </div>
-
-                    <div class="bucket" ng-droppable ng-on-drop="onDrop">
-                        <div class="bucket-name">Hello</div>
+                    <div class="bucket"
+                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets"
+                         ng-droppable
+                         ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
+                        <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
+                        <div class="bucket-content">
+                            <div
+                                ng-repeat="employee in assignmentTypeBucket.employeeList"
+                                class="assigned-employee"
+                                ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)">
+                                <img
+                                    ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
+                                    width="100%"
+                                    height="100%"/>
+                                <span class="minus-span">-</span>
+                            </div>
+                        </div>
 
                     </div>
-
                 </div>
 
             </div>
@@ -73,6 +107,14 @@
                     <td class="day hover"></td>
                     <td class="description" colspan="2">Selected</td>
                 </tr>
+                <tr>
+                    <td class="day mid-assigned"></td>
+                    <td class="description" colspan="2">Partially Assigned</td>
+                </tr>
+                <tr>
+                    <td class="day assigned"></td>
+                    <td class="description" colspan="2">Fully Assigned</td>
+                </tr>
             </table>
         </div>
     </div>
@@ -85,7 +127,8 @@
     <ul class="nav nav-sidebar" role="navigation">
         <div ng-draggable
              ghost-element=".avatar-wrapper"
-             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch">
+             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
+             drag-data=employee>
             <employee-card
                     employee="employee"
                     remove="deleteEmployee(employee)"

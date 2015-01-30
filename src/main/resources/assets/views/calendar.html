@@ -3,6 +3,7 @@
     previous-chunk-method="loadPreviousMonth"
     next-chunk-method="loadNextMonth"
     number-of-loaded-chunks-per-scroll="1"
+    on-scroll-stop="onScrollStop"
     ng-class="{'invisible': !showCalendar}">
 
     <table class="calendar-header view-calendar">
@@ -30,7 +31,9 @@
                     'even': day.date.getMonth() % 2 == 0,
                     'odd': day.date.getMonth() % 2 == 1,
                     'today': day.date.isToday(),
-                    'selected': day.selected
+                    'selected': day.selected,
+                    'assigned': day.content && day.content.isAssigned(),
+                    'mid-assigned': day.content && day.content.isMidAssigned()
                 }"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"

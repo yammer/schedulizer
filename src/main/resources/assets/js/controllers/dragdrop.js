@@ -14,19 +14,24 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
     return {
         restrict: 'A',
         scope: {
-            ghostElement: '@'
+            ghostElement: '@',
+            dragData: '='
         },
         link: function(scope, el, attrs, controller) {
             angular.element(el).attr("draggable", "true");
 
             var id = angular.element(el).attr("id");
+
+            if (scope.dragData) {
+                $.data(el.get(0), 'drag-drop-data', scope.dragData);
+            }
+
             if (!id) {
                 id = guid()
                 angular.element(el).attr("id", id);
             }
 
             el.bind("dragstart", function(e) {
-
                 if (scope.ghostElement) {
                     try {
                         var img = $(el).find(scope.ghostElement)[0];
@@ -53,7 +58,7 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
     return {
         restrict: 'A',
         scope: {
-            ngOnDrop: '='
+            ngOnDrop: '&'
         },
         link: function($scope, el, attrs, controller) {
             var id = angular.element(el).attr("id");
@@ -95,7 +100,11 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
                 var data = e.dataTransfer.getData("text");
                 var dest = document.getElementById(id);
                 var src = document.getElementById(data);
-                $scope.ngOnDrop(src, dest);
+                $scope.ngOnDrop({
+                    dragEl: src,
+                    dropEl: dest,
+                    data: $.data(src, 'drag-drop-data')
+                });
             });
 
             $rootScope.$on("DRAG-START", function(e) {

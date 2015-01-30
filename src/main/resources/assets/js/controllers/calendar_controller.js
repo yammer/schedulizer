@@ -42,6 +42,9 @@ App.controller('CalendarController', function ($timeout, $scope) {
 
     function createWeek(day){
         return {
+            loaded: false,
+            previousUnloadedWeek: null,
+            nextUnloadedWeek: null,
             month: createMonth(day, 0),
             firstOfTheMonth: false,
             days: []
@@ -57,6 +60,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         week.days.push({
             selected: false,
             previousSelectedState: false,
+            content: null,
             date: date.clone()
         });
     }
@@ -77,6 +81,10 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 firstDay = firstDay.next();
             }
 
+            if ($scope.calendar.length > 0) {
+                currentWeek.nextUnloadedWeek = $scope.calendar[0];
+                $scope.calendar[0].previousUnloadedWeek = currentWeek;
+            }
             $scope.calendar.unshift(currentWeek);
             firstDay = firstDay.plusWeeks(-1);
         }
@@ -105,10 +113,65 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 lastDay = lastDay.next();
             }
 
+            var n = $scope.calendar.length;
+            if (n > 0) {
+                $scope.calendar[n - 1].nextUnloadedWeek = currentWeek;
+                currentWeek.previousUnloadedWeek = $scope.calendar[n - 1];
+            }
             $scope.calendar.push(currentWeek);
         }
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
+
+    $scope.onScrollStop = function(top, bottom, total) {
+        var n = $scope.calendar.length;
+        var i = Math.floor(top * n / total);
+        var j = Math.floor(bottom * n / total);
+        loadDayContent(i, j);
+    }
+
+    function loadDayContent(i, j) {
+        i = Math.max(i - 0, 0);
+        j = Math.min(j + 0, $scope.calendar.length - 1);
+        i = nextUnloadedWeek(i);
+        j = previousUnloadedWeek(j);
+        if (i == null || j == null || i > j) {
+            return;
+        }
+        var first = $scope.calendar[i].days[0].date;
+        var last = $scope.calendar[j].days[6].date;
+        var days = [];
+        for (var w = i; w <= j; w++) {
+            var week = $scope.calendar[w];
+            week.loaded = true;
+            days = days.concat(week.days);
+        }
+        if (days.length > 0 && $scope.onLoadDayContent != null) {
+            $scope.onLoadDayContent(days);
+        }
+    }
+
+    $scope.getDays = function(dates) {
+        return _.map(dates, function(date) {
+            return getDay(date);
+        })
+    }
+
+    function nextUnloadedWeek(i) {
+        for (var n = $scope.calendar.length; i < n; i++) {
+            if (!$scope.calendar[i].loaded) return i;
+        }
+        return null;
+    }
+
+    function previousUnloadedWeek(i) {
+        for ( ; i >= 0; i--) {
+            if (!$scope.calendar[i].loaded) return i;
+        }
+        return null;
+    }
+
+
 
     $scope.goToDate = function(date, duration) {
         if (duration == undefined) {
@@ -184,7 +247,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
     };
 
     function onSelectDays() {
-        $scope.onSelectDaysParent(selection.dates());
+        $scope.onSelectDaysParent(selection);
     }
 
     function isCtrl(e) {
@@ -249,6 +312,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
                 twoStepStart = null;
                 break;
         }
+        if (state == States.DOWN) { return; } // we should just update the parent when mouse is up or dragging
         onSelectDays();
     }
 
@@ -304,7 +368,8 @@ App.directive('calendar', function() {
         restrict: 'E',
         scope: {
             onSelectDaysParent: '=onSelectDays',
-            onHoverDayParent: '=onHoverDay'
+            onHoverDayParent: '=onHoverDay',
+            onLoadDayContent: '=onLoadDayContent'
         },
         templateUrl: 'views/calendar.html',
         controller: 'CalendarController'

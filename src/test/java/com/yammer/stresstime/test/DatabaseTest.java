@@ -19,6 +19,7 @@ public class DatabaseTest {
 
     private SessionFactory sessionFactory;
     private Session session;
+    private boolean flushSession;
 
     public DatabaseTest() {
         StresstimeApplication app = RULE.getApplication();
@@ -40,15 +41,22 @@ public class DatabaseTest {
         }
     }
 
+    protected void hibernateThrewException() {
+        flushSession = false;
+    }
+
     @Before
     public void setUp() throws Exception {
         session = sessionFactory.openSession();
         ManagedSessionContext.bind(session);
+        flushSession = true;
     }
 
     @After
     public void tearDown() throws Exception {
-        session.flush();
+        if (flushSession) {
+            session.flush();
+        }
         session.close();
         ManagedSessionContext.unbind(sessionFactory);
     }

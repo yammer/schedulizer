@@ -2,6 +2,9 @@ body {
     padding-top: 50px;
 }
 
+$light-grey: #F5F5F5;
+$dark-grey: #A6A6A6;
+
 /* Text rotation */
 
 .rotate90deg {
@@ -12,6 +15,29 @@ body {
 }
 
 /* Calendar */
+
+$light-fg: #FFFFFF;
+$dark-fg: #828282;
+
+$selected-bg: #2EC3E5;
+$odd-bg: #D9D9D9;
+$even-bg: #EEEEEE;
+$today-bg: #F99A4A;
+$assigned-bg: #6FDF6F;
+$mid-assigned-bg: #F2D253;
+
+@mixin colorize-day($color) {
+    background-color: $color;
+    &.even { background-color: mix($color, $even-bg, 85%); }
+    &.odd { background-color: mix($color, $odd-bg, 85%); }
+    .hoverable &:hover { background-color: lighten($color, 10%); }
+    &.selected {
+        background-color: mix($selected-bg, $color, 60%);
+        .hoverable &:hover {
+            background-color: lighten(mix($selected-bg, $color, 60%), 10%);
+        }
+    }
+}
 
 .view-calendar td, .view-calendar th {
   -webkit-touch-callout: none;
@@ -57,56 +83,36 @@ body {
     cursor: default;
 }
 .day.odd, .month.odd {
-    color: #828282;
-    background-color: #D9D9D9;
+    color: $dark-fg;
+    background-color: $odd-bg;
 }
 .day.even, .month.even {
-    color: #8D8D8D;
-    background-color: #EEEEEE;
-}
-.day.today {
-    color: #FFFFFF;
-    background-color: #FFAA25;
-}
-.hoverable .day.today:hover {
-    color: #FFFFFF;
-    background-color: #FFBB38;
+    color: $dark-fg;
+    background-color: $even-bg;
 }
 .hoverable .day:hover, .day.hover {
-    color: #FFFFFF;
-    background-color: #2EC3E5;
+    color: $light-fg;
+    background-color: $selected-bg;
 }
-
 .day.selected {
-    color: #FFFFFF;
-    background-color: #2EC3E5;
+    color: $light-fg;
+    background-color: $selected-bg;
+    &.odd { background-color: mix($selected-bg, $odd-bg, 90%); }
+    &.even { background-color: mix($selected-bg, $even-bg, 90%); }
+    .hoverable &:hover {
+        background-color: lighten($selected-bg, 10%);
+    }
 }
 
-.day.today.selected {
-    background-color: #97B785;
+.day.today {
+    color: $light-fg;
+    @include colorize-day($today-bg);
 }
-
-.hoverable .day.today.selected:hover {
-    background-color: #A7C795;
-}
-
-.hoverable .day.selected:hover {
-    background-color: #3ED3F5;
-}
-
-/*.hoverable .day.odd.selected:hover {
-    color: #828282;
-    background-color: #D9D9D9;
-}
-.hoverable .day.even.selected:hover {
-    color: #8D8D8D;
-    background-color: #EEEEEE;
-}*/
 
 .calendar-header {
     margin-top: -54px;
     border-spacing: 4px 0;
-    position: fixed;
+    position: absolute;
 }
 .calendar-header .month {
     vertical-align: middle;
@@ -118,12 +124,25 @@ body {
     background-color: #828282;
 }
 
+/* Group View Calendar */
+
+.day.assigned {
+    color: $light-fg;
+    @include colorize-day($assigned-bg);
+}
+.day.mid-assigned {
+    color: $light-fg;
+    @include colorize-day($mid-assigned-bg);
+}
+
+
+
 /* Header */
 
 .header {
-    color: #8D8D8D;
+    color: $dark-grey;
     font-size: 22px;
-    background-color: #F5F5F5;
+    background-color: $light-grey;
     border-bottom: 1px solid #EEEEEE;
     margin: 0 -15px 15px -15px;
     padding: 18px 15px 17px 15px;
@@ -186,6 +205,7 @@ body {
 .left-bar {
     float: left;
     margin: 0 15px 0 0;
+    width: 150px;
 }
 
 .right-bar {
@@ -228,6 +248,7 @@ body {
     border-radius: 4px;
     text-align: center;
     position: relative;
+    margin-bottom: 22px;
 }
 
 .stamp .sub-label {
@@ -259,7 +280,7 @@ body {
 }
 
 .selection-stamp:hover {
-    background-color: #FE9395;
+    background-color: #e06969;
 }
 
 /* Employee card */
@@ -279,7 +300,6 @@ body {
     height: 50px;
     margin-left: 8px;
     border-radius: 50%;
-    cursor: pointer;
 }
 
 .employee-card .avatar-wrapper.with-image img {
@@ -296,15 +316,7 @@ body {
     color: #FFF;
 }
 
-.employee-card .avatar-wrapper.with-image:hover img {
-    display: none;
-}
-
-.employee-card .avatar-wrapper.with-image:hover {
-    background-color: #CC5555;
-}
-
-.employee-card .avatar-wrapper.no-image, .employee-card .avatar-wrapper.with-image:hover {
+.employee-card .avatar-wrapper.no-image {
     font-size: 31px;
     font-weight: bold;
     text-align: center;
@@ -341,14 +353,65 @@ body {
     width: 150px;
     height: 100px;
     margin: 10px 0;
-    background-color: #ddd;
+    background-color: #eee;
+    padding: 32px 5px 5px 5px;
+    position: relative;
 }
 
 .bucket .bucket-name {
     color: #AAA;
     font-size: 16px;
     margin: 5px;
+    position: absolute;
+    top: 3px;
+    left: 5px;
 }
+
+.bucket .bucket-content {
+    overflow: scroll;
+    height: 100%;
+}
+
+.bucket .bucket-content .assigned-employee {
+    display: inline-block;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    margin: 5px;
+    border-radius: 14%;
+    position: relative;
+}
+
+.bucket .bucket-content .assigned-employee img {
+    max-width: 35px;
+    max-height: 35px;
+    border-radius: 14%;
+    opacity: 0.75;
+}
+
+.bucket .bucket-content .assigned-employee .minus-span {
+    font-size: 30px;
+    color: white;
+    visibility: hidden;
+    position: absolute;
+    top: -6px;
+    left: 12px;
+}
+
+.bucket .bucket-content .assigned-employee:hover img {
+    visibility: hidden;
+}
+
+.bucket .bucket-content .assigned-employee:hover .minus-span {
+    visibility: visible;
+}
+
+.bucket .bucket-content .assigned-employee:hover {
+    background-color: #e06969;
+}
+
+
+
 
 /* New Group form */
 
@@ -358,7 +421,7 @@ body {
 
 /* Deletable card */
 
-.deletable-card a {
+.deletable-card {
     position: relative;
 }
 
@@ -373,7 +436,7 @@ body {
     width: 23px;
     border-radius: 50%;
     cursor: pointer;
-    background-color: #CC5555;
+    background-color: #e06969;
 }
 
 .deletable-card .delete div {
@@ -383,13 +446,21 @@ body {
     width: 23px;
 }
 
-.deletable-card .content:hover .delete {
+.deletable-card:hover .delete {
     display: block;
 }
 
 .deletable-card .delete:hover {
     display: block;
-    background-color: #DC143C;
+    background-color: #CC5555;
+}
+
+.deletable-card.employee-card .delete div {
+    top: -65%;
+}
+
+.deletable-card.employee-card .delete {
+    top: 36%;
 }
 
 /* drag and drop */
@@ -410,3 +481,112 @@ body {
     cursor: move;
     cursor: -webkit-grab; // hand for chrome and safari
 }
+
+/* Assignment types */
+
+$role-bg: #E06969;
+
+.assignment-type-label {
+    float: right;
+    text-align: center;
+    background-color: $role-bg;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 7px 30px 7px 25px;
+    margin-left: 20px;
+    color: white;
+
+    font-weight: normal;
+    cursor: pointer;
+    position: relative;
+
+    .delete {
+        position: absolute;
+        right: -6px;
+        top: 6px;
+        border-radius: 8px;
+        color: darken($role-bg, 20%);
+        background-color: $light-grey;
+        padding: 0px 3px 1px 3px;
+        font-size: 18px;
+        line-height: 12px;
+        border: 1px solid darken($role-bg, 20%);
+        visibility: hidden;
+
+    }
+
+    &:hover {
+        background-color: darken($role-bg, 20%);
+
+        .delete {
+            visibility: visible;
+
+            &:hover {
+                color: #FFFFFF;
+                background-color: darken($role-bg, 20%);
+            }
+        }
+    }
+
+}
+
+.add-assignment-type {
+    cursor: pointer;
+    float: right;
+    font-size: 38px;
+    margin-top: -13px;
+    color: $dark-grey;
+}
+
+.add-assignment-type:hover {
+    color: darken($dark-grey, 20%);
+}
+
+.assignment-types-wrapper {
+    float: right;
+    margin-top: -1px;
+}
+
+.assignment-type-form {
+    float: right !important;
+    width: 150px;
+    margin-right: 20px;
+    margin-top: -5px;
+    font-weight: normal;
+}
+
+/* Assignments details on hovered day (column to the left of calendar) */
+
+
+.day-assignments {
+    clear: both;
+}
+
+.day-assignment {
+    margin: 5px 0px;
+    text-align: right;
+
+    .day-assignment-role {
+        margin: 7px 0;
+
+        span {
+            font-size: 12px;
+            color: #FFFFFF;
+            background-color: $role-bg;
+            border-radius: 4px;
+            padding: 7px 10px;
+        }
+    }
+
+    .day-assignment-avatars {
+        margin: 12px 0px;
+
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin: 4px 0 4px 8px;
+        }
+    }
+}
+

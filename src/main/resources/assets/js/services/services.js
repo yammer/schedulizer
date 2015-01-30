@@ -35,10 +35,11 @@ var urlencodedTransformRequest = function(data) {
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
 };
 
+var PREFIX = 'service/';
 var SHARED_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'};
 
 services.factory('Group', ['$resource', function($resource) {
-    var Group = $resource('service/groups/:group_id',{},{
+    var Group = $resource(PREFIX + 'groups/:group_id', {}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -52,12 +53,25 @@ services.factory('Group', ['$resource', function($resource) {
         }
     });
     Group.prototype.employees = [];
+    Group.prototype.employeeFor = function(id) {
+        return _.find(this.employees, function(employee) {
+            return employee.id == id;
+        })
+    }
+
     Group.prototype.assignmentTypes = [];
+    Group.prototype.assignmentTypeFor = function(id) {
+        return _.find(this.assignmentTypes, function(assignmentType) {
+            return assignmentType.id == id;
+        });
+    }
+
+
     return Group;
 }]);
 
 services.factory('GroupEmployee', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/employees/:employee_id', { group_id: "@groupId" },{
+    return $resource(PREFIX + 'groups/:group_id/employees/:employee_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -74,17 +88,40 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
 
 
 services.factory('AssignmentType', ['$resource', function($resource) {
-    return $resource('service/groups/:group_id/assignment-types/:assignment_type_id', { group_id: "@groupId" }, {
-            save: {
-                method: 'POST',
-                transformRequest: [urlencodedTransformRequest],
-                headers: SHARED_HEADERS
-            },
-            delete: {
-                method: 'DELETE',
-                params: { assignment_type_id: "@id" },
-                transformRequest: [urlencodedTransformRequest],
-                headers: SHARED_HEADERS
-            }
+    return $resource(PREFIX + 'groups/:group_id/assignment-types/:assignment_type_id', {group_id: '@groupId'}, {
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            params: { assignment_type_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
     });
+}]);
+
+services.factory('AssignableDay', ['$resource', function($resource) {
+    var AssignableDay = $resource(PREFIX + 'groups/:group_id/assignments/:assignment_id', {group_id: '@groupId'}, {
+        save: {
+            method: 'POST',
+            isArray: true,
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            params: { assignment_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
+
+    AssignableDay.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    }
+
+    return AssignableDay;
 }]);

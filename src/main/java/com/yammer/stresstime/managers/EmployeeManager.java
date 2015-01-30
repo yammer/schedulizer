@@ -33,6 +33,7 @@ public class EmployeeManager extends EntityManager<Employee> {
     private Employee createByYammerId(String yammerId) {
         /* TODO */
         Employee employee = new Employee("name retrieved from yammer", yammerId);
+        employee.setImageUrlTemplate("https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm");
         employee.setGlobalAdmin(false);
         // TODO: set name, image and other information
         save(employee);

@@ -10,6 +10,7 @@ import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -39,10 +40,15 @@ public class AssignableDay {
 
     @OneToMany(mappedBy = "assignableDay")
     @Cascade({CascadeType.DELETE})
-    private Set<Assignment> assignments;
+    private Set<Assignment> assignments = new HashSet<>();
 
     public long getId() {
         return id;
+    }
+
+    @JsonProperty("date")
+    public String getDateString() {
+        return date.toString();
     }
 
     @JsonIgnore
@@ -50,13 +56,12 @@ public class AssignableDay {
         return date;
     }
 
-    @JsonProperty("date")
-    public String getDateStr() {
-        return date.toString();
-    }
-
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public long getGroupId() {
+        return group.getId();
     }
 
     @JsonIgnore
