@@ -20,16 +20,30 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     
+    <distributionManagement>
+        <repository>
+            <id>maven.int.yammer.com-releases</id>
+            <url>http://maven.int.yammer.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven.int.yammer.com-snapshots</id>
+            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
-            <id>maven.int.yammer.com</id>
-            <url>http://maven.int.yammer.com/nexus/content/groups/public/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
+            <id>maven.int.yammer.com-releases</id>
+            <name>Yammer Maven Releases</name>
+            <url>http://maven.int.yammer.com/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>maven.int.yammer.com-snapshots</id>
+            <name>Yammer Maven Snapshots</name>
+            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots</url>
         </repository>
     </repositories>
+
     
     <dependencies>
         <dependency>
