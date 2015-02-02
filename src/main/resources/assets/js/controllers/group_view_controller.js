@@ -76,10 +76,18 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     }
 
-    $scope.maybeAddAssignmentType = function() {
+    var hideInput = null;
+
+    $scope.tryAddAssignmentType = function() {
         if ($scope.isCreatingAssignmentType) {
             $scope.addAssignmentType();
         }
+    }
+
+    $scope.onInputBlur = function() {
+        hideInput = $timeout(function(){
+            $scope.isCreatingAssignmentType = false;
+        }, 200);
     }
 
     $scope.deleteAssignmentType = function(assignmentType) {

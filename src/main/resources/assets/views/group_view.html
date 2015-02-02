@@ -11,19 +11,22 @@
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
         <span class="add-assignment-type"
-            ng-click="maybeAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
+            ng-click="tryAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
             >
             +
         </span>
+        <!-- TODO: Remove timeout hack, wrap both the + and input in a parent and put ng-blur there -->
+        <!-- TODO: Also remove everything from inside the h1, make the .header a div etc -->
         <div class="assignment-type-form">
             <input
                 ng-show="isCreatingAssignmentType"
                 ng-focus="isCreatingAssignmentType"
+                ng-blur="onInputBlur()"
                 class="form-control"
                 type="text"
                 ng-model="newAssignmentTypeName"
                 placeholder="Name"
-                ng-enter="addAssignmentType(); isCreatingAssignmentType = false;"
+                ng-enter="addAssignmentType()"
                 />
         </div>
     </h1>
