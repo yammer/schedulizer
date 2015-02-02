@@ -105,8 +105,8 @@ $mid-assigned-bg: #F2D253;
 }
 
 .day.today {
-    color: $light-fg;
-    @include colorize-day($today-bg);
+    border-color: $today-bg;
+    border-style: solid;
 }
 
 .calendar-header {
