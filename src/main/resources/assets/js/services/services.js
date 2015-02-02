@@ -77,7 +77,7 @@ services.factory('yammer', ['$window', function($window) {
     }
 }]);
 
-services.factory('Group', ['$resource', function($resource) {
+services.factory('Group', ['$resource', 'Employee', function($resource, Employee) {
     var Group = $resource(PREFIX + 'groups/:group_id', {}, {
         save: {
             method: 'POST',
@@ -92,10 +92,9 @@ services.factory('Group', ['$resource', function($resource) {
         }
     });
     Group.prototype.employees = [];
+    Group.prototype.employeeMap = {};
     Group.prototype.employeeFor = function(id) {
-        return _.find(this.employees, function(employee) {
-            return employee.id == id;
-        })
+        return this.employeeMap[id] || Employee.get({ employee_id: id});
     }
 
     Group.prototype.assignmentTypes = [];
@@ -103,6 +102,10 @@ services.factory('Group', ['$resource', function($resource) {
         return _.find(this.assignmentTypes, function(assignmentType) {
             return assignmentType.id == id;
         });
+    }
+    Group.prototype.addEmployee = function(employee) {
+        this.employees.push(employee);
+        this.employeeMap[employee.id] = employee;
     }
 
 
@@ -125,6 +128,9 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
     });
 }]);
 
+services.factory('Employee', ['$resource', function($resource) {
+    return $resource(PREFIX + 'employees/:employee_id', {employee_id: '@employeeId'}, {});
+}]);
 
 services.factory('AssignmentType', ['$resource', function($resource) {
     return $resource(PREFIX + 'groups/:group_id/assignment-types/:assignment_type_id', {group_id: '@groupId'}, {

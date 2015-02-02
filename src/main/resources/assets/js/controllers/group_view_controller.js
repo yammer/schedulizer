@@ -40,9 +40,8 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         employee.name = yEmployee.full_name;
         employee.imageUrlTemplate = yEmployee.photo;
         employee.$save({}, function(response) {
-            group.employees.push(employee);
+            group.addEmployee(employee);
             $scope.newEmployeeName = "";
-            group.employeeMap[employee.id] = employee;
         });
         return true;
 
@@ -134,7 +133,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             for (var j = 0; j < assignableDays[i].assignments.length; j++) {
                 var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
                 var employeeId = assignableDays[i].assignments[j].employeeId;
-                var employee = $scope.selectedGroup.employeeMap[employeeId];
+                var employee = $scope.selectedGroup.employeeFor(employeeId);
                 if ($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
                     $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] = {
                         employee: employee,
