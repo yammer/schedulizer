@@ -3,6 +3,10 @@ App.controller('CalendarController', function ($timeout, $scope) {
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
 
+    // This object holds the external api for the calendar, i.e. function that other components outside
+    // calendar can call to manipulate the calendar from the outside
+    $scope.api = {};
+
     $scope.calendar = [];
     var firstDay = Date.firstDayOfThisMonth().lastSunday();
     var lastDay = firstDay.clone();
@@ -151,7 +155,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         }
     }
 
-    $scope.getDays = function(dates) {
+    $scope.api.getDays = function(dates) {
         return _.map(dates, function(date) {
             return getDay(date);
         })
@@ -173,7 +177,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
 
 
 
-    $scope.goToDate = function(date, duration) {
+    $scope.api.goToDate = function(date, duration) {
         if (duration == undefined) {
             duration = 'fast';
         }
@@ -194,8 +198,8 @@ App.controller('CalendarController', function ($timeout, $scope) {
         }
     }
 
-    $scope.goToToday = function(duration) {
-        $scope.goToDate(Date.TODAY, duration);
+    $scope.api.goToToday = function(duration) {
+        $scope.api.goToDate(Date.TODAY, duration);
     }
 
     $scope.showCalendar = true;
@@ -212,7 +216,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         // Wait some time so that getCellHeight() can return
         // something useful, since this function is used inside goToToday(...)
         $timeout(function() {
-            $scope.goToToday(0);
+            $scope.api.goToToday(0);
             // BUG: A piece of the screen is cut
             //$scope.showCalendar = true;
         });
@@ -241,7 +245,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         });
     }
 
-    $scope.clearSelectedDays = function() {
+    $scope.api.clearSelectedDays = function() {
         selection.clear();
         twoStepStart = null;
     };
@@ -369,7 +373,8 @@ App.directive('calendar', function() {
         scope: {
             onSelectDaysParent: '=onSelectDays',
             onHoverDayParent: '=onHoverDay',
-            onLoadDayContent: '=onLoadDayContent'
+            onLoadDayContent: '=onLoadDayContent',
+            api: '=exposeApiTo'
         },
         templateUrl: 'views/calendar.html',
         controller: 'CalendarController'

@@ -3,6 +3,9 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
+    // Will hold the calendar api
+    $scope.calendar = null;
+
     $scope.assignmentTypeBuckets = {};
 
     function getGroupEmployeesData(group) {
@@ -74,7 +77,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         }
     }
 
-    $scope.deleteAssignmentType = function (assignmentType) {
+    $scope.deleteAssignmentType = function(assignmentType) {
         var group = $scope.selectedGroup;
         assignmentType.groupId = group.id;
         assignmentType.$delete({}, function() {
@@ -83,15 +86,11 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         });
     }
 
-    function getCalendar() {
-        // TODO: Find another way to do this
-        return angular.element($("#group-tab .view-calendar-wrapper")[0]).scope();
-    }
+    $scope.calendar = null;
 
     $scope.goToToday = function() {
         // TODO: Find another way to do this
-        var calendar = getCalendar();
-        calendar.goToToday();
+        $scope.calendar.goToToday();
         $scope.dayStamp = new Date();
     }
 
@@ -103,7 +102,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     }
 
     $scope.clearSelection = function() {
-        getCalendar().clearSelectedDays();
+        $scope.calendar.clearSelectedDays();
         $scope.selectedDays = [];
     }
 
@@ -226,7 +225,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             var dates = _.map(assignableDays, function(assignableDay) {
                 return assignableDay.getDate();
             });
-            daysMap = indexDaysByISOString(getCalendar().getDays(dates));
+            daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
         }
 
         _.each(assignableDays, function(assignableDay) {
