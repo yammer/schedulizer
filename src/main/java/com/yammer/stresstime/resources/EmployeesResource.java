@@ -35,10 +35,12 @@ public class EmployeesResource {
     @UnitOfWork
     public Response joinGroup(
             @PathParam("group_id") long groupId,
-            @FormParam("yammerId") String yammerId) {
+            @FormParam("yammerId") String yammerId,
+            @FormParam("name") String name,
+            @FormParam("imageUrlTemplate") String imageUrlTemplate) {
 
         Group group = groupManager.getById(groupId);
-        Employee employee = employeeManager.getOrCreateByYammerId(yammerId);
+        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, name, imageUrlTemplate);
         membershipManager.join(group, employee);
         return Response.ok().entity(employee).build();
     }

@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $location,  $stateParams,
+App.controller('GroupViewController', function($scope, $timeout, $location,  $stateParams,yammer,
                                               Group, GroupEmployee, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -6,7 +6,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     $scope.assignmentTypeBuckets = {};
 
     function getGroupEmployeesData(group) {
-        if (group == EMPTY_GROUP) {
+        if (group == EMPTY_GROUP || group == undefined) {
             group.employees = [];
             return;
         }
@@ -15,18 +15,27 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         });
     }
 
-    $scope.addEmployee = function () {
+    function addEmployee(yEmployee) {
         var group = $scope.selectedGroup;
-        var yid = $scope.newEmployeeName; // TODO: retrieve from yammer
-        if (yid == undefined || yid == "") { return; }
+        var yid = yEmployee.id;
+        if (yid == undefined || yid == "") {
+            return false;
+        }
+        if (_.find(group.employees, function(e){ return e.yammerId == yid; })) {
+            $scope.newEmployeeName = "";
+            return false;
+        }
 
         var employee = new GroupEmployee({ groupId: group.id });
         employee.yammerId = yid;
+        employee.name = yEmployee.full_name;
+        employee.imageUrlTemplate = yEmployee.photo;
         employee.$save({}, function(response) {
             group.employees.push(employee);
             $scope.newEmployeeName = "";
             group.employeeMap[employee.id] = employee;
         });
+        return true;
 
     }
 
@@ -199,6 +208,9 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
         var daysMap = indexDaysByISOString(days);
+        days = _.indexBy(days, function(day) {
+            return day.date.toISOLocalDateString();
+        });
 
         var assignableDays = AssignableDay.query(
             {
@@ -207,6 +219,11 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
                 end_date: endDate.toISOLocalDateString()
             }, function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
+                _.each(assignableDays, function(assignableDay) {
+                    days[assignableDay.date].content = {
+                        assignments: assignableDay.assignments
+                    }
+                });
             }
         );
 
@@ -257,6 +274,73 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         });
     }
 
+    $scope.autocompleteList = [];
+
+    var timeout;
+    var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // as suggested by yammers api
+    $scope.$watch('newEmployeeName', function(prefix) {
+        if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
+            return;
+        }
+        if (timeout != undefined) {
+            $timeout.cancel(timeout);
+        }
+        timeout = $timeout(function() {
+            yammer.autocomplete(prefix, function(response) {
+                if (response == undefined) {
+                    return;
+                }
+                var users = response.user;
+                $timeout(function(){
+                    $scope.autocompleteList =
+                        (users.map(function(user) {
+                            var names = user.full_name.split(" ");
+                            user.label = names[0] + " " + names[names.length - 1];
+                            return {
+                                label: user.label,
+                                value: user
+                            }
+                        }));
+                    $scope.autocompleteList = _.unique($scope.autocompleteList, function(e) { return e.label; } );
+                });
+            });
+
+        }, AUTOCOMPLETE_QUERY_WAIT_TIME);
+    });
+
+    $scope.getAutocompleteItem = function(user) {
+        return "" +
+            "<div>" +
+            "<img width=\"20\" height=\"20\" src=\"" + user.photo + "\"/>" + user.label +
+            "</div>";
+    }
+
+    var userSelectionConfirmed = false; // so that enter in autocomplete selection does not trigger input submit
+
+    $scope.userInputKeyDown = function(e) {
+        switch (e.which) {
+            case 13: // enter
+                if (userSelectionConfirmed && $scope.newEmployee) {
+                    addEmployee($scope.newEmployee);
+                    $scope.newEmployee = undefined;
+                    userSelectionConfirmed = false;
+                }
+                else {
+                    // shake... I think you should put more conditions... try and you'll see
+                }
+                break;
+            default:
+                $scope.newEmployee = undefined;
+                userSelectionConfirmed = false;
+                break;
+        }
+    }
+
+    $scope.onSelectAutocomplete = function(user) {
+        $scope.newEmployeeName = user.label;
+        $scope.newEmployee = user;
+        $timeout(function() { userSelectionConfirmed = true; }, 100);
+    }
 
     // TODO: Ugly hack!
     $timeout(resizeCalendar, 300)
