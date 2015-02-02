@@ -208,9 +208,6 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
         var daysMap = indexDaysByISOString(days);
-        days = _.indexBy(days, function(day) {
-            return day.date.toISOLocalDateString();
-        });
 
         var assignableDays = AssignableDay.query(
             {
@@ -219,11 +216,6 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
                 end_date: endDate.toISOLocalDateString()
             }, function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
-                _.each(assignableDays, function(assignableDay) {
-                    days[assignableDay.date].content = {
-                        assignments: assignableDay.assignments
-                    }
-                });
             }
         );
 
