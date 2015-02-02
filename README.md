@@ -2,7 +2,7 @@
 
 On-call schedule manager
 
-#### Before spin up server
+#### Before spining up server
 
 ```
 gem install sass
