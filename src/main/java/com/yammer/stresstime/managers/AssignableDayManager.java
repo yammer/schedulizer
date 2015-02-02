@@ -31,6 +31,7 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
         /* TODO: Group! */
         return currentSession()
                 .createCriteria(AssignableDay.class)
+                .add(Restrictions.eq("group.id", group.getId()))
                 .add(Restrictions.ge("date", startDate))
                 .add(Restrictions.le("date", endDate))
                 .list();

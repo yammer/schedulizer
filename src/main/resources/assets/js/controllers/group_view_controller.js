@@ -200,7 +200,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
         var endDate = days[days.length - 1].date;
         var daysMap = indexDaysByISOString(days);
 
-        assignableDays = AssignableDay.query(
+        var assignableDays = AssignableDay.query(
             {
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
