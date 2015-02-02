@@ -4,7 +4,7 @@
         <div class="assignment-types-wrapper">
             <div
                 ng-repeat="assignmentType in selectedGroup.assignmentTypes"
-                class="assignment-type-label">
+                class="assignment-type-label sacudido">
                 {{assignmentType.name}}
                 <div class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
@@ -81,10 +81,10 @@
                                 class="assigned-employee"
                                 ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)">
                                 <img
-                                    ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
+                                    ng-src="{{employee.employee.imageUrlTemplate}}"
                                     width="100%"
                                     height="100%"/>
-                                <span class="minus-span">-</span>
+                                <span class="minus-span">-{{employee}}</span>
                             </div>
                         </div>
 
@@ -137,13 +137,18 @@
         </div>
         <div class="employee-card">
             <div class="avatar-wrapper no-image add" ng-click="addEmployee()">+</div>
-            <div class="name">
+            <div class="name ui-widget">
                 <input
                         class="form-control"
                         type="text"
                         ng-model="newEmployeeName"
                         placeholder="Name"
-                        ng-enter="addEmployee()"
+                        st-autocomplete
+                        tags="autocompleteList"
+                        get-custom-template="getAutocompleteItem"
+                        autocomplete-width="150"
+                        autocomplete-select="onSelectAutocomplete"
+                        ng-keydown="userInputKeyDown($event)"
                         />
             </div>
             <div class="clear"></div>

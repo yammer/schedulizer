@@ -1,19 +1,4 @@
-App.factory('yammer', ['$window', function($window) {
-    var yam = $window.yam;
-    if (!yam) throw new Error('Yammer did not load');
-
-    return {
-        // a me function
-        getLoginStatus: function(callback) {
-            yam.getLoginStatus(callback);
-        },
-        login: function(callback){
-            yam.platform.login(callback);
-        }
-    }
-}]);
-
-App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location) {
+App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location, yammer) {
     /* injecting constants into scope */
     // $route.routes contains the elements of NAV_TABS augmented
     $scope.tabs = angular.copy(NAV_TABS);
@@ -30,7 +15,22 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
     $scope.STATUS = { GUEST: 'guest', USER: 'user', ADMIN: 'admin', GLOBALADMIN: 'globaladmin'}
 
     /* main functionality */
-    $scope.$on("$routeChangeSuccess", function($route) {
+    yammer.getLoginStatus(function(response) {
+        $timeout(function() {
+            if (response.authResponse) {
+                $scope.isLoggedToYammer = true;
+            }
+        }, 0);
+    });
+    $scope.doLogin = function() {
+        if (!$scope.isLoggedToYammer) {
+            yammer.login(function (response) {
+                if (response.authResponse) {
+                    $scope.isLoggedToYammer = true;
+                }
+            });
+        }
+    }
 
 
         // <TODO: Extract authorization logic to the server!>
@@ -52,23 +52,7 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
 //            return $scope.userStatus == $scope.STATUS.ADMIN || $scope.userStatus == $scope.STATUS.GLOBALADMIN;
 //        };
 //
-//        $scope.dologin = function() {
-//
-//            if (!$scope.isLogged()) {
-//                yammer.login(function (response) {
-//                    if (response.authResponse) {
-//                        console.dir(response); //print user information to the console
-//                    }
-//                });
-//                $scope.userStatus = $scope.STATUS.GLOBALADMIN;
-//                $scope.goToTab($scope.navigation.CALENDAR);
-//            }
-//            else {
-//                $scope.userStatus = $scope.STATUS.GUEST;
-//                $scope.goToTab($scope.navigation.GROUPS);
-//            }
-//        }
+
 
         // </TODO>
-    });
 });
