@@ -6,6 +6,12 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
     // Will hold the calendar api
     $scope.calendar = null;
 
+    $scope.$watchCollection('selectedGroup.assignmentTypes', function(assignmentTypes) {
+        if (assignmentTypes && assignmentTypes.$resolved && $scope.calendar != null) {
+            $scope.calendar.invalidateAssignments();
+        }
+    });
+
     $scope.assignmentTypeBuckets = {};
 
     function getGroupEmployeesData(group) {

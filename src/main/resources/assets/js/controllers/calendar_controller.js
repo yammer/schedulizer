@@ -10,6 +10,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
     $scope.calendar = [];
     var firstDay = Date.firstDayOfThisMonth().lastSunday();
     var lastDay = firstDay.clone();
+    var loadedWeeks = [];
 
     var cellHeight = null;
 
@@ -47,8 +48,6 @@ App.controller('CalendarController', function ($timeout, $scope) {
     function createWeek(day){
         return {
             loaded: false,
-            previousUnloadedWeek: null,
-            nextUnloadedWeek: null,
             month: createMonth(day, 0),
             firstOfTheMonth: false,
             days: []
@@ -127,12 +126,32 @@ App.controller('CalendarController', function ($timeout, $scope) {
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
 
+    var currentScroll = null;
+
     $scope.onScrollStop = function(top, bottom, total) {
+        currentScroll = [top, bottom, total];
         var n = $scope.calendar.length;
         var i = Math.floor(top * n / total);
         var j = Math.floor(bottom * n / total);
         loadDayContent(i, j);
     }
+
+    function tryUpdateLastScrollPosition() {
+        if (currentScroll != null) {
+            $scope.onScrollStop.apply($scope, currentScroll);
+        }
+    }
+
+    $scope.api.invalidateAssignments = function() {
+        _.each(loadedWeeks, function(week) {
+            week.loaded = false;
+            _.each(week.days, function(day) {
+                day.content = null;
+            });
+        });
+        loadedWeeks = [];
+        tryUpdateLastScrollPosition();
+    };
 
     function loadDayContent(i, j) {
         i = Math.max(i - 0, 0);
@@ -148,6 +167,7 @@ App.controller('CalendarController', function ($timeout, $scope) {
         for (var w = i; w <= j; w++) {
             var week = $scope.calendar[w];
             week.loaded = true;
+            loadedWeeks.push(week);
             days = days.concat(week.days);
         }
         if (days.length > 0 && $scope.onLoadDayContent != null) {
