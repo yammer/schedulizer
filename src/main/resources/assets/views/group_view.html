@@ -46,8 +46,9 @@
                     </div>
                     <div class="day-assignment-avatars">
                         <img
-                            ng-src="https://mug0.assets-yammer.com/mugshot/images/150x150/bsrr0LTDpcX3pZvt59FZtn1KTRp5J9Fm"
-                            ng-repeat="employee in employees">
+                            ng-repeat="employee in employees"
+                            ng-src="{{employee.imageUrlTemplate}}"
+                            />
                     </div>
                 </div>
             </div>

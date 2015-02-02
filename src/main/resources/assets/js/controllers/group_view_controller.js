@@ -35,7 +35,7 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
             return false;
         }
 
-        var employee = new GroupEmployee({ groupId: group.id });
+        var employee = new GroupEmployee({groupId: group.id});
         employee.yammerId = yid;
         employee.name = yEmployee.full_name;
         employee.imageUrlTemplate = yEmployee.photo;
