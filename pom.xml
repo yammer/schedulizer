@@ -20,6 +20,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     
+    <scm>
+        <connection>scm:git:git://github.int.yammer.com/yammer/stresstime.git</connection>
+        <developerConnection>scm:git:git@github.int.yammer.com:yammer/stresstime.git</developerConnection>
+        <url>http://github.int.yammer.com/yammer/stresstime/</url>
+        <tag>HEAD</tag>
+    </scm>
+    
     <distributionManagement>
         <repository>
             <id>maven.int.yammer.com-releases</id>
