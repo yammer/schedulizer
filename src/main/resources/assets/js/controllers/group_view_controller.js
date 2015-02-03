@@ -344,17 +344,22 @@ App.controller('GroupViewController', function(
 
     var userSelectionConfirmed = false; // so that enter in autocomplete selection does not trigger input submit
 
+    $scope.employeeInput = null; // <input/>
+
+    $scope.triggerAddEmployee = function() {
+        if (userSelectionConfirmed && $scope.newEmployee) {
+            addEmployee($scope.newEmployee);
+            $scope.newEmployee = undefined;
+            userSelectionConfirmed = false;
+        } else {
+            DomUtils.shakeOnError($scope.employeeInput);
+        }
+    }
+
     $scope.userInputKeyDown = function(e) {
         switch (e.which) {
             case 13: // enter
-                if (userSelectionConfirmed && $scope.newEmployee) {
-                    addEmployee($scope.newEmployee);
-                    $scope.newEmployee = undefined;
-                    userSelectionConfirmed = false;
-                } else {
-                    var input = $(e.currentTarget);
-                    DomUtils.shakeOnError(input);
-                }
+                $scope.triggerAddEmployee();
                 break;
             default:
                 $scope.newEmployee = undefined;

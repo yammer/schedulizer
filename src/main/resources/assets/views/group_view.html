@@ -142,11 +142,12 @@
             </employee-card>
         </div>
         <div class="employee-card">
-            <div class="avatar-wrapper no-image add" ng-click="addEmployee()">+</div>
+            <div class="avatar-wrapper no-image add" ng-click="triggerAddEmployee()">+</div>
             <div class="name ui-widget">
                 <input
                         class="form-control"
                         type="text"
+                        st-name="employeeInput"
                         ng-model="newEmployeeName"
                         placeholder="Name"
                         st-autocomplete
