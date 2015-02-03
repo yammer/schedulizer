@@ -85,11 +85,12 @@ App.factory('DomUtils', ['$rootScope', '$animate', function($rootScope, $animate
 App.directive('stName', function() {
     return {
         restrict: 'A',
-        scope: {
-            stName: '='
-        },
+        // acts as below without requiring isolated scope
+        //scope: {
+        //    stName: '='
+        //},
         link: function(scope, element, attrs) {
-            scope.stName = element;
+            scope[attrs.stName] = element;
         }
     }
 })
