@@ -63,6 +63,18 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
 
 }]);
 
+App.directive('stName', function() {
+    return {
+        restrict: 'A',
+        scope: {
+            stName: '='
+        },
+        link: function(scope, element, attrs) {
+            scope.stName = element;
+        }
+    }
+})
+
 function resizeCalendar() {
     // TODO
 }
