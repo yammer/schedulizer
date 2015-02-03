@@ -1,4 +1,4 @@
-App.controller('CalendarController', function ($timeout, $scope) {
+App.controller('CalendarController', function ($timeout, $scope, DomUtils) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
@@ -220,6 +220,10 @@ App.controller('CalendarController', function ($timeout, $scope) {
 
     $scope.api.goToToday = function(duration) {
         $scope.api.goToDate(Date.TODAY, duration);
+
+        // Better way to get the today cell
+        var today = $(".view-calendar .day.today");
+        DomUtils.animate('tada', today);
     }
 
     $scope.showCalendar = true;
