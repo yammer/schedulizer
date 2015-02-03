@@ -4,6 +4,8 @@ On-call schedule manager
 
 #### Before spining up server
 
+Open a terminal session and leave it running with:
+
 ```
 gem install sass
 mkdir src/main/resources/assets/css/out/
