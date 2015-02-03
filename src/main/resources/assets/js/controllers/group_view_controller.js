@@ -1,5 +1,6 @@
-App.controller('GroupViewController', function($scope, $timeout, $location,  $stateParams,yammer,
-                                              Group, GroupEmployee, AssignmentType, AssignableDay, EMPTY_GROUP) {
+App.controller('GroupViewController', function(
+        $scope, $timeout, $location, $animate, $stateParams, yammer, DomUtils,
+        Group, GroupEmployee, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
@@ -328,9 +329,9 @@ App.controller('GroupViewController', function($scope, $timeout, $location,  $st
                     addEmployee($scope.newEmployee);
                     $scope.newEmployee = undefined;
                     userSelectionConfirmed = false;
-                }
-                else {
-                    // shake... I think you should put more conditions... try and you'll see
+                } else {
+                    var input = $(e.currentTarget);
+                    DomUtils.shakeOnError(input);
                 }
                 break;
             default:

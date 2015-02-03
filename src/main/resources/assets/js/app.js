@@ -5,7 +5,7 @@
  */
 var StresstimeApp = {};
 
-var App = angular.module('StresstimeApp', ['ui.bootstrap', 'services', 'ui.router']);
+var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'ui.router']);
 
 App.constant('NAV_TABS', {
     calendar: {
@@ -61,6 +61,21 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
                 .state(view.stateName, angular.copy(view));
         });
 
+}]);
+
+App.factory('DomUtils', ['$rootScope', '$animate', function($rootScope, $animate) {
+    return {
+        shakeOnError: function(input) {
+            var parent = input.parent();
+            parent.addClass('has-error');
+            $animate.addClass(input, 'shake-animation').then(function() {
+                $rootScope.$apply(function() {
+                    parent.removeClass('has-error');
+                    $animate.removeClass(input, 'shake-animation');
+                });
+            });
+        }
+    };
 }]);
 
 App.directive('stName', function() {
