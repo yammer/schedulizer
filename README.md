@@ -2,7 +2,7 @@
 
 On-call schedule manager
 
-#### Before spining up server
+#### [Development] Before spining up server
 
 Open a terminal session and leave it running with:
 
