@@ -1,5 +1,6 @@
-App.controller('GroupTabController', function($scope, $timeout, $location, $state, $rootScope,
-                                              Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS) {
+App.controller('GroupTabController', function(
+        $scope, $timeout, $location, $state, $rootScope, DomUtils,
+        Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS) {
 
     $scope.selectedGroup = EMPTY_GROUP;
 
@@ -18,9 +19,14 @@ App.controller('GroupTabController', function($scope, $timeout, $location, $stat
 
     $scope.groups = Group.query({}, selectGroup);
 
+    $scope.groupInput = null;
+
     $scope.createNewGroup = function() {
         var groupName = $scope.newGroupName;
-        if(groupName == undefined || groupName == "") { return; }
+        if (groupName == null || groupName == "") {
+            DomUtils.shakeOnError($scope.groupInput);
+            return;
+        }
 
         var group = new Group();
         group.name = groupName;

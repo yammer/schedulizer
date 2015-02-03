@@ -465,7 +465,12 @@ $mid-assigned-bg: #F2D253;
     top: 36%;
 }
 
-/* drag and drop */
+.add-group-button {
+    padding-top: 5px;
+    padding-bottom: 7px;
+}
+
+/* Drag and drop */
 
 .drag-over {
     border: 2px dashed black !important;
@@ -591,7 +596,6 @@ $role-bg: #E06969;
         }
     }
 }
-
 
 /* Form shake */
 
