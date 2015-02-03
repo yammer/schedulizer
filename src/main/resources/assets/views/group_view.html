@@ -11,7 +11,7 @@
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
         <span class="add-assignment-type"
-            ng-click="tryAddAssignmentType(); isCreatingAssignmentType = !isCreatingAssignmentType;"
+            ng-click="addAssignmentTypeButtonClick()"
             >
             +
         </span>
@@ -19,6 +19,7 @@
         <!-- TODO: Also remove everything from inside the h1, make the .header a div etc -->
         <div class="assignment-type-form">
             <input
+                st-name="assignmentTypeInput"
                 ng-show="isCreatingAssignmentType"
                 ng-focus="isCreatingAssignmentType"
                 ng-blur="onInputBlur()"
@@ -26,7 +27,7 @@
                 type="text"
                 ng-model="newAssignmentTypeName"
                 placeholder="Name"
-                ng-enter="addAssignmentType()"
+                ng-enter="assignmentTypeInputEnter()"
                 />
         </div>
     </h1>

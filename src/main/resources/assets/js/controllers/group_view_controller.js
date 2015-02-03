@@ -63,10 +63,34 @@ App.controller('GroupViewController', function(
         group.assignmentTypes = AssignmentType.query({ group_id: group.id });
     }
 
+    var hideInput = null;
+
+    $scope.assignmentTypeInput = null;
+
+    $scope.addAssignmentTypeButtonClick = function() {
+        if ($scope.isCreatingAssignmentType) {
+            if ($scope.addAssignmentType()) {
+                focusOnAssignmentTypeInput();
+            } else {
+                $scope.isCreatingAssignmentType = false;
+            }
+        } else {
+            $scope.isCreatingAssignmentType = true;
+        }
+    }
+
+    $scope.assignmentTypeInputEnter = function() {
+        if (!$scope.addAssignmentType()) {
+            DomUtils.shakeOnError($scope.assignmentTypeInput);
+        }
+    }
+
     $scope.addAssignmentType = function () {
         var name = $scope.newAssignmentTypeName;
+        if (name == null || name == "") {
+            return false;
+        }
         var group = $scope.selectedGroup;
-        if (name == undefined || name == "") { return; }
         var assignmentType = new AssignmentType({ groupId: group.id });
         assignmentType.name = name;
         assignmentType.$save({}, function() {
@@ -74,21 +98,18 @@ App.controller('GroupViewController', function(
             $scope.newAssignmentTypeName = "";
             initAssignmentTypeBucket(assignmentType);
         });
-
-    }
-
-    var hideInput = null;
-
-    $scope.tryAddAssignmentType = function() {
-        if ($scope.isCreatingAssignmentType) {
-            $scope.addAssignmentType();
-        }
+        return true;
     }
 
     $scope.onInputBlur = function() {
         hideInput = $timeout(function(){
             $scope.isCreatingAssignmentType = false;
         }, 200);
+    }
+
+    function focusOnAssignmentTypeInput() {
+        $timeout.cancel(hideInput);
+        $scope.assignmentTypeInput.focus();
     }
 
     $scope.deleteAssignmentType = function(assignmentType) {
@@ -98,6 +119,7 @@ App.controller('GroupViewController', function(
             group.assignmentTypes.remove(assignmentType);
             delete $scope.assignmentTypeBuckets[assignmentType.id];
         });
+        focusOnAssignmentTypeInput();
     }
 
     $scope.calendar = null;
