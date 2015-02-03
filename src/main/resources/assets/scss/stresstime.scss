@@ -24,21 +24,24 @@ $dark-fg: #828282;
 $selected-bg: #2EC3E5;
 $odd-bg: #D9D9D9;
 $even-bg: #EEEEEE;
-$today-bg: #F99A4A;
+$today-bg: #FD8845;
 $assigned-bg: #6FDF6F;
-$mid-assigned-bg: #F2D253;
+$mid-assigned-bg: #EFC932;
 
 @mixin colorize-day($color) {
-    background-color: $color;
-    &.even { background-color: mix($color, $even-bg, 85%); }
-    &.odd { background-color: mix($color, $odd-bg, 85%); }
-    .hoverable &:hover { background-color: lighten($color, 10%); }
-    &.selected {
-        background-color: mix($selected-bg, $color, 60%);
-        .hoverable &:hover {
-            background-color: lighten(mix($selected-bg, $color, 60%), 10%);
-        }
+    @include even-odd($color, 7%);
+    .hoverable &:hover, &.selected {
+        @include even-odd(mix($selected-bg, $color, 80%), 7%);
     }
+    .hoverable &.selected:hover {
+        @include even-odd(mix(lighten($selected-bg, 10%), $color, 70%), 7%);
+    }
+}
+
+@mixin even-odd($color, $amount) {
+    background-color: $color;
+    &.odd { background-color: darken($color, $amount); }
+    &.even { background-color: lighten($color, $amount); }
 }
 
 .view-calendar td, .view-calendar th {
@@ -94,15 +97,13 @@ $mid-assigned-bg: #F2D253;
 }
 .hoverable .day:hover, .day.hover {
     color: $light-fg;
-    background-color: $selected-bg;
+    @include even-odd($selected-bg, 7%);
 }
 .day.selected {
     color: $light-fg;
-    background-color: $selected-bg;
-    &.odd { background-color: mix($selected-bg, $odd-bg, 90%); }
-    &.even { background-color: mix($selected-bg, $even-bg, 90%); }
+    @include even-odd($selected-bg, 7%);
     .hoverable &:hover {
-        background-color: lighten($selected-bg, 10%);
+        @include even-odd(lighten($selected-bg, 10%), 7%);
     }
 }
 
@@ -269,8 +270,8 @@ $mid-assigned-bg: #F2D253;
 }
 
 .day-stamp.today {
-    color: #FFFFFF;
-    background-color: #FFAA25;
+    color: $light-fg;
+    background-color: $today-bg;
 }
 
 
