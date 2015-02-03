@@ -7,5 +7,5 @@ On-call schedule manager
 ```
 gem install sass
 mkdir src/main/resources/assets/css/out/
-sass --watch src/main/resources/assets/scss/stresstime.scss:src/main/resources/assets/css/out/
+sass --watch src/main/resources/assets/scss/stresstime.scss:src/main/resources/assets/css/out/stresstime.css
 ```
