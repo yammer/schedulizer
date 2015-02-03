@@ -335,12 +335,12 @@ $mid-assigned-bg: #F2D253;
     background-color: #828282;
 }
 
-
 .employee-card .name {
     display: table-cell;
     height: 50px;
     vertical-align: middle;
     padding: 0 10px 0 10px;
+    font-size: inherit;
 }
 
 .clear {
