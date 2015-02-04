@@ -16,7 +16,7 @@ App.controller('GroupViewController', function(
     $scope.assignmentTypeBuckets = {};
 
     function getGroupEmployeesData(group) {
-        if (group == EMPTY_GROUP || group == undefined) {
+        if (group == EMPTY_GROUP) {
             group.employees = [];
             return;
         }
@@ -196,6 +196,7 @@ App.controller('GroupViewController', function(
     }
 
     $scope.$watch('selectedGroup', function() {
+        if ($scope.selectedGroup == undefined) { return; }
         getGroupEmployeesData($scope.selectedGroup);
         getAssignmentTypeData($scope.selectedGroup);
     });
