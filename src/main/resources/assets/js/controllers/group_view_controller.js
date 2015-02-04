@@ -227,7 +227,8 @@ App.controller('GroupViewController', function(
     }
 
     GroupViewDayContent.prototype.isAssigned = function() {
-        return this.numberOfRoles() == $scope.selectedGroup.assignmentTypes.length;
+        var roles = this.numberOfRoles();
+        return roles != 0 && roles == $scope.selectedGroup.assignmentTypes.length;
     }
 
     GroupViewDayContent.prototype.assign = function() {
