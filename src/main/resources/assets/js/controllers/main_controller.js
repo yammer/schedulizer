@@ -1,4 +1,4 @@
-App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location, yammer) {
+App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location) {
     /* injecting constants into scope */
     // $route.routes contains the elements of NAV_TABS augmented
     $scope.tabs = angular.copy(NAV_TABS);
@@ -15,22 +15,6 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
     $scope.STATUS = { GUEST: 'guest', USER: 'user', ADMIN: 'admin', GLOBALADMIN: 'globaladmin'}
 
     /* main functionality */
-    yammer.getLoginStatus(function(response) {
-        $timeout(function() {
-            if (response.authResponse) {
-                $scope.isLoggedToYammer = true;
-            }
-        }, 0);
-    });
-    $scope.doLogin = function() {
-        if (!$scope.isLoggedToYammer) {
-            yammer.login(function (response) {
-                if (response.authResponse) {
-                    $scope.isLoggedToYammer = true;
-                }
-            });
-        }
-    }
 
 
         // <TODO: Extract authorization logic to the server!>
