@@ -1,28 +1,24 @@
 package com.yammer.stresstime.test;
 
 import com.yammer.stresstime.StresstimeApplication;
-import com.yammer.stresstime.config.StresstimeConfiguration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
+import com.yammer.stresstime.TestSuite;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 
-/* TODO: Fix problem when running all tests at once, probably related to RULE being loaded once across suites */
+/* TODO: Extract this class into a rule (allowing test classes to subclass other classes) and create an annotation
+ * TODO: for tests that want to be wrapped in a hibernate session, allowing classes to have db test methods and
+ * TODO: non-db test methods */
 public class DatabaseTest {
-
-    @ClassRule
-    public static final DropwizardAppRule<StresstimeConfiguration> RULE =
-            new DropwizardAppRule<>(StresstimeApplication.class, "app.yml");
 
     private SessionFactory sessionFactory;
     private Session session;
     private boolean flushSession;
 
     public DatabaseTest() {
-        StresstimeApplication app = RULE.getApplication();
+        StresstimeApplication app = TestSuite.RULE.getApplication();
         sessionFactory = app.getSessionFactory();
     }
 

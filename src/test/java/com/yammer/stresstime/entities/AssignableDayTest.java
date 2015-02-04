@@ -23,7 +23,9 @@ public class AssignableDayTest extends DatabaseTest {
         super.setUp();
         assignableDayManager = new AssignableDayManager(getSessionFactory());
         groupManager = new GroupManager(getSessionFactory());
-        group = groupManager.random();
+
+        group = new Group("Core Services");
+        groupManager.save(group);
     }
 
     @Test

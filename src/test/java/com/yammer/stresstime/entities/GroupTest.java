@@ -6,7 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class GroupTest extends DatabaseTest {
 
@@ -21,7 +22,7 @@ public class GroupTest extends DatabaseTest {
 
     @Test
     public void testNewGroupHasEmptyAssignableDays() {
-        Group group = new Group("");
+        Group group = new Group("Core Services");
         assertNotNull(group.getAssignableDays());
         assertThat(group.getAssignableDays(), empty());
     }

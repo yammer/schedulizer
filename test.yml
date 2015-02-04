@@ -1,0 +1,22 @@
+rootPath: /service/*
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+
+  adminConnectors:
+    - type: http
+      port: 8081
+
+database:
+  driverClass: org.h2.Driver
+  user: test
+  password: test
+  url: jdbc:h2:mem:stresstime_test # In memory database for faster tests
+  properties:
+    hibernate.generate_statistics: true
+    hibernate.hbm2ddl.auto: create-drop # create-drop to clear database
+    hibernate.jdbc.batch_size: 20 # Should be the same as MAX_BATCH_SIZE property in EntityManager class
+    hibernate.order_inserts: true
+    hibernate.order_updates: true
