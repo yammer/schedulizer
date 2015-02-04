@@ -46,6 +46,7 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                     source: availableTags,
                     select: function(event, ui) {
                         scope.autocompleteSelect(ui.item.value);
+                        return false;
                     },
                     focus: function( event, ui ) {
                         $(element).val(ui.item.label);
@@ -73,6 +74,21 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 availableTags = value;
                 $(element).autocomplete("option", "source", availableTags);
                 $(element).autocomplete("search");
+            });
+        }
+    }
+});
+
+App.directive('stTryBackgroundImage', function($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            scope.$watch(attr.stTryBackgroundImage, function(value) {
+                if(value== undefined) {
+                    $(element)[0].style.backgroundImage = "";
+                    return;
+                }
+                $(element)[0].style.backgroundImage = "url(" + value + ")";
             });
         }
     }

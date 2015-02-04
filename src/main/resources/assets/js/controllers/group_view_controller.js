@@ -351,26 +351,23 @@ App.controller('GroupViewController', function(
             addEmployee($scope.newEmployee);
             $scope.newEmployee = undefined;
             userSelectionConfirmed = false;
-        } else {
+        } else if (!$scope.newEmployee) {
             DomUtils.shakeOnError($scope.employeeInput);
         }
     }
 
     $scope.userInputKeyDown = function(e) {
-        switch (e.which) {
-            case 13: // enter
-                $scope.triggerAddEmployee();
-                break;
-            default:
-                $scope.newEmployee = undefined;
-                userSelectionConfirmed = false;
-                break;
-        }
+        $scope.newEmployee = undefined;
+        userSelectionConfirmed = false;
+    }
+
+    $scope.userInputEnter = function(e) {
+        $scope.triggerAddEmployee();
     }
 
     $scope.onSelectAutocomplete = function(user) {
-        $scope.newEmployeeName = user.label;
         $scope.newEmployee = user;
+        $scope.newEmployeeName = user.label;
         $timeout(function() { userSelectionConfirmed = true; }, 100);
     }
 
