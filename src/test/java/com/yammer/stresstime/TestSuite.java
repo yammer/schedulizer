@@ -11,5 +11,5 @@ public class TestSuite {
 
     @ClassRule
     public static final DropwizardAppRule<StresstimeConfiguration> RULE =
-            new DropwizardAppRule<>(StresstimeApplication.class, "app.yml");
+            new DropwizardAppRule<>(StresstimeApplication.class, "test.yml");
 }
