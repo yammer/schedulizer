@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
 import com.yammer.stresstime.managers.exceptions.DataConflictException;
 import com.yammer.stresstime.managers.exceptions.ParameterException;
+import io.dropwizard.jackson.Jackson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ResourceUtils {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper();
 
     // Method used in cases where you need to pre-process the response before returning from a resource
     // method, most probably b/c of lazy db evaluation from hibernate that will happen after the
