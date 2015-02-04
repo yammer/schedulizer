@@ -82,19 +82,6 @@ App.factory('DomUtils', ['$rootScope', '$animate', function($rootScope, $animate
     };
 }]);
 
-App.directive('stName', function() {
-    return {
-        restrict: 'A',
-        // acts as below without requiring isolated scope
-        //scope: {
-        //    stName: '='
-        //},
-        link: function(scope, element, attrs) {
-            scope[attrs.stName] = element;
-        }
-    }
-})
-
 function resizeCalendar() {
     // TODO
 }

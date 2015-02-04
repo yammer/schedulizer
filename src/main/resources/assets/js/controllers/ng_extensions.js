@@ -53,14 +53,14 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                         return false;
                     }
                 });
-                if (scope.getCustomTemplate != undefined) {
+                if (scope.getCustomTemplate != null) {
                     autocomplete.data("ui-autocomplete")._renderItem = function (ul, item) {
                         return $('<li></li>')
                             .append(scope.getCustomTemplate(item.value))
                             .appendTo(ul);
                     };
                 }
-                if (scope.autocompleteWidth != undefined) {
+                if (scope.autocompleteWidth != null) {
                     autocomplete.data("ui-autocomplete")._resizeMenu = function () {
                         var ul = this.menu.element;
                         ul.outerWidth(scope.autocompleteWidth);
@@ -70,7 +70,7 @@ App.directive('stAutocomplete', function($timeout, $compile) {
             });
 
             scope.$watch("tags", function(value) {
-                if(value== undefined) { return; }
+                if (value == null) return;
                 availableTags = value;
                 $(element).autocomplete("option", "source", availableTags);
                 $(element).autocomplete("search");
@@ -90,6 +90,19 @@ App.directive('stTryBackgroundImage', function($timeout) {
                 }
                 $(element)[0].style.backgroundImage = "url(" + value + ")";
             });
+        }
+    }
+})
+
+App.directive('stName', function() {
+    return {
+        restrict: 'A',
+        // acts as below without requiring isolated scope
+        //scope: {
+        //    stName: '='
+        //},
+        link: function(scope, element, attrs) {
+            scope[attrs.stName] = element;
         }
     }
 })
