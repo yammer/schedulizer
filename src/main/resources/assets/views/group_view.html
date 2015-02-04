@@ -158,9 +158,9 @@
                         ng-model="newEmployeeName"
                         placeholder="Name"
                         st-autocomplete
+                        item-class="employee-autocomplete-item"
                         tags="autocompleteList"
                         get-custom-template="getAutocompleteItem"
-                        autocomplete-width="150"
                         autocomplete-select="onSelectAutocomplete"
                         ng-change="userInputKeyDown($event)"
                         ng-enter="userInputEnter($event)"

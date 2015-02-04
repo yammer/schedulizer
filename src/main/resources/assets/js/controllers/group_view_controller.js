@@ -339,9 +339,8 @@ App.controller('GroupViewController', function(
 
     $scope.getAutocompleteItem = function(user) {
         return "" +
-            "<div>" +
-            "<img width=\"20\" height=\"20\" src=\"" + user.photo + "\"/>" + user.label +
-            "</div>";
+            "<div class=\"employee-image\"><img src=\"" + user.photo + "\"/></div>" +
+            "<div class=\"employee-name\">" + user.label + "</div>";
     }
 
     var userSelectionConfirmed = false; // so that enter in autocomplete selection does not trigger input submit

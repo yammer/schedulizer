@@ -34,10 +34,11 @@ App.directive('stAutocomplete', function($timeout, $compile) {
         scope: {
             tags: "=",
             getCustomTemplate: "=",
-            autocompleteWidth: "=",
             autocompleteSelect: "="
+            //itemClass: "=attribute"
+
         },
-        link: function(scope, element, attr) {
+        link: function(scope, element, attrs) {
             var availableTags;
 
             $(function() {
@@ -55,17 +56,15 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 });
                 if (scope.getCustomTemplate != null) {
                     autocomplete.data("ui-autocomplete")._renderItem = function (ul, item) {
-                        return $('<li></li>')
+                        var itemClass = (attrs.itemClass != null) ? ' class="' + attrs.itemClass + '"' : "";
+                        return $('<li' + itemClass + '></li>')
                             .append(scope.getCustomTemplate(item.value))
                             .appendTo(ul);
                     };
                 }
-                if (scope.autocompleteWidth != null) {
-                    autocomplete.data("ui-autocomplete")._resizeMenu = function () {
-                        var ul = this.menu.element;
-                        ul.outerWidth(scope.autocompleteWidth);
-
-                    }
+                autocomplete.data("ui-autocomplete")._resizeMenu = function () {
+                    var ul = this.menu.element;
+                    ul.outerWidth(element.outerWidth());
                 }
             });
 
@@ -82,8 +81,8 @@ App.directive('stAutocomplete', function($timeout, $compile) {
 App.directive('stTryBackgroundImage', function($timeout) {
     return {
         restrict: 'A',
-        link: function(scope, element, attr) {
-            scope.$watch(attr.stTryBackgroundImage, function(value) {
+        link: function(scope, element, attrs) {
+            scope.$watch(attrs.stTryBackgroundImage, function(value) {
                 if(value== undefined) {
                     $(element)[0].style.backgroundImage = "";
                     return;
