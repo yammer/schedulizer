@@ -25,8 +25,25 @@ App.service('Session', function (USER_ROLES) {
     return this;
 });
 
+App.factory('SessionStorage', ['$window', function($window) {
+    var SessionStorage = {};
+
+    SessionStorage.save = function(key, value) {
+        $window.localStorage.setItem(key, JSON.stringify(value));
+    }
+    SessionStorage.load = function(key) {
+        var value = $window.localStorage.getItem(key);
+        if (value) {
+            return JSON.parse(value);
+        }
+        return undefined;
+    }
+    return SessionStorage;
+
+}]);
+
 App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, yammer,
-                                     USER_ROLES, AUTH_EVENTS) {
+                                     USER_ROLES, AUTH_EVENTS, SessionStorage) {
     var authService = {};
 
     function updateYammerSession(yammerResponse) {
@@ -37,16 +54,17 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         }
     }
 
-    function createStresstimeSession(stresstimeResponse) {
-         Session.create(stresstimeResponse.token, stresstimeResponse.userId, USER_ROLES.admin);
+    function createStresstimeSession(session) {
+        Session.create(session.token, session.userId, session.userRole); // TODO: change to session.userRole
+        SessionStorage.save('session', Session);
     }
 
     yammer.getLoginStatus(function(response) {
         updateYammerSession(response);
-        // TODO: check cookies to see if user is logged in our app
-        if(YammerSession.token) {
+        var session = SessionStorage.load('session');
+        if(YammerSession.token && session) {
             $rootScope.$apply(function() { // Necessary as it is an async response outside angular
-                createStresstimeSession(YammerSession); // should be stresstime response (see todo above)
+                createStresstimeSession(session); // should be stresstime response (see todo above)
             });
         }
         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
@@ -66,6 +84,7 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         }
         return deferred.promise.then(function(yammerSession) {
            // TODO: log in our app
+           yammerSession.userRole = USER_ROLES.admin; // mock for now
            createStresstimeSession(yammerSession); // should be stresstimeResponse
         });
     };
@@ -74,6 +93,7 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         var deferred = $q.defer(); // this is done just to be compatible with the login function
         deferred.resolve();
         Session.destroy();
+        SessionStorage.save("session", Session);
         return deferred.promise;
     }
 
