@@ -1,26 +1,17 @@
-App.controller('LoginController', function ($scope, $rootScope, $timeout, AUTH_EVENTS, yammer) {
-    $scope.isLoggedToYammer = false;
-    yammer.getLoginStatus(function(response) {
-        $timeout(function() {
-            if (response.authResponse && !$scope.isLoggedToYammer) {
-                $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-                $scope.isLoggedToYammer = true;
-            }
-        }, 0);
-    });
+App.controller('LoginController', function ($scope, $rootScope, $timeout, AUTH_EVENTS, AuthService) {
+
     $scope.doLogin = function() {
-        if (!$scope.isLoggedToYammer) {
-            yammer.login(function (response) {
-                $timeout(function() {
-                    if (response.authResponse && !$scope.isLoggedToYammer) {
-                        $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-                        $scope.isLoggedToYammer = true;
-                    } else if (!response.authResponse) {
-                        $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-                        $scope.isLoggedToYammer = false;
-                    }
-                });
-            });
-        }
+        AuthService.login().then(function(user) {
+            $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+        }, function(error) {
+            $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+        });
     }
+
+    $scope.doLogout = function() {
+        AuthService.logout().then(function() {
+            $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+        });
+    }
+    $scope.isAuthenticated = AuthService.isAuthenticated;
 });

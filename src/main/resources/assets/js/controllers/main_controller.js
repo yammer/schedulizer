@@ -1,4 +1,4 @@
-App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location) {
+App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location, AuthService, USER_ROLES) {
     /* injecting constants into scope */
     $scope.tabs = angular.copy(NAV_TABS);
 
@@ -9,4 +9,7 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
             return false
         }
     }
+
+    $scope.userRoles = USER_ROLES;
+    $scope.isAuthorized = AuthService.isAuthorized;
 });
