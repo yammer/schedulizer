@@ -143,12 +143,13 @@
         </div>
         <div class="employee-card">
             <div
+                class="avatar-wrapper no-image add"
                 ng-class="{'selected-employee-add': newEmployee }"
                 st-try-background-image="newEmployee.photo"
-                class="avatar-wrapper no-image add"
                 ng-click="triggerAddEmployee()"
                 >
-                +</div>
+                <span>+</span>
+            </div>
 
             <div class="name ui-widget">
                 <input

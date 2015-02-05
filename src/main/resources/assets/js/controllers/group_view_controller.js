@@ -343,23 +343,19 @@ App.controller('GroupViewController', function(
             "<div class=\"employee-name\">" + user.label + "</div>";
     }
 
-    var userSelectionConfirmed = false; // so that enter in autocomplete selection does not trigger input submit
-
     $scope.employeeInput = null; // <input/>
 
     $scope.triggerAddEmployee = function() {
-        if (userSelectionConfirmed && $scope.newEmployee) {
+        if ($scope.newEmployee) {
             addEmployee($scope.newEmployee);
             $scope.newEmployee = undefined;
-            userSelectionConfirmed = false;
-        } else if (!$scope.newEmployee) {
+        } else {
             DomUtils.shakeOnError($scope.employeeInput);
         }
     }
 
     $scope.userInputKeyDown = function(e) {
         $scope.newEmployee = undefined;
-        userSelectionConfirmed = false;
     }
 
     $scope.userInputEnter = function(e) {
@@ -367,9 +363,9 @@ App.controller('GroupViewController', function(
     }
 
     $scope.onSelectAutocomplete = function(user) {
+        console.log("onSelectAutocomplete(", user, ")");
         $scope.newEmployee = user;
         $scope.newEmployeeName = user.label;
-        $timeout(function() { userSelectionConfirmed = true; }, 100);
     }
 
     // TODO: Ugly hack!

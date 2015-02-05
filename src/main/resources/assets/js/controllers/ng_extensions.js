@@ -46,10 +46,15 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 var autocomplete = $(element).autocomplete({
                     source: availableTags,
                     select: function(event, ui) {
-                        scope.autocompleteSelect(ui.item.value);
+                        scope.$apply(function() {
+                            scope.autocompleteSelect(ui.item.value);
+                        });
                         return false;
                     },
-                    focus: function( event, ui ) {
+                    focus: function(event, ui) {
+                        scope.$apply(function() {
+                            scope.autocompleteSelect(ui.item.value);
+                        });
                         $(element).val(ui.item.label);
                         return false;
                     }
@@ -82,8 +87,10 @@ App.directive('stTryBackgroundImage', function($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
+            console.log(attrs.stTryBackgroundImage)
             scope.$watch(attrs.stTryBackgroundImage, function(value) {
-                if(value== undefined) {
+                console.log("new value = ", value);
+                if(value == undefined) {
                     $(element)[0].style.backgroundImage = "";
                     return;
                 }
