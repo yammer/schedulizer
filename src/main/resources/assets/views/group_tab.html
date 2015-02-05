@@ -12,15 +12,15 @@
                 <a ui-sref="groups.view({groupId: {{group.id}}})">
                     {{group.name}}
                     <div
-                        ng-if="isAuthorized(userRoles.globalAdmin)"
+                        st-if="isAuthorized(userRoles.globalAdmin)"
                         class="delete"
                         ng-click="deleteGroup(group, $event);">
                         <div>-</div>
                     </div>
                 </a>
             </li>
-            <li>
-                <div ng-if="isAuthorized(userRoles.globalAdmin)" class="input-group new-group-form">
+            <li st-if="isAuthorized(userRoles.globalAdmin)">
+                <div class="input-group new-group-form">
                     <input
                         st-name="groupInput"
                         type="text"

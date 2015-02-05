@@ -109,4 +109,30 @@ App.directive('stName', function() {
             scope[attrs.stName] = element;
         }
     }
-})
+});
+
+App.directive('stIf', ['$animate', function($animate) {
+  return {
+    transclude: 'element',
+    priority: 1000,
+    terminal: true,
+    restrict: 'A',
+    compile: function (element, attr, transclude) {
+      return function ($scope, $element, $attr) {
+        var childElement, childScope;
+        $scope.$watch($attr.stIf, function ngIfWatchAction(value) {
+          if (childElement) {
+            $animate.leave(childElement);
+            childElement = undefined;
+          }
+          if (value) {
+            transclude($scope, function (clone) {
+              childElement = clone;
+              $animate.enter(clone, $element.parent(), $element);
+            });
+          }
+        });
+      }
+    }
+  }
+}]);

@@ -45,7 +45,9 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         updateYammerSession(response);
         // TODO: check cookies to see if user is logged in our app
         if(YammerSession.token) {
-            createStresstimeSession(YammerSession) // should be stresstime response (see todo above)
+            $rootScope.$apply(function() { // Necessary as it is an async response outside angular
+                createStresstimeSession(YammerSession); // should be stresstime response (see todo above)
+            });
         }
         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
 

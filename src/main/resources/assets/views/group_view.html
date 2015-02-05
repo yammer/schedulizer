@@ -6,12 +6,12 @@
                 ng-repeat="assignmentType in selectedGroup.assignmentTypes"
                 class="assignment-type-label sacudido">
                 {{assignmentType.name}}
-                <div ng-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
+                <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
         <span
-            ng-if="isGroupAdmin(selectedGroup)"
+            st-if="isGroupAdmin(selectedGroup)"
             class="add-assignment-type"
             ng-click="addAssignmentTypeButtonClick()"
             >
@@ -143,7 +143,7 @@
                     >
             </employee-card>
         </div>
-        <div ng-if="isGroupAdmin(selectedGroup)" class="employee-card">
+        <div st-if="isGroupAdmin(selectedGroup)" class="employee-card">
             <div
                 class="avatar-wrapper no-image add"
                 ng-class="{'selected-employee-add': newEmployee }"

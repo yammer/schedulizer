@@ -97,7 +97,7 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
 
 }]);
 
-App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS) {
+App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
     function checkAuthorized(authorizedRoles) {
         if (!AuthService.isAuthorized(authorizedRoles)) {
             if (AuthService.isAuthenticated()) {
