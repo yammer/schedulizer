@@ -15,9 +15,11 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
         restrict: 'A',
         scope: {
             ghostElement: '@',
-            dragData: '='
+            dragData: '=',
+            ngDraggable: '='
         },
         link: function(scope, el, attrs, controller) {
+            if (scope.ngDraggable === false) { return; }
             angular.element(el).attr("draggable", "true");
 
             var id = angular.element(el).attr("id");
@@ -58,9 +60,11 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
     return {
         restrict: 'A',
         scope: {
-            ngOnDrop: '&'
+            ngOnDrop: '&',
+            ngDroppable: '='
         },
         link: function($scope, el, attrs, controller) {
+            if ($scope.ngDroppable === false) { return; }
             var id = angular.element(el).attr("id");
             if (!id) {
                 id = guid()

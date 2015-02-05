@@ -83,8 +83,7 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         if (!angular.isArray(authorizedRoles)) {
             authorizedRoles = [authorizedRoles];
         }
-        return (authService.isAuthenticated() &&
-        authorizedRoles.indexOf(Session.userRole) !== -1);
+        return authorizedRoles.indexOf(Session.userRole) !== -1;
     };
     return authService;
 });

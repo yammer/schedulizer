@@ -112,7 +112,22 @@ App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED
         return true;
     }
 
+    function iAmNotAuthorizedToBeHere() {
+        // If I am already in an unauthorized state
+        var allStates = _.extend(NESTED_VIEWS, NAV_TABS);
+        var allStatesArray = Object.keys(allStates).map(function(k){return allStates[k]});
+        var currentState = _.find( allStatesArray, function(s) { return s.stateName == $state.current.name; });
+        return !checkAuthorized(currentState.data.authorizedRoles);
+    }
+
+    $rootScope.$on(AUTH_EVENTS.logoutSuccess, function() {
+        if (iAmNotAuthorizedToBeHere()) {
+            $state.go(NAV_TABS.group.stateName, {});
+        }
+    });
+
     $rootScope.$on(AUTH_EVENTS.authServiceInitialized, function() {
+
         $rootScope.$on('$stateChangeStart', function (event, next) {
             var authorizedRoles = next.data.authorizedRoles;
             if (!checkAuthorized(authorizedRoles)) {
@@ -120,12 +135,7 @@ App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED
             }
         });
 
-        // If I am already in an unauthorized state
-        var allStates = _.extend(NESTED_VIEWS, NAV_TABS);
-        var allStatesArray = Object.keys(allStates).map(function(k){return allStates[k]});
-        var currentState = _.find( allStatesArray, function(s) { return s.stateName == $state.current.name; });
-
-        if (!checkAuthorized(currentState.data.authorizedRoles)) {
+        if (iAmNotAuthorizedToBeHere()) {
             $state.go(NAV_TABS.group.stateName, {});
         }
     });

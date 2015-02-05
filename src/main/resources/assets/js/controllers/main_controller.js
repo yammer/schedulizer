@@ -12,4 +12,12 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
 
     $scope.userRoles = USER_ROLES;
     $scope.isAuthorized = AuthService.isAuthorized;
+
+    $scope.isGroupAdmin = function(group) {
+        if ($scope.isAuthorized($scope.userRoles.globalAdmin)) { return true; }
+        if (!$scope.isAuthorized($scope.userRoles.admin)) { return false; }
+        // TODO: Check if is this group's admin
+        return true;
+    }
+
 });
