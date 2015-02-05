@@ -38,7 +38,7 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
     }
 
     function createStresstimeSession(stresstimeResponse) {
-         Session.create(stresstimeResponse.token, stresstimeResponse.userId, USER_ROLES.globalAdmin);
+         Session.create(stresstimeResponse.token, stresstimeResponse.userId, USER_ROLES.admin);
     }
 
     yammer.getLoginStatus(function(response) {

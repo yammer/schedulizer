@@ -437,7 +437,7 @@ $add-bg: #D9D9D9;
     opacity: 0.75;
 }
 
-.bucket .bucket-content .assigned-employee .minus-span {
+.bucket .bucket-content .assigned-employee.is-admin .minus-span {
     font-size: 30px;
     color: white;
     visibility: hidden;
@@ -446,15 +446,15 @@ $add-bg: #D9D9D9;
     left: 12px;
 }
 
-.bucket .bucket-content .assigned-employee:hover img {
+.bucket .bucket-content .assigned-employee.is-admin:hover img {
     visibility: hidden;
 }
 
-.bucket .bucket-content .assigned-employee:hover .minus-span {
+.bucket .bucket-content .assigned-employee.is-admin:hover .minus-span {
     visibility: visible;
 }
 
-.bucket .bucket-content .assigned-employee:hover {
+.bucket .bucket-content .assigned-employee.is-admin:hover {
     background-color: #e06969;
 }
 
