@@ -363,7 +363,6 @@ App.controller('GroupViewController', function(
     }
 
     $scope.onSelectAutocomplete = function(user) {
-        console.log("onSelectAutocomplete(", user, ")");
         $scope.newEmployee = user;
         $scope.newEmployeeName = user.label;
     }

@@ -87,9 +87,7 @@ App.directive('stTryBackgroundImage', function($timeout) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-            console.log(attrs.stTryBackgroundImage)
             scope.$watch(attrs.stTryBackgroundImage, function(value) {
-                console.log("new value = ", value);
                 if(value == undefined) {
                     $(element)[0].style.backgroundImage = "";
                     return;

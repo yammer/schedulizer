@@ -7,7 +7,6 @@ App.controller('GroupTabController', function(
     $scope.selectedGroup = EMPTY_GROUP;
 
     function selectGroup() {
-        console.log($state.params.groupId)
         $scope.selectedGroup = _.find($scope.groups, function(g) {
             return g.id == parseInt($state.params.groupId);
         });
