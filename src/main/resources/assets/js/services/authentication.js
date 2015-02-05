@@ -1,19 +1,3 @@
-App.constant('AUTH_EVENTS', {
-    loginSuccess: 'auth-login-success',
-    loginFailed: 'auth-login-failed',
-    logoutSuccess: 'auth-logout-success',
-    sessionTimeout: 'auth-session-timeout',
-    notAuthenticated: 'auth-not-authenticated',
-    notAuthorized: 'auth-not-authorized'
-});
-
-App.constant('USER_ROLES', {
-    globalAdmin: 'global',
-    admin: 'admin',
-    user: 'user',
-    guest: 'guest'
-});
-
 App.service('YammerSession', function () {
     this.create = function (token, userId) {
         this.token = token;
@@ -26,7 +10,7 @@ App.service('YammerSession', function () {
     return this;
 });
 
-App.service('Session', function () {
+App.service('Session', function (USER_ROLES) {
     this.create = function (token, userId, userRole) {
         this.token = token;
         this.userId = userId;
@@ -35,12 +19,14 @@ App.service('Session', function () {
     this.destroy = function () {
         this.token = null;
         this.userId = null;
-        this.userRole = null;
+        this.userRole = USER_ROLES.guest;
     };
+    this.destroy();
     return this;
 });
 
-App.factory('AuthService', function ($http, $q, $timeout, Session, YammerSession, yammer, USER_ROLES) {
+App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, yammer,
+                                     USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
     function updateYammerSession(yammerResponse) {
@@ -61,6 +47,7 @@ App.factory('AuthService', function ($http, $q, $timeout, Session, YammerSession
         if(YammerSession.token) {
             createStresstimeSession(YammerSession) // should be stresstime response (see todo above)
         }
+        $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
 
     });
 
