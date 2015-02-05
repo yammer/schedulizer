@@ -115,4 +115,20 @@ public class AssignmentsResource {
         String response = ResourceUtils.preProcessResponse(assignableDay);
         return Response.ok().entity(response).build();
     }
+
+    @GET
+    @Path("/stats")
+    @UnitOfWork
+    public Response getAssignmentsStats(
+            @PathParam("group_id") long groupId,
+            @QueryParam("start_date") String startDateString,
+            @QueryParam("end_date") String endDateString) {
+        ResourceUtils.checkParameter(startDateString != null, "start_date");
+        ResourceUtils.checkParameter(endDateString != null, "end_date");
+        Group group = groupManager.getById(groupId);
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
+
+    }
 }
