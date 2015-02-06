@@ -3,8 +3,8 @@
         {{selectedGroup.name}}
         <div class="assignment-types-wrapper">
             <div
-                ng-repeat="assignmentType in selectedGroup.assignmentTypes | orderBy: 'name' : true"
-                class="assignment-type-label sacudido">
+                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name' : true"
+                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index)%10}}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
@@ -46,9 +46,11 @@
                 <div class="main-label">{{dayStamp.getDate()}}</div>
             </div>
             <div ng-if="hoveredDay && hoveredDay.content && hoveredDay.content.assignments" class="day-assignments">
-                <div ng-repeat="employees in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy" class="day-assignment">
+                <div ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy" class="day-assignment">
                     <div class="day-assignment-role">
-                        <span>{{selectedGroup.assignmentTypeFor(employees.key).name}}</span>
+                        <span class="assignment-color-{{index%10}}">
+                            {{selectedGroup.assignmentTypeFor(employees.key).name}}
+                        </span>
                     </div>
                     <div class="day-assignment-avatars">
                         <img

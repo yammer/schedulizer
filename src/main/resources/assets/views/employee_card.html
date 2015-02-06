@@ -4,6 +4,14 @@
     </div>
     <div class="name">
         {{employee.name}}
+        <br>
+        <span
+            ng-repeat="(index, stat) in employee.statistics | orderBy: 'assignmentType.name'"
+            class="mini-assignment-type-label assignment-color-{{index%10}}"
+            ng-class="{'no-assignments-label': stat.count == 0 }"
+             >
+            {{stat.count}}
+        </span>
     </div>
     <div class="clear"></div>
     <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">

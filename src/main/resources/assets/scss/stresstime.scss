@@ -385,7 +385,7 @@ $add-bg: #D9D9D9;
     width: 999999px;
     height: 50px;
     vertical-align: middle;
-    padding: 0 10px 0 10px;
+    padding: 0 10px 5px  10px;
     font-size: inherit;
 }
 
@@ -395,11 +395,22 @@ $add-bg: #D9D9D9;
 
 .mini-assignment-type-label {
     border-radius: 2px;
-    padding: 2px 9px;
-    margin: 0px 5px;
+    padding: 2px 0px 1px 0px;
+    margin: 0px 6px 0px 0px;
     color: #ffffff;
-    font-size: 10px;
+    font-size: 13px;
+    width: 23px;
+    display: inline-block;
+    text-align: center;
+    opacity: 0.7;
+}
 
+.no-assignments-label {
+    opacity: 0.15;
+}
+
+.employee-card:hover .mini-assignment-type-label {
+    opacity: 1.0;
 }
 
 /* AssignmentType buckets */
@@ -548,7 +559,7 @@ $delete-bg: #C41E1E;
 
 /* Assignment types */
 
-$assignment-colors: #37af8e, #34a5b4, #e06636, #dac63a, #fc8686, #bbbbbb, #94e057, #aa11cc, #1ba2a5, #123456;
+$assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e057, #aa11cc, #1ba2a5, #123456;
 
 @for $i from 1 through length($assignment-colors) {
     .assignment-color-#{$i - 1} {
