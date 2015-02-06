@@ -96,6 +96,10 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
         $scope.hoveredDay = day;
     }
 
+    $scope.orderHoveredDayBy = function(key){
+        return $scope.selectedGroup.assignmentTypeFor(key).name;
+    }
+
     $scope.clearSelection = function() {
         $scope.calendar.clearSelectedDays();
         $scope.selectedDays = [];

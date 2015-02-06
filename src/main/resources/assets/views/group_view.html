@@ -3,7 +3,7 @@
         {{selectedGroup.name}}
         <div class="assignment-types-wrapper">
             <div
-                ng-repeat="assignmentType in selectedGroup.assignmentTypes"
+                ng-repeat="assignmentType in selectedGroup.assignmentTypes | orderBy: 'name' : true"
                 class="assignment-type-label sacudido">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
@@ -46,9 +46,9 @@
                 <div class="main-label">{{dayStamp.getDate()}}</div>
             </div>
             <div ng-if="hoveredDay && hoveredDay.content && hoveredDay.content.assignments" class="day-assignments">
-                <div ng-repeat="(roleId, employees) in hoveredDay.content.assignments" class="day-assignment">
+                <div ng-repeat="employees in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy" class="day-assignment">
                     <div class="day-assignment-role">
-                        <span>{{selectedGroup.assignmentTypeFor(roleId).name}}</span>
+                        <span>{{selectedGroup.assignmentTypeFor(employees.key).name}}</span>
                     </div>
                     <div class="day-assignment-avatars">
                         <img
@@ -79,7 +79,7 @@
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
                     <div class="bucket"
-                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets"
+                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.name'"
                          ng-droppable="isGroupAdmin(selectedGroup)"
                          ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>

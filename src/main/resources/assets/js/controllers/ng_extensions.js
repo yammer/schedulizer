@@ -136,3 +136,37 @@ App.directive('stIf', ['$animate', function($animate) {
     }
   }
 }]);
+
+App.filter('orderObjectBy', function() {
+    return function(items, field, reverse) {
+        var filtered = [];
+        var deepField = field.split(".");
+        angular.forEach(items, function(item) {
+             filtered.push(item);
+        });
+        filtered.sort(function (a, b) {
+            for(var i = 0; i < deepField.length; i++) {
+                a = a[deepField[i]];
+                b = b[deepField[i]];
+            }
+            return (a > b ? 1 : -1);
+        });
+        if(reverse) filtered.reverse();
+        return filtered;
+    };
+});
+
+App.filter('orderByExpressionAppliedOnTheKey', function() {
+    return function(items, func, reverse) {
+        var filtered = [];
+        angular.forEach(items, function(item, key) {
+             item.key = key;
+             filtered.push(item);
+        });
+        filtered.sort(function (a, b) {
+            return (func(a.key) > func(b.key) ? 1 : -1);
+        });
+        if(reverse) filtered.reverse();
+        return filtered;
+    };
+});
