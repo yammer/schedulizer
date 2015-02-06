@@ -97,7 +97,7 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
     }
 
     $scope.orderHoveredDayBy = function(key){
-        return $scope.selectedGroup.assignmentTypeFor(key).name;
+        return $scope.selectedGroup.assignmentTypeFor(key).name.toLowerCase();
     }
 
     $scope.clearSelection = function() {

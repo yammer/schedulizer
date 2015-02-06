@@ -144,10 +144,17 @@ App.filter('orderObjectBy', function() {
         angular.forEach(items, function(item) {
              filtered.push(item);
         });
+        if(filtered.length <=1) return filtered;
         filtered.sort(function (a, b) {
             for(var i = 0; i < deepField.length; i++) {
                 a = a[deepField[i]];
                 b = b[deepField[i]];
+            }
+            if (typeof a == 'string') {
+                a = a.toLowerCase();
+            }
+            if (typeof b == 'string') {
+                b = b.toLowerCase();
             }
             return (a > b ? 1 : -1);
         });
@@ -163,6 +170,7 @@ App.filter('orderByExpressionAppliedOnTheKey', function() {
              item.key = key;
              filtered.push(item);
         });
+        if(filtered.length <=1) return filtered;
         filtered.sort(function (a, b) {
             return (func(a.key) > func(b.key) ? 1 : -1);
         });
