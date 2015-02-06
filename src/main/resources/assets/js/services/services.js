@@ -174,3 +174,7 @@ services.factory('AssignableDay', ['$resource', function($resource) {
 services.factory('AuthorizationResource', ['$resource', function($resource) {
     return $resource(PREFIX + 'current');
 }]);
+
+services.factory('AssignmentStats', ['$resource', function($resource) {
+    return $resource(PREFIX + 'groups/:group_id/assignments/stats', {group_id: '@groupId'}, {});
+}]);
