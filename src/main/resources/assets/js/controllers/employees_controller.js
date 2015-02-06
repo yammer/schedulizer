@@ -1,4 +1,5 @@
-App.controller('EmployeesController', function($scope, $timeout, yammer, DomUtils, GroupEmployee, EMPTY_GROUP) {
+App.controller('EmployeesController', function($scope, $timeout, yammer,
+                                               DomUtils, GroupEmployee, AssignmentStats, EMPTY_GROUP) {
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP) {
                 group.employees = [];
@@ -80,6 +81,27 @@ App.controller('EmployeesController', function($scope, $timeout, yammer, DomUtil
                 "<div class=\"employee-name\">" + user.label + "</div>";
         }
 
+        $scope.getAssignmentStats = function (group){
+            AssignmentStats.query({
+                group_id: group.id,
+                start_date: "2015-02-02",
+                end_date: "2015-03-10"
+            }, function(assignmentStats) {
+                var assignmentStatsMap = _.indexBy(assignmentStats, function(a) { return a.employee_id; });
+                group.employees.map(function(e) {
+                    if(assignmentStatsMap[e.id]) {
+                        e.statistics = assignmentStatsMap[e.id].statistics;
+                        e.statistics.map(function(s) {
+                            s.assignmentType = _.find(group.assignmentTypes, function(a) {
+                                return a.id == s.assignmentTypeId
+                            });
+                        });
+                    }
+                });
+                 console.log(group);
+            });
+        }
+
         $scope.employeeInput = null; // <input/>
 
         $scope.triggerAddEmployee = function() {
@@ -105,8 +127,9 @@ App.controller('EmployeesController', function($scope, $timeout, yammer, DomUtil
         }
 
         $scope.$watch('selectedGroup', function() {
-            if ($scope.selectedGroup == undefined) { return; }
+            if ($scope.selectedGroup == undefined || $scope.selectedGroup == EMPTY_GROUP) { return; }
             getGroupEmployeesData($scope.selectedGroup);
+            $scope.getAssignmentStats($scope.selectedGroup);
         });
 
 });
