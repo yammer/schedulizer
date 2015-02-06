@@ -129,6 +129,6 @@ public class AssignmentsResource {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
-
+        return Response.ok().entity(new AssignmentsStatsBuilder(assignableDays).build()).build();
     }
 }

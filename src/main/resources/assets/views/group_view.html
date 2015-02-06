@@ -135,7 +135,7 @@
     <div class="top-search">
         <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
     </div>
-    <ul class="nav nav-sidebar" role="navigation">
+    <ul ng-controller="EmployeesController" class="nav nav-sidebar" role="navigation">
         <div ng-draggable="isGroupAdmin(selectedGroup)"
              ghost-element=".avatar-wrapper"
              ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
