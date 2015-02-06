@@ -7,15 +7,6 @@ import javax.validation.constraints.NotNull;
 @Table(name = "memberships")
 public class Membership {
 
-    /* package private */ Membership() {
-        // Required by Hibernate
-    }
-
-    public Membership(Employee employee, Group group) {
-        this.employee = employee;
-        this.group = group;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -31,6 +22,15 @@ public class Membership {
     @Column(name = "admin")
     @NotNull
     private boolean admin = false;
+
+    /* package private */ Membership() {
+        // Required by Hibernate
+    }
+
+    public Membership(Employee employee, Group group) {
+        this.employee = employee;
+        this.group = group;
+    }
 
     public long getId() {
         return id;

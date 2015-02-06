@@ -17,14 +17,6 @@ import java.util.Set;
 @Table(name = "assignable_days")
 public class AssignableDay {
 
-    public  AssignableDay() {
-        // Required by Hibernate
-    }
-
-    public AssignableDay(Group group, LocalDate date) {
-        setGroup(group);
-        setDate(date);
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -41,6 +33,15 @@ public class AssignableDay {
     @OneToMany(mappedBy = "assignableDay")
     @Cascade({CascadeType.DELETE})
     private Set<Assignment> assignments = new HashSet<>();
+
+    /* package private */ AssignableDay() {
+        // Required by Hibernate
+    }
+
+    public AssignableDay(Group group, LocalDate date) {
+        this.group = group;
+        this.date = date;
+    }
 
     public long getId() {
         return id;

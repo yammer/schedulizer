@@ -15,14 +15,6 @@ import java.util.Set;
 @Table(name = "groups")
 public class Group {
 
-    public Group(String name) {
-        this.name = name;
-    }
-
-    public Group() {
-        // Required by Hibernate
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,6 +34,14 @@ public class Group {
     @OneToMany(mappedBy = "group")
     @Cascade({CascadeType.DELETE})
     private Set<Membership> memberships = new HashSet<>();
+
+    /* package private */ Group() {
+        // Required by Hibernate
+    }
+
+    public Group(String name) {
+        this.name = name;
+    }
 
     public long getId() {
         return id;
