@@ -385,8 +385,13 @@ $add-bg: #D9D9D9;
     width: 999999px;
     height: 50px;
     vertical-align: middle;
-    padding: 0 10px 5px  10px;
+    padding: 0 10px 0 10px;
     font-size: inherit;
+}
+
+.employee-card .name  span {
+    display: inline-block;
+    overflow: hidden;
 }
 
 .clear {
@@ -403,6 +408,7 @@ $add-bg: #D9D9D9;
     display: inline-block;
     text-align: center;
     opacity: 0.7;
+    float: right;
 }
 
 .no-assignments-label {
@@ -530,7 +536,18 @@ $delete-bg: #C41E1E;
 }
 
 .deletable-card.employee-card .delete {
-    top: 36%;
+    top: 32%;
+}
+
+.deletable-card.employee-card .delete {
+    float: right;
+    margin-right: 10px;
+    position: inherit;
+    padding-top: 0.5px;
+
+    div {
+        position: relative;
+    }
 }
 
 .add-group-button {
