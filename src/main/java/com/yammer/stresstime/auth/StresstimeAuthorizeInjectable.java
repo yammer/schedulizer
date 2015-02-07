@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.yammer.stresstime.managers.exceptions.StresstimeException;
+import com.yammer.stresstime.managers.exceptions.UnauthorizedAccessException;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 
@@ -66,11 +67,7 @@ public class StresstimeAuthorizeInjectable<T> extends AbstractHttpContextInjecta
         }
 
         if (!principal.isPresent()) {
-            throw new StresstimeException(Response
-                    .status(Response.Status.UNAUTHORIZED)
-                    .header(HttpHeaders.WWW_AUTHENTICATE, SCHEME)
-                    .entity("You are not authorized to perform this action.")
-                    .build());
+            throw new UnauthorizedAccessException();
         }
 
         return principal.get();

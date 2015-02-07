@@ -1,6 +1,7 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -9,6 +10,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.yammer.stresstime.utils.CoreUtils.convertOptional;
 
 /* TODO: Collection handling methods */
 @Entity
@@ -86,4 +89,20 @@ public class Group {
         }
         return employees.build();
     }
+
+    public boolean isMember(Employee employee) {
+        return getMembership(employee).isPresent();
+    }
+
+    public boolean isAdmin(Employee employee) {
+        Optional<Membership> membership = getMembership(employee);
+        return membership.isPresent() && membership.get().isAdmin();
+    }
+
+    private Optional<Membership> getMembership(Employee employee) {
+        return convertOptional(memberships.stream()
+                .filter(m -> m.getEmployee().getId() == employee.getId())
+                .findAny());
+    }
+
 }
