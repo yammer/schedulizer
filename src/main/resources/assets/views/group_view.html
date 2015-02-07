@@ -45,8 +45,12 @@
                 <div class="sub-label">{{dayStamp.getMonthName()}}</div>
                 <div class="main-label">{{dayStamp.getDate()}}</div>
             </div>
-            <div ng-if="hoveredDay && hoveredDay.content && hoveredDay.content.assignments" class="day-assignments">
-                <div ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy" class="day-assignment">
+            <div ng-if="hasAssignment(hoveredDay)" class="day-assignments">
+                <div
+                    ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy"
+                    class="day-assignment"
+                    ng-if="employees.length > 0"
+                    >
                     <div class="day-assignment-role">
                         <span class="assignment-color-{{index%10}}">
                             {{selectedGroup.assignmentTypeFor(employees.key).name}}

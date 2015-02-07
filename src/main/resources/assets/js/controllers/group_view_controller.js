@@ -94,6 +94,18 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
     $scope.onHoverDay = function(day) {
         $scope.dayStamp = day.date;
         $scope.hoveredDay = day;
+        // Adding empty assignments when there is no assignment in a given assignment type
+        if ($scope.hasAssignment($scope.hoveredDay)) {
+            angular.forEach($scope.selectedGroup.assignmentTypes, function(assignmentType) {
+                if ($scope.hoveredDay.content.assignments[assignmentType.id] == undefined) {
+                    $scope.hoveredDay.content.assignments[assignmentType.id] = [];
+                }
+            });
+        }
+    }
+
+    $scope.hasAssignment = function(day) {
+        return day && day.content && day.content.assignments && Object.keys(day.content.assignments).length > 0;
     }
 
     $scope.orderHoveredDayBy = function(key){
@@ -181,7 +193,8 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
     GroupViewDayContent.prototype.assignments = {};
 
     GroupViewDayContent.prototype.numberOfRoles = function() {
-        return _.size(this.assignments);
+        var self = this;
+        return Object.keys(this.assignments).filter(function(x){return self.assignments[x].length>0}).length;
     }
 
     GroupViewDayContent.prototype.isMidAssigned = function() {
