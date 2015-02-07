@@ -2,6 +2,7 @@ package com.yammer.stresstime.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 
 import javax.validation.Valid;
@@ -11,8 +12,10 @@ public class StresstimeConfiguration extends Configuration {
 
     private final String rootPath;
 
-    @Valid
-    @NotNull
+    @Valid @NotNull @JsonProperty
+    private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+
+    @Valid @NotNull @JsonProperty
     private DataSourceFactory database = new DataSourceFactory();
 
     public StresstimeConfiguration(@JsonProperty("rootPath") String rootPath) {
@@ -23,13 +26,11 @@ public class StresstimeConfiguration extends Configuration {
         return rootPath;
     }
 
-    @JsonProperty("database")
-    public DataSourceFactory getDataSourceFactory() {
-        return database;
+    public JerseyClientConfiguration getJerseyClientConfiguration() {
+        return httpClient;
     }
 
-    @JsonProperty("database")
-    public void setDataSourceFactory(DataSourceFactory database) {
-        this.database = database;
+    public DataSourceFactory getDataSourceFactory() {
+        return database;
     }
 }
