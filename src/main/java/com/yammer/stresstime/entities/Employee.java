@@ -53,6 +53,10 @@ public class Employee {
         this.yammerId = yammerId;
     }
 
+    public Employee(String yammerId) {
+        this.yammerId = yammerId;
+    }
+
     public long getId() {
         return id;
     }

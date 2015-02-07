@@ -40,7 +40,10 @@ public class GroupEmployeesResource {
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
 
         Group group = groupManager.getById(groupId);
-        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, name, imageUrlTemplate);
+        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {
+            e.setName(name);
+            e.setImageUrlTemplate(imageUrlTemplate);
+        });
         membershipManager.join(group, employee);
         return Response.ok().entity(employee).build();
     }
