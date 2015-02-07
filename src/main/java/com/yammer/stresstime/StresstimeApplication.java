@@ -21,8 +21,10 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
             DayRestriction.class,
             Employee.class,
             Group.class,
-            Membership.class);
+            Membership.class,
+            User.class);
 
+    private UserManager userManager;
     private GroupManager groupManager;
     private EmployeeManager employeeManager;
     private MembershipManager membershipManager;
@@ -47,6 +49,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
     @Override
     public void run(StresstimeConfiguration config, Environment env) throws Exception {
         SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
+        userManager = new UserManager(sessionFactory);
         groupManager = new GroupManager(sessionFactory);
         employeeManager = new EmployeeManager(sessionFactory);
         membershipManager = new MembershipManager(sessionFactory);

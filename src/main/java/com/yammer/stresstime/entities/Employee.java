@@ -44,6 +44,9 @@ public class Employee {
     @OneToMany(mappedBy = "employee")
     private Set<Assignment> assignments = new HashSet<>();
 
+    @OneToOne(mappedBy = "employee", fetch = FetchType.EAGER)
+    private User user;
+
     /* package private */ Employee() {
         // Required by Hibernate
     }
@@ -114,5 +117,13 @@ public class Employee {
 
     public void setAssignments(Set<Assignment> assignments) {
         this.assignments = ImmutableSet.copyOf(assignments);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
