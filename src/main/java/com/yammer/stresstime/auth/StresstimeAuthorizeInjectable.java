@@ -12,21 +12,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 
 
 public class StresstimeAuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
-
-    // Authorization header syntax
-    // Authorization: ST-AUTH access-token = <value>, yammer-id = <value>
-
-    /* TODO: Move from here */
-    public static final String SCHEME = "ST-AUTH";
-
-    private static class Param {
-        private static final String ACCESS_TOKEN = "access-token";
-        private static final String YAMMER_ID = "yammer-id";
-    }
 
     private final Authenticator<? super StresstimeCredentials, T> authenticator;
     private final Set<Role> roles;
@@ -49,18 +38,21 @@ public class StresstimeAuthorizeInjectable<T> extends AbstractHttpContextInjecta
             try {
                 header = AuthorizationHeader.decode(headerString);
                 includeErrorMessage = true;
-                checkArgument(header.isScheme(SCHEME), "Scheme not supported in authorization header.");
-                checkArgument(header.hasParameter(Param.ACCESS_TOKEN), "Param access-token not provided in header.");
-                checkArgument(header.hasParameter(Param.YAMMER_ID), "Param yammer-id not provided in header.");
+                checkArgument(header.isScheme(StresstimeAuthentication.SCHEME),
+                        "Scheme not supported in authorization header.");
+                checkArgument(header.hasParameter(StresstimeAuthentication.Param.ACCESS_TOKEN),
+                        "Param access-token not provided in header.");
+                checkArgument(header.hasParameter(StresstimeAuthentication.Param.YAMMER_ID),
+                        "Param yammer-id not provided in header.");
             } catch (IllegalArgumentException | NullPointerException e) {
                 throw new StresstimeException(e, Response
                         .status(Response.Status.BAD_REQUEST)
-                        .header(HttpHeaders.WWW_AUTHENTICATE, SCHEME)
+                        .header(HttpHeaders.WWW_AUTHENTICATE, StresstimeAuthentication.SCHEME)
                         .entity((includeErrorMessage) ? e.getMessage() : "Could not decode authorization header")
                         .build());
             }
-            String accessToken = header.getParameter(Param.ACCESS_TOKEN);
-            String yammerId = header.getParameter(Param.YAMMER_ID);
+            String accessToken = header.getParameter(StresstimeAuthentication.Param.ACCESS_TOKEN);
+            String yammerId = header.getParameter(StresstimeAuthentication.Param.YAMMER_ID);
             credentials = new StresstimeCredentials(accessToken, yammerId, roles);
         } else {
             credentials = StresstimeCredentials.absent(roles);
