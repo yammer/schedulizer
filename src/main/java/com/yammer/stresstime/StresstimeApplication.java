@@ -1,11 +1,15 @@
 package com.yammer.stresstime;
 
+import com.sun.jersey.api.client.Client;
+import com.yammer.stresstime.auth.StresstimeAuthenticator;
+import com.yammer.stresstime.auth.StresstimeAuthorizeProvider;
 import com.yammer.stresstime.config.StresstimeConfiguration;
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.managers.*;
 import com.yammer.stresstime.resources.*;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -64,6 +68,12 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
+
+        Client client = new JerseyClientBuilder(env)
+                .using(config.getJerseyClientConfiguration())
+                .build(getName());
+        StresstimeAuthenticator authenticator = new StresstimeAuthenticator(client, userManager, employeeManager);
+        env.jersey().register(new StresstimeAuthorizeProvider<>(authenticator));
     }
 
     // For tests
