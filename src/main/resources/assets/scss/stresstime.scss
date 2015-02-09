@@ -1,4 +1,5 @@
-@import "animate.scss";
+@import "animate/animate.scss";
+@import "hover/hover.scss";
 
 /* TODO: Extract this */
 @mixin select($value) {
@@ -379,7 +380,7 @@ $add-bg: $grey-2;
 }
 
 .employee-card .avatar-wrapper.add.selected-employee-add:hover {
-    box-shadow: 0 0 3px 2px rgba(#33AA33, 0.85);
+    @include pulse(.6s);
     &::before {
         display: none;
     }
