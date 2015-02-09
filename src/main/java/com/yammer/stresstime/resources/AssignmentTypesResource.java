@@ -43,7 +43,9 @@ public class AssignmentTypesResource {
 
     @GET
     @UnitOfWork
-    public Response getGroupAssignmentTypes(@PathParam("group_id") long groupId) {
+    public Response getGroupAssignmentTypes(
+            @PathParam("group_id") long groupId) {
+
         Group group = groupManager.getById(groupId);
         Set<AssignmentType> assignmentTypes = group.getAssignmentTypes();
         return Response.ok().entity(assignmentTypes).build();

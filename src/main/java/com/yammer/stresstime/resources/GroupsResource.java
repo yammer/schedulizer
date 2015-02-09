@@ -46,22 +46,10 @@ public class GroupsResource {
     @GET
     @Path("/{group_id}")
     @UnitOfWork
-    public Response getGroup(@PathParam("group_id") long groupId) {
+    public Response getGroup(
+            @PathParam("group_id") long groupId) {
+
         Group group = groupManager.getById(groupId);
         return Response.ok().entity(group).build();
-    }
-
-    @POST
-    @Path("/test1")
-    @UnitOfWork
-    public String test2(@FormParam("s")String s) {
-        return s;
-    }
-
-    @GET
-    @Path("/test1")
-    @UnitOfWork
-    public String test3(@QueryParam("s")String s) {
-        return s;
     }
 }

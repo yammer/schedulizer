@@ -53,7 +53,6 @@ public class AssignmentsResource {
         LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
 
-        // TODO: Testst
         // Avoid hibernate lazy eval problems with premature session closing
         String response = ResourceUtils.preProcessResponse(assignableDays);
         return Response.ok().entity(response).build();
