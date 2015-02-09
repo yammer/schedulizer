@@ -68,6 +68,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
+        env.jersey().register(new AuthorizationResource());
 
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
