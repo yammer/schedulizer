@@ -51,14 +51,14 @@ public class ResourceUtils {
         }
     }
 
-    public static void checkGroupAdmin(Group group, Employee employee) {
-        if (!group.isAdmin(employee)) {
+    public static void checkGroupAdminOrGlobalAdmin(Group group, Employee employee) {
+        if (!employee.isGlobalAdmin() && !group.isAdmin(employee)) {
             throw new UnauthorizedAccessException();
         }
     }
 
-    public static void checkGroupMember(Group group, Employee employee) {
-        if (!group.isMember(employee)) {
+    public static void checkGroupMemberOrGlobalAdmin(Group group, Employee employee) {
+        if (!employee.isGlobalAdmin() && !group.isMember(employee)) {
             throw new UnauthorizedAccessException();
         }
     }

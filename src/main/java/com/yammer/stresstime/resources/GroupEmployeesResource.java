@@ -1,11 +1,15 @@
 package com.yammer.stresstime.resources;
 
+import com.yammer.stresstime.auth.Authorize;
+import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.Membership;
+import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.managers.MembershipManager;
+import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
 
 import javax.ws.rs.*;
@@ -34,12 +38,16 @@ public class GroupEmployeesResource {
     @POST
     @UnitOfWork
     public Response joinGroup(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @FormParam("yammerId") String yammerId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
 
         Group group = groupManager.getById(groupId);
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+
         Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {
             e.setName(name);
             e.setImageUrlTemplate(imageUrlTemplate);
@@ -62,8 +70,13 @@ public class GroupEmployeesResource {
     @Path("{employee_id}")
     @UnitOfWork
     public Response unjoinGroup(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @PathParam("employee_id") long employeeId) {
+
+        Group group = groupManager.getById(groupId);
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
 
         Membership membership = membershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
         membershipManager.delete(membership);
