@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/assignments")
@@ -129,6 +130,8 @@ public class AssignmentsResource {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
-        return Response.ok().entity(new AssignmentsStatsBuilder(assignableDays).build()).build();
+        Map<Employee, Map<AssignmentType, Long>> statistics = AssignableDayManager.getStatistics(assignableDays);
+
+        return Response.ok().entity(statistics).build();
     }
 }
