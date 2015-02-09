@@ -680,7 +680,7 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
 }
 
 .day-assignment {
-    margin: 5px 0px;
+    margin: 5px 0 17px 0;
     text-align: right;
 
     .day-assignment-role {
@@ -695,7 +695,7 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     }
 
     .day-assignment-avatars {
-        margin: 12px 0px;
+        margin: 8px 0 12px 0;
 
         img {
             width: 40px;
