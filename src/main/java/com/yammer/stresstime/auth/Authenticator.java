@@ -10,14 +10,13 @@ import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.managers.UserManager;
 import com.yammer.stresstime.utils.CoreUtils;
 import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 
-public class StresstimeAuthenticator implements Authenticator<StresstimeCredentials, User> {
+public class Authenticator implements io.dropwizard.auth.Authenticator<Credentials, User> {
 
     private static final String YAMMER_CURRENT_USER_ENDPOINT = "https://www.yammer.com/api/v1/users/current.json";
     private static final String YAMMER_AUTHORIZATION_HEADER_VALUE = "Bearer %s";
@@ -27,14 +26,14 @@ public class StresstimeAuthenticator implements Authenticator<StresstimeCredenti
     private final UserManager userManager;
     private final EmployeeManager employeeManager;
 
-    public StresstimeAuthenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
+    public Authenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
         this.client = client;
         this.userManager = userManager;
         this.employeeManager = employeeManager;
     }
 
     @Override
-    public Optional<User> authenticate(StresstimeCredentials credentials) throws AuthenticationException {
+    public Optional<User> authenticate(Credentials credentials) throws AuthenticationException {
         User user;
         if (!credentials.isPresent()) {
             user = User.guest();

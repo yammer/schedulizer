@@ -7,11 +7,11 @@ import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
 import io.dropwizard.auth.Authenticator;
 
-public class StresstimeAuthorizeProvider<T> implements InjectableProvider<Authorize, Parameter> {
+public class AuthorizeProvider<T> implements InjectableProvider<Authorize, Parameter> {
 
-    private Authenticator<? super StresstimeCredentials, T> authenticator;
+    private Authenticator<? super Credentials, T> authenticator;
 
-    public StresstimeAuthorizeProvider(Authenticator<? super StresstimeCredentials, T> authenticator) {
+    public AuthorizeProvider(Authenticator<? super Credentials, T> authenticator) {
         this.authenticator = authenticator;
     }
 
@@ -22,6 +22,6 @@ public class StresstimeAuthorizeProvider<T> implements InjectableProvider<Author
 
     @Override
     public Injectable getInjectable(ComponentContext ic, Authorize authorize, Parameter parameter) {
-        return new StresstimeAuthorizeInjectable<>(authenticator, authorize.value());
+        return new AuthorizeInjectable<>(authenticator, authorize.value());
     }
 }

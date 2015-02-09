@@ -3,6 +3,7 @@ package com.yammer.stresstime.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.stresstime.auth.Role;
+import com.yammer.stresstime.auth.Authentication;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -11,11 +12,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users")
 public class User {
-
-    /**
-     * Time (in days) after which we need to verify token authenticity with yammer
-     */
-    public static final int LOCAL_EXPIRATION_TIME = 1;
 
     public static User fresh(Employee employee, String accessToken) {
         User user = new User(employee, accessToken);
@@ -98,7 +94,7 @@ public class User {
     }
 
     public void renew() {
-        expirationDate = LocalDate.now().plusDays(LOCAL_EXPIRATION_TIME);
+        expirationDate = LocalDate.now().plusDays(Authentication.EXPIRATION_TIME);
     }
 
     public void expire() {
