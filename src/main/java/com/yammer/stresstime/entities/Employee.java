@@ -45,6 +45,7 @@ public class Employee {
     private Set<Assignment> assignments = new HashSet<>();
 
     @OneToOne(mappedBy = "employee", fetch = FetchType.EAGER)
+    @JsonIgnore
     private User user;
 
     /* package private */ Employee() {
