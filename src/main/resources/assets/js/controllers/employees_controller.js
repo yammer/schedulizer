@@ -35,9 +35,10 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
 
         $scope.deleteEmployee = function (employee) {
             var group = $scope.selectedGroup;
-            group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
             employee.groupId = group.id;
-            employee.$delete();
+            employee.$delete().then(function() {
+                group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
+            });;
         }
 
 
