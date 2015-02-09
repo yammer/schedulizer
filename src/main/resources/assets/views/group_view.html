@@ -142,6 +142,19 @@
         <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
     </div>
     <ul ng-controller="EmployeesController" class="nav nav-sidebar" role="navigation">
+        <div class="stats-inputs-container">
+            <div class="stats-time-number-container">
+                <div>
+                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+                </div>
+                <div>
+                    <span class="stats-time-number-span" ng-init="employeeStatsTimeNumber=3" ng-bind="employeeStatsTimeNumber"/>
+                </div>
+                <div>
+                    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
         <div ng-draggable="isGroupAdmin(selectedGroup)"
              ghost-element=".avatar-wrapper"
              ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
