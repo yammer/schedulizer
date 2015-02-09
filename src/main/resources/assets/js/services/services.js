@@ -94,7 +94,7 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
     Group.prototype.employees = [];
     Group.prototype.employeeMap = {};
     Group.prototype.employeeFor = function(id) {
-        return this.employeeMap[id] || (this.employeeMap[id]=Employee.get({ employee_id: id}));
+        return this.employeeMap[id] || (this.employeeMap[id] = Employee.get({employee_id: id}));
     }
 
     Group.prototype.assignmentTypes = [];
@@ -176,5 +176,9 @@ services.factory('AuthorizationResource', ['$resource', function($resource) {
 }]);
 
 services.factory('AssignmentStats', ['$resource', function($resource) {
-    return $resource(PREFIX + 'groups/:group_id/assignments/stats', {group_id: '@groupId'}, {});
+    return $resource(PREFIX + 'groups/:group_id/assignments/stats', {group_id: '@groupId'}, {
+        query: {
+            isArray: false
+        }
+    });
 }]);

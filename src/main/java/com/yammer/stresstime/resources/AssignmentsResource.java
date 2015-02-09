@@ -1,6 +1,7 @@
 package com.yammer.stresstime.resources;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.*;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/assignments")
@@ -132,6 +134,26 @@ public class AssignmentsResource {
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
         Map<Employee, Map<AssignmentType, Long>> statistics = AssignableDayManager.getStatistics(assignableDays);
 
-        return Response.ok().entity(statistics).build();
+        Map<Long, Set<Map<String, Long>>> response = processStatisticsResponse(statistics);
+        return Response.ok().entity(response).build();
+    }
+
+    /**
+     * @return {(Long) employeeId => [{"assignmentTypeId" => Long, "count" => Long}] }
+     */
+    private Map<Long, Set<Map<String, Long>>> processStatisticsResponse(
+            Map<Employee, Map<AssignmentType, Long>> statistics) {
+
+        return statistics
+                .entrySet().stream()
+                .collect(Collectors.toMap(
+                        (Map.Entry<Employee, Map<AssignmentType, Long>> e) -> e.getKey().getId(),
+                        (Map.Entry<Employee, Map<AssignmentType, Long>> e) -> e.getValue()
+                                .entrySet().stream()
+                                .map(c -> (Map<String, Long>) ImmutableMap.<String, Long>builder()
+                                        .put("assignmentTypeId", c.getKey().getId())
+                                        .put("count", c.getValue())
+                                        .build())
+                                .collect(Collectors.toSet())));
     }
 }

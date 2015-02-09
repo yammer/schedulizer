@@ -91,25 +91,22 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 start_date: "2015-02-02",
                 end_date: "2015-03-10"
             }, function(assignmentStats) {
-                var assignmentStatsMap = _.indexBy(assignmentStats, function(a) { return a.employee_id; });
                 angular.forEach(group.employees, function(e) {
-                    e.statistics = undefined;
-                    if(assignmentStatsMap[e.id]) {
-                        e.statistics = assignmentStatsMap[e.id].statistics;
+                    e.statistics = null;
+                    if (assignmentStats[e.id]) {
+                        e.statistics = assignmentStats[e.id];
                         angular.forEach(e.statistics, function(s) {
-                            s.assignmentType = _.find(group.assignmentTypes, function(a) {
-                                return a.id == s.assignmentTypeId
-                            });
+                            s.assignmentType = group.assignmentTypeFor(s.assignmentTypeId);
                         });
                     }
                 });
                 // complete with "count: 0" for other assignment types
                 angular.forEach(group.employees, function(e) {
-                    if (e.statistics == undefined) {
+                    if (e.statistics == null) {
                         e.statistics = [];
                     }
                     angular.forEach(group.assignmentTypes, function(a){
-                        if (!_.find(e.statistics, function(x) { return x.assignmentType.id == a.id; })) {
+                        if (!_.find(e.statistics, function(x) {return x.assignmentType.id == a.id;})) {
                             e.statistics.push({
                                 assignmentType: a,
                                 assignmentTypeId: a.id,
@@ -118,8 +115,6 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                         }
                     });
                 });
-
-                 console.log(group);
             });
         }
 
