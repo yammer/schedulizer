@@ -1,7 +1,11 @@
 package com.yammer.stresstime.resources;
 
+import com.yammer.stresstime.auth.Authorize;
+import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.Group;
+import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.GroupManager;
+import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
 
 import javax.ws.rs.*;
@@ -28,7 +32,10 @@ public class GroupsResource {
 
     @POST
     @UnitOfWork
-    public Response createGroup(@FormParam("name") String name) {
+    public Response createGroup(
+            @Authorize({Role.ADMIN}) User user,
+            @FormParam("name") String name) {
+
         Group group = new Group(name);
         groupManager.save(group);
         return Response.ok().entity(group).build();
@@ -37,8 +44,15 @@ public class GroupsResource {
     @DELETE
     @Path("/{group_id}")
     @UnitOfWork
-    public Response deleteGroup(@PathParam("group_id") long groupId) {
-        groupManager.deleteById(groupId);
+    public Response deleteGroup(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
+            @PathParam("group_id") long groupId) {
+
+        Group group = groupManager.getById(groupId);
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+
+        groupManager.delete(group);
         return Response.noContent().build();
     }
 
@@ -46,22 +60,10 @@ public class GroupsResource {
     @GET
     @Path("/{group_id}")
     @UnitOfWork
-    public Response getGroup(@PathParam("group_id") long groupId) {
+    public Response getGroup(
+            @PathParam("group_id") long groupId) {
+
         Group group = groupManager.getById(groupId);
         return Response.ok().entity(group).build();
-    }
-
-    @POST
-    @Path("/test1")
-    @UnitOfWork
-    public String test2(@FormParam("s")String s) {
-        return s;
-    }
-
-    @GET
-    @Path("/test1")
-    @UnitOfWork
-    public String test3(@QueryParam("s")String s) {
-        return s;
     }
 }

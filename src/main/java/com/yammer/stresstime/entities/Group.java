@@ -1,6 +1,7 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -10,18 +11,12 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.yammer.stresstime.utils.CoreUtils.convertOptional;
+
 /* TODO: Collection handling methods */
 @Entity
 @Table(name = "groups")
 public class Group {
-
-    public Group(String name) {
-        this.name = name;
-    }
-
-    public Group() {
-        // Required by Hibernate
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +37,14 @@ public class Group {
     @OneToMany(mappedBy = "group")
     @Cascade({CascadeType.DELETE})
     private Set<Membership> memberships = new HashSet<>();
+
+    /* package private */ Group() {
+        // Required by Hibernate
+    }
+
+    public Group(String name) {
+        this.name = name;
+    }
 
     public long getId() {
         return id;
@@ -86,4 +89,20 @@ public class Group {
         }
         return employees.build();
     }
+
+    public boolean isMember(Employee employee) {
+        return getMembership(employee).isPresent();
+    }
+
+    public boolean isAdmin(Employee employee) {
+        Optional<Membership> membership = getMembership(employee);
+        return membership.isPresent() && membership.get().isAdmin();
+    }
+
+    private Optional<Membership> getMembership(Employee employee) {
+        return convertOptional(memberships.stream()
+                .filter(m -> m.getEmployee().getId() == employee.getId())
+                .findAny());
+    }
+
 }

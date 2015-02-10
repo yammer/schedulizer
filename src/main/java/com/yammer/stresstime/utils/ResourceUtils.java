@@ -2,8 +2,11 @@ package com.yammer.stresstime.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.exceptions.DataConflictException;
 import com.yammer.stresstime.managers.exceptions.ParameterException;
+import com.yammer.stresstime.managers.exceptions.UnauthorizedAccessException;
 import io.dropwizard.jackson.Jackson;
 
 import java.io.ByteArrayOutputStream;
@@ -45,6 +48,18 @@ public class ResourceUtils {
     public static void checkParameter(boolean condition, String name) {
         if (!condition) {
             throw new ParameterException(name);
+        }
+    }
+
+    public static void checkGroupAdminOrGlobalAdmin(Group group, Employee employee) {
+        if (!employee.isGlobalAdmin() && !group.isAdmin(employee)) {
+            throw new UnauthorizedAccessException();
+        }
+    }
+
+    public static void checkGroupMemberOrGlobalAdmin(Group group, Employee employee) {
+        if (!employee.isGlobalAdmin() && !group.isMember(employee)) {
+            throw new UnauthorizedAccessException();
         }
     }
 

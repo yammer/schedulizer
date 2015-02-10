@@ -13,14 +13,6 @@ import java.util.Set;
 @Table(name = "day_restrictions")
 public class DayRestriction {
 
-    public DayRestriction() {
-        // Required by Hibernate
-    }
-
-    public DayRestriction(LocalDate date) {
-        setDate(date);
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -39,6 +31,14 @@ public class DayRestriction {
             inverseJoinColumns = { @JoinColumn(name = "assignment_type_id") })
     private Set<AssignmentType> assignmentTypes = new HashSet<>();
     // ^ This represents the assignment types the employee cannot fulfill
+
+    /* package private */ DayRestriction() {
+        // Required by Hibernate
+    }
+
+    public DayRestriction(LocalDate date) {
+        this.date = date;
+    }
 
     public long getId() {
         return id;

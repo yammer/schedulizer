@@ -119,22 +119,38 @@ public class EntityManager<E> extends AbstractDAO<E> {
         }
     }
 
+    protected <T> T getExactOne(Criteria criteria, Class<T> klass) {
+        T entity = getUnique(criteria, klass);
+        return checkFound(entity, klass);
+    }
+
     protected E getExactOne(Criteria criteria) {
-        E entity = getUnique(criteria);
+        return getExactOne(criteria, entityClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T getUnique(Criteria criteria, Class<? extends T> klass) {
+        try {
+            return (T) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            EntityNonUniqueException error = new EntityNonUniqueException(klass);
+            error.initCause(e);
+            throw error;
+        }
+    }
+
+    protected E getUnique(Criteria criteria) {
+        return getUnique(criteria, entityClass);
+    }
+
+    protected <T> T checkFound(T entity, Class<? extends T> klass) {
         if (entity == null) {
-            throw new EntityNotFoundException(entityClass);
+            throw new EntityNotFoundException(klass);
         }
         return entity;
     }
 
-    @SuppressWarnings("unchecked")
-    protected E getUnique(Criteria criteria) {
-        try {
-            return (E) criteria.uniqueResult();
-        } catch (HibernateException e) {
-            EntityNonUniqueException error = new EntityNonUniqueException(entityClass);
-            error.initCause(e);
-            throw error;
-        }
+    protected E checkFound(E entity) {
+        return checkFound(entity, entityClass);
     }
 }

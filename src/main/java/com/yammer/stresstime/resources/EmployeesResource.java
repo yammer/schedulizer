@@ -26,7 +26,9 @@ public class EmployeesResource {
     @GET
     @Path("/groups")
     @UnitOfWork
-    public Response getEmployeeGroups(@PathParam("employee_id") long employeeId) {
+    public Response getEmployeeGroups(
+            @PathParam("employee_id") long employeeId) {
+
         Employee employee = employeeManager.getById(employeeId);
         Set<Group> groups = employee.getGroups();
         return Response.ok().entity(groups).build();
@@ -34,7 +36,9 @@ public class EmployeesResource {
 
     @GET
     @UnitOfWork
-    public Response getEmployee(@PathParam("employee_id") long employeeId) {
+    public Response getEmployee(
+            @PathParam("employee_id") long employeeId) {
+
         Employee employee = employeeManager.getById(employeeId);
         return Response.ok().entity(employee).build();
     }

@@ -1,7 +1,10 @@
 package com.yammer.stresstime.resources;
 
+import com.yammer.stresstime.auth.Authorize;
+import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.AssignmentType;
 import com.yammer.stresstime.entities.Group;
+import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.AssignmentTypeManager;
 import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.utils.ResourceUtils;
@@ -30,11 +33,15 @@ public class AssignmentTypesResource {
     @POST
     @UnitOfWork
     public Response createAssignmentType(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @FormParam("name") String name,
             @FormParam("description") String description) {
 
         Group group = groupManager.getById(groupId);
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+
         AssignmentType assignmentType = new AssignmentType(name, group);
         assignmentType.setDescription(description);
         assignmentTypeManager.save(assignmentType);
@@ -43,7 +50,9 @@ public class AssignmentTypesResource {
 
     @GET
     @UnitOfWork
-    public Response getGroupAssignmentTypes(@PathParam("group_id") long groupId) {
+    public Response getGroupAssignmentTypes(
+            @PathParam("group_id") long groupId) {
+
         Group group = groupManager.getById(groupId);
         Set<AssignmentType> assignmentTypes = group.getAssignmentTypes();
         return Response.ok().entity(assignmentTypes).build();
@@ -53,11 +62,16 @@ public class AssignmentTypesResource {
     @Path("/{assignment_type_id}")
     @UnitOfWork
     public Response deleteAssignmentType(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @PathParam("assignment_type_id") long assignmentTypeId) {
 
         AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
-        ResourceUtils.checkConflictFree(assignmentType.getGroup().getId() == groupId, Group.class);
+        Group group = assignmentType.getGroup();
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+        ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+
         assignmentTypeManager.delete(assignmentType);
         return Response.noContent().build();
     }

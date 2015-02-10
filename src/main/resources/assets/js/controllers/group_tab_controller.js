@@ -5,6 +5,7 @@ App.controller('GroupTabController', function(
         Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS, NESTED_VIEWS) {
 
     $scope.selectedGroup = EMPTY_GROUP;
+    $scope.newGroupName = "";
 
     function selectGroup() {
         $scope.selectedGroup = _.find($scope.groups, function(g) {

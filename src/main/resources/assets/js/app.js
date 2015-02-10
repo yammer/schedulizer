@@ -7,27 +7,57 @@ var StresstimeApp = {};
 
 var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'ui.router']);
 
+App.constant('AUTH_EVENTS', {
+    loginSuccess: 'auth-login-success',
+    loginFailed: 'auth-login-failed',
+    logoutSuccess: 'auth-logout-success',
+    sessionTimeout: 'auth-session-timeout',
+    notAuthenticated: 'auth-not-authenticated',
+    notAuthorized: 'auth-not-authorized',
+    authServiceInitialized: 'auth-service-initialized'
+});
+
+// I did this because in angular you cant inject a constant in a constant and we need USER_ROLES for NAV_TABS
+var USER_ROLES_CONSTANT = {
+    globalAdmin: 'ADMIN',
+    admin: 'MEMBER', // TODO: merge admin and user into a single role called member
+    user: 'MEMBER',
+    guest: 'GUEST'
+}
+
+App.constant('USER_ROLES', USER_ROLES_CONSTANT);
+
 App.constant('NAV_TABS', {
     calendar: {
         title: 'Calendar',                        // Displayed on navbar
         stateName: 'calendar',                     // Name of the state
         url: '/calendar',                       // Link when tab is clicked
         templateUrl: 'views/calendar_tab.html',       // Template loaded into ui-view element
-        controller: 'CalendarTabController'     // Controller for this template
+        controller: 'CalendarTabController',     // Controller for this template
+        data: {                                 // Which roles can see this state
+            authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin, USER_ROLES_CONSTANT.user]
+        }
     },
     availability: {
         title: 'Availability',
         stateName: 'availability',
         url: '/availability',
         templateUrl: 'views/availability_tab.html',
-        controller: 'AvailabilityTabController'
+        controller: 'AvailabilityTabController',
+        data: {
+            authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin, USER_ROLES_CONSTANT.user]
+        }
     },
     group: {
         title: 'Groups',
         stateName: 'groups',                    // The controller handles the default group
         url: '/groups',
         templateUrl: 'views/group_tab.html',
-        controller: 'GroupTabController'
+        controller: 'GroupTabController',
+        data: {
+            authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin,
+                              USER_ROLES_CONSTANT.user, USER_ROLES_CONSTANT.guest]
+        }
     }
 });
 
@@ -37,9 +67,13 @@ App.constant('NESTED_VIEWS', {
         stateName: 'groups.view',
         url: '/:groupId',
         templateUrl: 'views/group_view.html',
-        controller: 'GroupViewController'
+        controller: 'GroupViewController',
+        data: {
+            authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin,
+                              USER_ROLES_CONSTANT.user, USER_ROLES_CONSTANT.guest]
+        }
     }
-})
+});
 
 App.constant('EMPTY_GROUP', {id: undefined, name: "-"});
 

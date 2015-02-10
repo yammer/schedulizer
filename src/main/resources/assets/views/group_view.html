@@ -6,11 +6,13 @@
                 ng-repeat="assignmentType in selectedGroup.assignmentTypes"
                 class="assignment-type-label sacudido">
                 {{assignmentType.name}}
-                <div class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
+                <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
             <span style="visibility: hidden;">&nbsp;</span> <!-- Hack to fix a chrome bug -->
         </div>
-        <span class="add-assignment-type"
+        <span
+            st-if="isGroupAdmin(selectedGroup)"
+            class="add-assignment-type"
             ng-click="addAssignmentTypeButtonClick()"
             >
             +
@@ -78,19 +80,22 @@
                 <div class="assignment-type-buckets">
                     <div class="bucket"
                          ng-repeat="assignmentTypeBucket in assignmentTypeBuckets"
-                         ng-droppable
+                         ng-droppable="isGroupAdmin(selectedGroup)"
                          ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
                         <div class="bucket-content">
                             <div
                                 ng-repeat="employee in assignmentTypeBucket.employeeList"
                                 class="assigned-employee"
-                                ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)">
+                                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}">
                                 <img
                                     ng-src="{{employee.employee.imageUrlTemplate}}"
                                     width="100%"
                                     height="100%"/>
-                                <span class="minus-span">-</span>
+                                <span
+                                    st-if="isGroupAdmin(selectedGroup)"
+                                    ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)"
+                                    class="minus-span">-</span>
                             </div>
                         </div>
 
@@ -131,17 +136,18 @@
         <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
     </div>
     <ul class="nav nav-sidebar" role="navigation">
-        <div ng-draggable
+        <div ng-draggable="isGroupAdmin(selectedGroup)"
              ghost-element=".avatar-wrapper"
              ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
              drag-data=employee>
             <employee-card
                     employee="employee"
+                    group="$parent.selectedGroup"
                     remove="deleteEmployee(employee)"
                     >
             </employee-card>
         </div>
-        <div class="employee-card">
+        <div st-if="isGroupAdmin(selectedGroup)" class="employee-card">
             <div
                 class="avatar-wrapper no-image add"
                 ng-class="{'selected-employee-add': newEmployee }"

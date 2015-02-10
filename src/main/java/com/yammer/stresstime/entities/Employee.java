@@ -18,15 +18,6 @@ import java.util.Set;
 @Table(name = "employees")
 public class Employee {
 
-    public Employee() {
-        // Required by Hibernate
-    }
-
-    public Employee(String name, String yammerId) {
-        setName(name);
-        setYammerId(yammerId);
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -52,6 +43,23 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee")
     private Set<Assignment> assignments = new HashSet<>();
+
+    @OneToOne(mappedBy = "employee", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private User user;
+
+    /* package private */ Employee() {
+        // Required by Hibernate
+    }
+
+    public Employee(String name, String yammerId) {
+        this.name = name;
+        this.yammerId = yammerId;
+    }
+
+    public Employee(String yammerId) {
+        this.yammerId = yammerId;
+    }
 
     public long getId() {
         return id;
@@ -110,5 +118,13 @@ public class Employee {
 
     public void setAssignments(Set<Assignment> assignments) {
         this.assignments = ImmutableSet.copyOf(assignments);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -15,15 +15,6 @@ import java.util.Set;
 @Table(name = "assignment_types")
 public class AssignmentType {
 
-    public AssignmentType() {
-        // Required by Hibernate
-    }
-
-    public AssignmentType(String name, Group group) {
-        setName(name);
-        setGroup(group);
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,6 +33,15 @@ public class AssignmentType {
     @OneToMany(mappedBy = "assignmentType")
     @Cascade({CascadeType.DELETE})
     private Set<Assignment> assignments = new HashSet<>();
+
+    /* package private */ AssignmentType() {
+        // Required by Hibernate
+    }
+
+    public AssignmentType(String name, Group group) {
+        this.name = name;
+        this.group = group;
+    }
 
     public long getId() {
         return id;

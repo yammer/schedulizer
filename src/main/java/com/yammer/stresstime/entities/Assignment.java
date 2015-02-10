@@ -10,16 +10,6 @@ import javax.persistence.*;
                 {"assignment_type_id", "assignable_day_id", "employee_id"}))
 public class Assignment {
 
-    public Assignment() {
-        // Required by Hibernate
-    }
-
-    public Assignment(Employee employee, AssignableDay assignableDay, AssignmentType assignmentType) {
-        setEmployee(employee);
-        setAssignableDay(assignableDay);
-        setAssignmentType(assignmentType);
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -35,6 +25,16 @@ public class Assignment {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    /* package private */ Assignment() {
+        // Required by Hibernate
+    }
+
+    public Assignment(Employee employee, AssignableDay assignableDay, AssignmentType assignmentType) {
+        this.employee = employee;
+        this.assignableDay = assignableDay;
+        this.assignmentType = assignmentType;
+    }
 
     public long getId() {
         return id;

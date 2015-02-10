@@ -6,7 +6,7 @@
         {{employee.name}}
     </div>
     <div class="clear"></div>
-    <div class="delete" ng-click="remove()">
+    <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">
         <div>-</div>
     </div>
 </div>

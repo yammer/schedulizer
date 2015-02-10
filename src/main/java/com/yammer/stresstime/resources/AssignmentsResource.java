@@ -1,6 +1,8 @@
 package com.yammer.stresstime.resources;
 
 
+import com.yammer.stresstime.auth.Authorize;
+import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.managers.*;
 import com.yammer.stresstime.utils.ResourceUtils;
@@ -53,7 +55,6 @@ public class AssignmentsResource {
         LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
 
-        // TODO: Testst
         // Avoid hibernate lazy eval problems with premature session closing
         String response = ResourceUtils.preProcessResponse(assignableDays);
         return Response.ok().entity(response).build();
@@ -62,17 +63,19 @@ public class AssignmentsResource {
     @POST
     @UnitOfWork
     public Response createAssignment(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @FormParam("employee_id") long employeeId,
             @FormParam("assignment_type_id") long assignmentTypeId,
             @FormParam("dates") String dates) {
 
-        ResourceUtils.checkParameter(dates != null, "dates");
-
         Employee employee = employeeManager.getById(employeeId);
         AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
         Group group = assignmentType.getGroup();
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
         ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+        ResourceUtils.checkParameter(dates != null, "dates");
 
         List<AssignableDay> assignableDays = Arrays.stream(dates.split(","))
                 .map(LocalDate::parse)
@@ -96,11 +99,16 @@ public class AssignmentsResource {
     @Path("/{assignment_id}")
     @UnitOfWork
     public Response deleteAssignment(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
             @PathParam("assignment_id") long assignmentId) {
 
         Assignment assignment = assignmentManager.getById(assignmentId);
-        ResourceUtils.checkConflictFree(assignment.getAssignableDay().getGroup().getId() == groupId, Group.class);
+        Group group = assignment.getAssignableDay().getGroup();
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+        ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+
         AssignableDay assignableDay = assignment.getAssignableDay();
         assignmentManager.delete(assignment);
         assignableDayManager.refresh(assignableDay);
