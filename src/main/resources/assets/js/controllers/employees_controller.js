@@ -235,12 +235,24 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
             $scope.newEmployeeName = user.label;
         }
 
+        $scope.toggleAdmin = function(employee) {
+            if (employee.isGroupAdmin) {
+                $scope.deleteAdmin(employee);
+            } else {
+                $scope.addAdmin(employee);
+            }
+        }
+
         $scope.addAdmin = function(employee) {
-            AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id})
+            AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id}, function() {
+                employee.isGroupAdmin = true;
+            });
         }
 
         $scope.deleteAdmin = function(employee) {
-            AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id})
+            AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
+                employee.isGroupAdmin = false;
+            });
         }
 
         $scope.$watch('selectedGroup', function() {

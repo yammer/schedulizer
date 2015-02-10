@@ -173,13 +173,14 @@
             </div>
         </div>
         <div ng-draggable="isGroupAdmin(selectedGroup)"
-             ghost-element=".avatar-wrapper"
+             ghost-element=".avatar-wrapper .avatar-image"
              ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
              drag-data=employee>
             <employee-card
                     employee="employee"
                     group="$parent.selectedGroup"
                     remove="deleteEmployee(employee)"
+                    toggle-admin="toggleAdmin"
                     >
             </employee-card>
         </div>
