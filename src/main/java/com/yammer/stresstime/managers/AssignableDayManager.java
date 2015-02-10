@@ -1,14 +1,30 @@
 package com.yammer.stresstime.managers;
 
-import com.yammer.stresstime.entities.AssignableDay;
-import com.yammer.stresstime.entities.Group;
+import com.google.common.collect.Maps;
+import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.utils.CoreUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.LocalDate;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AssignableDayManager extends EntityManager<AssignableDay> {
+
+    public static Map<Employee, Map<AssignmentType, Long>> getStatistics(
+            Collection<? extends AssignableDay> assignableDays) {
+
+        Map<Employee, List<Assignment>> employeeAssignments = assignableDays.stream()
+                .map(day -> day.getAssignments().stream().collect(Collectors.groupingBy(Assignment::getEmployee)))
+                .collect(CoreUtils.mergingMapCollector(HashMap::new, CoreUtils::concatLists));
+
+        return Maps.transformValues(employeeAssignments,
+                as -> as.stream().collect(CoreUtils.countingByCollector(Assignment::getAssignmentType)));
+    }
 
     public AssignableDayManager(SessionFactory sessionFactory) {
         super(sessionFactory, AssignableDay.class);
@@ -28,7 +44,6 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
 
     @SuppressWarnings("unchecked")
     public List<AssignableDay> getByGroupPeriod(Group group, LocalDate startDate, LocalDate endDate) {
-        /* TODO: Group! */
         return currentSession()
                 .createCriteria(AssignableDay.class)
                 .add(Restrictions.eq("group.id", group.getId()))

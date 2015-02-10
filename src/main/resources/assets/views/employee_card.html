@@ -3,10 +3,17 @@
         <img ng-src="{{employee.imageUrlTemplate}}" width="50" height="50" />
     </div>
     <div class="name">
-        {{employee.name}}
+        <span>{{employee.name}}</span>
+        <div
+            ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
+            class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
+            ng-class="{'no-assignments-label': stat.count == 0 }"
+             >
+            {{stat.count}}
+        </div>
+        <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">
+            <div>-</div>
+        </div>
     </div>
     <div class="clear"></div>
-    <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">
-        <div>-</div>
-    </div>
 </div>

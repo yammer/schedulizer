@@ -1,12 +1,26 @@
 @import "animate.scss";
 
+/* TODO: Extract this */
+@mixin select($value) {
+    -webkit-touch-callout: $value;
+    -webkit-user-select: $value;
+    -khtml-user-select: $value;
+    -moz-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
+
 body {
     padding-top: 50px;
 }
 
 $blue: #398BCA;
-$light-grey: #F5F5F5;
-$dark-grey: #A6A6A6;
+/* $grey-N: higher N means darker */
+$grey-0: #F5F5F5; /* Sidebar and title bgs */
+$grey-1: #EEEEEE; /* Lighter months on calendar */
+$grey-2: #D9D9D9; /* Darker months and (+) employee button bg */
+$grey-3: #A6A6A6; /* Title text color */
+$grey-4: #828282; /* + inside (+) button */
 
 /* Text rotation */
 
@@ -26,11 +40,11 @@ $dark-grey: #A6A6A6;
 /* Calendar */
 
 $light-fg: #FFFFFF;
-$dark-fg: #828282;
+$dark-fg: $grey-4;
 
 $selected-bg: #2EC3E5;
-$odd-bg: #D9D9D9;
-$even-bg: #EEEEEE;
+$odd-bg: $grey-2;
+$even-bg: $grey-1;
 $today-bg: #FD8845;
 $assigned-bg: #6FDF6F;
 $mid-assigned-bg: #EFC932;
@@ -132,7 +146,7 @@ $mid-assigned-bg: #EFC932;
 }
 .calendar-header .day, .calendar-header .month {
     color: #E9E9E9;
-    background-color: #828282;
+    background-color: $grey-4;
 }
 
 /* Group View Calendar */
@@ -151,10 +165,10 @@ $mid-assigned-bg: #EFC932;
 /* Header */
 
 .header {
-    color: $dark-grey;
+    color: $grey-3;
     font-size: 22px;
-    background-color: $light-grey;
-    border-bottom: 1px solid #EEEEEE;
+    background-color: $grey-0;
+    border-bottom: 1px solid $grey-1;
     margin: 0 -15px 15px -15px;
     padding: 18px 15px 17px 15px;
 }
@@ -164,7 +178,7 @@ $mid-assigned-bg: #EFC932;
 .sidebar {
     padding: 15px 0 0 0;
     background-color: #f5f5f5;
-    border-right: 1px solid #EEEEEE;
+    border-right: 1px solid $grey-1;
     height: 100%;
 }
 
@@ -228,7 +242,7 @@ $mid-assigned-bg: #EFC932;
 }
 
 .legend {
-    color: #828282;
+    color: $grey-4;
     position: absolute;
     bottom: 0;
 }
@@ -298,11 +312,11 @@ $mid-assigned-bg: #EFC932;
 
 .employee-card {
     padding: 6px 10px;
-    color: #828282;
+    color: $grey-4;
 }
 
 .employee-card.hoverable:hover {
-    background-color: #EEEEEE;
+    background-color: $grey-1;
 }
 
 .employee-card .avatar-wrapper {
@@ -338,10 +352,10 @@ $mid-assigned-bg: #EFC932;
     font-size: 13px;
 }
 
-$add-bg: #D9D9D9;
+$add-bg: $grey-2;
 
 .employee-card .avatar-wrapper.add {
-    color: #828282;
+    color: $grey-4;
     background-color: $add-bg;
     position: relative;
 }
@@ -376,7 +390,7 @@ $add-bg: #D9D9D9;
 
 .employee-card .avatar-wrapper.add:hover {
     color: #E9E9E9;
-    background-color: #828282;
+    background-color: $grey-4;
 }
 
 .employee-card .name {
@@ -385,12 +399,42 @@ $add-bg: #D9D9D9;
     width: 999999px;
     height: 50px;
     vertical-align: middle;
-    padding: 0 10px 0 10px;
+    padding: 6px 10px 0 10px;
     font-size: inherit;
+
+    &.with-input {
+        padding-top: 0;
+    }
+}
+
+.employee-card .name  span {
+    display: inline-block;
+    overflow: hidden;
 }
 
 .clear {
     clear: both;
+}
+
+.mini-assignment-type-label {
+    border-radius: 2px;
+    padding: 2px 0px 1px 0px;
+    margin: 0px 6px 0px 0px;
+    color: #ffffff;
+    font-size: 13px;
+    width: 23px;
+    display: inline-block;
+    text-align: center;
+    opacity: 0.7;
+    float: right;
+}
+
+.no-assignments-label {
+    opacity: 0.15;
+}
+
+.employee-card:hover .mini-assignment-type-label {
+    opacity: 1.0;
 }
 
 /* AssignmentType buckets */
@@ -469,6 +513,8 @@ $add-bg: #D9D9D9;
 
 /* Deletable card */
 
+$delete-bg: #C41E1E;
+
 .deletable-card {
     position: relative;
 }
@@ -500,7 +546,7 @@ $add-bg: #D9D9D9;
 
 .deletable-card .delete:hover {
     display: block;
-    background-color: #CC5555;
+    background-color: $delete-bg;
 }
 
 .deletable-card.employee-card .delete div {
@@ -508,10 +554,21 @@ $add-bg: #D9D9D9;
 }
 
 .deletable-card.employee-card .delete {
-    top: 36%;
+    top: 32%;
 }
 
-.add-group-button {
+.deletable-card.employee-card .delete {
+    float: right;
+    margin-right: 10px;
+    position: inherit;
+    padding-top: 0.5px;
+
+    div {
+        position: relative;
+    }
+}
+
+.st-input-button  {
     padding-top: 5px;
     padding-bottom: 7px;
 }
@@ -537,12 +594,18 @@ $add-bg: #D9D9D9;
 
 /* Assignment types */
 
-$role-bg: #E06969;
+$assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e057, #aa11cc, #1ba2a5, #123456;
+
+@for $i from 1 through length($assignment-colors) {
+    .assignment-color-#{$i - 1} {
+        background: nth($assignment-colors, $i);
+    }
+
+}
 
 .assignment-type-label {
     float: right;
     text-align: center;
-    background-color: $role-bg;
     border-radius: 4px;
     font-size: 12px;
     padding: 7px 30px 7px 29px;
@@ -558,25 +621,25 @@ $role-bg: #E06969;
         right: -6px;
         top: 6px;
         border-radius: 8px;
-        color: darken($role-bg, 20%);
-        background-color: $light-grey;
+        color: $delete-bg;
+        background-color: $grey-0;
         padding: 0px 3px 1px 3px;
         font-size: 18px;
         line-height: 12px;
-        border: 1px solid darken($role-bg, 20%);
+        border: 1px solid $delete-bg;
         visibility: hidden;
 
     }
 
     &:hover {
-        background-color: darken($role-bg, 20%);
+        background-color: $delete-bg;
 
         .delete {
             visibility: visible;
 
             &:hover {
                 color: #FFFFFF;
-                background-color: darken($role-bg, 20%);
+                background-color: $delete-bg;
             }
         }
     }
@@ -588,11 +651,11 @@ $role-bg: #E06969;
     float: right;
     font-size: 38px;
     margin-top: -13px;
-    color: $dark-grey;
+    color: $grey-3;
 }
 
 .add-assignment-type:hover {
-    color: darken($dark-grey, 20%);
+    color: darken($grey-3, 20%);
 }
 
 .assignment-types-wrapper {
@@ -625,7 +688,6 @@ $role-bg: #E06969;
         span {
             font-size: 12px;
             color: #FFFFFF;
-            background-color: $role-bg;
             border-radius: 4px;
             padding: 7px 10px;
         }
@@ -689,6 +751,75 @@ $employee-autocomplete-height: 40px;
             vertical-align: middle;
             padding-left: 4px;
             text-align: left;
+        }
+    }
+}
+
+/* Stats inputs */
+
+.stats-inputs-container {
+    padding: 10px;
+
+
+}
+
+$counter-width: 20px;
+
+.stats-inputs-container {
+    &, .form-control {
+        color: $grey-4;
+    }
+
+    text-align: left;
+    padding: 10px 20px 10px 15px;
+
+    .stats-space {
+        display: inline-block;
+        width: 5px;
+    }
+
+    .stat-counter {
+        width: 28px;
+        padding: 0;
+        text-align: center;
+
+        /* Hide arrows */
+        -moz-appearance:textfield;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    }
+
+    .counter-control {
+        @include select(none);
+
+        background-color: $grey-2;
+        color: mix($grey-3, $grey-4, 50%);
+        padding: 3px 4px;
+        border-radius: 50%;
+        font-size: 10px;
+        cursor: pointer;
+
+        &.plus { padding: 3px 4px 3px 5px; }
+        &.minus { padding: 3px 5px 3px 4px; }
+
+        &:hover {
+            background-color: mix($grey-3, $grey-4, 50%);
+            color: $grey-2;
+        }
+    }
+
+    .mini-assignment-type-label {
+        @include select(none);
+
+        color: $grey-0;
+        cursor: pointer;
+        margin-top: 6px;
+
+        &:hover {
+            opacity: 1 !important;
+
         }
     }
 }

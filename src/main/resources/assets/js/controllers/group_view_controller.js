@@ -1,6 +1,5 @@
-App.controller('GroupViewController', function(
-        $scope, $timeout, $location, $animate, $stateParams, yammer, DomUtils,
-        Group, GroupEmployee, AssignmentType, AssignableDay, EMPTY_GROUP) {
+App.controller('GroupViewController', function($scope, $timeout, Utils,
+                                               Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
@@ -13,54 +12,17 @@ App.controller('GroupViewController', function(
         }
     });
 
+
     $scope.assignmentTypeBuckets = {};
-
-    function getGroupEmployeesData(group) {
-        if (group == EMPTY_GROUP) {
-            group.employees = [];
-            return;
-        }
-        group.employees = GroupEmployee.query({group_id: group.id}, function(employees) {
-            group.employeeMap = _.indexBy(employees, 'id');
-        });
-    }
-
-    function addEmployee(yEmployee) {
-        var group = $scope.selectedGroup;
-        var yid = yEmployee.id;
-        if (yid == undefined || yid == "") {
-            return false;
-        }
-        if (_.find(group.employees, function(e){ return e.yammerId == yid; })) {
-            $scope.newEmployeeName = "";
-            return false;
-        }
-
-        var employee = new GroupEmployee({groupId: group.id});
-        employee.yammerId = yid;
-        employee.name = yEmployee.full_name;
-        employee.imageUrlTemplate = yEmployee.photo;
-        employee.$save({}, function(response) {
-            group.addEmployee(employee);
-            $scope.newEmployeeName = "";
-        });
-        return true;
-
-    }
-
-    $scope.deleteEmployee = function (employee) {
-        var group = $scope.selectedGroup;
-        group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
-        employee.groupId = group.id;
-        employee.$delete();
-    }
 
     function getAssignmentTypeData(group) {
         if (group == EMPTY_GROUP) {
             group.assignmentTypes = [];
             return;
         }
-        group.assignmentTypes = AssignmentType.query({ group_id: group.id });
+        group.assignmentTypes = AssignmentType.query({group_id: group.id}, function(assignmentTypes) {
+            group.setAssignmentTypes(assignmentTypes);
+        });
     }
 
     var hideInput = null;
@@ -81,7 +43,7 @@ App.controller('GroupViewController', function(
 
     $scope.assignmentTypeInputEnter = function() {
         if (!$scope.addAssignmentType()) {
-            DomUtils.shakeOnError($scope.assignmentTypeInput);
+            Utils.shakeOnError($scope.assignmentTypeInput);
         }
     }
 
@@ -94,7 +56,7 @@ App.controller('GroupViewController', function(
         var assignmentType = new AssignmentType({ groupId: group.id });
         assignmentType.name = name;
         assignmentType.$save({}, function() {
-            group.assignmentTypes.unshift(assignmentType);
+            group.addAssignmentType(assignmentType);
             $scope.newAssignmentTypeName = "";
             initAssignmentTypeBucket(assignmentType);
         });
@@ -135,6 +97,22 @@ App.controller('GroupViewController', function(
     $scope.onHoverDay = function(day) {
         $scope.dayStamp = day.date;
         $scope.hoveredDay = day;
+        // Adding empty assignments when there is no assignment in a given assignment type
+        if ($scope.hasAssignment($scope.hoveredDay)) {
+            angular.forEach($scope.selectedGroup.assignmentTypes, function(assignmentType) {
+                if ($scope.hoveredDay.content.assignments[assignmentType.id] == undefined) {
+                    $scope.hoveredDay.content.assignments[assignmentType.id] = [];
+                }
+            });
+        }
+    }
+
+    $scope.hasAssignment = function(day) {
+        return day && day.content && day.content.assignments && Object.keys(day.content.assignments).length > 0;
+    }
+
+    $scope.orderHoveredDayBy = function(key){
+        return $scope.selectedGroup.assignmentTypeFor(key).name.toLowerCase();
     }
 
     $scope.clearSelection = function() {
@@ -196,8 +174,7 @@ App.controller('GroupViewController', function(
     }
 
     $scope.$watch('selectedGroup', function() {
-        if ($scope.selectedGroup == undefined) { return; }
-        getGroupEmployeesData($scope.selectedGroup);
+        if ($scope.selectedGroup == null) return;
         getAssignmentTypeData($scope.selectedGroup);
     });
 
@@ -219,7 +196,8 @@ App.controller('GroupViewController', function(
     GroupViewDayContent.prototype.assignments = {};
 
     GroupViewDayContent.prototype.numberOfRoles = function() {
-        return _.size(this.assignments);
+        var self = this;
+        return Object.keys(this.assignments).filter(function(x){return self.assignments[x].length>0}).length;
     }
 
     GroupViewDayContent.prototype.isMidAssigned = function() {
@@ -301,70 +279,6 @@ App.controller('GroupViewController', function(
                 }
             });
         });
-    }
-
-    $scope.autocompleteList = [];
-
-    var timeout;
-    var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // as suggested by yammers api
-    $scope.$watch('newEmployeeName', function(prefix) {
-        if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
-            return;
-        }
-        if (timeout != undefined) {
-            $timeout.cancel(timeout);
-        }
-        timeout = $timeout(function() {
-            yammer.autocomplete(prefix, function(response) {
-                if (response == undefined) {
-                    return;
-                }
-                var users = response.user;
-                $timeout(function(){
-                    $scope.autocompleteList =
-                        (users.map(function(user) {
-                            var names = user.full_name.split(" ");
-                            user.label = names[0] + " " + names[names.length - 1];
-                            return {
-                                label: user.label,
-                                value: user
-                            }
-                        }));
-                    $scope.autocompleteList = _.unique($scope.autocompleteList, function(e) { return e.label; } );
-                });
-            });
-
-        }, AUTOCOMPLETE_QUERY_WAIT_TIME);
-    });
-
-    $scope.getAutocompleteItem = function(user) {
-        return "" +
-            "<div class=\"employee-image\"><img src=\"" + user.photo + "\"/></div>" +
-            "<div class=\"employee-name\">" + user.label + "</div>";
-    }
-
-    $scope.employeeInput = null; // <input/>
-
-    $scope.triggerAddEmployee = function() {
-        if ($scope.newEmployee) {
-            addEmployee($scope.newEmployee);
-            $scope.newEmployee = undefined;
-        } else {
-            DomUtils.shakeOnError($scope.employeeInput);
-        }
-    }
-
-    $scope.userInputKeyDown = function(e) {
-        $scope.newEmployee = undefined;
-    }
-
-    $scope.userInputEnter = function(e) {
-        $scope.triggerAddEmployee();
-    }
-
-    $scope.onSelectAutocomplete = function(user) {
-        $scope.newEmployee = user;
-        $scope.newEmployeeName = user.label;
     }
 
     // TODO: Ugly hack!
