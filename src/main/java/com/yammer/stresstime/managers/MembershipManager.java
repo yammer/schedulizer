@@ -13,7 +13,7 @@ public class MembershipManager extends EntityManager<Membership> {
     }
 
     public Membership join(Group group, Employee employee) {
-        // Validate uniqueness of (group, employee) in the group
+        // TODO: Validate uniqueness of (group, employee) in the group
         Membership membership = new Membership(employee, group);
         save(membership);
         return membership;

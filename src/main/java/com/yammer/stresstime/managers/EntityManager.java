@@ -9,6 +9,7 @@ import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 
 import java.util.List;
 
@@ -30,6 +31,14 @@ public class EntityManager<E> extends AbstractDAO<E> {
         return list(currentSession()
                 .createCriteria(entityClass)
                 .setMaxResults(n));
+    }
+
+    public long count() {
+        return ((Number) currentSession()
+                .createCriteria(entityClass)
+                .setProjection(Projections.rowCount())
+                .uniqueResult())
+                .longValue();
     }
 
     public void save(E entity) {

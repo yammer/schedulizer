@@ -45,6 +45,10 @@ public class Authenticator implements io.dropwizard.auth.Authenticator<Credentia
                 if (employee == null || !employee.getYammerId().equals(yammerId)) {
                     return Optional.absent();
                 }
+                if (employeeManager.count() == 0) {
+                    // First employee to login with yammer is a global admin
+                    employee.setGlobalAdmin(true);
+                }
                 // User verified successfully
                 employeeManager.save(employee);
                 user = User.fresh(employee, credentials.getAccessToken());
@@ -56,7 +60,6 @@ public class Authenticator implements io.dropwizard.auth.Authenticator<Credentia
                     user.setAccessToken(credentials.getAccessToken());
                     user.expire();
                 }
-
             }
         }
         return authenticate(user, credentials.getAcceptedRoles());
@@ -66,6 +69,7 @@ public class Authenticator implements io.dropwizard.auth.Authenticator<Credentia
     private Optional<User> authenticate(User user, Set<Role> acceptedRoles) throws AuthenticationException {
         if (!user.isGuest()) {
             if (!user.isUpToDate()) {
+                // Don't need to save the employee, just verify identity
                 Employee tokenOwner = getTokenOwner(user.getAccessToken());
                 if (tokenOwner != null && tokenOwner.getYammerId().equals(user.getEmployee().getYammerId())) {
                     user.renew();
