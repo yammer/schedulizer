@@ -19,10 +19,10 @@ App.constant('AUTH_EVENTS', {
 
 // I did this because in angular you cant inject a constant in a constant and we need USER_ROLES for NAV_TABS
 var USER_ROLES_CONSTANT = {
-    globalAdmin: 'global',
-    admin: 'admin',
-    user: 'user',
-    guest: 'guest'
+    globalAdmin: 'ADMIN',
+    admin: 'MEMBER', // TODO: merge admin and user into a single role called member
+    user: 'MEMBER',
+    guest: 'GUEST'
 }
 
 App.constant('USER_ROLES', USER_ROLES_CONSTANT);
