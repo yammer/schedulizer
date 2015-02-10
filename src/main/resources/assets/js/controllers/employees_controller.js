@@ -1,5 +1,6 @@
 App.controller('EmployeesController', function($scope, $timeout, yammer,
-                                               DomUtils, GroupEmployee, AssignmentStats, EMPTY_GROUP) {
+                                               Utils, GroupEmployee, AssignmentStats, EMPTY_GROUP) {
+
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP) {
                 group.employees = [];
@@ -30,7 +31,6 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 $scope.newEmployeeName = "";
             });
             return true;
-
         }
 
         $scope.deleteEmployee = function (employee) {
@@ -40,7 +40,6 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
             });;
         }
-
 
         $scope.autocompleteList = [];
 
@@ -125,7 +124,7 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 addEmployee($scope.newEmployee);
                 $scope.newEmployee = undefined;
             } else {
-                DomUtils.shakeOnError($scope.employeeInput);
+                Utils.shakeOnError($scope.employeeInput);
             }
         }
 

@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, DomUtils,
+App.controller('GroupViewController', function($scope, $timeout, Utils,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -11,6 +11,7 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
             $scope.calendar.invalidateAssignments();
         }
     });
+
 
     $scope.assignmentTypeBuckets = {};
 
@@ -40,7 +41,7 @@ App.controller('GroupViewController', function($scope, $timeout, DomUtils,
 
     $scope.assignmentTypeInputEnter = function() {
         if (!$scope.addAssignmentType()) {
-            DomUtils.shakeOnError($scope.assignmentTypeInput);
+            Utils.shakeOnError($scope.assignmentTypeInput);
         }
     }
 

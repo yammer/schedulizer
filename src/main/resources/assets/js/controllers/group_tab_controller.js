@@ -1,7 +1,7 @@
 var groupTabStateChangeSuccessOff = undefined;
 
 App.controller('GroupTabController', function(
-        $scope, $timeout, $location, $state, $rootScope, DomUtils,
+        $scope, $timeout, $location, $state, $rootScope, Utils,
         Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS, NESTED_VIEWS) {
 
     $scope.selectedGroup = EMPTY_GROUP;
@@ -41,7 +41,7 @@ App.controller('GroupTabController', function(
     $scope.createNewGroup = function() {
         var groupName = $scope.newGroupName;
         if (groupName == null || groupName == "") {
-            DomUtils.shakeOnError($scope.groupInput);
+            Utils.shakeOnError($scope.groupInput);
             return;
         }
 

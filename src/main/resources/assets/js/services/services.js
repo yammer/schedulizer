@@ -91,6 +91,7 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
             headers: SHARED_HEADERS
         }
     });
+
     Group.prototype.employees = [];
     Group.prototype.employeeMap = {};
     Group.prototype.employeeFor = function(id) {

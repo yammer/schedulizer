@@ -1,4 +1,4 @@
-App.controller('CalendarController', function ($timeout, $scope, DomUtils) {
+App.controller('CalendarController', function ($timeout, $scope, Utils) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
@@ -223,7 +223,7 @@ App.controller('CalendarController', function ($timeout, $scope, DomUtils) {
 
         // Better way to get the today cell
         var today = $(".view-calendar .day.today");
-        DomUtils.animate('tada', today);
+        Utils.animate('tada', today);
     }
 
     $scope.showCalendar = true;

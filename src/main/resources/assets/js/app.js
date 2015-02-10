@@ -97,25 +97,6 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
 
 }]);
 
-App.factory('DomUtils', ['$rootScope', '$animate', function($rootScope, $animate) {
-    return {
-        animate: function(type, element) {
-            return $animate.addClass(element, type + ' animated').then(function() {
-                $rootScope.$apply(function() {
-                    $animate.removeClass(element, type + ' animated');
-                });
-            });
-        },
-        shakeOnError: function(input) {
-            var parent = input.parent();
-            parent.addClass('has-error');
-            this.animate('shake', input).then(function() {
-                parent.removeClass('has-error');
-            });
-        }
-    };
-}]);
-
 function resizeCalendar() {
     // TODO
 }

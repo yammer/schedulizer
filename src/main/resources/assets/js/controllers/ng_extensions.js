@@ -144,9 +144,9 @@ App.filter('orderObjectBy', function() {
         angular.forEach(items, function(item) {
              filtered.push(item);
         });
-        if(filtered.length <=1) return filtered;
-        filtered.sort(function (a, b) {
-            for(var i = 0; i < deepField.length; i++) {
+        if (filtered.length <= 1) return filtered;
+        filtered.sort(function(a, b) {
+            for (var i = 0; i < deepField.length; i++) {
                 a = a[deepField[i]];
                 b = b[deepField[i]];
             }
@@ -158,7 +158,7 @@ App.filter('orderObjectBy', function() {
             }
             return (a > b ? 1 : -1);
         });
-        if(reverse) filtered.reverse();
+        if (reverse) filtered.reverse();
         return filtered;
     };
 });
@@ -170,11 +170,61 @@ App.filter('orderByExpressionAppliedOnTheKey', function() {
              item.key = key;
              filtered.push(item);
         });
-        if(filtered.length <=1) return filtered;
+        if (filtered.length <= 1) return filtered;
         filtered.sort(function (a, b) {
             return (func(a.key) > func(b.key) ? 1 : -1);
         });
-        if(reverse) filtered.reverse();
+        if (reverse) filtered.reverse();
         return filtered;
     };
 });
+
+App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope, $animate, $timeout) {
+    return {
+        animate: function(type, element) {
+            return $animate.addClass(element, type + ' animated').then(function() {
+                $rootScope.$apply(function() {
+                    $animate.removeClass(element, type + ' animated');
+                });
+            });
+        },
+        shakeOnError: function(input) {
+            var parent = input.parent();
+            parent.addClass('has-error');
+            this.animate('shake', input).then(function() {
+                parent.removeClass('has-error');
+            });
+        },
+        interpolate: function(current, srcScale, tgtScale) {
+            return tgtScale[0] + (current - srcScale[0]) * (tgtScale[1] - tgtScale[0]) / (srcScale[1] - srcScale[0]);
+        },
+        preventBurst: function(func, threshold) {
+            if (threshold) func._burstThreshold = threshold;
+            if (!func._burstThreshold) func._burstThreshold = 50;
+
+            return function() {
+                if (!func._okToIssue) return func._lastValue;
+                func._okToIssue = false;
+                $timeout(function() {func._okToIssue = true;}, func._burstThreshold);
+                func._lastValue = func();
+                return func._lastValue;
+            }
+        },
+        lastOfBurst: function(func, threshold) {
+            if (threshold) func._lastOfBurstThreshold = threshold;
+            if (!func._lastOfBurstThreshold) func._lastOfBurstThreshold = 50;
+
+            func._burstTimeout = null;
+            return function() {
+                if (func._burstTimeout != null) {
+                    $timeout.cancel(func._burstTimeout);
+                }
+                func._burstTimeout = $timeout(function() {
+                    func._burstTimeout = null;
+                    func();
+                }, func._lastOfBurstThreshold);
+            }
+        }
+
+    };
+}]);
