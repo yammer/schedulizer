@@ -1,5 +1,5 @@
 App.controller('EmployeesController', function($scope, $timeout, yammer,
-                                               Utils, GroupEmployee, AssignmentStats, EMPTY_GROUP) {
+                                               Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP) {
@@ -228,6 +228,14 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
         $scope.onSelectAutocomplete = function(user) {
             $scope.newEmployee = user;
             $scope.newEmployeeName = user.label;
+        }
+
+        $scope.addAdmin = function(employee) {
+            AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id})
+        }
+
+        $scope.deleteAdmin = function(employee) {
+            AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id})
         }
 
         $scope.$watch('selectedGroup', function() {

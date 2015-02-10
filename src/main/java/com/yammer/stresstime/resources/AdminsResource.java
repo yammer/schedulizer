@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Path("/admins")
+@Path("/groups/{group_id}/admins/{employee_id}")
 @Produces(MediaType.APPLICATION_JSON)
 public class AdminsResource {
 
@@ -36,8 +36,8 @@ public class AdminsResource {
     @UnitOfWork
     public Response addAdmin(
             @Authorize({Role.ADMIN, Role.MEMBER}) User user,
-            @FormParam("group_id") long groupId,
-            @FormParam("employee_id") long employeeId) {
+            @PathParam("group_id") long groupId,
+            @PathParam("employee_id") long employeeId) {
 
         Group group = groupManager.getById(groupId);
         ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
@@ -52,8 +52,8 @@ public class AdminsResource {
     @UnitOfWork
     public Response removeAdmin(
             @Authorize({Role.ADMIN, Role.MEMBER}) User user,
-            @FormParam("group_id") long groupId,
-            @FormParam("employee_id") long employeeId) {
+            @PathParam("group_id") long groupId,
+            @PathParam("employee_id") long employeeId) {
 
         Group group = groupManager.getById(groupId);
         ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());

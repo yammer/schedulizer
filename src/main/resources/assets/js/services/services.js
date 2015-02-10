@@ -206,3 +206,24 @@ services.factory('AssignmentStats', ['$resource', function($resource) {
         }
     });
 }]);
+
+services.factory('AdminsResource', ['$resource', function($resource) {
+    var AssignableDay = $resource(PREFIX + 'groups/:group_id/admins/:employee_id',  { employee_id: "@employeeId", group_id: "@groupId"}, {
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
+
+    AssignableDay.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    }
+
+    return AssignableDay;
+}]);
