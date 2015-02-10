@@ -133,9 +133,7 @@ public class EntityManager<E> extends AbstractDAO<E> {
         try {
             return (T) criteria.uniqueResult();
         } catch (HibernateException e) {
-            EntityNonUniqueException error = new EntityNonUniqueException(klass);
-            error.initCause(e);
-            throw error;
+            throw new EntityNonUniqueException(e, klass);
         }
     }
 
