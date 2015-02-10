@@ -80,15 +80,17 @@ App.service('YammerSession', function () {
 });
 
 App.service('Session', function (USER_ROLES) {
-    this.create = function (token, userId, userRole) {
+    this.create = function (token, userId, userRole, groupsAdmin) {
         this.token = token;
         this.userId = userId;
         this.userRole = userRole;
+        this.groupsAdmin = groupsAdmin;
     };
     this.destroy = function () {
         this.token = null;
         this.userId = null;
         this.userRole = USER_ROLES.guest;
+        this.groupsAdmin = null;
     };
     this.destroy();
     return this;
@@ -111,9 +113,27 @@ App.factory('SessionStorage', ['$window', function($window) {
 
 }]);
 
-App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, yammer,
-                                     USER_ROLES, AUTH_EVENTS, SessionStorage) {
+App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
+                                     AuthorizationResource, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
+
+    function createAuthorizationHeader(yammerSession) {
+        $http.defaults.headers.common.Authorization = 'ST-AUTH access-token = \"' +
+                                                      yammerSession.token +
+                                                      '\",' +
+                                                      " yammer-id = \"" +
+                                                      yammerSession.userId  +
+                                                      "\"";
+    }
+
+    function destroyAuthorizationHeader() {
+        $http.defaults.headers.common.Authorization = undefined;
+    }
+
+    function getStresstimeUserStatus() {
+        return AuthorizationResource.get().$promise;
+
+    }
 
     function updateYammerSession(yammerResponse) {
         if (yammerResponse.authResponse) {
@@ -123,44 +143,62 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         }
     }
 
-    function createStresstimeSession(session) {
-        Session.create(session.token, session.userId, session.userRole); // TODO: change to session.userRole
-        SessionStorage.save('session', Session);
+    function loginStresstime(yammerSession) {
+        createAuthorizationHeader(yammerSession);
+        return getStresstimeUserStatus().then(function(userStatus) {
+            if (userStatus.role ==  USER_ROLES.guest) {
+                console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
+                return;
+            }
+            Session.create(yammerSession.token, userStatus.employeeId, userStatus.role, userStatus.groupsAdmin);
+            SessionStorage.save('session', Session);
+            return userStatus;
+        });
     }
 
-    yammer.getLoginStatus(function(response) {
-        updateYammerSession(response);
-        var session = SessionStorage.load('session');
-        if(YammerSession.token && session) {
-            $rootScope.$apply(function() { // Necessary as it is an async response outside angular
-                createStresstimeSession(session); // should be stresstime response (see todo above)
-            });
-        }
-        $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
+    function initializeAuthService() {
+        yammer.getLoginStatus(function(response) {
+            updateYammerSession(response);
+            var session = SessionStorage.load('session');
+            if(YammerSession.token && session) {
+                if (session.userRole == USER_ROLES.guest) {
+                    Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
+                    $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
+                }
+                else {
+                    loginStresstime(YammerSession).then(function(userStatus) {
+                        $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
+                    });
+                }
+            }
 
-    });
+        });
+    }
 
     authService.login = function () {
-        var deferred = $q.defer();
+        var deferredYammerResponse = $q.defer();
         if (!YammerSession.token) {
             yammer.login(function (response) {
                 updateYammerSession(response);
-                deferred.resolve(YammerSession);
+                deferredYammerResponse.resolve(YammerSession);
             });
         }
         else {
-            deferred.resolve(YammerSession);
+            deferredYammerResponse.resolve(YammerSession);
         }
-        return deferred.promise.then(function(yammerSession) {
-           // TODO: log in our app
-           yammerSession.userRole = USER_ROLES.admin; // mock for now
-           createStresstimeSession(yammerSession); // should be stresstimeResponse
+        var deferred = $q.defer();
+        deferredYammerResponse.promise.then(function(yammerSession) {
+            loginStresstime(yammerSession).then(function(userStatus) {
+                deferred.resolve(userStatus);
+            });
         });
+        return deferred.promise;
     };
 
     authService.logout = function() {
         var deferred = $q.defer(); // this is done just to be compatible with the login function
         deferred.resolve();
+        destroyAuthorizationHeader();
         Session.destroy();
         SessionStorage.save("session", Session);
         return deferred.promise;
@@ -170,11 +208,19 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         return !!Session.userId;
     };
 
-    authService.isAuthorized = function (authorizedRoles) {
+    authService.isAuthorized = function (authorizedRoles, groupId) {
         if (!angular.isArray(authorizedRoles)) {
             authorizedRoles = [authorizedRoles];
         }
-        return authorizedRoles.indexOf(Session.userRole) !== -1;
+        if (authorizedRoles.indexOf(Session.userRole) === -1) {
+            return false;
+        }
+        if (groupId == undefined) { // no further conditions
+            return true;
+        }
+        return  Session.groupsAdmin && Session.groupsAdmin.indexOf(groupId) !== -1;
     };
+
+    initializeAuthService();
     return authService;
 });

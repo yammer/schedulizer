@@ -170,3 +170,7 @@ services.factory('AssignableDay', ['$resource', function($resource) {
 
     return AssignableDay;
 }]);
+
+services.factory('AuthorizationResource', ['$resource', function($resource) {
+    return $resource(PREFIX + 'current');
+}]);
