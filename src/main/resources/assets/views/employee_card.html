@@ -5,8 +5,8 @@
             <div
                     class="admin-icon"
                     ng-class="{
-                        'is-admin': employee.isGroupAdmin && !employee.globalAdmin,
-                        'not-admin': !employee.isGroupAdmin && !employee.globalAdmin,
+                        'is-admin': employee.groupAdmin && !employee.globalAdmin,
+                        'not-admin': !employee.groupAdmin && !employee.globalAdmin,
                         'global-admin': employee.globalAdmin}"
                     ng-click="toggleAdminClicked(employee)">
                 <span class="glyphicon glyphicon-cog"></span>

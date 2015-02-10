@@ -66,11 +66,9 @@ public class GroupEmployeesResource {
             @PathParam("group_id") long groupId) {
 
         Group group = groupManager.getById(groupId);
-        Set<Employee> employees = group.getEmployees();
-        List<Membership> adminMemberships = membershipManager.getGroupAdmins(groupId);
-        Map<String, Object> response = new HashMap<>();
-        response.put("employees", employees);
-        response.put("admins", adminMemberships.stream().map(m -> m.getEmployee().getId()).collect(Collectors.toList()));
+        Set<ExtendedEmployeeJson> response = group.getMemberships().stream()
+                .map(ExtendedEmployeeJson::new)
+                .collect(Collectors.toSet());
         return Response.ok().entity(response).build();
     }
 
@@ -89,5 +87,40 @@ public class GroupEmployeesResource {
         Membership membership = membershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
         membershipManager.delete(membership);
         return Response.noContent().build();
+    }
+
+    private static class ExtendedEmployeeJson {
+
+        private Employee employee;
+        private boolean groupAdmin;
+
+        public ExtendedEmployeeJson(Membership membership) {
+            this.employee = membership.getEmployee();
+            groupAdmin = membership.isAdmin();
+        }
+
+        public long getId() {
+            return employee.getId();
+        }
+
+        public String getYammerId() {
+            return employee.getYammerId();
+        }
+
+        public String getName() {
+            return employee.getName();
+        }
+
+        public boolean isGlobalAdmin() {
+            return employee.isGlobalAdmin();
+        }
+
+        public String getImageUrlTemplate() {
+            return employee.getImageUrlTemplate();
+        }
+
+        public boolean isGroupAdmin() {
+            return groupAdmin;
+        }
     }
 }
