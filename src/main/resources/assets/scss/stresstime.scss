@@ -342,6 +342,70 @@ $mid-assigned-bg: #EFC932;
     color: #FFF;
 }
 
+.employee-card .avatar-wrapper .avatar-image-wrapper {
+    width: 50px;
+    height: 50px;
+    position: relative;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .avatar-image {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    position: absolute;
+    top: 34px;
+    left: 37px;
+    text-align: center;
+    background: $grey-0;
+    cursor: pointer;
+    display: none;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.global-admin {
+    display: inherit;
+    color: #dbb800;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon .delete-admin {
+    display: none;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin {
+    opacity: 1;
+    display: inherit;
+}
+
+.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin {
+    display: inherit;
+    opacity: 0.7;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin:hover {
+    opacity: 0.9;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover .glyphicon {
+    display: none;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover .delete-admin {
+    display: inline-block;
+    line-height: 0;
+    vertical-align: middle;
+    height: 6px;
+    color: white;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover {
+    background: #cc5555;
+}
+
 .employee-card .avatar-wrapper.no-image {
     font-size: 31px;
     font-weight: bold;

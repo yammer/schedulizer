@@ -1,6 +1,18 @@
 <div class="employee-card hoverable deletable-card">
     <div class="avatar-wrapper with-image">
-        <img ng-src="{{employee.imageUrlTemplate}}" width="50" height="50" />
+        <div class="avatar-image-wrapper">
+            <img class="avatar-image" ng-src="{{employee.imageUrlTemplate}}" width="50" height="50" />
+            <div
+                    class="admin-icon"
+                    ng-class="{
+                        'is-admin': employee.groupAdmin && !employee.globalAdmin,
+                        'not-admin': !employee.groupAdmin && !employee.globalAdmin,
+                        'global-admin': employee.globalAdmin}"
+                    ng-click="toggleAdminClicked(employee)">
+                <span class="glyphicon glyphicon-cog"></span>
+                <span class="delete-admin">-</span>
+            </div>
+        </div>
     </div>
     <div class="name">
         <span>{{employee.name}}</span>

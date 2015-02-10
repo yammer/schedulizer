@@ -1,5 +1,11 @@
 App.controller('EmployeeCardController', function ($scope, $rootScope) {
     $scope.isGroupAdmin = $rootScope.isGroupAdmin;
+
+    $scope.toggleAdminClicked = function(employee) {
+        if(employee.globalAdmin) { return; }
+        $scope.toggleAdmin(employee);
+    }
+
 });
 
 App.directive('employeeCard', function() {
@@ -8,7 +14,8 @@ App.directive('employeeCard', function() {
         scope: {
             employee: "=",
             group: "=",
-            remove: "&"
+            remove: "&",
+            toggleAdmin: "="
         },
         templateUrl: 'views/employee_card.html',
         controller: 'EmployeeCardController'

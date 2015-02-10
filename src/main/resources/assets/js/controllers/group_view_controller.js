@@ -12,7 +12,6 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
         }
     });
 
-
     $scope.assignmentTypeBuckets = {};
 
     function getAssignmentTypeData(group) {
