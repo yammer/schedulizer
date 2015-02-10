@@ -1,18 +1,13 @@
 package com.yammer.stresstime.entities;
 
-import com.google.common.base.Throwables;
 import com.yammer.stresstime.managers.*;
-import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
 import com.yammer.stresstime.test.DatabaseTest;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.fail;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static com.yammer.stresstime.test.TestUtils.assertCauses;
 
 public class AssignmentTest extends DatabaseTest {
 
@@ -43,12 +38,7 @@ public class AssignmentTest extends DatabaseTest {
                 assignment.getAssignableDay(),
                 assignment.getAssignmentType());
 
-        try {
-            assignmentManager.save(clone);
-            fail("HibernateUncaughtException was expected but wasn't thrown");
-        } catch (HibernateUncaughtException e) {
-            assertThat(Throwables.getCausalChain(e), hasItem(instanceOf(ConstraintViolationException.class)));
-        }
+        assertCauses(ConstraintViolationException.class, () -> assignmentManager.save(clone));
 
         hibernateThrewException();
     }

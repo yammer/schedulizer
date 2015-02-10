@@ -1,14 +1,12 @@
 package com.yammer.stresstime.auth;
 
-import com.google.common.base.Throwables;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
+import static com.yammer.stresstime.test.TestUtils.assertCauses;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -61,21 +59,21 @@ public class AuthorizationHeaderTest {
 
     @Test
     public void testInvalidWithNull() throws Exception {
-        assertThrows(NullPointerException.class, () -> AuthorizationHeader.decode(null));
+        assertCauses(NullPointerException.class, () -> AuthorizationHeader.decode(null));
     }
 
     @Test
     public void testInvalidWithoutParameters() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> AuthorizationHeader.decode("Schema"));
-        assertThrows(IllegalArgumentException.class, () -> AuthorizationHeader.decode("Schema  "));
-        assertThrows(IllegalArgumentException.class, () -> AuthorizationHeader.decode("  Schema"));
+        assertCauses(IllegalArgumentException.class, () -> AuthorizationHeader.decode("Schema"));
+        assertCauses(IllegalArgumentException.class, () -> AuthorizationHeader.decode("Schema  "));
+        assertCauses(IllegalArgumentException.class, () -> AuthorizationHeader.decode("  Schema"));
     }
 
     @Test
     public void testInvalidWithNonKeyValueParameters() throws Exception {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertCauses(IllegalArgumentException.class, () ->
                 AuthorizationHeader.decode("Schema key, value"));
-        assertThrows(IllegalArgumentException.class, () ->
+        assertCauses(IllegalArgumentException.class, () ->
                 AuthorizationHeader.decode("Schema key = value, value"));
     }
 
@@ -95,15 +93,5 @@ public class AuthorizationHeaderTest {
 
     private <K, V> Map.Entry<K, V> p(K key, V value) {
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
-    }
-
-    /* TODO: Extract to test utils */
-    private void assertThrows(Class<? extends Throwable> exception, Runnable runnable) {
-        try {
-            runnable.run();
-            fail("Expected exception " + exception.getSimpleName() + " but none was thrown");
-        } catch (Throwable e) {
-            Assert.assertThat(Throwables.getCausalChain(e), hasItem(instanceOf(exception)));
-        }
     }
 }
