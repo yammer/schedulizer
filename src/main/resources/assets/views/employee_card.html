@@ -11,12 +11,9 @@
              >
             {{stat.count}}
         </div>
-        <div class="delete" ng-click="remove()">
+        <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">
             <div>-</div>
         </div>
     </div>
     <div class="clear"></div>
-    <div st-if="isGroupAdmin(group)" class="delete" ng-click="remove()">
-        <div>-</div>
-    </div>
 </div>
