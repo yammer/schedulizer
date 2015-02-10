@@ -3,8 +3,8 @@
         {{selectedGroup.name}}
         <div class="assignment-types-wrapper">
             <div
-                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name' : true"
-                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index)%10}}">
+                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                class="assignment-type-label assignment-color-{{assignmentType.index % 10}}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
@@ -47,12 +47,12 @@
             </div>
             <div ng-if="hasAssignment(hoveredDay)" class="day-assignments">
                 <div
-                    ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey:orderHoveredDayBy"
+                    ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey: orderHoveredDayBy"
                     class="day-assignment"
                     ng-if="employees.length > 0"
                     >
                     <div class="day-assignment-role">
-                        <span class="assignment-color-{{index%10}}">
+                        <span class="assignment-color-{{index % 10}}">
                             {{selectedGroup.assignmentTypeFor(employees.key).name}}
                         </span>
                     </div>
@@ -142,22 +142,39 @@
         <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
     </div>
     <ul ng-controller="EmployeesController" class="nav nav-sidebar" role="navigation">
-        <div class="stats-inputs-container">
-            <div class="stats-time-number-container">
-                <div>
-                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
-                </div>
-                <div>
-                    <span class="stats-time-number-span" ng-init="employeeStatsTimeNumber=3" ng-bind="employeeStatsTimeNumber"/>
-                </div>
-                <div>
-                    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-                </div>
+        <div class="stats-inputs-container form-inline">
+            <span class="stats-label">Past</span>
+
+            <span class="stats-space"></span>
+
+            <span ng-click="incrementStatCounter(-1)" class="counter-control minus"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
+
+            <input ng-model="stat.selected.counter" type="number" min="0" value="3" class="form-control stat-counter" />
+
+            <span ng-click="incrementStatCounter(+1)" class="counter-control plus"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+
+            <span class="stats-space"></span>
+
+            <select
+                ng-options="id as item.label for (id, item) in stat.units"
+                ng-model="stat.selected.unit"
+                class="form-control"
+                >
+            </select>
+
+            <div
+                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                ng-click="updateEmployeesOrder(assignmentType)"
+                class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
+                ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
+                >
+                <!-- Figure out a way to initialize -->
+                <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
             </div>
         </div>
         <div ng-draggable="isGroupAdmin(selectedGroup)"
              ghost-element=".avatar-wrapper"
-             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch"
+             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
              drag-data=employee>
             <employee-card
                     employee="employee"
@@ -176,21 +193,21 @@
                 <span>+</span>
             </div>
 
-            <div class="name ui-widget">
+            <div class="name with-input ui-widget">
                 <input
-                        class="form-control"
-                        type="text"
-                        st-name="employeeInput"
-                        ng-model="newEmployeeName"
-                        placeholder="Name"
-                        st-autocomplete
-                        item-class="employee-autocomplete-item"
-                        tags="autocompleteList"
-                        get-custom-template="getAutocompleteItem"
-                        autocomplete-select="onSelectAutocomplete"
-                        ng-change="userInputKeyDown($event)"
-                        ng-enter="userInputEnter($event)"
-                        />
+                    class="form-control"
+                    type="text"
+                    st-name="employeeInput"
+                    ng-model="newEmployeeName"
+                    placeholder="Name"
+                    st-autocomplete
+                    item-class="employee-autocomplete-item"
+                    tags="autocompleteList"
+                    get-custom-template="getAutocompleteItem"
+                    autocomplete-select="onSelectAutocomplete"
+                    ng-change="userInputKeyDown($event)"
+                    ng-enter="userInputEnter($event)"
+                    />
             </div>
             <div class="clear"></div>
         </div>

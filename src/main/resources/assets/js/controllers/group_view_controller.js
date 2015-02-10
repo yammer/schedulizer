@@ -20,7 +20,9 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
             group.assignmentTypes = [];
             return;
         }
-        group.assignmentTypes = AssignmentType.query({ group_id: group.id });
+        group.assignmentTypes = AssignmentType.query({group_id: group.id}, function(assignmentTypes) {
+            group.setAssignmentTypes(assignmentTypes);
+        });
     }
 
     var hideInput = null;
@@ -54,7 +56,7 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
         var assignmentType = new AssignmentType({ groupId: group.id });
         assignmentType.name = name;
         assignmentType.$save({}, function() {
-            group.assignmentTypes.unshift(assignmentType);
+            group.addAssignmentType(assignmentType);
             $scope.newAssignmentTypeName = "";
             initAssignmentTypeBucket(assignmentType);
         });
@@ -172,7 +174,7 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
     }
 
     $scope.$watch('selectedGroup', function() {
-        if ($scope.selectedGroup == undefined) { return; }
+        if ($scope.selectedGroup == null) return;
         getAssignmentTypeData($scope.selectedGroup);
     });
 

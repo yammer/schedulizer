@@ -81,40 +81,129 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 "<div class=\"employee-name\">" + user.label + "</div>";
         }
 
-        $scope.getAssignmentStats = function (group){
+        $scope.stat = {
+            selected: {counter: 3, unit: 'months'},
+            units: {
+                days:   {label: 'days',   multiplier: 1  },
+                weeks:  {label: 'weeks',  multiplier: 7  },
+                months: {label: 'months', multiplier: 30 },
+                years:  {label: 'years',  multiplier: 365}
+            }
+        }
+
+        $scope.getDaysOffset = function() {
+            var counter = $scope.stat.selected.counter;
+            var unit = $scope.stat.units[$scope.stat.selected.unit];
+            return counter * unit.multiplier;
+        }
+
+        $scope.incrementStatCounter = function(delta) {
+            $scope.stat.selected.counter = Math.max(0, $scope.stat.selected.counter + delta);
+        }
+
+        $scope.getAssignmentStats = function() {
+            var group = $scope.selectedGroup;
             if (group == EMPTY_GROUP) {
                 return;
             }
+
+            var endDate = Date.TODAY;
+            var startDate = endDate.plusDays(- $scope.getDaysOffset());
+
             AssignmentStats.query({
                 group_id: group.id,
-                start_date: "2015-02-02",
-                end_date: "2015-03-10"
+                start_date: startDate.toISOLocalDateString(),
+                end_date: endDate.toISOLocalDateString()
             }, function(assignmentStats) {
-                angular.forEach(group.employees, function(e) {
-                    e.statistics = null;
-                    if (assignmentStats[e.id]) {
-                        e.statistics = assignmentStats[e.id];
-                        angular.forEach(e.statistics, function(s) {
-                            s.assignmentType = group.assignmentTypeFor(s.assignmentTypeId);
-                        });
-                    }
+                _.each(group.employees, function(e) {
+                    e.statistics = {};
+                    if (!assignmentStats[e.id]) return;
+                    e.statistics = _.chain(assignmentStats[e.id])
+                        .each(function(s) {s.assignmentType = group.assignmentTypeFor(s.assignmentTypeId);})
+                        .indexBy('assignmentTypeId')
+                        .value();
                 });
                 // complete with "count: 0" for other assignment types
-                angular.forEach(group.employees, function(e) {
-                    if (e.statistics == null) {
-                        e.statistics = [];
-                    }
-                    angular.forEach(group.assignmentTypes, function(a){
-                        if (!_.find(e.statistics, function(x) {return x.assignmentType.id == a.id;})) {
-                            e.statistics.push({
-                                assignmentType: a,
-                                assignmentTypeId: a.id,
-                                count: 0
-                            });
-                        }
+                _.each(group.employees, function(e) {
+                    _.each(group.assignmentTypes, function(a) {
+                        if (e.statisticsFor(a.id)) return;
+                        e.statistics[a.id] = {
+                            assignmentTypeId: a.id,
+                            assignmentType: a,
+                            count: 0
+                        };
                     });
                 });
             });
+        }
+
+        $scope.$watch('assignmentsChange', $scope.getAssignmentStats);
+        $scope.$watch('getDaysOffset()', $scope.getAssignmentStats);
+
+        $scope.getAssignmentTypeHeaderStyle = function(assignmentType) {
+            var ids = _.map($scope.employeeOrder, Math.abs);
+            var i = _.indexOf(ids, assignmentType.id);
+            var n = _.size(ids);
+            var current = n - i - 1;
+            var srcScale = [0, n - 1];
+
+            return {
+                position: 'relative',
+                opacity: Utils.interpolate(current, srcScale, [0.25, 0.9]),
+                paddingTop: Utils.interpolate(current, srcScale, [2, 8]) + 'px',
+                bottom: Utils.interpolate(current, srcScale, [-3, 3]) + 'px'
+            };
+        }
+
+        $scope.employeeOrder = []
+        $scope.employeeOrderKey = []
+
+        function computeEmployeeOrderKey(employeeOrder) {
+            return _.map(employeeOrder, function(id) {
+                var prefix = (id < 0) ? '-' : '+';
+                return prefix + 'statistics[' + Math.abs(id) + '].count';
+            })
+        }
+
+        function getOrderedId(assignmentType) {
+            return (assignmentType.desc) ? -assignmentType.id : +assignmentType.id;
+        }
+
+        function tryUpdateOrder(newOrder) {
+            if (_.isEqual(newOrder, $scope.employeeOrder)) return;
+            $scope.employeeOrder = newOrder;
+            $scope.employeeOrderKey = computeEmployeeOrderKey(newOrder);
+        }
+
+        function tryComputeEmployeeOrder() {
+            var assignmentTypes = $scope.selectedGroup.assignmentTypes;
+            if (assignmentTypes == null || assignmentTypes.length <= 0) return;
+            var map = _.indexBy(assignmentTypes, 'id');
+            var newIds = _.map(assignmentTypes, 'id');
+            var currentIds = _.map($scope.employeeOrder, Math.abs);
+            var newOrder = _.chain(currentIds)       // [unorderedId]
+                .union(newIds)                       // [unorderedId]
+                .intersection(newIds)                // intersect() after union() to keep original order
+                .map(function(id) {return map[id];}) // [assignmentType]
+                .map(getOrderedId)                   // [orderedId]
+                .value();
+
+            tryUpdateOrder(newOrder);
+        }
+
+        $scope.$watch('assignmentsChange', tryComputeEmployeeOrder);
+
+        $scope.updateEmployeesOrder = function(assignmentType) {
+            var oldId = getOrderedId(assignmentType);
+            assignmentType.desc = !assignmentType.desc;
+            var newId = getOrderedId(assignmentType);
+
+            var newOrder = _.chain($scope.employeeOrder)
+                .without(oldId)
+                .unshift(newId)
+                .value();
+
+            tryUpdateOrder(newOrder);
         }
 
         $scope.employeeInput = null; // <input/>
@@ -142,19 +231,20 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
         }
 
         $scope.$watch('selectedGroup', function() {
-            if ($scope.selectedGroup == undefined || $scope.selectedGroup == EMPTY_GROUP) { return; }
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
             getGroupEmployeesData($scope.selectedGroup);
-            $scope.getAssignmentStats($scope.selectedGroup);
+            $scope.getAssignmentStats();
         });
 
-        $scope.$watch('selectedGroup.employees.length', function() {
-            $scope.getAssignmentStats($scope.selectedGroup);
-        });
-        $scope.$watch('selectedGroup.assignmentTypes.length', function() {
-            $scope.getAssignmentStats($scope.selectedGroup);
-        });
-        $scope.$watch('assignmentTypeBuckets', function() {
-            $scope.getAssignmentStats($scope.selectedGroup);
-        }, true); // deep watching
+        // Create new property to centralize assignments change events
+        $scope.assignmentsChange = 0;
+
+        function touchAssignments() {
+            $scope.assignmentsChange++;
+        }
+
+        $scope.$watch('selectedGroup.employees.length', Utils.lastOfBurst(touchAssignments));
+        $scope.$watch('selectedGroup.assignmentTypes.length', Utils.lastOfBurst(touchAssignments));
+        $scope.$watch('assignmentTypeBuckets', Utils.lastOfBurst(touchAssignments), true);
 
 });

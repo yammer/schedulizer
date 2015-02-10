@@ -103,18 +103,32 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
         return _.find(this.assignmentTypes, function(assignmentType) {
             return assignmentType.id == id;
         });
+    };
+
+    Group.prototype.addAssignmentType = function(assignmentType) {
+        this.setAssignmentTypes(_.union(this.assignmentTypes, [assignmentType]));
     }
+
+    Group.prototype.setAssignmentTypes = function(assignmentTypes) {
+        this.assignmentTypes = _.chain(assignmentTypes)
+            .sortBy(function(a) {return a.name.toLowerCase();})
+            .each(function(a, i) {
+                a.index = i;
+            })
+            .value();
+    }
+
     Group.prototype.addEmployee = function(employee) {
+        // TODO: Fix flash when adding new employee in different order
         this.employees.push(employee);
         this.employeeMap[employee.id] = employee;
     }
-
 
     return Group;
 }]);
 
 services.factory('GroupEmployee', ['$resource', function($resource) {
-    return $resource(PREFIX + 'groups/:group_id/employees/:employee_id', {group_id: '@groupId'}, {
+    var GroupEmployee = $resource(PREFIX + 'groups/:group_id/employees/:employee_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -127,6 +141,15 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
             headers: SHARED_HEADERS
         }
     });
+
+    GroupEmployee.prototype.statistics = {}; // {assignmentTypeId: {assignmentType, assignmentTypeId, count}}
+    GroupEmployee.prototype.statisticsFor = function(assignmentTypeId) {
+        return _.find(this.statistics, function(s, id) {
+            return id == assignmentTypeId;
+        })
+    }
+
+    return GroupEmployee;
 }]);
 
 services.factory('Employee', ['$resource', function($resource) {

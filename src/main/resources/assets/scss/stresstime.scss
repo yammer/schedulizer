@@ -568,7 +568,7 @@ $delete-bg: #C41E1E;
     }
 }
 
-.add-group-button {
+.st-input-button  {
     padding-top: 5px;
     padding-bottom: 7px;
 }
@@ -759,9 +759,67 @@ $employee-autocomplete-height: 40px;
 
 .stats-inputs-container {
     padding: 10px;
+
+
 }
 
-.stats-inputs-container .stats-time-number {
-    width: 33px;
-    padding: 0px 0px 0px 4px;
+$counter-width: 20px;
+
+.stats-inputs-container {
+    &, .form-control {
+        color: $grey-4;
+    }
+
+    text-align: left;
+    padding: 10px 20px 10px 15px;
+
+    .stats-space {
+        display: inline-block;
+        width: 5px;
+    }
+
+    .stat-counter {
+        width: 28px;
+        padding: 0;
+        text-align: center;
+
+        /* Hide arrows */
+        -moz-appearance:textfield;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    }
+
+    .counter-control {
+        @include select(none);
+
+        background-color: $grey-2;
+        color: mix($grey-3, $grey-4, 50%);
+        padding: 3px 4px;
+        border-radius: 50%;
+        font-size: 10px;
+        cursor: pointer;
+
+        &.plus { padding: 3px 4px 3px 5px; }
+        &.minus { padding: 3px 5px 3px 4px; }
+
+        &:hover {
+            background-color: mix($grey-3, $grey-4, 50%);
+            color: $grey-2;
+        }
+    }
+
+    .mini-assignment-type-label {
+        @include select(none);
+
+        color: $grey-0;
+        cursor: pointer;
+        margin-top: 6px;
+
+        &:hover {
+            opacity: 1 !important;
+
+        }
+    }
 }

@@ -5,8 +5,8 @@
     <div class="name">
         <span>{{employee.name}}</span>
         <div
-            ng-repeat="(index, stat) in employee.statistics | orderBy:'assignmentType.name':true"
-            class="mini-assignment-type-label assignment-color-{{(employee.statistics.length - 1 - index)%10}}"
+            ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
+            class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
             ng-class="{'no-assignments-label': stat.count == 0 }"
              >
             {{stat.count}}
