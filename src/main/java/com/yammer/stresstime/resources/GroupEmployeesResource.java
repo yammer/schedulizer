@@ -15,7 +15,11 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/employees")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,7 +67,11 @@ public class GroupEmployeesResource {
 
         Group group = groupManager.getById(groupId);
         Set<Employee> employees = group.getEmployees();
-        return Response.ok().entity(employees).build();
+        List<Membership> adminMemberships = membershipManager.getGroupAdmins(groupId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("employees", employees);
+        response.put("admins", adminMemberships.stream().map(m -> m.getEmployee().getId()).collect(Collectors.toList()));
+        return Response.ok().entity(response).build();
     }
 
     @DELETE

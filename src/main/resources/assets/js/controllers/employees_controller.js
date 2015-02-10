@@ -6,8 +6,12 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 group.employees = [];
                 return;
             }
-            group.employees = GroupEmployee.query({group_id: group.id}, function(employees) {
-                group.employeeMap = _.indexBy(employees, 'id');
+            GroupEmployee.get({group_id: group.id}, function(response) {
+                group.employees = response.employees;
+                group.employeeMap = _.indexBy(response.employees, 'id');
+                angular.forEach(response.admins, function(admin) {
+                    group.employeeMap[admin].isGroupAdmin = true;
+                });
             });
         }
 
@@ -31,6 +35,7 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 $scope.newEmployeeName = "";
             });
             return true;
+
         }
 
         $scope.deleteEmployee = function (employee) {
