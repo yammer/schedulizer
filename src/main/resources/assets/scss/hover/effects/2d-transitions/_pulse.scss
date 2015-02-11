@@ -1,11 +1,11 @@
 /* Pulse */
 @include keyframes(#{$nameSpace}-pulse) {
 	25% {
-		@include prefixed(transform, scale(1.04));
+		@include prefixed(transform, scale(1.08));
 	}
 
 	75% {
-		@include prefixed(transform, scale(.96));
+		@include prefixed(transform, scale(.92));
 	}
 }
 

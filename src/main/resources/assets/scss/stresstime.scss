@@ -354,6 +354,8 @@ $mid-assigned-bg: #EFC932;
     left: 0px;
 }
 
+/* Refactor styles to use SASS nesting */
+
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
     width: 17px;
     height: 17px;
@@ -387,7 +389,8 @@ $mid-assigned-bg: #EFC932;
 }
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable:hover {
-    opacity: 0.9;
+    @include pulse(.6s);
+    opacity: 1;
 }
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover .glyphicon {
@@ -403,7 +406,7 @@ $mid-assigned-bg: #EFC932;
 }
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover {
-    background: #cc5555;
+    background-color: #CC5555;
 }
 
 .employee-card .avatar-wrapper.no-image {
