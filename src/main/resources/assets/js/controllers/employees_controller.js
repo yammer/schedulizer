@@ -243,11 +243,16 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
                     confirm = $dialogs.confirm('Please confirm',
                                                'Are you sure you want to revoke admin privileges for this user? <br>');
                 }
-                confirm.result.then(function(){
+                confirm.result.then(function(btn){
                     $scope.deleteAdmin(employee);
                 });
             } else {
-                $scope.addAdmin(employee);
+                var confirm = $dialogs.confirm('Please confirm',
+                                               'Are you sure you want to make this user an admin? <br>' +
+                                               'He will be able to edit this group as much as he wants');
+                confirm.result.then(function(btn){
+                    $scope.addAdmin(employee);
+                });
             }
         }
 
