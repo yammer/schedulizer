@@ -1,7 +1,7 @@
 var groupTabStateChangeSuccessOff = undefined;
 
 App.controller('GroupTabController', function(
-        $scope, $timeout, $location, $state, $rootScope, Utils,
+        $scope, $timeout, $location, $state, $rootScope, $dialogs, Utils,
         Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS, NESTED_VIEWS) {
 
     $scope.selectedGroup = EMPTY_GROUP;
@@ -57,15 +57,26 @@ App.controller('GroupTabController', function(
     }
 
     $scope.deleteGroup = function(group, $event) {
-        group.$delete({}, function() {
-            $scope.groups.remove(group);
-            if ($scope.isSelectedGroup(group)) {
-                if ($scope.groups.length == 0) {
-                    $location.path('groups');
-                } else {
-                    $state.go('.', {groupId: $scope.groups[0].id});
-                }
-            }
+        var confirm = $dialogs.confirm('Please confirm',
+                                       'Are you sure you want to delete this group?' +
+                                       '<br> Bad things may happen, ' +
+                                       'because this operation can not be undone!');
+
+        confirm.result.then(function(btn) {
+            var doubleConfirm = $dialogs.confirm('Please confirm again',
+                                                 'Are you really sure?');
+            doubleConfirm.result.then(function(btn2) {
+                group.$delete({}, function() {
+                    $scope.groups.remove(group);
+                    if ($scope.isSelectedGroup(group)) {
+                        if ($scope.groups.length == 0) {
+                            $location.path('groups');
+                        } else {
+                            $state.go('.', {groupId: $scope.groups[0].id});
+                        }
+                    }
+                });
+            });
         });
         $event.preventDefault();
         $event.stopPropagation();
