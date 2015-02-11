@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, yammer,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, yammer, Session,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
@@ -233,7 +233,19 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
 
         $scope.toggleAdmin = function(employee) {
             if (employee.groupAdmin) {
-                $scope.deleteAdmin(employee);
+                var confirm;
+                if (employee.id == Session.userId) {
+                    confirm = $dialogs.confirm('Please confirm',
+                                               'Are you sure you want to revoke your own admin privileges? <br>' +
+                                               'YOU WILL LOSE POWER!');
+                }
+                else {
+                    confirm = $dialogs.confirm('Please confirm',
+                                               'Are you sure you want to revoke admin privileges for this user? <br>');
+                }
+                confirm.result.then(function(){
+                    $scope.deleteAdmin(employee);
+                });
             } else {
                 $scope.addAdmin(employee);
             }
