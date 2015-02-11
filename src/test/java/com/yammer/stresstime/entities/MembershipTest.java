@@ -35,6 +35,9 @@ public class MembershipTest extends DatabaseTest {
 
         assertCauses(ConstraintViolationException.class, () -> membershipManager.join(group, employee));
 
+        Membership membership = new Membership(employee, group);
+        assertCauses(ConstraintViolationException.class, () -> membershipManager.save(membership));
+
         hibernateThrewException();
     }
 }
