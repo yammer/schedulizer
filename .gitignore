@@ -120,3 +120,6 @@ hs_err_pid*
 # .scss compiled .css files from sass
 src/main/resources/assets/css/out/
 .sass-cache
+
+# Maven auto-generates this file
+dependency-reduced-pom.xml
