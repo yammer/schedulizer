@@ -35,11 +35,15 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
         }
 
         $scope.deleteEmployee = function (employee) {
-            var group = $scope.selectedGroup;
-            employee.groupId = group.id;
-            employee.$delete().then(function() {
-                group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
-            });;
+            var confirm = $dialogs.confirm('Please confirm',
+                                           'Are you sure you want to remove this employee from this group? <br>');
+            confirm.result.then(function(btn) {
+                var group = $scope.selectedGroup;
+                employee.groupId = group.id;
+                employee.$delete().then(function() {
+                    group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
+                });
+            });
         }
 
         $scope.autocompleteList = [];
