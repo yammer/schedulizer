@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employees",
+        uniqueConstraints = @UniqueConstraint(columnNames =
+                {"yammer_id"}))
 public class Employee {
 
     @Id
