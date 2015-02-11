@@ -13,8 +13,8 @@ Date.max = function(a, b) {
 Date.fromISOLocalString = function(string) {
     var parts = string.split("-");
     var d = new Date();
-    d.setMonth(parseInt(parts[1]) - 1, parseInt(parts[2]));
     d.setYear(parseInt(parts[0]));
+    d.setMonth(parseInt(parts[1]) - 1, parseInt(parts[2]));
     return d;
 }
 
