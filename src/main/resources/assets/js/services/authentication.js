@@ -218,8 +218,12 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         if (groupId == undefined) { // no further conditions
             return true;
         }
-        return  Session.groupsAdmin && Session.groupsAdmin.indexOf(groupId) !== -1;
+        return Session.groupsAdmin && Session.groupsAdmin.indexOf(groupId) !== -1;
     };
+
+    authService.belongsToGroup = function(group) {
+        return group.employeeMap != undefined && group.employeeMap[Session.userId] != undefined;
+    }
 
     initializeAuthService();
     return authService;
