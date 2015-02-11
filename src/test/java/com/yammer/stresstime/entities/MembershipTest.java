@@ -26,7 +26,7 @@ public class MembershipTest extends DatabaseTest {
     }
 
     @Test
-    public void testAssignmentUniqueness() throws Exception {
+    public void testMembershipUniqueness() throws Exception {
         Employee employee = new Employee("John Doe", "<yid>");
         Group group = new Group("Core Services");
         employeeManager.save(employee);
