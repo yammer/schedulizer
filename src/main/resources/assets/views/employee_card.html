@@ -7,7 +7,8 @@
                     ng-class="{
                         'is-admin': employee.groupAdmin && !employee.globalAdmin,
                         'not-admin': !employee.groupAdmin && !employee.globalAdmin,
-                        'global-admin': employee.globalAdmin}"
+                        'global-admin': employee.globalAdmin,
+                        'editable': isGroupAdmin(group)}"
                     ng-click="toggleAdminClicked(employee)">
                 <span class="glyphicon glyphicon-cog"></span>
                 <span class="delete-admin">-</span>

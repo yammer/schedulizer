@@ -381,20 +381,20 @@ $mid-assigned-bg: #EFC932;
     display: inherit;
 }
 
-.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin {
+.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable {
     display: inherit;
     opacity: 0.7;
 }
 
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin:hover {
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable:hover {
     opacity: 0.9;
 }
 
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover .glyphicon {
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover .glyphicon {
     display: none;
 }
 
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover .delete-admin {
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover .delete-admin {
     display: inline-block;
     line-height: 0;
     vertical-align: middle;
@@ -402,7 +402,7 @@ $mid-assigned-bg: #EFC932;
     color: white;
 }
 
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin:hover {
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover {
     background: #cc5555;
 }
 
