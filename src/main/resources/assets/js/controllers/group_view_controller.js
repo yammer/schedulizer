@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, Utils,
+App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -75,13 +75,25 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
     }
 
     $scope.deleteAssignmentType = function(assignmentType) {
-        var group = $scope.selectedGroup;
-        assignmentType.groupId = group.id;
-        assignmentType.$delete({}, function() {
-            group.assignmentTypes.remove(assignmentType);
-            delete $scope.assignmentTypeBuckets[assignmentType.id];
+        var confirm = $dialogs.confirm('Please confirm',
+                                       'Are you sure you want to delete this assignment type?<br>' +
+                                       'Bad things may happen, ' +
+                                       'because this operation can not be undone!<br>' +
+                                       'All the assignments related to this assignment type will also be deleted.');
+
+        confirm.result.then(function(btn){
+            var doubleConfirm = $dialogs.confirm('Please confirm again',
+                                                 'Are you really sure?');
+            doubleConfirm.result.then(function(btn2) {
+                var group = $scope.selectedGroup;
+                assignmentType.groupId = group.id;
+                assignmentType.$delete({}, function() {
+                    group.assignmentTypes.remove(assignmentType);
+                    delete $scope.assignmentTypeBuckets[assignmentType.id];
+                });
+                focusOnAssignmentTypeInput();
+            });
         });
-        focusOnAssignmentTypeInput();
     }
 
     $scope.calendar = null;
