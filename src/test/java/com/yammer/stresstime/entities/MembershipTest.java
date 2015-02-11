@@ -4,6 +4,7 @@ import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.managers.MembershipManager;
 import com.yammer.stresstime.test.DatabaseTest;
+import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class MembershipTest extends DatabaseTest {
 
     @Test
     public void testMembershipUniqueness() throws Exception {
-        Employee employee = new Employee("John Doe", "<yid>");
+        Employee employee = new Employee("John Doe", TestUtils.nextYammerId());
         Group group = new Group("Core Services");
         employeeManager.save(employee);
         groupManager.save(group);

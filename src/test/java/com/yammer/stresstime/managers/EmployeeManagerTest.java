@@ -2,6 +2,7 @@ package com.yammer.stresstime.managers;
 
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.test.DatabaseTest;
+import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,10 +23,11 @@ public class EmployeeManagerTest extends DatabaseTest {
 
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
-        Employee employee = new Employee("John Doe", "lorem");
+        String yammerId = TestUtils.nextYammerId();
+        Employee employee = new Employee("John Doe", yammerId);
         employeeManager.save(employee);
         refresh(employee);
-        Employee found = employeeManager.getByYammerId("lorem");
+        Employee found = employeeManager.getByYammerId(yammerId);
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
