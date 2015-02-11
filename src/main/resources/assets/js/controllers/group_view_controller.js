@@ -7,7 +7,8 @@ App.controller('GroupViewController', function($scope, $timeout, Utils,
     $scope.calendar = null;
 
     $scope.$watchCollection('selectedGroup.assignmentTypes', function(assignmentTypes) {
-        if (assignmentTypes && assignmentTypes.$resolved && $scope.calendar != null) {
+        if (assignmentTypes == null || assignmentTypes.$resolved == false) return;
+        if ($scope.calendar != null) {
             $scope.calendar.invalidateAssignments();
         }
     });
