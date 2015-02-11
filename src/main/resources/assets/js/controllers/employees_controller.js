@@ -7,7 +7,7 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
                 return;
             }
             group.employees = GroupEmployee.query({group_id: group.id}, function(response) {
-                group.employeeMap = _.indexBy(response.employees, 'id');
+                group.employeeMap = _.indexBy(group.employees, 'id');
             });
         }
 
