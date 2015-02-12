@@ -97,6 +97,27 @@ Array.prototype.clone = function() {
     return this.slice(0);
 };
 
+Array.prototype.contains = function(item) {
+    return this.indexOf(item) >= 0;
+}
+
+// TODO: Change to Object
+Objects = {}; // Helper functions
+
+Objects.deepField = function(object, deepField, value) {
+    var fields = deepField.split('.');
+    var last = fields.pop();
+    var previous = _.reduce(fields, function(proxy, field) {
+        return proxy[field];
+    }, object);
+    if (arguments.length == 3) {
+        previous[last] = value;
+        return value;
+    } else {
+        return previous[last];
+    }
+}
+
 /**
 * Function currying. Eg:
 *

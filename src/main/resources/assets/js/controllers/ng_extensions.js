@@ -106,7 +106,7 @@ App.directive('stName', function() {
         //    stName: '='
         //},
         link: function(scope, element, attrs) {
-            scope[attrs.stName] = element;
+            Objects.deepField(scope, attrs.stName, element);
         }
     }
 });

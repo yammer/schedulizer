@@ -23,12 +23,14 @@
     <table class="view-calendar hoverable">
         <tr ng-repeat="week in calendar" ng-class="{
             'first': week.firstOfTheMonth,
-            'week': true
+            'week': true,
+            'pending': week.pending || !week.loaded
         }">
             <td
                 ng-repeat="day in week.days"
                 ng-class="{
                     'day': true,
+                    'empty': !day.content,
                     'even': day.date.getMonth() % 2 == 0,
                     'odd': day.date.getMonth() % 2 == 1,
                     'today': day.date.isToday(),

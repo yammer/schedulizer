@@ -8,9 +8,11 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     $scope.api = {};
 
     $scope.calendar = [];
+
     var firstDay = Date.firstDayOfThisMonth().lastSunday();
     var lastDay = firstDay.clone();
     var loadedWeeks = [];
+    var pendingWeeks = [];
 
     var cellHeight = null;
 
@@ -48,6 +50,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     function createWeek(day){
         return {
             loaded: false,
+            pending: false,
             month: createMonth(day, 0),
             firstOfTheMonth: false,
             days: []
@@ -59,6 +62,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         return createMonth(day01, nweeks);
     }
 
+    // Days cannot be moved from within weeks or arbitrary added to weeks
     function pushDayIntoWeek(week, date) {
         week.days.push({
             selected: false,
@@ -191,11 +195,22 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         }
     });
 
+    // TODO: Remove
+    window.contentQueue = contentQueue;
+
     function isValidArea(i, j) {
         return i != null && j != null && i <= j;
     }
 
+    function markAsLoaded(weeks) {
+        _.each(weeks, function(week) {
+            week.loaded = true;
+            loadedWeeks.push(week);
+        });
+    }
+
     function unloadWeeks(weeks) {
+        console.log('                                                               unloadWeeks: ' + debugWeeks(weeks));
         _.each(weeks, function(week) {
             week.loaded = false;
             _.each(week.days, function(day) {
@@ -205,27 +220,85 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         loadedWeeks = _.difference(loadedWeeks, weeks);
     }
 
-    function loadDayContent(terminator, i, j) {
-        var first = $scope.calendar[i].days[0].date;
-        var last = $scope.calendar[j].days[6].date;
-        var days = [];
-        var weeks = [];
-        for (var w = i; w <= j; w++) {
-            var week = $scope.calendar[w];
-            week.loaded = true;
-            weeks.push(week);
-            loadedWeeks.push(week);
-            days = days.concat(week.days);
+    function markAsPending(weeks) {
+        _.each(weeks, function(week) {
+            week.pending = true;
+            pendingWeeks.push(week);
+        });
+    }
+
+    function unsetPendingWeeks(weeks) {
+        _.each(weeks, function(week) {
+            week.pending = false;
+        });
+        pendingWeeks = _.difference(pendingWeeks, weeks);
+    }
+
+    // return true to stop subsequent requests
+    function onDayContentLoaded(days, weeks, error, id) {
+        if (!authorizedRequests.contains(id)) {
+            console.log('!]---- request unauthorized [' + debugWeeks(weeks) + ']');
+            // Even though invalidate clears the weeks, when the invalidated request returns
+            // the caller (above us) can (and will) change the day objects, so we invalidate
+            // them again here, before Angular take over the ui
+            unloadWeeks(weeks);
+            //
+            // TODO: Handle the following case, where Request 1 and Request 2 have the same weeks
+            //
+            //                | -> invalidation
+            //                |
+            // Request 1: [---|----------]
+            // Request 2:     | [-----]
+            //
+            // In this case Request 1 return will invalidates (and clears) Request 2 results
+            //
+            // Hint1: Put an attribute on every week called lastRequestId and overload unloadWeeks()
+            //        with a version that receives the request id that wants to unload the weeks, and
+            //        test if lastRequestId equals the id provided, if not, don't unload.
+            // Hint2: To test this, put a gaussian timeout on AssignmentsResource.getAssignableDays()
+            //        open up Chrome's network console tab and wait for the case scenario.
+            //
+            return false;
         }
+
+        unsetPendingWeeks(weeks);
+        if (error) {
+            console.log('------ error [' + debugWeeks(weeks) + ']')
+            trySetLoadAreaByLastScroll();
+            // If there was an error retry with probability of 0.75
+            // Two requests are triggered, only stop retrying if BOTH ask to stop, so 1 - 0.5^2
+            return Math.random() > 0.5;
+        } else {
+            markAsLoaded(weeks);
+            console.log('------ success [' + debugWeeks(weeks) + ']')
+            return false;
+        }
+    }
+
+    function debugWeeks(weeks) {
+        if (weeks.length == 0) {
+            return '<empty weeks>'
+        }
+        return 'end = ' + weeks[weeks.length - 1].days[6].date.toISOLocalDateString() + ', start = ' + weeks[0].days[0]
+        .date.toISOLocalDateString();
+    }
+
+    // To prevent requests returned after calendar was invalidated from changing it
+    var authorizedRequests = [];
+
+    function loadDayContent(terminator, i, j) {
+        var id = {};
+        authorizedRequests.push(id);
+
+        var weeks = $scope.calendar.slice(i, j + 1);
+        var days = _.chain(weeks).map('days').flatten().value();
+        markAsPending(weeks);
+
         if (days.length > 0 && $scope.onLoadDayContent != null) {
             var wrappedTerminator = function(error) {
-                if (error) unloadWeeks(weeks);
-                trySetLoadAreaByLastScroll();
-                // If there was an error retry with probability of 0.75
-                // Two requests are triggered, only stop retrying if BOTH ask to stop, so 1 - 0.5^2
-                var retry = Math.random() < 0.5;
-                terminator(error && !retry);
-            }
+                var stop = onDayContentLoaded(days, weeks, error, id);
+                terminator(stop);
+            };
             $scope.onLoadDayContent(wrappedTerminator, days);
         } else {
             terminator(true);
@@ -233,10 +306,23 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     }
 
     $scope.api.invalidateAssignments = function() {
-        // TODO: Stop outstanding requests or prevent their response from stopping new ones
+        // TODO: Stop pending requests
+        console.log('invalidate');
         unloadWeeks(loadedWeeks);
+        unsetPendingWeeks(pendingWeeks);
+        authorizedRequests = [];
         trySetLoadAreaByLastScroll();
     };
+
+    $scope.api.loadingStatus = function() {
+        return {
+            weeks: {
+                pending: pendingWeeks.length,
+                loaded: loadedWeeks.length,
+                total: $scope.calendar.length
+            }
+        };
+    }
 
     $scope.api.getDays = function(dates) {
         return _.map(dates, function(date) {
@@ -246,19 +332,19 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     function nextUnloadedWeek(i) {
         for (var n = $scope.calendar.length; i < n; i++) {
-            if (!$scope.calendar[i].loaded) return i;
+            var w = $scope.calendar[i];
+            if (!w.loaded && !w.pending) return i;
         }
         return null;
     }
 
     function previousUnloadedWeek(i) {
         for ( ; i >= 0; i--) {
-            if (!$scope.calendar[i].loaded) return i;
+            var w = $scope.calendar[i];
+            if (!w.loaded && !w.pending) return i;
         }
         return null;
     }
-
-
 
     $scope.api.goToDate = function(date, duration) {
         if (duration == undefined) {
