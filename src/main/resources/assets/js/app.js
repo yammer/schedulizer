@@ -5,7 +5,7 @@
  */
 var StresstimeApp = {};
 
-var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'ui.router']);
+var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'ui.router', 'dialogs']);
 
 App.constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
@@ -104,4 +104,3 @@ function resizeCalendar() {
 $(window).on('resize', function() {
     resizeCalendar();
 })
-

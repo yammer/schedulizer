@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, yammer,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, yammer, Session,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
@@ -35,11 +35,15 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
         }
 
         $scope.deleteEmployee = function (employee) {
-            var group = $scope.selectedGroup;
-            employee.groupId = group.id;
-            employee.$delete().then(function() {
-                group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
-            });;
+            var confirm = $dialogs.confirm('Please confirm',
+                                           'Are you sure you want to remove this employee from this group? <br>');
+            confirm.result.then(function(btn) {
+                var group = $scope.selectedGroup;
+                employee.groupId = group.id;
+                employee.$delete().then(function() {
+                    group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
+                });
+            });
         }
 
         $scope.autocompleteList = [];
@@ -240,14 +244,31 @@ App.controller('EmployeesController', function($scope, $timeout, yammer,
         }
 
         $scope.addAdmin = function(employee) {
-            AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id}, function() {
-                employee.groupAdmin = true;
+            var confirm = $dialogs.confirm('Please confirm',
+                                           'Are you sure you want to make this user an admin? <br>' +
+                                           'He will be able to edit this group as much as he wants');
+            confirm.result.then(function(btn){
+                AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id}, function() {
+                    employee.groupAdmin = true;
+                });
             });
         }
 
         $scope.deleteAdmin = function(employee) {
-            AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
-                employee.groupAdmin = false;
+            var confirm;
+            if (employee.id == Session.userId) {
+                confirm = $dialogs.confirm('Please confirm',
+                                           'Are you sure you want to revoke your own admin privileges? <br>' +
+                                           'YOU WILL LOSE POWER!');
+            }
+            else {
+                confirm = $dialogs.confirm('Please confirm',
+                                           'Are you sure you want to revoke admin privileges for this user? <br>');
+            }
+            confirm.result.then(function(btn){
+                AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
+                    employee.groupAdmin = false;
+                });
             });
         }
 
