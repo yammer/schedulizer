@@ -945,7 +945,8 @@ $counter-width: 20px;
 /* Progress bar */
 
 $progress-bar-height: 2px;
-$progress-bar-color: #DD4444;
+$progress-bar-color: #337AB7;
+$progress-bar-error-color: #DD4444;
 $progress-bar-bg: transparent;
 
 .st-progress-bar {
@@ -964,8 +965,10 @@ $progress-bar-bg: transparent;
         width: 0%;
         transition: width 300ms linear;
 
-        &.idle {
-            visibility: hidden;
+        &.error {
+            width: 100% !important;
+            background-color: $progress-bar-error-color;
+            transition: none;
         }
     }
 }

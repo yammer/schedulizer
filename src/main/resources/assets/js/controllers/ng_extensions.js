@@ -266,6 +266,10 @@ App.factory('GenerativeJobQueue', [function() {
         }.curry(this));
     }
 
+    GenerativeJobQueue.prototype.active = function() {
+        return this.pool.length > 0;
+    }
+
     return GenerativeJobQueue;
 }]);
 
@@ -297,10 +301,16 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
 
     ProgressBar.prototype.wrappedWatcher = function() {
         var p = this.headstart + this.watcher() * (1 - this.headstart);
-        // set visibility to ensure hidden timeout doesn't prevail after a trigger
-        this.inner.css({visibility: 'visible', width: Math.floor(p * 100) + '%'});
-        if (p + EPS > 1) {
-            this.dismiss();
+        if (p < 0) { // means error
+            this.inner.addClass('error');
+            //this.dismiss();
+        } else {
+            // set visibility to ensure hidden timeout doesn't prevail after a trigger
+            this.inner.removeClass('error');
+            this.inner.css({visibility: 'visible', width: Math.floor(p * 100) + '%'});
+            if (p + EPS > 1) {
+                this.dismiss();
+            }
         }
     }
 
@@ -324,6 +334,7 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
         $interval.cancel(this.promise);
         this.promise = null;
         $timeout(function() {
+            this.inner.removeClass('error');
             this.inner.css({visibility: 'hidden', width: '0%'});
         }.curry(this), this.delay);
     }

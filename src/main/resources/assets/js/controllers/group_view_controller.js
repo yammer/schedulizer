@@ -309,14 +309,12 @@ App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils
     $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
 
     function progressWatcher() {
-        var status = $scope.calendar.loadingStatus().weeks;
+        var status = $scope.calendar.loadingStatus();
         var d = $scope.progressBar.previousLoadedWeeks;
-
-        if (status.total - d <= 0) return 1;
-        var p = Math.max(0, status.loaded - d) / Math.max(0, status.total - d);
-
+        if (status.weeks.total - d <= 0) return 1;
+        var p = Math.max(0, status.weeks.loaded - d) / Math.max(0, status.weeks.total - d);
         //console.log('p = ' + p);
-        return p;
+        return (status.weeks.loaded < status.weeks.total && !status.active) ? -1 : p;
     }
 
     function onBeforeWatch() {

@@ -141,7 +141,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         var m = Math.floor((i + j) / 2);
         var a = j - i + 1;
         nextLoadArea = {i: m, j: m + 1, a: a};
-        contentQueue.trigger();
     }
 
     function trySetLoadAreaByLastScroll() {
@@ -153,6 +152,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     $scope.onScroll = function(top, bottom, total) {
         currentScroll = {top: top, bottom: bottom, total: total};
         setLoadAreaByScroll(currentScroll);
+        contentQueue.trigger();
     }
 
     var contentQueue = new GenerativeJobQueue({
@@ -265,9 +265,17 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         if (error) {
             console.log('------ error [' + debugWeeks(weeks) + ']')
             trySetLoadAreaByLastScroll();
-            // If there was an error retry with probability of 0.75
-            // Two requests are triggered, only stop retrying if BOTH ask to stop, so 1 - 0.5^2
-            return Math.random() > 0.5;
+            // TODO: The logic below is just for one request per worker and one worker,
+            // TODO: we may have up to 2 request per worker and a lot of workers
+            // Suppose the server is faulty, on average we will retry (1-p)/p times
+            // where p is the probability of stopping, so for an average of 5 times
+            // we have (1-p)/p = 5 => p = 1/6 chances of stopping (= not retrying)
+            // But to stop the worker we need to make both requests (if 2) stop,
+            // hence chances gotta go up to sqrt(1/6) = 0.40825
+            // But we have more than one worker (cmd+f bottleneck), we have 2, so
+            // new value is sqrt(0.40825) = 0.63894
+            var stop = Math.random() < 0.63894;
+            return stop;
         } else {
             markAsLoaded(weeks);
             console.log('------ success [' + debugWeeks(weeks) + ']')
@@ -312,6 +320,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         unsetPendingWeeks(pendingWeeks);
         authorizedRequests = [];
         trySetLoadAreaByLastScroll();
+        contentQueue.trigger();
     };
 
     $scope.api.loadingStatus = function() {
@@ -320,7 +329,9 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                 pending: pendingWeeks.length,
                 loaded: loadedWeeks.length,
                 total: $scope.calendar.length
-            }
+            },
+            active: contentQueue.active()
+
         };
     }
 
