@@ -1,0 +1,12 @@
+/* One more level because of out/ folder */
+
+@function twbs-font-path($path) {
+  @return '../../fonts/#{$path}';
+}
+
+@function twbs-image-path($path) {
+  /* TODO: Fix */
+  @return '../../img/#{$path}';
+}
+
+$bootstrap-sass-asset-helper: true;
