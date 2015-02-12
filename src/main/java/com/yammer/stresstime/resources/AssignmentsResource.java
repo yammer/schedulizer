@@ -126,6 +126,7 @@ public class AssignmentsResource {
             @PathParam("group_id") long groupId,
             @QueryParam("start_date") String startDateString,
             @QueryParam("end_date") String endDateString) {
+
         ResourceUtils.checkParameter(startDateString != null, "start_date");
         ResourceUtils.checkParameter(endDateString != null, "end_date");
         Group group = groupManager.getById(groupId);

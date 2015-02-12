@@ -88,3 +88,53 @@ Array.prototype.remove = function(item) {
 Array.prototype.clear = function() {
     this.splice(0, this.length);
 };
+
+Array.fromArguments = function(args) {
+    return Array.prototype.slice.call(args);
+};
+
+Array.prototype.clone = function() {
+    return this.slice(0);
+};
+
+Array.prototype.contains = function(item) {
+    return this.indexOf(item) >= 0;
+}
+
+// TODO: Change to Object
+Objects = {}; // Helper functions
+
+Objects.deepField = function(object, deepField, value) {
+    var fields = deepField.split('.');
+    var last = fields.pop();
+    var previous = _.reduce(fields, function(proxy, field) {
+        return proxy[field];
+    }, object);
+    if (arguments.length == 3) {
+        previous[last] = value;
+        return value;
+    } else {
+        return previous[last];
+    }
+}
+
+/**
+* Function currying. Eg:
+*
+*   function foo(a, b, c) {return "a = " + a + "; b = " + b + "; c = " + c}
+*   var bar = foo.curry(1)
+*   var baz = foo.curry(3, 4)
+*   var chu = foo.curry(3).curry(4)
+*   bar(2, 3)  //=> a = 1; b = 2; c = 3
+*   baz(5)     //=> a = 3; b = 4; c = 5
+*   chu(7)     //=> a = 3; b = 4; c = 7
+*/
+Function.prototype.curry = function(/* ... */) {
+    var func = this;
+    var firstArgs = Array.fromArguments(arguments);
+    var context = firstArgs.shift();
+    return function(/* ... */) {
+        var lastArgs = Array.fromArguments(arguments);
+        return func.apply(context, firstArgs.concat(lastArgs));
+    };
+};

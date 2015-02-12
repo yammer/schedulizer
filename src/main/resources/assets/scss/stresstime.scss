@@ -50,20 +50,26 @@ $today-bg: #FD8845;
 $assigned-bg: #6FDF6F;
 $mid-assigned-bg: #EFC932;
 
+$day-border-thickness: 5px;
+
 @mixin colorize-day($color) {
-    @include even-odd($color, 7%);
+    @include even-odd-bg($color, 7%);
     .hoverable &:hover, &.selected {
-        @include even-odd(mix($selected-bg, $color, 80%), 7%);
+        @include even-odd-bg(mix($selected-bg, $color, 80%), 7%);
     }
     .hoverable &.selected:hover {
-        @include even-odd(mix(lighten($selected-bg, 10%), $color, 70%), 7%);
+        @include even-odd-bg(mix(lighten($selected-bg, 10%), $color, 70%), 7%);
     }
 }
 
-@mixin even-odd($color, $amount) {
-    background-color: $color;
-    &.odd { background-color: darken($color, $amount); }
-    &.even { background-color: lighten($color, $amount); }
+@mixin even-odd($property-name, $color, $amount) {
+    #{$property-name}: $color;
+    &.odd { #{$property-name}: darken($color, $amount); }
+    &.even { #{$property-name}: lighten($color, $amount); }
+}
+
+@mixin even-odd-bg($color, $amount) {
+    @include even-odd(background-color, $color, $amount);
 }
 
 .view-calendar td, .view-calendar th {
@@ -81,17 +87,11 @@ $mid-assigned-bg: #EFC932;
 }
 .view-calendar-wrapper {
     display: inline-block;
-    overflow: auto;
+    overflow: scroll !important;
     margin-top: 54px; /* 50 + 4*/
 }
-.week:hover {
-    background-color: #DDDDDD;
-}
-.week.first {
-    border-top: 1px solid #000;
-}
 .month, .day {
-    color: #8D8D8D;
+    color: $dark-fg;
     border-radius: 2px;
     font-size: 15px;
     cursor: default;
@@ -102,9 +102,13 @@ $mid-assigned-bg: #EFC932;
     text-align: left;
     vertical-align: top;
 }
+
+$day-width: 60px;
+$day-height: 50px;
+
 .day {
-    width: 60px;
-    height: 50px;
+    width: $day-width;
+    height: $day-height;
     vertical-align: middle;
     text-align: center;
     cursor: default;
@@ -119,18 +123,18 @@ $mid-assigned-bg: #EFC932;
 }
 .hoverable .day:hover, .day.hover {
     color: $light-fg;
-    @include even-odd($selected-bg, 7%);
+    @include even-odd-bg($selected-bg, 7%);
 }
 .day.selected {
     color: $light-fg;
-    @include even-odd($selected-bg, 7%);
+    @include even-odd-bg($selected-bg, 7%);
     .hoverable &:hover {
-        @include even-odd(lighten($selected-bg, 10%), 7%);
+        @include even-odd-bg(lighten($selected-bg, 10%), 7%);
     }
 }
 
 .day.today {
-    border: 5px solid $today-bg;
+    border: $day-border-thickness solid $today-bg;
     color: $light-fg;
     background-color: $today-bg;
 }
@@ -161,6 +165,35 @@ $mid-assigned-bg: #EFC932;
     @include colorize-day($mid-assigned-bg);
 }
 
+/* Loading */
+
+$shimmer-width: 35px;
+
+@include keyframes(moving-day-bg) {
+    0%   { background-position: (-$shimmer-width/2) 0; }
+    100% { background-position: ($day-width - $shimmer-width/2) 0; }
+}
+
+@mixin shimmer($color) {
+    background: linear-gradient(to right,
+        $color 1%,
+        lighten($color, 3%) 35%,
+        lighten($color, 3%) 65%,
+        $color 99%
+    ) no-repeat $color;
+    background-size: $shimmer-width 100%;
+}
+
+.week.pending .day.empty {
+    color: lighten($dark-fg, 20%);
+    &.odd { background-color: lighten($odd-bg, 5%); }
+    &.even { background-color: lighten($even-bg, 5%); }
+
+    /* Animation is too demanding */
+    /*&.odd { @include shimmer($odd-bg) }
+    &.even { @include shimmer($even-bg) }
+    @include prefixed(animation, moving-day-bg .8s ease-in-out 0s infinite alternate none running);*/
+}
 
 
 /* Header */
@@ -170,16 +203,16 @@ $mid-assigned-bg: #EFC932;
     font-size: 22px;
     background-color: $grey-0;
     border-bottom: 1px solid $grey-1;
-    margin: 0 -15px 15px -15px;
+    margin: 0 -15px 0 -15px;
     padding: 18px 15px 17px 15px;
 }
+
 
 /* Dual pane */
 
 .sidebar {
     padding: 15px 0 0 0;
     background-color: #f5f5f5;
-    border-right: 1px solid $grey-1;
     height: 100%;
 }
 
@@ -222,10 +255,19 @@ $mid-assigned-bg: #EFC932;
 
 /* Group tab */
 
+$inner-padding: 15px;
+
+.main {
+    padding-left: $inner-padding;
+    padding-right: $inner-padding;
+}
+
+
 #group-tab .calendar-wrap {
     display: table;
     margin: 0 auto;
     position: relative;
+    padding-top: $inner-padding;
 }
 
 .left-bar {
@@ -245,7 +287,7 @@ $mid-assigned-bg: #EFC932;
 .legend {
     color: $grey-4;
     position: absolute;
-    bottom: 0;
+    bottom: 6px;
 }
 
 .legend .day {
@@ -896,6 +938,37 @@ $counter-width: 20px;
         &:hover {
             opacity: 1 !important;
 
+        }
+    }
+}
+
+/* Progress bar */
+
+$progress-bar-height: 2px;
+$progress-bar-color: #337AB7;
+$progress-bar-error-color: #DD4444;
+$progress-bar-bg: transparent;
+
+.st-progress-bar {
+    background-color: $progress-bar-bg;
+    margin: 0;
+    margin-right: -$inner-padding;
+    margin-left: -$inner-padding;
+
+    &, .st-progress {
+        height: $progress-bar-height;
+        border-radius: 0 $progress-bar-height / 2 $progress-bar-height / 2 0;
+    }
+
+    .st-progress {
+        background-color: $progress-bar-color;
+        width: 0%;
+        transition: width 300ms linear;
+
+        &.error {
+            width: 100% !important;
+            background-color: $progress-bar-error-color;
+            transition: none;
         }
     }
 }

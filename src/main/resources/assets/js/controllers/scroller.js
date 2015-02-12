@@ -4,7 +4,7 @@ App.directive('scroller', function($timeout) {
         scope: {
             nextChunkMethod: "=",
             previousChunkMethod: "=", // return the height of the chunk if you don't want a flash on the screen,
-            onScrollStop: "=",
+            onScroll: "=",
             numberOfLoadedChunksPerScroll: "="
         },
         // Make scroll even if it does not have scroll (increase height to test)
@@ -14,21 +14,12 @@ App.directive('scroller', function($timeout) {
                 $scope.numberOfLoadedChunksPerScroll = 1;
             }
 
-            var TIMEOUT_STOP_SCROLL = 200; // In ms
-
-            var timeout;
-
             element.bind('scroll', function () {
 
-                if (timeout != null) {
-                    $timeout.cancel(timeout);
-                }
-                timeout = $timeout(function() {
-                    $scope.onScrollStop(
-                        rawElement.scrollTop,
-                        rawElement.scrollTop +  rawElement.offsetHeight - 5,
-                        rawElement.scrollHeight);
-                }, TIMEOUT_STOP_SCROLL);
+                $scope.onScroll(
+                    rawElement.scrollTop,
+                    rawElement.scrollTop + rawElement.offsetHeight - 5,
+                    rawElement.scrollHeight);
 
                 // + 5 error margin
                 if ((rawElement.scrollTop + rawElement.offsetHeight + 5) >= rawElement.scrollHeight

@@ -106,7 +106,7 @@ App.directive('stName', function() {
         //    stName: '='
         //},
         link: function(scope, element, attrs) {
-            scope[attrs.stName] = element;
+            Objects.deepField(scope, attrs.stName, element);
         }
     }
 });
@@ -227,4 +227,117 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
         }
 
     };
+}]);
+
+function JobQueue(/* arguments */) {
+    return this.initialize.apply(this, arguments);
+}
+
+App.factory('GenerativeJobQueue', [function() {
+
+    function GenerativeJobQueue(options, executor) {
+        this.executor = options.executor;
+        this.bottleneck = options.bottleneck || this.bottleneck;
+    }
+
+    GenerativeJobQueue.prototype.bottleneck = 2; // Generally used for xhr calls
+
+    GenerativeJobQueue.prototype.pool = [];
+
+    GenerativeJobQueue.prototype.terminator = function(job, stop) {
+        this.pool.remove(job);
+        if (!stop) {
+            this.trigger();
+        }
+    }
+
+    /* public */
+
+    GenerativeJobQueue.prototype.trigger = function() {
+        var terminators = [];
+        while (this.pool.length < this.bottleneck) {
+            var job = {};
+            this.pool.push(job);
+            terminators.push(this.terminator.curry(this, job));
+        }
+        // Separate loop because terminator can be sync
+        _.each(terminators, function(terminator) {
+            this.executor(terminator);
+        }.curry(this));
+    }
+
+    GenerativeJobQueue.prototype.active = function() {
+        return this.pool.length > 0;
+    }
+
+    return GenerativeJobQueue;
+}]);
+
+App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interval) {
+
+    var EPS = 0.001;
+
+    function ProgressBar(inner, outer, watcher, options) {
+        this.inner = $(inner);
+        this.outer = $(outer);
+        this.watcher = watcher;
+        if (options && options.interval) this.interval = options.interval;
+        if (options && options.delay) this.interval = options.delay;
+        if (options && options.onBeforeWatch) this.onBeforeWatch = options.onBeforeWatch;
+        if (options && options.timeout) this.timeout = options.timeout;
+        if (options && options.headstart) this.headstart = option.headstart;
+        this.promise = null
+    }
+
+    ProgressBar.prototype.promise = null;
+
+    ProgressBar.prototype.interval = 200;
+
+    ProgressBar.prototype.delay = 500;
+
+    ProgressBar.prototype.timeout = 5 * 60 * 1000; // 5 minutes before killing
+
+    ProgressBar.prototype.headstart = 0.06; // Useful for giving the user a hint that the progress bar exists
+
+    ProgressBar.prototype.wrappedWatcher = function() {
+        var p = this.headstart + this.watcher() * (1 - this.headstart);
+        if (p < 0) { // means error
+            this.inner.addClass('error');
+            //this.dismiss();
+        } else {
+            // set visibility to ensure hidden timeout doesn't prevail after a trigger
+            this.inner.removeClass('error');
+            this.inner.css({visibility: 'visible', width: Math.floor(p * 100) + '%'});
+            if (p + EPS > 1) {
+                this.dismiss();
+            }
+        }
+    }
+
+    /* public */
+
+    ProgressBar.prototype.trigger = function() {
+        if (this.promise != null) return;
+        this.onBeforeWatch();
+        this.inner.css({visibility: 'visible'});
+        this.promise = $interval(this.wrappedWatcher.curry(this), this.interval)
+
+        // timeout
+        $timeout(function() {
+            if (this.promise != null) {
+                this.dismiss();
+            }
+        }.curry(this), this.timeout);
+    }
+
+    ProgressBar.prototype.dismiss = function() {
+        $interval.cancel(this.promise);
+        this.promise = null;
+        $timeout(function() {
+            this.inner.removeClass('error');
+            this.inner.css({visibility: 'hidden', width: '0%'});
+        }.curry(this), this.delay);
+    }
+
+    return ProgressBar;
 }]);
