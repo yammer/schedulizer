@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $rootScope, $timeout, $dialogs, Utils,
+App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils, ProgressBar,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -231,6 +231,8 @@ App.controller('GroupViewController', function($scope, $rootScope, $timeout, $di
         })
     }
 
+    var progressBar = null;
+
     $scope.onLoadDayContent = function(terminate, days) {
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
@@ -239,14 +241,22 @@ App.controller('GroupViewController', function($scope, $rootScope, $timeout, $di
         if ($scope.selectedGroup == null || $scope.selectedGroup.id == null) {
             return terminate(true);
         }
+        progressBar.trigger();
+        var log = 'assignments? end = ' + endDate.toISOLocalDateString() + ', start = ' + startDate
+        .toISOLocalDateString()
+        console.log('> ' + log)
         var assignableDays = AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(assignableDays) {
+                console.log('---- success [' + log + ']')
+                console.log('---- update day assignments')
                 updateDayAssignments(assignableDays, daysMap);
+                console.log('---- updated ', $scope.calendar.loadingStatus().weeks)
                 terminate();
-            }).catch(function() {
+            }).catch(function(e) {
+                console.log('x]-- error catch [' + log + ']')
                 terminate(true);
         });
     }
@@ -295,6 +305,32 @@ App.controller('GroupViewController', function($scope, $rootScope, $timeout, $di
             });
         });
     }
+
+    $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
+
+    function progressWatcher() {
+        var status = $scope.calendar.loadingStatus().weeks;
+        var d = $scope.progressBar.previousLoadedWeeks;
+
+        if (status.total - d <= 0) return 1;
+        var p = Math.max(0, status.loaded - d) / Math.max(0, status.total - d);
+
+        //console.log('p = ' + p);
+        return p;
+    }
+
+    function onBeforeWatch() {
+        var status = $scope.calendar.loadingStatus().weeks;
+        $scope.progressBar.previousLoadedWeeks = status.loaded;
+    }
+
+    $scope.$watchGroup(['progressBar.inner', 'progressBar.outer'], function(values) {
+        var bar = $scope.progressBar;
+        if (bar.inner == null || bar.outer == null) return;
+        progressBar = new ProgressBar(bar.inner, bar.outer, progressWatcher, {
+            onBeforeWatch: onBeforeWatch
+        });
+    });
 
     // TODO: Ugly hack!
     $timeout(function() {
