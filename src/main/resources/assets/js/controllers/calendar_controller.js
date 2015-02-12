@@ -1,4 +1,4 @@
-App.controller('CalendarController', function ($timeout, $scope, Utils) {
+App.controller('CalendarController', function ($timeout, $scope, Utils, GenerativeJobQueue) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
@@ -126,54 +126,117 @@ App.controller('CalendarController', function ($timeout, $scope, Utils) {
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
     }
 
+    var nextLoadArea = null; // {i, j, a}
+
     var currentScroll = null;
 
-    $scope.onScrollStop = function(top, bottom, total) {
-        currentScroll = [top, bottom, total];
+    function setLoadAreaByScroll(scroll) {
         var n = $scope.calendar.length;
-        var i = Math.floor(top * n / total);
-        var j = Math.floor(bottom * n / total);
-        loadDayContent(i, j);
+        var i = Math.floor(scroll.top * n / scroll.total);      // first week
+        var j = Math.floor(scroll.bottom * n / scroll.total);   // last week
+        var m = Math.floor((i + j) / 2);
+        var a = j - i + 1;
+        nextLoadArea = {i: m, j: m + 1, a: a};
+        contentQueue.trigger();
     }
 
-    function tryUpdateLastScrollPosition() {
+    function trySetLoadAreaByLastScroll() {
         if (currentScroll != null) {
-            $scope.onScrollStop.apply($scope, currentScroll);
+            setLoadAreaByScroll(currentScroll);
         }
     }
 
-    $scope.api.invalidateAssignments = function() {
-        _.each(loadedWeeks, function(week) {
+    $scope.onScroll = function(top, bottom, total) {
+        currentScroll = {top: top, bottom: bottom, total: total};
+        setLoadAreaByScroll(currentScroll);
+    }
+
+    var contentQueue = new GenerativeJobQueue({
+        bottleneck: 2, // number of requests goes up to 2 * bottleneck
+
+        executor: function(terminate) {
+            if (nextLoadArea == null) return terminate(true);
+
+            var a = {valid: false};
+            a.j = previousUnloadedWeek(nextLoadArea.i);
+            if (a.j != null) {
+                a.i = Math.max(0, a.j - 2 * nextLoadArea.a);
+                a.i = nextUnloadedWeek(a.i);
+                a.valid = isValidArea(a.i, a.j);
+            }
+            if (a.valid) nextLoadArea.i = a.i;
+
+            var b = {valid: false};
+            b.i = nextUnloadedWeek(nextLoadArea.j);
+            if (b.i != null) {
+                b.j = Math.min($scope.calendar.length - 1, b.i + 2 * nextLoadArea.a);
+                b.j = previousUnloadedWeek(b.j);
+                b.valid = isValidArea(b.i, b.j);
+            }
+            if (b.valid) nextLoadArea.j = b.j;
+
+            if (!a.valid && !b.valid) {
+                return terminate(true);
+            }
+
+            var i = a.valid + b.valid;
+            var stop = true;
+            var doubleTerminator = function(localStop) {
+                stop = stop && localStop;
+                if (--i == 0) terminate(stop);
+            }
+
+            if (a.valid) loadDayContent(doubleTerminator, a.i, a.j);
+            if (b.valid) loadDayContent(doubleTerminator, b.i, b.j);
+        }
+    });
+
+    function isValidArea(i, j) {
+        return i != null && j != null && i <= j;
+    }
+
+    function unloadWeeks(weeks) {
+        _.each(weeks, function(week) {
             week.loaded = false;
             _.each(week.days, function(day) {
                 day.content = null;
             });
         });
-        loadedWeeks = [];
-        tryUpdateLastScrollPosition();
-    };
+        loadedWeeks = _.difference(loadedWeeks, weeks);
+    }
 
-    function loadDayContent(i, j) {
-        i = Math.max(i - 0, 0);
-        j = Math.min(j + 0, $scope.calendar.length - 1);
-        i = nextUnloadedWeek(i);
-        j = previousUnloadedWeek(j);
-        if (i == null || j == null || i > j) {
-            return;
-        }
+    function loadDayContent(terminator, i, j) {
         var first = $scope.calendar[i].days[0].date;
         var last = $scope.calendar[j].days[6].date;
         var days = [];
+        var weeks = [];
         for (var w = i; w <= j; w++) {
             var week = $scope.calendar[w];
             week.loaded = true;
+            weeks.push(week);
             loadedWeeks.push(week);
             days = days.concat(week.days);
         }
         if (days.length > 0 && $scope.onLoadDayContent != null) {
-            $scope.onLoadDayContent(days);
+            var wrappedTerminator = function(error) {
+                if (error) unloadWeeks(weeks);
+                trySetLoadAreaByLastScroll();
+                // If there was an error retry with probability of 0.75
+                // Two requests are triggered, only stop retrying if BOTH ask to stop, so 1 - 0.5^2
+                var retry = Math.random() < 0.5;
+                terminator(error && !retry);
+            }
+            $scope.onLoadDayContent(wrappedTerminator, days);
+        } else {
+            terminator(true);
         }
     }
+
+    $scope.api.invalidateAssignments = function() {
+        // TODO: Stop outstanding requests or prevent their response from stopping new ones
+        unloadWeeks(loadedWeeks);
+        trySetLoadAreaByLastScroll();
+    };
 
     $scope.api.getDays = function(dates) {
         return _.map(dates, function(date) {

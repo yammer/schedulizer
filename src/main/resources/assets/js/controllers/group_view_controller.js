@@ -231,21 +231,24 @@ App.controller('GroupViewController', function($scope, $rootScope, $timeout, $di
         })
     }
 
-    $scope.onLoadDayContent = function(days) {
+    $scope.onLoadDayContent = function(terminate, days) {
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
         var daysMap = indexDaysByISOString(days);
 
-        var assignableDays = AssignableDay.query(
-            {
+        if ($scope.selectedGroup == null || $scope.selectedGroup.id == null) {
+            return terminate(true);
+        }
+        var assignableDays = AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
-            }, function(assignableDays) {
+            }).$promise.then(function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
-            }
-        );
-
+                terminate();
+            }).catch(function() {
+                terminate(true);
+        });
     }
 
     function updateDayAssignments(assignableDays, daysMap) {
