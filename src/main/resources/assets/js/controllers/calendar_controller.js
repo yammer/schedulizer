@@ -210,7 +210,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     }
 
     function unloadWeeks(weeks) {
-        console.log('                                                               unloadWeeks: ' + debugWeeks(weeks));
         _.each(weeks, function(week) {
             week.loaded = false;
             _.each(week.days, function(day) {
@@ -237,7 +236,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     // return true to stop subsequent requests
     function onDayContentLoaded(days, weeks, error, id) {
         if (!authorizedRequests.contains(id)) {
-            console.log('!]---- request unauthorized [' + debugWeeks(weeks) + ']');
             // Even though invalidate clears the weeks, when the invalidated request returns
             // the caller (above us) can (and will) change the day objects, so we invalidate
             // them again here, before Angular take over the ui
@@ -263,7 +261,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
         unsetPendingWeeks(weeks);
         if (error) {
-            console.log('------ error [' + debugWeeks(weeks) + ']')
             trySetLoadAreaByLastScroll();
             // TODO: The logic below is just for one request per worker and one worker,
             // TODO: we may have up to 2 request per worker and a lot of workers
@@ -278,7 +275,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             return stop;
         } else {
             markAsLoaded(weeks);
-            console.log('------ success [' + debugWeeks(weeks) + ']')
             return false;
         }
     }
@@ -315,7 +311,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     $scope.api.invalidateAssignments = function() {
         // TODO: Stop pending requests
-        console.log('invalidate');
         unloadWeeks(loadedWeeks);
         unsetPendingWeeks(pendingWeeks);
         authorizedRequests = [];

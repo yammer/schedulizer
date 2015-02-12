@@ -244,19 +244,14 @@ App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils
         progressBar.trigger();
         var log = 'assignments? end = ' + endDate.toISOLocalDateString() + ', start = ' + startDate
         .toISOLocalDateString()
-        console.log('> ' + log)
         var assignableDays = AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(assignableDays) {
-                console.log('---- success [' + log + ']')
-                console.log('---- update day assignments')
                 updateDayAssignments(assignableDays, daysMap);
-                console.log('---- updated ', $scope.calendar.loadingStatus().weeks)
                 terminate();
             }).catch(function(e) {
-                console.log('x]-- error catch [' + log + ']')
                 terminate(true);
         });
     }
