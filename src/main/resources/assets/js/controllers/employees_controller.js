@@ -18,7 +18,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
                 return false;
             }
             if (_.find(group.employees, function(e){ return e.yammerId == yid; })) {
-                $scope.newEmployeeName = "";
+                $scope.employeeInput.setValue("");
                 return false;
             }
 
@@ -28,7 +28,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
             employee.imageUrlTemplate = yEmployee.photo;
             employee.$save({}, function(response) {
                 group.addEmployee(employee);
-                $scope.newEmployeeName = "";
+                $scope.employeeInput.setValue("");
             });
             return true;
 
@@ -44,46 +44,6 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
                     group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
                 });
             });
-        }
-
-        $scope.autocompleteList = [];
-
-        var timeout;
-        var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // as suggested by yammers api
-        $scope.$watch('newEmployeeName', function(prefix) {
-            if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
-                return;
-            }
-            if (timeout != undefined) {
-                $timeout.cancel(timeout);
-            }
-            timeout = $timeout(function() {
-                yammer.autocomplete(prefix, function(response) {
-                    if (response == undefined) {
-                        return;
-                    }
-                    var users = response.user;
-                    $timeout(function(){
-                        $scope.autocompleteList =
-                            (users.map(function(user) {
-                                var names = user.full_name.split(" ");
-                                user.label = names[0] + " " + names[names.length - 1];
-                                return {
-                                    label: user.label,
-                                    value: user
-                                }
-                            }));
-                        $scope.autocompleteList = _.unique($scope.autocompleteList, function(e) { return e.label; } );
-                    });
-                });
-
-            }, AUTOCOMPLETE_QUERY_WAIT_TIME);
-        });
-
-        $scope.getAutocompleteItem = function(user) {
-            return "" +
-                "<div class=\"employee-image\"><img src=\"" + user.photo + "\"/></div>" +
-                "<div class=\"employee-name\">" + user.label + "</div>";
         }
 
         $scope.stat = {
@@ -218,21 +178,20 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
                 addEmployee($scope.newEmployee);
                 $scope.newEmployee = undefined;
             } else {
-                Utils.shakeOnError($scope.employeeInput);
+                $scope.employeeInput.shake();
             }
         }
 
-        $scope.userInputKeyDown = function(e) {
+        $scope.userInputKeyDown = function() {
             $scope.newEmployee = undefined;
         }
 
-        $scope.userInputEnter = function(e) {
+        $scope.userInputEnter = function() {
             $scope.triggerAddEmployee();
         }
 
         $scope.onSelectAutocomplete = function(user) {
             $scope.newEmployee = user;
-            $scope.newEmployeeName = user.label;
         }
 
         $scope.toggleAdmin = function(employee) {

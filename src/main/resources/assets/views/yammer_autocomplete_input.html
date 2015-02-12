@@ -1,0 +1,14 @@
+<input
+        class="form-control"
+        type="text"
+        st-name="autocompleteInput"
+        ng-model="inputValue"
+        placeholder="Name"
+        st-autocomplete
+        item-class="employee-autocomplete-item"
+        tags="autocompleteList"
+        get-custom-template="getAutocompleteItem"
+        autocomplete-select="onSelectAutocomplete"
+        ng-change="onKeyDown()"
+        ng-enter="onEnter()"
+        />
