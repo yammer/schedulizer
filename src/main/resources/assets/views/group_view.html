@@ -1,4 +1,4 @@
-<div class="col-md-7 main">
+<div class="col-md-7 main align-parent-bottom" discount-height="70">
     <h1 class="header">
         {{selectedGroup.name}}
         <div class="assignment-types-wrapper">
@@ -33,7 +33,7 @@
                 />
         </div>
     </h1>
-    <div class="calendar-wrap">
+    <div class="calendar-wrap align-parent-bottom" discount-height="70">
         <div class="left-bar">
             <div class="tools">
                 <button type="button" ng-click="goToToday()" class="btn btn-primary">
@@ -67,7 +67,8 @@
 
         </div>
         <calendar
-                class="calendar"
+                class="calendar align-parent-bottom"
+                discount-height="70"
                 on-select-days="onSelectDays"
                 on-hover-day="onHoverDay"
                 on-load-day-content="onLoadDayContent"
@@ -137,80 +138,85 @@
     </div>
 
 </div>
-<div class="col-md-3 sidebar right-sidebar">
-    <div class="top-search">
-        <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
-    </div>
-    <ul ng-controller="EmployeesController" class="nav nav-sidebar" role="navigation">
-        <div st-if="isGroupMember(selectedGroup)" class="stats-inputs-container form-inline">
-            <span class="stats-label">Past</span>
-
-            <span class="stats-space"></span>
-
-            <span ng-click="incrementStatCounter(-1)" class="counter-control minus"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
-
-            <input ng-model="stat.selected.counter" type="number" min="0" value="3" class="form-control stat-counter" />
-
-            <span ng-click="incrementStatCounter(+1)" class="counter-control plus"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
-
-            <span class="stats-space"></span>
-
-            <select
-                ng-options="id as item.label for (id, item) in stat.units"
-                ng-model="stat.selected.unit"
-                class="form-control"
-                >
-            </select>
-
-            <div
-                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
-                ng-click="updateEmployeesOrder(assignmentType)"
-                class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
-                ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
-                >
-                <!-- Figure out a way to initialize -->
-                <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
-            </div>
+<div class="col-md-3 sidebar right-sidebar align-parent-bottom" discount-height="70">
+    <div style="height: 100%;">
+        <div class="top-search">
+            <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
         </div>
-        <div ng-draggable="isGroupAdmin(selectedGroup)"
-             ghost-element=".avatar-wrapper .avatar-image"
-             ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
-             drag-data=employee>
-            <employee-card
-                    employee="employee"
-                    group="$parent.selectedGroup"
-                    remove="deleteEmployee(employee)"
-                    toggle-admin="toggleAdmin"
-                    >
-            </employee-card>
-        </div>
-        <div st-if="isGroupAdmin(selectedGroup)" class="employee-card">
-            <div
-                class="avatar-wrapper no-image add"
-                ng-class="{'selected-employee-add': newEmployee }"
-                st-try-background-image="newEmployee.photo"
-                ng-click="triggerAddEmployee()"
-                >
-                <span>+</span>
-            </div>
+        <ul ng-controller="EmployeesController" class="nav nav-sidebar align-parent-bottom" discount-height="65" role="navigation">
+            <div st-if="isGroupMember(selectedGroup)" class="stats-inputs-container form-inline">
+                <span class="stats-label">Past</span>
 
-            <div class="name with-input ui-widget">
-                <input
+                <span class="stats-space"></span>
+
+                <span ng-click="incrementStatCounter(-1)" class="counter-control minus"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
+
+                <input ng-model="stat.selected.counter" type="number" min="0" value="3" class="form-control stat-counter" />
+
+                <span ng-click="incrementStatCounter(+1)" class="counter-control plus"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
+
+                <span class="stats-space"></span>
+
+                <select
+                    ng-options="id as item.label for (id, item) in stat.units"
+                    ng-model="stat.selected.unit"
                     class="form-control"
-                    type="text"
-                    st-name="employeeInput"
-                    ng-model="newEmployeeName"
-                    placeholder="Name"
-                    st-autocomplete
-                    item-class="employee-autocomplete-item"
-                    tags="autocompleteList"
-                    get-custom-template="getAutocompleteItem"
-                    autocomplete-select="onSelectAutocomplete"
-                    ng-change="userInputKeyDown($event)"
-                    ng-enter="userInputEnter($event)"
-                    />
+                    >
+                </select>
+
+                <div
+                    ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                    ng-click="updateEmployeesOrder(assignmentType)"
+                    class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
+                    ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
+                    >
+                    <!-- Figure out a way to initialize -->
+                    <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                </div>
             </div>
-            <div class="clear"></div>
-        </div>
-    </ul>
+            <div class="employees-container overflow-scroll align-parent-bottom" discount-height="65">
+                <div ng-draggable="isGroupAdmin(selectedGroup)"
+                     ghost-element=".avatar-wrapper .avatar-image"
+                     ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
+                     drag-data=employee>
+                    <employee-card
+                            employee="employee"
+                            group="$parent.selectedGroup"
+                            remove="deleteEmployee(employee)"
+                            toggle-admin="toggleAdmin"
+                            >
+                    </employee-card>
+                </div>
+            </div>
+
+            <div st-if="isGroupAdmin(selectedGroup)" class="employee-card">
+                <div
+                    class="avatar-wrapper no-image add"
+                    ng-class="{'selected-employee-add': newEmployee }"
+                    st-try-background-image="newEmployee.photo"
+                    ng-click="triggerAddEmployee()"
+                    >
+                    <span>+</span>
+                </div>
+
+                <div class="name with-input ui-widget">
+                    <input
+                        class="form-control"
+                        type="text"
+                        st-name="employeeInput"
+                        ng-model="newEmployeeName"
+                        placeholder="Name"
+                        st-autocomplete
+                        item-class="employee-autocomplete-item"
+                        tags="autocompleteList"
+                        get-custom-template="getAutocompleteItem"
+                        autocomplete-select="onSelectAutocomplete"
+                        ng-change="userInputKeyDown($event)"
+                        ng-enter="userInputEnter($event)"
+                        />
+                </div>
+                <div class="clear"></div>
+            </div>
+        </ul>
+    </div>
 </div>
