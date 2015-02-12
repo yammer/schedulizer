@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, $dialogs, yammer, Session,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, yammer, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
@@ -268,6 +268,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
             confirm.result.then(function(btn){
                 AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
                     employee.groupAdmin = false;
+                    if (employee.id == Session.userId) {
+                        AuthService.removeGroupAdminPrivileges($scope.selectedGroup.id);
+                    }
                 });
             });
         }

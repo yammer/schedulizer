@@ -225,6 +225,11 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         return group.employeeMap != undefined && group.employeeMap[Session.userId] != undefined;
     }
 
+    authService.removeGroupAdminPrivileges = function(groupId) {
+        Session.groupsAdmin.remove(groupId);
+        SessionStorage.save("session", Session);
+    }
+
     initializeAuthService();
     return authService;
 });
