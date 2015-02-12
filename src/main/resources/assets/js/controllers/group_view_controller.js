@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils,
+App.controller('GroupViewController', function($scope, $rootScope, $timeout, $dialogs, Utils,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -294,5 +294,7 @@ App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils
     }
 
     // TODO: Ugly hack!
-    $timeout(resizeCalendar, 300)
+    $timeout(function() {
+        $rootScope.$broadcast('trigger-resize');
+    }, 300);
 });
