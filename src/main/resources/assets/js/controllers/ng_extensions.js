@@ -228,3 +228,43 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
 
     };
 }]);
+
+function JobQueue(/* arguments */) {
+    return this.initialize.apply(this, arguments);
+}
+
+App.factory('GenerativeJobQueue', [function() {
+
+    function GenerativeJobQueue(options, executor) {
+        this.executor = options.executor;
+        this.bottleneck = options.bottleneck || this.bottleneck;
+    }
+
+    GenerativeJobQueue.prototype.bottleneck = 2; // Generally used for xhr calls
+
+    GenerativeJobQueue.prototype.pool = [];
+
+    GenerativeJobQueue.prototype.terminator = function(job, stop) {
+        this.pool.remove(job);
+        if (!stop) {
+            this.trigger();
+        }
+    }
+
+    /* public */
+
+    GenerativeJobQueue.prototype.trigger = function() {
+        var terminators = [];
+        while (this.pool.length < this.bottleneck) {
+            var job = {};
+            this.pool.push(job);
+            terminators.push(this.terminator.curry(this, job));
+        }
+        // Separate loop because terminator can be sync
+        _.each(terminators, function(terminator) {
+            this.executor(terminator);
+        }.curry(this));
+    }
+
+    return GenerativeJobQueue;
+}]);
