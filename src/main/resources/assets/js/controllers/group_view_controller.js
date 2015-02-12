@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $dialogs, Utils, ProgressBar,
+App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, ProgressBar,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
