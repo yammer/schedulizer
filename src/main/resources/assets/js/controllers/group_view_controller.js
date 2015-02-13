@@ -4,7 +4,7 @@ App.controller('GroupViewController', function($scope, $rootScope, $timeout, $di
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
 
     // Will hold the calendar api
-    $scope.calendar = null;
+    $scope.calendar = {};
 
     $scope.$watchCollection('selectedGroup.assignmentTypes', function(assignmentTypes) {
         if (assignmentTypes == null || assignmentTypes.$resolved == false) return;

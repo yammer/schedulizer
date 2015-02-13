@@ -171,7 +171,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
             tryUpdateOrder(newOrder);
         }
 
-        $scope.employeeInput = null; // <input/>
+        $scope.employeeInput = {}; // <input/>
 
         $scope.triggerAddEmployee = function() {
             if ($scope.newEmployee) {
