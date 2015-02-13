@@ -111,28 +111,6 @@ $day-border-thickness: 5px;
     vertical-align: top;
 }
 
-@media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
-                                                    .view-calendar-wrapper { margin-top: 29px; }
-                                                    .calendar-header { margin-top: -29px; }
-                                                    .legend .day { width: 26px; height: 23px; }
-                                                    .month, .day { font-size: 13px; }
-                                                   }
-@media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
-                                                    .view-calendar-wrapper { margin-top: 42px; }
-                                                    .calendar-header { margin-top: -42px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                   }
-@media (min-width: 1648px) and (max-width: 2000px) { .day { width: 55px; height: 47px; }
-                                                    .view-calendar-wrapper { margin-top: 51px; }
-                                                    .calendar-header { margin-top: -51px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                   }
-@media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
-                                                    .view-calendar-wrapper { margin-top: 54px; }
-                                                    .calendar-header { margin-top: -54px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                   }
-
 .day {
     vertical-align: middle;
     text-align: center;
@@ -171,7 +149,6 @@ $day-border-thickness: 5px;
 .calendar-header .month {
     vertical-align: middle;
     text-align: center;
-    width: 85px;
 }
 .calendar-header .day, .calendar-header .month {
     color: #E9E9E9;
@@ -188,6 +165,50 @@ $day-border-thickness: 5px;
     color: $light-fg;
     @include colorize-day($mid-assigned-bg);
 }
+
+/* Responsiveness */
+.stats-space {
+    width: 5px;
+}
+
+.right-sidebar-content {
+    font-size: 14px;
+    padding: 0 15px;
+}
+
+.mini-assignment-type-label {
+    width: 23px;
+    margin-left: 6px;
+}
+
+@media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
+                                                    .view-calendar-wrapper { margin-top: 29px; }
+                                                    .calendar-header { margin-top: -29px; }
+                                                    .calendar-header .month, .month { width: 75px; }
+                                                    .legend .day { width: 26px; height: 23px; }
+                                                    .month, .day { font-size: 13px; }
+                                                    .right-sidebar-content { font-size: 12px; padding: 0 11px; }
+                                                    .stats-space { width: 1px; }
+                                                    .mini-assignment-type-label { width: 18px; margin-left: 4px; }
+                                                   }
+@media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
+                                                    .view-calendar-wrapper { margin-top: 42px; }
+                                                    .calendar-header { margin-top: -42px; }
+                                                    .legend .day { width: 36px; height: 32px; }
+                                                    .right-sidebar-content { font-size: 13px; padding: 0 13px; }
+                                                    .stats-space { width: 2.5px; }
+                                                    .mini-assignment-type-label { width: 21px; margin-left: 4px; }
+                                                   }
+@media (min-width: 1648px) and (max-width: 2000px) { .day { width: 55px; height: 47px; }
+                                                    .view-calendar-wrapper { margin-top: 51px; }
+                                                    .calendar-header { margin-top: -51px; }
+                                                    .legend .day { width: 36px; height: 32px; }
+                                                   }
+@media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
+                                                    .view-calendar-wrapper { margin-top: 54px; }
+                                                    .calendar-header { margin-top: -54px; }
+                                                    .legend .day { width: 36px; height: 32px; }
+                                                   }
 
 /* Loading */
 
@@ -377,7 +398,7 @@ $inner-padding: 15px;
 /* Employee card */
 
 .employee-card {
-    padding: 6px 10px;
+    padding: 6px 0px 6px 3px;
     color: $grey-4;
 }
 
@@ -389,7 +410,6 @@ $inner-padding: 15px;
     float: left;
     width: 50px;
     height: 50px;
-    margin-left: 8px;
     border-radius: 50%;
 }
 
@@ -532,8 +552,7 @@ $add-bg: $grey-2;
     width: 999999px;
     height: 50px;
     vertical-align: middle;
-    padding: 6px 10px 0 10px;
-    font-size: inherit;
+    padding: 6px 0px 0 10px;
 
     &.with-input {
         padding-top: 0;
@@ -552,10 +571,8 @@ $add-bg: $grey-2;
 .mini-assignment-type-label {
     border-radius: 2px;
     padding: 2px 0px 1px 0px;
-    margin: 0px 6px 0px 0px;
     color: #ffffff;
-    font-size: 13px;
-    width: 23px;
+    font-size: inherit;
     display: inline-block;
     text-align: center;
     opacity: 0.7;
@@ -696,7 +713,7 @@ $delete-bg: #C41E1E;
 
 .deletable-card.employee-card .delete {
     float: right;
-    margin-right: 10px;
+    margin-right: 4px;
     position: inherit;
     padding-top: 0.5px;
 
@@ -901,8 +918,6 @@ $employee-autocomplete-height: 40px;
 
 .stats-inputs-container {
     padding: 10px;
-
-
 }
 
 $counter-width: 20px;
@@ -913,11 +928,14 @@ $counter-width: 20px;
     }
 
     text-align: left;
-    padding: 10px 20px 10px 15px;
+    padding: 10px 0px 10px 0px;
+
+    .form-control {
+        font-size: inherit; /* To inherit from right sidebar content for width responsiveness */
+    }
 
     .stats-space {
         display: inline-block;
-        width: 5px;
     }
 
     .stat-counter {

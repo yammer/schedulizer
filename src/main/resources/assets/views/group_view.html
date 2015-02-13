@@ -173,7 +173,12 @@
         <div class="top-search">
             <input class="form-control" type="text" ng-model="employeeSearch" placeholder="Search Employee">
         </div>
-        <ul ng-controller="EmployeesController" class="nav nav-sidebar align-parent-bottom" discount-height="65" role="navigation">
+        <ul
+            ng-controller="EmployeesController"
+            class="nav nav-sidebar align-parent-bottom right-sidebar-content"
+            discount-height="65"
+            role="navigation"
+            >
             <div st-if="isGroupMember(selectedGroup)" class="stats-inputs-container form-inline">
                 <span class="stats-label">Past</span>
 
