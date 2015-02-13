@@ -611,29 +611,25 @@ $add-bg: $grey-2;
     opacity: 0.75;
 }
 
-.bucket .bucket-content .assigned-employee.is-admin .minus-span {
-    font-size: 30px;
-    color: white;
-    visibility: hidden;
-    position: absolute;
-    top: -6px;
-    left: 11px;
+.bucket .bucket-content .assigned-employee.is-admin {
+    cursor: pointer;
+
+    .minus-span {
+        font-size: 30px;
+        color: white;
+        visibility: hidden;
+        position: absolute;
+        top: -6px;
+        left: 11px;
+    }
+
+    &:hover {
+        background-color: #e06969;
+
+        .minus-span { visibility: visible; }
+        img { visibility: hidden; }
+    }
 }
-
-.bucket .bucket-content .assigned-employee.is-admin:hover img {
-    visibility: hidden;
-}
-
-.bucket .bucket-content .assigned-employee.is-admin:hover .minus-span {
-    visibility: visible;
-}
-
-.bucket .bucket-content .assigned-employee.is-admin:hover {
-    background-color: #e06969;
-}
-
-
-
 
 /* New Group form */
 

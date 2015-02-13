@@ -284,6 +284,12 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         });
     }
 
+    $scope.deleteAssignmentsIfHasPrivileges = function(bucketEmployee, bucketEmployeeList) {
+        if ($scope.isGroupAdmin($scope.selectedGroup)) {
+            $scope.deleteAssignments(bucketEmployee, bucketEmployeeList);
+        }
+    }
+
     $scope.deleteAssignments = function(bucketEmployee, bucketEmployeeList) {
         var count = 0;
         var total = bucketEmployee.assignments.length;

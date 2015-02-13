@@ -107,14 +107,15 @@
                             <div
                                 ng-repeat="employee in assignmentTypeBucket.employeeList"
                                 class="assigned-employee"
-                                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}">
+                                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
+                                ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
+                                >
                                 <img
                                     ng-src="{{employee.employee.imageUrlTemplate}}"
                                     width="100%"
                                     height="100%"/>
                                 <span
                                     st-if="isGroupAdmin(selectedGroup)"
-                                    ng-click="deleteAssignments(employee, assignmentTypeBucket.employeeList)"
                                     class="minus-span">-</span>
                             </div>
                         </div>
