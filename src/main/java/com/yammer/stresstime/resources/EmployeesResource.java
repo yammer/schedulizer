@@ -78,6 +78,7 @@ public class EmployeesResource {
     public Response removeGlobalAdmin(
             @Authorize({Role.ADMIN}) User user,
             @PathParam("employee_id") long employeeId) {
+        ResourceUtils.checkState(employeeManager.getGlobalAdmins().size() > 1, "You cannot delete the last global admin");
         Employee employee = employeeManager.getById(employeeId);
         employee.setGlobalAdmin(false);
         employeeManager.save(employee);

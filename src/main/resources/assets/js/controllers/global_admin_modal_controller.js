@@ -51,14 +51,20 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
                                        'Are you sure you want to revoke global admin privileges from this user? <br>');
         }
         confirm.result.then(function(btn){
-            employee.$delete({}, function() {
-                changed = true;
-                if (employee.id == Session.userId) {
-                    AuthService.removeGlobalAdminPrivileges();
-                    $modalInstance.close(changed);
-                }
-                $scope.globalAdmins.remove(employee);
-            });
+            if ($scope.globalAdmins.length == 1) {
+                $dialogs.error("You cannot delete the last global admin");
+            } else {
+                employee.$delete({}, function() {
+                    changed = true;
+                    if (employee.id == Session.userId) {
+                        AuthService.removeGlobalAdminPrivileges();
+                        $modalInstance.close(changed);
+                    }
+                    $scope.globalAdmins.remove(employee);
+                }, function(m){
+                    $dialogs.error("Something went wrong");
+                });
+            }
         });
     }
 

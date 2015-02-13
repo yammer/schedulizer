@@ -5,6 +5,7 @@ import com.google.common.base.Throwables;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.exceptions.DataConflictException;
+import com.yammer.stresstime.managers.exceptions.InvalidStateException;
 import com.yammer.stresstime.managers.exceptions.ParameterException;
 import com.yammer.stresstime.managers.exceptions.UnauthorizedAccessException;
 import io.dropwizard.jackson.Jackson;
@@ -48,6 +49,12 @@ public class ResourceUtils {
     public static void checkParameter(boolean condition, String name) {
         if (!condition) {
             throw new ParameterException(name);
+        }
+    }
+
+    public static void checkState(boolean condition, String message) {
+        if (!condition) {
+            throw new InvalidStateException(message);
         }
     }
 
