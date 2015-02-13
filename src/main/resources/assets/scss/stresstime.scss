@@ -23,6 +23,13 @@ $grey-2: #D9D9D9; /* Darker months and (+) employee button bg */
 $grey-3: #A6A6A6; /* Title text color */
 $grey-4: #828282; /* + inside (+) button */
 
+/* Global admins icon */
+
+.global-admins-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
 /* Text rotation */
 
 .rotate90deg {

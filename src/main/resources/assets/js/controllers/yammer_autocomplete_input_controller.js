@@ -1,5 +1,6 @@
 App.controller("YammerAutocompleteInputController", function($scope, $timeout, yammer, Utils) {
     $scope.autocompleteList = [];
+    window.autocompleteScope = $scope;
 
     var timeout;
     var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // as suggested by yammers api

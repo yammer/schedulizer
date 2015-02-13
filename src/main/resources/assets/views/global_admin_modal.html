@@ -1,0 +1,50 @@
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    Global Admins
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="employees-container overflow-scroll">
+                    <div ng-repeat="employee in globalAdmins">
+                        <employee-card
+                                employee="employee"
+                                group="undefined"
+                                remove="deleteGlobalAdmin(employee)"
+                                toggle-admin="undefined"
+                                >
+                        </employee-card>
+                    </div>
+                </div>
+                <div class="employee-card">
+                    <div
+                            class="avatar-wrapper no-image add"
+                            ng-class="{'selected-employee-add': newGlobalAdmin }"
+                            st-try-background-image="newGlobalAdmin.photo"
+                            ng-click="triggerAddGlobalAdmin()"
+                            >
+                        <span>+</span>
+                    </div>
+
+                    <div class="name with-input ui-widget">
+                        <yammer-autocomplete-input
+                                on-select-autocomplete="onSelectAutocomplete"
+                                on-key-down="onKeyDown"
+                                on-enter="triggerAddGlobalAdmin"
+                                expose-api-to="globalAdminInput">
+                        </yammer-autocomplete-input>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="(nameDialog.$dirty && nameDialog.$invalid) || nameDialog.$pristine">
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, $dialogs, yammer, Session, AuthService,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
@@ -222,7 +222,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
             }
             else {
                 confirm = $dialogs.confirm('Please confirm',
-                                           'Are you sure you want to revoke admin privileges for this user? <br>');
+                                           'Are you sure you want to revoke admin privileges from this user? <br>');
             }
             confirm.result.then(function(btn){
                 AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
@@ -247,6 +247,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, yamme
             $scope.assignmentsChange++;
         }
 
+        $rootScope.$on("global-admins-changed", function() {
+            getGroupEmployeesData($scope.selectedGroup);
+        });
         $scope.$watch('selectedGroup.employees.length', Utils.lastOfBurst(touchAssignments));
         $scope.$watch('selectedGroup.assignmentTypes.length', Utils.lastOfBurst(touchAssignments));
         $scope.$watch('assignmentTypeBuckets', Utils.lastOfBurst(touchAssignments), true);

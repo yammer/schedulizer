@@ -230,6 +230,13 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         SessionStorage.save("session", Session);
     }
 
+    authService.removeGlobalAdminPrivileges = function() {
+        if (Session.userRole == USER_ROLES.globalAdmin) {
+            Session.userRole = USER_ROLES.user;
+        }
+        SessionStorage.save("session", Session);
+    }
+
     initializeAuthService();
     return authService;
 });
