@@ -229,3 +229,24 @@ services.factory('AdminsResource', ['$resource', function($resource) {
 
     return AssignableDay;
 }]);
+
+services.factory('GlobalAdminsResource', ['$resource', function($resource) {
+    var AssignableDay = $resource(PREFIX + 'employees/admins/:employee_id',  { employee_id: "@id"}, {
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
+
+    AssignableDay.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    }
+
+    return AssignableDay;
+}]);

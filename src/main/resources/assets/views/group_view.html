@@ -230,20 +230,12 @@
                 </div>
 
                 <div class="name with-input ui-widget">
-                    <input
-                        class="form-control"
-                        type="text"
-                        st-name="employeeInput"
-                        ng-model="newEmployeeName"
-                        placeholder="Name"
-                        st-autocomplete
-                        item-class="employee-autocomplete-item"
-                        tags="autocompleteList"
-                        get-custom-template="getAutocompleteItem"
-                        autocomplete-select="onSelectAutocomplete"
-                        ng-change="userInputKeyDown($event)"
-                        ng-enter="userInputEnter($event)"
-                        />
+                    <yammer-autocomplete-input
+                            on-select-autocomplete="onSelectAutocomplete"
+                            on-key-down="userInuptKeyDown"
+                            on-enter="userInputEnter"
+                            expose-api-to="employeeInput">
+                    </yammer-autocomplete-input>
                 </div>
                 <div class="clear"></div>
             </div>

@@ -3,6 +3,8 @@ App.controller('EmployeeCardController', function ($scope, $rootScope) {
 
     $scope.isGroupMember = $rootScope.isGroupMember;
 
+    $scope.isGlobalAdmin = $rootScope.isGlobalAdmin;
+
     $scope.toggleAdminClicked = function(employee) {
         if(employee.globalAdmin) { return; }
         $scope.toggleAdmin(employee);

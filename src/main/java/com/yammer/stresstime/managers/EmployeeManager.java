@@ -28,6 +28,12 @@ public class EmployeeManager extends EntityManager<Employee> {
         return checkFound(employee);
     }
 
+    public List<Employee> getGlobalAdmins() {
+        return currentSession()
+                .createCriteria(Employee.class)
+                .add(Restrictions.eq("globalAdmin", true)).list();
+    }
+
     /**
      * Try to find an employee with the provided yammerId, if not found create one with the yammerId,
      * in which case the callback is called before saving.
