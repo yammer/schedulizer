@@ -35,7 +35,6 @@ App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED
                 event.preventDefault();
             }
         });
-
         if (iAmNotAuthorizedToBeHere()) {
             $state.go(NAV_TABS.group.stateName, {});
         }
@@ -170,6 +169,8 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
                 }
+            } else {
+                $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
             }
 
         });
