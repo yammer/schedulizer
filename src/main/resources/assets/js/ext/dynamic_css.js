@@ -39,5 +39,5 @@ App.run(function($window, $timeout, $rootScope) {
 
     $($window).resize(_.debounce(reAlignEls, 500));
 
-    $rootScope.$on('trigger-resize', reAlignEls);
+    $rootScope.$on('trigger-resize', _.debounce(reAlignEls, 500));
 });
