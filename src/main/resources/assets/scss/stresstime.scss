@@ -51,6 +51,15 @@ $grey-4: #828282; /* + inside (+) button */
     margin: 7px 7px 7px 20px;
 }
 
+/* Responsiveness */
+
+$inner-padding: 15px;
+
+.main { padding: 0 $inner-padding; }
+.st-progress-bar, .header { margin: 0 (-$inner-padding); }
+.left-bar { margin: 0 $inner-padding 0 0; }
+.right-bar { margin: 0 0 0 $inner-padding; }
+
 /* Calendar */
 
 $light-fg: #FFFFFF;
@@ -94,9 +103,11 @@ $day-border-thickness: 5px;
   user-select: none;
 }
 
+$calendar-cell-spacing: 4px;
+
 .view-calendar, .legend {
     border-collapse: separate;
-    border-spacing: 4px;
+    border-spacing: $calendar-cell-spacing;
 }
 .view-calendar-wrapper {
     display: inline-block;
@@ -147,7 +158,7 @@ $day-border-thickness: 5px;
 }
 
 .calendar-header {
-    border-spacing: 4px 0;
+    border-spacing: $calendar-cell-spacing 0;
     position: absolute;
 }
 .calendar-header .month {
@@ -169,50 +180,6 @@ $day-border-thickness: 5px;
     color: $light-fg;
     @include colorize-day($mid-assigned-bg);
 }
-
-/* Responsiveness */
-.stats-space {
-    width: 5px;
-}
-
-.right-sidebar-content {
-    font-size: 14px;
-    padding: 0 15px;
-}
-
-.mini-assignment-type-label {
-    width: 23px;
-    margin-left: 6px;
-}
-
-@media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
-                                                    .view-calendar-wrapper { margin-top: 29px; }
-                                                    .calendar-header { margin-top: -29px; }
-                                                    .calendar-header .month, .month { width: 75px; }
-                                                    .legend .day { width: 26px; height: 23px; }
-                                                    .month, .day { font-size: 13px; }
-                                                    .right-sidebar-content { font-size: 12px; padding: 0 11px; }
-                                                    .stats-space { width: 1px; }
-                                                    .mini-assignment-type-label { width: 18px; margin-left: 4px; }
-                                                   }
-@media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
-                                                    .view-calendar-wrapper { margin-top: 42px; }
-                                                    .calendar-header { margin-top: -42px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                    .right-sidebar-content { font-size: 13px; padding: 0 13px; }
-                                                    .stats-space { width: 2.5px; }
-                                                    .mini-assignment-type-label { width: 21px; margin-left: 4px; }
-                                                   }
-@media (min-width: 1648px) and (max-width: 2000px) { .day { width: 55px; height: 47px; }
-                                                    .view-calendar-wrapper { margin-top: 51px; }
-                                                    .calendar-header { margin-top: -51px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                   }
-@media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
-                                                    .view-calendar-wrapper { margin-top: 54px; }
-                                                    .calendar-header { margin-top: -54px; }
-                                                    .legend .day { width: 36px; height: 32px; }
-                                                   }
 
 /* Loading */
 
@@ -252,7 +219,6 @@ $day-border-thickness: 5px;
     font-size: 22px;
     background-color: $grey-0;
     border-bottom: 1px solid $grey-1;
-    margin: 0 -15px 0 -15px;
     padding: 18px 15px 17px 15px;
 }
 
@@ -304,14 +270,6 @@ $day-border-thickness: 5px;
 
 /* Group tab */
 
-$inner-padding: 15px;
-
-.main {
-    padding-left: $inner-padding;
-    padding-right: $inner-padding;
-}
-
-
 #group-tab .calendar-wrap {
     display: table;
     margin: 0 auto;
@@ -321,15 +279,13 @@ $inner-padding: 15px;
 
 .left-bar {
     float: left;
-    margin: 0 15px 0 0;
-    width: 110px;
+    width: 144px;
 }
 
 .right-bar {
     float: right;
-    margin: 0 0 0 15px;
     /* Making up space for the legend */
-    width: 175px;
+    width: 150px;
     height: 50px;
 }
 
@@ -337,9 +293,11 @@ $inner-padding: 15px;
     color: $grey-4;
     position: absolute;
     bottom: 6px;
+    padding-top: 10px;
+    margin-left: -$calendar-cell-spacing;
 
     &.full {
-        background-color: rgba(#FFFFFF, 0.95);
+        background-color: #FFFFFF;
     }
 
     .description {
@@ -364,7 +322,11 @@ $inner-padding: 15px;
     border-radius: 4px;
     text-align: center;
     position: relative;
-    margin-bottom: 22px;
+    margin-bottom: 21px;
+}
+
+.right-bar .stamp {
+    margin-bottom: 17px;
 }
 
 .stamp .sub-label {
@@ -402,7 +364,8 @@ $inner-padding: 15px;
 /* Employee card */
 
 .employee-card {
-    padding: 6px 0px 6px 3px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     color: $grey-4;
 }
 
@@ -446,6 +409,7 @@ $inner-padding: 15px;
 /* Refactor styles to use SASS nesting */
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
+    font-size: 14px;
     width: 17px;
     height: 17px;
     border-radius: 50%;
@@ -601,20 +565,28 @@ $add-bg: $grey-2;
 
 /* AssignmentType buckets */
 
+.assignment-type-buckets {
+    /* On top of legend  */
+    position: relative;
+    z-index: 1;
+    background-color: #FFFFFF;
+    /* Idk why, but below works */
+    padding-bottom: 1px;
+}
+
 .bucket {
-    border: 2px dashed #8B8484;
+    border: 1px dashed $grey-3;
     border-radius: 4px;
     width: 150px;
-    height: 100px;
-    margin: 10px 0;
-    background-color: #eee;
-    padding: 32px 5px 5px 5px;
+    margin: 0 0 17px 0;
+    background-color: $grey-0;
+    padding: 27px 5px 5px 5px;
     position: relative;
 }
 
 .bucket .bucket-name {
-    color: #AAA;
-    font-size: 16px;
+    color: mix($grey-4, $grey-3, 60%);
+    font-size: 14px;
     margin: 5px;
     position: absolute;
     top: 3px;
@@ -622,8 +594,11 @@ $add-bg: $grey-2;
 }
 
 .bucket .bucket-content {
+    &::-webkit-scrollbar {
+        display: none;
+    }
     overflow: scroll;
-    height: 100%;
+    min-height: 45px;
 }
 
 .bucket .bucket-content .assigned-employee {
@@ -734,7 +709,7 @@ $delete-bg: #C41E1E;
 /* Drag and drop */
 
 .drag-over {
-    border: 2px dashed black !important;
+    border: 1px dashed black !important;
 }
 
 .drop-target {
@@ -920,10 +895,6 @@ $employee-autocomplete-height: 40px;
 
 /* Stats inputs */
 
-.stats-inputs-container {
-    padding: 10px;
-}
-
 $counter-width: 20px;
 
 .stats-inputs-container {
@@ -932,7 +903,8 @@ $counter-width: 20px;
     }
 
     text-align: left;
-    padding: 10px 0px 10px 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
     .form-control {
         font-size: inherit; /* To inherit from right sidebar content for width responsiveness */
@@ -943,7 +915,6 @@ $counter-width: 20px;
     }
 
     .stat-counter {
-        width: 28px;
         padding: 0;
         text-align: center;
 
@@ -997,9 +968,6 @@ $progress-bar-bg: transparent;
 
 .st-progress-bar {
     background-color: $progress-bar-bg;
-    margin: 0;
-    margin-right: -$inner-padding;
-    margin-left: -$inner-padding;
 
     &, .st-progress {
         height: $progress-bar-height;
@@ -1018,3 +986,78 @@ $progress-bar-bg: transparent;
         }
     }
 }
+
+/* Responsiveness */
+
+.stats-space {
+    width: 5px;
+}
+
+.right-sidebar-content {
+    font-size: 14px;
+}
+
+.stats-inputs-container, .employee-card {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.form-control.stat-counter {
+    width: 28px;
+}
+
+.mini-assignment-type-label {
+    width: 23px;
+    margin-left: 6px;
+}
+
+@media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
+                                                     .view-calendar-wrapper { margin-top: 54px; }
+                                                     .calendar-header { margin-top: -54px; }
+                                                     .legend .day { width: 36px; height: 32px; }
+                                                   }
+@media (min-width: 1648px) and (max-width: 2000px) { .day { width: 55px; height: 47px; }
+                                                     .view-calendar-wrapper { margin-top: 51px; }
+                                                     .calendar-header { margin-top: -51px; }
+                                                     .legend .day { width: 36px; height: 32px; }
+                                                   }
+@media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
+                                                     .view-calendar-wrapper { margin-top: 42px; }
+                                                     .calendar-header { margin-top: -42px; }
+                                                     .legend .day { width: 36px; height: 32px; }
+                                                     .right-sidebar-content { font-size: 13px; }
+                                                     .stats-inputs-container, .employee-card { padding-left: 13px;
+                                                                                               padding-right: 13px; }
+                                                     .stats-space { width: 2.5px; }
+                                                     .mini-assignment-type-label { width: 21px; margin-left: 4px; }
+                                                   }
+@media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
+                                                     .view-calendar-wrapper { margin-top: 29px; }
+                                                     .calendar-header { margin-top: -29px; }
+                                                     .calendar-header .month, .month { width: 75px; }
+                                                     .legend .day { width: 26px; height: 23px; }
+                                                     .month, .day { font-size: 13px; }
+                                                     .right-sidebar-content { font-size: 12px; }
+                                                     .stats-inputs-container, .employee-card { padding-left: 11px;
+                                                                                               padding-right: 11px; }
+                                                     .stats-space { width: 0; }
+                                                     .mini-assignment-type-label { width: 18px; margin-left: 3px; }
+                                                     .main { padding: 0 5px; }
+                                                     .st-progress-bar, .header { margin: 0 -5px; }
+                                                     .left-bar { width: 110px; margin: 0 5px 0 0; }
+                                                     .right-bar { margin: 0 0 0 5px; }
+                                                     .form-control.stat-counter { width: 18px; }
+                                                   }
+@media (max-width: 1136px)                         { .left-bar, .left-bar .stamp { width: 96px; }
+                                                     .right-bar, .right-bar .stamp, .bucket { width: 102px; }
+                                                     .legend { display: none; }
+                                                     .stats-label { display: none; }
+                                                   }
+@media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
+                                                     .stats-inputs-container .counter-control { display: none; }
+                                                     .assignment-type-label { margin-left: 5px; }
+                                                     .right-sidebar-content { font-size: 10px; }
+                                                   }
+
+
+
+
