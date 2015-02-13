@@ -1,5 +1,6 @@
 var services = angular.module('services', ['ngResource']);
 
+// Got from http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
 var param = function(obj) {
     var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
 
@@ -17,6 +18,7 @@ var param = function(obj) {
         }
         else if(value instanceof Object) {
             for(subName in value) {
+                if (!value.hasOwnProperty(subName)) continue;
                 subValue = value[subName];
                 fullSubName = name + '[' + subName + ']';
                 innerObj = {};
