@@ -125,7 +125,23 @@
 
             </div>
 
-            <table class="legend">
+            <table
+                ng-init="legendToggle = false"
+                class="legend hint"
+                ng-mouseenter="legendToggle = true"
+                ng-hide="legendToggle"
+                >
+                <tr>
+                    <td class="day today"></td>
+                    <td class="description">Legend</td>
+                </tr>
+            </table>
+
+            <table
+                class="legend full"
+                ng-mouseleave="legendToggle = false"
+                ng-show="legendToggle"
+                >
                 <tr>
                     <td class="day odd"></td>
                     <td class="day even"></td>
