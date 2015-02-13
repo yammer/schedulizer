@@ -96,11 +96,3 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
         });
 
 }]);
-
-function resizeCalendar() {
-    // TODO
-}
-
-$(window).on('resize', function() {
-    resizeCalendar();
-})
