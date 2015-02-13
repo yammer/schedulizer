@@ -56,7 +56,8 @@ App.directive('yammerAutocompleteInput', function() {
             onSelectAutocomplete: "=",
             onKeyDown: "=",
             onEnter: "=",
-            api: "=exposeApiTo"
+            api: "=exposeApiTo",
+            displayAbove: "@"
         },
         templateUrl: 'views/yammer_autocomplete_input.html',
         controller: 'YammerAutocompleteInputController'

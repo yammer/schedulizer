@@ -34,7 +34,8 @@ App.directive('stAutocomplete', function($timeout, $compile) {
         scope: {
             tags: "=",
             getCustomTemplate: "=",
-            autocompleteSelect: "="
+            autocompleteSelect: "=",
+            displayAbove: "@"
             //itemClass: "=attribute"
 
         },
@@ -45,6 +46,17 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 availableTags = [];
                 var autocomplete = $(element).autocomplete({
                     source: availableTags,
+                    open: function(event, ui){
+                        if (scope.displayAbove == "true") {
+                            var input = $(event.target);
+                            var results = input.autocomplete("widget");
+                            var top = results.position().top;
+                            var height = results.outerHeight();
+                            var inputHeight = input.outerHeight();
+                            var newTop = top - height - inputHeight;
+                            results.css("top", newTop + "px");
+                        }
+                    },
                     select: function(event, ui) {
                         scope.$apply(function() {
                             scope.autocompleteSelect(ui.item.value);
@@ -75,7 +87,14 @@ App.directive('stAutocomplete', function($timeout, $compile) {
 
             scope.$watch("tags", function(value) {
                 if (value == null) return;
-                availableTags = value;
+
+                if (scope.displayAbove == "true") {
+                    availableTags = value.reverse();
+                }
+                else {
+                    availableTags = value;
+                }
+
                 $(element).autocomplete("option", "source", availableTags);
                 $(element).autocomplete("search");
             });
