@@ -2,7 +2,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
         function getGroupEmployeesData(group) {
-            if (group == EMPTY_GROUP) {
+            if (group == EMPTY_GROUP || group == null) {
                 group.employees = [];
                 return;
             }
@@ -68,7 +68,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.getAssignmentStats = function() {
             var group = $scope.selectedGroup;
-            if (group == EMPTY_GROUP) {
+            if (group == EMPTY_GROUP || group == null) {
                 return;
             }
 
@@ -141,6 +141,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         }
 
         function tryComputeEmployeeOrder() {
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
             var assignmentTypes = $scope.selectedGroup.assignmentTypes;
             if (assignmentTypes == null || assignmentTypes.length <= 0) return;
             var map = _.indexBy(assignmentTypes, 'id');
@@ -244,12 +245,14 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         $scope.assignmentsChange = 0;
 
         function touchAssignments() {
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
             $scope.assignmentsChange++;
         }
 
         $rootScope.$on("global-admins-changed", function() {
             getGroupEmployeesData($scope.selectedGroup);
         });
+
         $scope.$watch('selectedGroup.employees.length', Utils.lastOfBurst(touchAssignments));
         $scope.$watch('selectedGroup.assignmentTypes.length', Utils.lastOfBurst(touchAssignments));
         $scope.$watch('assignmentTypeBuckets', Utils.lastOfBurst(touchAssignments), true);
