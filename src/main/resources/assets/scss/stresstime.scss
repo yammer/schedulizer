@@ -17,6 +17,10 @@ body {
     padding-top: 50px;
 }
 
+.navbar-nav li a.with-icon {
+    height: 20px;
+}
+
 $blue: #398BCA;
 /* $grey-N: higher N means darker */
 $grey-0: #F5F5F5; /* Sidebar and title bgs */
