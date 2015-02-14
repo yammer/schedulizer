@@ -51,10 +51,10 @@ App.controller('GroupTabController', function(
             $scope.groups.$promise.then(function() {
                 $scope.groups.push(group);
                 $state.go('groups.view', {groupId: group.id});
-            })
+            });
             $scope.newGroupName = "";
         });
-    }
+    };
 
     $scope.deleteGroup = function(group, $event) {
         var confirm = $dialogs.confirm('Please confirm',

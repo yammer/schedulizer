@@ -70,6 +70,8 @@ App.service('YammerSession', function () {
     this.create = function (token, userId) {
         this.token = token;
         this.userId = userId;
+        /* TODO: auth */
+        window.localStorage.setItem("yammerId", userId);
     };
     this.destroy = function () {
         this.token = null;

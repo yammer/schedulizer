@@ -38,7 +38,10 @@ var urlencodedTransformRequest = function(data) {
 };
 
 var PREFIX = 'service/';
-var SHARED_HEADERS = {'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'};
+
+var SHARED_HEADERS = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+};
 
 services.factory('yammer', ['$window', function($window) {
     var yam = $window.yam;
@@ -79,7 +82,8 @@ services.factory('yammer', ['$window', function($window) {
     }
 }]);
 
-services.factory('Group', ['$resource', 'Employee', function($resource, Employee) {
+/* TODO: auth -> using $http as argument */
+services.factory('Group', ['$resource', '$http', 'Employee', function($resource, $http, Employee) {
     var Group = $resource(PREFIX + 'groups/:group_id', {}, {
         save: {
             method: 'POST',
@@ -93,6 +97,13 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
             headers: SHARED_HEADERS
         }
     });
+
+    /* TODO: auth */
+    var session = JSON.parse(window.localStorage.getItem("session"));
+    var yammerId = window.localStorage.getItem("yammerId");
+    if (session != null && session.token != null && yammerId != null) {
+        $http.defaults.headers.common.Authorization = 'ST-AUTH access-token = \"' + session.token + '\",' + " yammer-id = \"" + yammerId + "\"";
+    }
 
     Group.prototype.employees = [];
     Group.prototype.employeeMap = {};
