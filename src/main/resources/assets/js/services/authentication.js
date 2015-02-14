@@ -112,18 +112,18 @@ App.factory('SessionStorage', ['$window', function($window) {
 
 }]);
 
+function createAuthorizationHeader($http, yammerSession) {
+    $http.defaults.headers.common.Authorization = 'ST-AUTH access-token = \"' +
+                                                  yammerSession.token +
+                                                  '\",' +
+                                                  " yammer-id = \"" +
+                                                  yammerSession.userId  +
+                                                  "\"";
+}
+
 App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
                                      AuthorizationResource, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
-
-    function createAuthorizationHeader(yammerSession) {
-        $http.defaults.headers.common.Authorization = 'ST-AUTH access-token = \"' +
-                                                      yammerSession.token +
-                                                      '\",' +
-                                                      " yammer-id = \"" +
-                                                      yammerSession.userId  +
-                                                      "\"";
-    }
 
     function destroyAuthorizationHeader() {
         $http.defaults.headers.common.Authorization = undefined;
@@ -137,13 +137,15 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
     function updateYammerSession(yammerResponse) {
         if (yammerResponse.authResponse) {
             YammerSession.create(yammerResponse.access_token.token, yammerResponse.access_token.user_id);
+            SessionStorage.save("yammerSession", YammerSession);
         } else {
             YammerSession.destroy();
+            SessionStorage.save("yammerSession", YammerSession);
         }
     }
 
     function loginStresstime(yammerSession) {
-        createAuthorizationHeader(yammerSession);
+        createAuthorizationHeader($http, yammerSession);
         return getStresstimeUserStatus().then(function(userStatus) {
             if (userStatus.role ==  USER_ROLES.guest) {
                 console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
@@ -241,3 +243,10 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
     initializeAuthService();
     return authService;
 });
+
+App.run(["SessionStorage", "$http", function(SessionStorage, $http) {
+    var yammerSession = SessionStorage.load("yammerSession");
+    if(yammerSession){
+        createAuthorizationHeader($http, yammerSession);
+    }
+}]);
