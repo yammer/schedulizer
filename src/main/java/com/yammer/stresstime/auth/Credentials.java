@@ -1,5 +1,7 @@
 package com.yammer.stresstime.auth;
 
+import com.google.common.base.Objects;
+
 import java.util.Set;
 
 public class Credentials {
@@ -36,5 +38,14 @@ public class Credentials {
 
     public boolean isPresent() {
         return accessToken != null && yammerId != null;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(Credentials.class)
+                .add("accessToken", accessToken)
+                .add("yammerId", yammerId)
+                .add("acceptedRoles", acceptedRoles)
+                .toString();
     }
 }

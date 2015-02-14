@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "memberships",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"employee_id", "group_id"}))
-public class Membership {
+public class Membership extends JsonAnnotatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

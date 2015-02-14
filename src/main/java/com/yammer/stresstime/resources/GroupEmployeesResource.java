@@ -15,11 +15,7 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/employees")
 @Produces(MediaType.APPLICATION_JSON)
@@ -66,10 +62,11 @@ public class GroupEmployeesResource {
             @PathParam("group_id") long groupId) {
 
         Group group = groupManager.getById(groupId);
-        Set<ExtendedEmployeeJson> response = group.getMemberships().stream()
-                .map(ExtendedEmployeeJson::new)
-                .collect(Collectors.toSet());
-        return Response.ok().entity(response).build();
+        Set<Employee> employees = group.getEmployees();
+        for (Employee employee : employees) {
+            employee.setAnnotationProperty("groupAdmin", group.isAdmin(employee));
+        }
+        return Response.ok().entity(employees).build();
     }
 
     @DELETE
@@ -87,40 +84,5 @@ public class GroupEmployeesResource {
         Membership membership = membershipManager.getByEmployeeIdAndGroupId(employeeId, groupId);
         membershipManager.delete(membership);
         return Response.noContent().build();
-    }
-
-    private static class ExtendedEmployeeJson {
-
-        private Employee employee;
-        private boolean groupAdmin;
-
-        public ExtendedEmployeeJson(Membership membership) {
-            this.employee = membership.getEmployee();
-            groupAdmin = membership.isAdmin();
-        }
-
-        public long getId() {
-            return employee.getId();
-        }
-
-        public String getYammerId() {
-            return employee.getYammerId();
-        }
-
-        public String getName() {
-            return employee.getName();
-        }
-
-        public boolean isGlobalAdmin() {
-            return employee.isGlobalAdmin();
-        }
-
-        public String getImageUrlTemplate() {
-            return employee.getImageUrlTemplate();
-        }
-
-        public boolean isGroupAdmin() {
-            return groupAdmin;
-        }
     }
 }

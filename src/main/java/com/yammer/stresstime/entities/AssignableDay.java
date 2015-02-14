@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "assignable_days")
-public class AssignableDay {
+public class AssignableDay extends JsonAnnotatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,6 +2,7 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
+import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.GroupManager;
@@ -25,8 +26,15 @@ public class GroupsResource {
 
     @GET
     @UnitOfWork
-    public Response getGroups() {
+    public Response getGroups(
+            @Authorize({Role.ADMIN, Role.MEMBER, Role.GUEST}) User user) {
+
         List<Group> groups = groupManager.all();
+        Employee employee = user.getEmployee();
+        for (Group group : groups) {
+            group.setAnnotationProperty("isMember", employee != null && group.isMember(employee));
+            group.setAnnotationProperty("isAdmin", employee != null && group.isAdmin(employee));
+        }
         return Response.ok().entity(groups).build();
     }
 

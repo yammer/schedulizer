@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Table(name = "assignments",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"assignment_type_id", "assignable_day_id", "employee_id"}))
-public class Assignment {
+public class Assignment extends JsonAnnotatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

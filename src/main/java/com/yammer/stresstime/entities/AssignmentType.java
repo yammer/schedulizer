@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "assignment_types")
-public class AssignmentType {
+public class AssignmentType extends JsonAnnotatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

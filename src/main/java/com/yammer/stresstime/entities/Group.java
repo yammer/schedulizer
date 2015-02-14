@@ -16,7 +16,7 @@ import static com.yammer.stresstime.utils.CoreUtils.convertOptional;
 /* TODO: Collection handling methods */
 @Entity
 @Table(name = "groups")
-public class Group {
+public class Group extends JsonAnnotatedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

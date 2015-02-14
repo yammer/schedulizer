@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends JsonAnnotatedEntity {
 
     public static User fresh(Employee employee, String accessToken) {
         User user = new User(employee, accessToken);
@@ -100,5 +100,4 @@ public class User {
     public void expire() {
         expirationDate = null;
     }
-
 }
