@@ -35,6 +35,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
     private AssignmentTypeManager assignmentTypeManager;
     private AssignmentManager assignmentManager;
     private AssignableDayManager assignableDayManager;
+    private DayRestrictionManager dayRestrictionManager;
 
     public static void main(String[] args) throws Exception {
         new StresstimeApplication().run(args);
@@ -60,6 +61,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         assignmentTypeManager = new AssignmentTypeManager(sessionFactory);
         assignmentManager = new AssignmentManager(sessionFactory);
         assignableDayManager = new AssignableDayManager(sessionFactory);
+        dayRestrictionManager = new DayRestrictionManager(sessionFactory);
 
         env.jersey().setUrlPattern(config.getRootPath());
         env.jersey().register(new GroupsResource(groupManager));
@@ -70,6 +72,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
                 assignmentTypeManager, assignableDayManager));
         env.jersey().register(new AuthorizationResource());
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
+        env.jersey().register(new DayRestrictionResource(employeeManager, dayRestrictionManager));
 
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())

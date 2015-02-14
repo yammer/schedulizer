@@ -44,6 +44,10 @@ public class Employee extends JsonAnnotatedEntity {
     private Set<Membership> memberships = new HashSet<>();
 
     @OneToMany(mappedBy = "employee")
+    @Cascade({CascadeType.DELETE})
+    private Set<DayRestriction> dayRestrictions = new HashSet<>();
+
+    @OneToMany(mappedBy = "employee")
     private Set<Assignment> assignments = new HashSet<>();
 
     @OneToOne(mappedBy = "employee", fetch = FetchType.EAGER)
@@ -128,5 +132,14 @@ public class Employee extends JsonAnnotatedEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @JsonIgnore
+    public Set<DayRestriction> getDayRestrictions() {
+        return ImmutableSet.copyOf(dayRestrictions);
+    }
+
+    public void setDayRestrictions(Set<DayRestriction> dayRestrictions) {
+        this.dayRestrictions = ImmutableSet.copyOf(dayRestrictions);
     }
 }
