@@ -1,4 +1,4 @@
-App.run(function($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
+App.run(function($rootScope, $state, $timeout, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
 
     function checkAuthorized(authorizedRoles) {
         if (!AuthService.isAuthorized(authorizedRoles)) {
@@ -36,9 +36,12 @@ App.run(function($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_
                 event.preventDefault();
             }
         });
-        if (iAmNotAuthorizedToBeHere()) {
-            $state.go(NAV_TABS.group.stateName, {});
-        }
+        // sometimes the current state name is not yet initialized, hence the timeout
+        $timeout(function(){
+            if (iAmNotAuthorizedToBeHere()) {
+                $state.go(NAV_TABS.group.stateName, {});
+            }
+        }, 10);
     });
 });
 
