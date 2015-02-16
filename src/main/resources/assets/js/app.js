@@ -29,22 +29,12 @@ App.constant('USER_ROLES', USER_ROLES_CONSTANT);
 
 App.constant('NAV_TABS', {
     calendar: {
-        title: 'Calendar',                        // Displayed on navbar
+        title: 'My Calendar',                        // Displayed on navbar
         stateName: 'calendar',                     // Name of the state
         url: '/calendar',                       // Link when tab is clicked
-        templateUrl: 'views/calendar_tab.html',       // Template loaded into ui-view element
-        controller: 'CalendarTabController',     // Controller for this template
+        templateUrl: 'views/my_calendar_tab.html',       // Template loaded into ui-view element
+        controller: 'MyCalendarTabController',     // Controller for this template
         data: {                                 // Which roles can see this state
-            authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin, USER_ROLES_CONSTANT.user]
-        }
-    },
-    availability: {
-        title: 'Availability',
-        stateName: 'availability',
-        url: '/availability',
-        templateUrl: 'views/availability_tab.html',
-        controller: 'AvailabilityTabController',
-        data: {
             authorizedRoles: [USER_ROLES_CONSTANT.globalAdmin, USER_ROLES_CONSTANT.admin, USER_ROLES_CONSTANT.user]
         }
     },
