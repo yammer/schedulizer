@@ -247,7 +247,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
 
 App.run(["SessionStorage", "Session", "YammerSession", "$http", function(SessionStorage, Session, YammerSession, $http) {
     var yammerSession = SessionStorage.load("yammerSession");
-    if(yammerSession){
+    if(yammerSession && yammerSession.token && yammerSession.userId){
         createAuthorizationHeader($http, yammerSession);
         YammerSession.create(YammerSession.token, YammerSession.userId);
     }
