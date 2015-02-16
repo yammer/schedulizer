@@ -37,9 +37,7 @@ App.controller('GroupTabController', function(
     });
 
     function triggerGroupsUpdate() {
-        console.log('triggered')
         return Group.query({}).$promise.then(function(groups) {
-            console.log('==> groups returned');
             $scope.groups = groups;
         }).then(selectGroup);
     }
