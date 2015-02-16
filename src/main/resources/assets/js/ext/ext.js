@@ -138,3 +138,10 @@ Function.prototype.curry = function(/* ... */) {
         return func.apply(context, firstArgs.concat(lastArgs));
     };
 };
+
+Function.prototype.negate = function() {
+    var func = this;
+    return function() {
+        return !func.apply(this, arguments);
+    };
+};

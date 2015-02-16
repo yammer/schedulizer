@@ -1,13 +1,15 @@
 var groupTabStateChangeSuccessOff = undefined;
 
 App.controller('GroupTabController', function(
-        $scope, $timeout, $location, $state, $rootScope, $dialogs, Utils,
+        $scope, $timeout, $location, $state, $rootScope, $dialogs, Utils, Session, $interval,
         Group, GroupEmployee, AssignmentType, EMPTY_GROUP, NAV_TABS, NESTED_VIEWS) {
 
     $scope.selectedGroup = EMPTY_GROUP;
     $scope.newGroupName = "";
 
     function selectGroup() {
+        if ($scope.selectedGroup && $scope.selectedGroup.id == parseInt($state.params.groupId)) return;
+
         $scope.selectedGroup = _.find($scope.groups, function(g) {
             return g.id == parseInt($state.params.groupId);
         });
@@ -34,7 +36,18 @@ App.controller('GroupTabController', function(
         }
     });
 
-    $scope.groups = Group.query({}, selectGroup);
+    function triggerGroupsUpdate() {
+        console.log('triggered')
+        return Group.query({}).$promise.then(function(groups) {
+            console.log('==> groups returned');
+            $scope.groups = groups;
+        }).then(selectGroup);
+    }
+
+    var debouncedTriggerGroupsUpdate = _.debounce(triggerGroupsUpdate, 100);
+    $scope.$watchCollection('selectedGroup.employees', debouncedTriggerGroupsUpdate);
+    $rootScope.$on('global-admins-changed', debouncedTriggerGroupsUpdate);
+    $scope.$watch(function(){return Session;}, debouncedTriggerGroupsUpdate, true);
 
     $scope.groupInput = null;
 
@@ -80,9 +93,20 @@ App.controller('GroupTabController', function(
         });
         $event.preventDefault();
         $event.stopPropagation();
-    }
+    };
 
     $scope.isSelectedGroup = function(group) {
         return group && $scope.selectedGroup && group.id == $scope.selectedGroup.id;
-    }
+    };
+
+    $scope.anyGroupThat = function(condition) {
+        return _.any($scope.groups, condition)
+    };
+});
+
+App.directive('groupItem', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'views/group_item.html'
+    };
 });

@@ -1,0 +1,17 @@
+<li
+    ng-class="{
+        'active': isSelectedGroup(group)
+    }"
+    class="group-item deletable-card"
+    >
+    <a ui-sref="groups.view({groupId: {{group.id}}})">
+        {{group.name}}
+        <span ng-if="isGroupAdmin(group)" class="glyphicon glyphicon-cog"></span>
+        <div
+            st-if="isAuthorized(userRoles.globalAdmin)"
+            class="delete"
+            ng-click="deleteGroup(group, $event);">
+            <div>-</div>
+        </div>
+    </a>
+</li>

@@ -3,22 +3,19 @@
         <div class="top-search">
             <input class="form-control" type="text" ng-model="groupSearch" placeholder="Search Group">
         </div>
-        <ul class="nav nav-sidebar" role="navigation">
+        <ul class="nav nav-sidebar nav-deep" role="navigation">
+            
+            <li ng-if="anyGroupThat({isMember: true})" class="groups-divider"><a disabled>My Groups</a></li>
+            <group-item ng-repeat="group in groups | filter: {isMember: true} |  filter: groupSearch"></group-item>
+
             <li
-                ng-class="{'active': isSelectedGroup(group)}"
-                ng-repeat="group in groups | filter: groupSearch"
-                class="deletable-card"
+                ng-if="anyGroupThat({isMember: false}) && anyGroupThat({isMember: true})"
+                class="groups-divider"
                 >
-                <a ui-sref="groups.view({groupId: {{group.id}}})">
-                    {{group.name}}
-                    <div
-                        st-if="isAuthorized(userRoles.globalAdmin)"
-                        class="delete"
-                        ng-click="deleteGroup(group, $event);">
-                        <div>-</div>
-                    </div>
-                </a>
+                <a disabled>Other Groups</a>
             </li>
+            <group-item ng-repeat="group in groups | filter: {isMember: false} |  filter: groupSearch"></group-item>
+
             <li st-if="isAuthorized(userRoles.globalAdmin)">
                 <div class="input-group new-group-form">
                     <input

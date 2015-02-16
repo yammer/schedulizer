@@ -208,8 +208,12 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                                            'Are you sure you want to make this user an admin? <br>' +
                                            'He will be able to edit this group as much as he wants');
             confirm.result.then(function(btn){
-                AdminsResource.save({groupId: $scope.selectedGroup.id, employeeId: employee.id}, function() {
+                var groupId = $scope.selectedGroup.id;
+                AdminsResource.save({groupId: groupId, employeeId: employee.id}, function() {
                     employee.groupAdmin = true;
+                    if (employee.id == Session.userId && !Session.groupsAdmin.contains(groupId)) {
+                        Session.groupAdmin.push(groupId);
+                    }
                 });
             });
         }

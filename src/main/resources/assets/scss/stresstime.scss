@@ -13,6 +13,50 @@
     user-select: $value;
 }
 
+/* To be able to use angular directives for li items in group tab */
+.nav-deep {
+    margin-bottom: 0;
+    padding-left: 0; // Override default ul/ol
+    list-style: none;
+    @include clearfix;
+
+    li {
+        position: relative;
+        display: block;
+
+        a {
+            position: relative;
+            display: block;
+            padding: $nav-link-padding;
+            &:hover,
+            &:focus {
+                text-decoration: none;
+                background-color: $nav-link-hover-bg;
+            }
+        }
+
+        // Disabled state sets text to gray and nukes hover/tab effects
+        &.disabled a {
+            color: $nav-disabled-link-color;
+
+            &:hover,
+            &:focus {
+                color: $nav-disabled-link-hover-color;
+                text-decoration: none;
+                background-color: transparent;
+                cursor: $cursor-disabled;
+            }
+        }
+    }
+
+    // Prevent IE8 from misplacing imgs
+    //
+    // See https://github.com/h5bp/html5-boilerplate/issues/984#issuecomment-3985989
+    li a img {
+        max-width: none;
+    }
+}
+
 body {
     padding-top: 50px;
 }
@@ -28,6 +72,8 @@ $grey-1: #EEEEEE; /* Lighter months on calendar */
 $grey-2: #D9D9D9; /* Darker months and (+) employee button bg */
 $grey-3: #A6A6A6; /* Title text color */
 $grey-4: #828282; /* + inside (+) button */
+
+$grey-2p5: mix($grey-2, $grey-3);
 
 /* Global admins icon */
 
@@ -252,7 +298,7 @@ $calendar-cell-spacing: 4px;
 .dual-pane .sidebar .top-search {
     margin: -20px -20px 0 -20px;
     padding: 13px 12px 13px 12px;
-    background-color: #E8E8E8;
+    background-color: $grey-1;
 }
 
 .dual-pane .sidebar ul {
@@ -644,6 +690,38 @@ $add-bg: $grey-2;
     padding: 10px 10px 0px 10px;
 }
 
+/* Group list */
+
+a[disabled] {
+    pointer-events: none;
+}
+
+
+.nav li.groups-divider {
+    background-color: darken($grey-2, 5%);
+    font-size: 13px;
+    text-align: center;
+
+    &, a {
+        color: $light-fg;
+    }
+    a {
+        text-shadow: 0 0 2px rgba(#000000, 0.2);
+        padding: 4px 15px;
+    }
+}
+
+.group-item {
+    .glyphicon {
+        top: 2px;
+        left: 3px;
+        opacity: 0.2;
+    }
+
+    &:hover .glyphicon {
+        opacity: 1;
+    }
+}
 /* Deletable card */
 
 $delete-bg: #C41E1E;
