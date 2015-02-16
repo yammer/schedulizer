@@ -217,6 +217,7 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
         interpolate: function(current, srcScale, tgtScale) {
             return tgtScale[0] + (current - srcScale[0]) * (tgtScale[1] - tgtScale[0]) / (srcScale[1] - srcScale[0]);
         },
+        // TODO: Remove preventBurst and lastOfBurst and use _.debounce
         preventBurst: function(func, threshold) {
             if (threshold) func._burstThreshold = threshold;
             if (!func._burstThreshold) func._burstThreshold = 50;

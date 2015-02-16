@@ -1,4 +1,5 @@
-App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
+App.run(function($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
+
     function checkAuthorized(authorizedRoles) {
         if (!AuthService.isAuthorized(authorizedRoles)) {
             if (AuthService.isAuthenticated()) {
@@ -41,10 +42,10 @@ App.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, NAV_TABS, NESTED
     });
 });
 
-App.config(function ($httpProvider) {
+App.config(function($httpProvider) {
   $httpProvider.interceptors.push([
     '$injector',
-    function ($injector) {
+    function($injector) {
       return $injector.get('AuthInterceptor');
     }
   ]);
@@ -66,28 +67,28 @@ App.factory('AuthInterceptor', function ($rootScope, $q,
 });
 
 
-App.service('YammerSession', function () {
-    this.create = function (token, userId) {
+App.service('YammerSession', function() {
+    this.create = function(token, userId) {
         this.token = token;
         this.userId = userId;
         /* TODO: auth */
         window.localStorage.setItem("yammerId", userId);
     };
-    this.destroy = function () {
+    this.destroy = function() {
         this.token = null;
         this.userId = null;
     };
     return this;
 });
 
-App.service('Session', function (USER_ROLES) {
+App.service('Session', function(USER_ROLES) {
     this.create = function (token, userId, userRole, groupsAdmin) {
         this.token = token;
         this.userId = userId;
         this.userRole = userRole;
         this.groupsAdmin = groupsAdmin;
     };
-    this.destroy = function () {
+    this.destroy = function(){
         this.token = null;
         this.userId = null;
         this.userRole = USER_ROLES.guest;
@@ -123,7 +124,7 @@ function createAuthorizationHeader($http, yammerSession) {
                                                   "\"";
 }
 
-App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
+App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
                                      AuthorizationResource, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
@@ -163,12 +164,11 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         yammer.getLoginStatus(function(response) {
             updateYammerSession(response);
             var session = SessionStorage.load('session');
-            if(YammerSession.token && session) {
+            if (YammerSession.token && session) {
                 if (session.userRole == USER_ROLES.guest) {
                     Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
-                }
-                else {
+                } else {
                     loginStresstime(YammerSession).then(function(userStatus) {
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
@@ -180,15 +180,14 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         });
     }
 
-    authService.login = function () {
+    authService.login = function() {
         var deferredYammerResponse = $q.defer();
         if (!YammerSession.token) {
-            yammer.login(function (response) {
+            yammer.login(function(response) {
                 updateYammerSession(response);
                 deferredYammerResponse.resolve(YammerSession);
             });
-        }
-        else {
+        } else {
             deferredYammerResponse.resolve(YammerSession);
         }
         var deferred = $q.defer();
@@ -213,7 +212,7 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
         return !!Session.userId;
     };
 
-    authService.isAuthorized = function (authorizedRoles, groupId) {
+    authService.isAuthorized = function(authorizedRoles, groupId) {
         if (!angular.isArray(authorizedRoles)) {
             authorizedRoles = [authorizedRoles];
         }
@@ -227,6 +226,8 @@ App.factory('AuthService', function ($rootScope, $http, $q, $timeout, Session, Y
     };
 
     authService.belongsToGroup = function(group) {
+        // Are we sure about querying the employeeMap? From employeeFor() function
+        // it seems that employeeMap can contain employees that don't belong to the group
         return group.employeeMap != undefined && group.employeeMap[Session.userId] != undefined;
     }
 

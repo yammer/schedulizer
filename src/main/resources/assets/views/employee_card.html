@@ -3,13 +3,13 @@
         <div class="avatar-image-wrapper">
             <img class="avatar-image" ng-src="{{employee.imageUrlTemplate}}" width="50" height="50" />
             <div
-                    class="admin-icon"
-                    ng-class="{
-                        'is-admin': employee.groupAdmin && !employee.globalAdmin,
-                        'not-admin': !employee.groupAdmin && !employee.globalAdmin,
-                        'global-admin': employee.globalAdmin,
-                        'editable': isGroupAdmin(group)}"
-                    ng-click="toggleAdminClicked(employee)">
+                class="admin-icon"
+                ng-class="{
+                    'is-admin': employee.groupAdmin && !employee.globalAdmin,
+                    'not-admin': !employee.groupAdmin && !employee.globalAdmin,
+                    'global-admin': employee.globalAdmin,
+                    'editable': isGroupAdmin(group)}"
+                ng-click="toggleAdminClicked(employee)">
                 <span class="glyphicon glyphicon-cog"></span>
                 <span class="delete-admin">-</span>
             </div>
@@ -17,7 +17,7 @@
     </div>
     <div class="name">
         <span>{{employee.name}}</span>
-        <if st-if="isGroupMember(group)">
+        <if st-if="isGroupMemberOrGlobalAdmin(group)">
             <div
                 ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
                 class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"

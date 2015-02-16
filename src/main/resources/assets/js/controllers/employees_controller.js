@@ -34,7 +34,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         }
 
-        $scope.deleteEmployee = function (employee) {
+        $scope.deleteEmployee = function(employee) {
             var confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to remove this employee from this group? <br>');
             confirm.result.then(function(btn) {
@@ -220,8 +220,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to revoke your own admin privileges? <br>' +
                                            'YOU WILL LOSE POWER!');
-            }
-            else {
+            } else {
                 confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to revoke admin privileges from this user? <br>');
             }

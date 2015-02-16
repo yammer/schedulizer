@@ -25,8 +25,11 @@ App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $lo
 
     $rootScope.isGroupMember = function(group) {
         if (group == null) return false;
-        if ($scope.isAuthorized($scope.userRoles.globalAdmin)) { return true; }
         return $scope.isAuthorized([$scope.userRoles.user, $scope.userRoles.globalAdmin]) && AuthService.belongsToGroup(group);
+    }
+
+    $rootScope.isGroupMemberOrGlobalAdmin = function(group) {
+        return $rootScope.isGroupMember(group) || $rootScope.isGlobalAdmin();
     }
 
     $scope.globalAdminModal = function() {

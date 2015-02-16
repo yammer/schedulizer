@@ -31,7 +31,7 @@ public class AuthorizationResource {
         if (user.getEmployee() != null) {
             response.put("employeeId", user.getEmployee().getId());
             List<Long> groupIds = user.getEmployee().getMemberships().stream()
-                    .filter(m -> m.isAdmin())
+                    .filter(Membership::isAdmin)
                     .map(Membership::getGroup)
                     .map(Group::getId)
                     .collect(Collectors.toList());
