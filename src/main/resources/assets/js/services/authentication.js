@@ -247,9 +247,14 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
     return authService;
 });
 
-App.run(["SessionStorage", "$http", function(SessionStorage, $http) {
+App.run(["SessionStorage", "Session", "YammerSession", "$http", function(SessionStorage, Session, YammerSession, $http) {
     var yammerSession = SessionStorage.load("yammerSession");
     if(yammerSession){
         createAuthorizationHeader($http, yammerSession);
+        YammerSession.create(YammerSession.token, YammerSession.userId);
+    }
+    var session = SessionStorage.load("session");
+    if (session) {
+        Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
     }
 }]);
