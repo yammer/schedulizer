@@ -98,7 +98,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         // calendar[0].month.nweeks is the number of weeks (lines) added, so
         // cellHeight * it will give us the height
         return getCellHeight() * $scope.calendar[0].month.nweeks;
-    }
+    };
 
     $scope.loadNextMonth = function() {
         var isBeginningOfMonth = false;
@@ -128,7 +128,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             $scope.calendar.push(currentWeek);
         }
         $scope.calendar[$scope.calendar.length - 1].month.name = "";
-    }
+    };
 
     var nextLoadArea = null; // {i, j, a}
 
@@ -188,15 +188,12 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             var doubleTerminator = function(localStop) {
                 stop = stop && localStop;
                 if (--i == 0) terminate(stop);
-            }
+            };
 
             if (a.valid) loadDayContent(doubleTerminator, a.i, a.j);
             if (b.valid) loadDayContent(doubleTerminator, b.i, b.j);
         }
     });
-
-    // TODO: Remove
-    window.contentQueue = contentQueue;
 
     function isValidArea(i, j) {
         return i != null && j != null && i <= j;
@@ -328,13 +325,13 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             active: contentQueue.active()
 
         };
-    }
+    };
 
     $scope.api.getDays = function(dates) {
         return _.map(dates, function(date) {
             return getDay(date);
         })
-    }
+    };
 
     function nextUnloadedWeek(i) {
         for (var n = $scope.calendar.length; i < n; i++) {
@@ -371,7 +368,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                 calendarElement[0].scrollTop = scroll;
             }
         }
-    }
+    };
 
     $scope.api.goToToday = function(duration) {
         $scope.api.goToDate(Date.TODAY, duration);
@@ -379,7 +376,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         // Better way to get the today cell
         var today = $(".view-calendar .day.today");
         Utils.animate('tada', today);
-    }
+    };
 
     $scope.showCalendar = true;
 
@@ -447,8 +444,8 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         CLICKED: {event: null, day: null},
         DRAGGING: {start: null, current: null, previous: null},
         DRAGGED: {start: null, end: null}
-    }
-    var state = States.IDLE
+    };
+    var state = States.IDLE;
 
     function onStateUpdate() {
         switch (state) {
@@ -506,13 +503,13 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             state.event = $event;
             onStateUpdate();
         }
-    }
+    };
 
     $scope.onMouseEnter = function(day) {
         $scope.onHoverDayParent(day);
         if (state == States.DOWN) {
             if (state.day != day) {
-                var start = state.day
+                var start = state.day;
                 state = States.DRAGGING;
                 state.start = start;
                 state.current = day;
@@ -526,7 +523,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                 onStateUpdate();
             }
         }
-    }
+    };
 
     $scope.onMouseUp = function(day, $event) {
         if (state == States.DOWN) {
