@@ -6,24 +6,40 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     // Will hold the calendar api
     $scope.calendar = {};
 
+    function tryInvalidateCalendarContent() {
+        if ($scope.calendar.invalidateContent != null) {
+            $scope.calendar.invalidateContent();
+        }
+    }
+
     $scope.$watchCollection('selectedGroup.assignmentTypes', function(assignmentTypes) {
         if (assignmentTypes == null || assignmentTypes.$resolved == false) return;
-        if ($scope.calendar != null) {
-            $scope.calendar.invalidateAssignments();
-        }
+        tryInvalidateCalendarContent();
     });
 
     $scope.assignmentTypeBuckets = {};
 
-    function getAssignmentTypeData(group) {
+    function getAssignmentTypeData() {
+        var group = $scope.selectedGroup;
         if (group == EMPTY_GROUP) {
             group.assignmentTypes = [];
             return;
         }
-        group.assignmentTypes = AssignmentType.query({group_id: group.id}, function(assignmentTypes) {
+        var oldAssignments = group.assignmentTypes;
+        AssignmentType.query({group_id: group.id}, function(assignmentTypes) {
             group.setAssignmentTypes(assignmentTypes);
+            // HACK: Angular does not trigger watch when we return an empty list of assignment types bc it
+            // was empty before as well)
+            if (oldAssignments.length == 0 && assignmentTypes.length == 0) {
+                tryInvalidateCalendarContent();
+            }
         });
     }
+
+    $scope.$watch('selectedGroup', function() {
+        if ($scope.selectedGroup == null) return;
+        getAssignmentTypeData($scope.selectedGroup);
+    });
 
     var hideInput = null;
 
@@ -95,8 +111,6 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             });
         });
     }
-
-    $scope.calendar = null;
 
     $scope.goToToday = function() {
         // TODO: Find another way to do this
@@ -185,11 +199,6 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         updateAssignmentTypeBuckets(assignableDays)
     }
 
-    $scope.$watch('selectedGroup', function() {
-        if ($scope.selectedGroup == null) return;
-        getAssignmentTypeData($scope.selectedGroup);
-    });
-
     var GroupViewDayContent = function(assignableDay) {
         this.assignableDay = assignableDay;
         this.assignments = _.groupBy(assignableDay.assignments, function(assignment) {
@@ -242,9 +251,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             return terminate(true);
         }
         progressBar.trigger();
-        var log = 'assignments? end = ' + endDate.toISOLocalDateString() + ', start = ' + startDate
-        .toISOLocalDateString()
-        var assignableDays = AssignableDay.query({
+        AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()

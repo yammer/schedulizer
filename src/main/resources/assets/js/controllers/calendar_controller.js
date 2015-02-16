@@ -306,7 +306,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         }
     }
 
-    $scope.api.invalidateAssignments = function() {
+    $scope.api.invalidateContent = function() {
         // TODO: Stop pending requests
         unloadWeeks(loadedWeeks);
         unsetPendingWeeks(pendingWeeks);
