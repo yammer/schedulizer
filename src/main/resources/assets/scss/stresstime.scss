@@ -13,50 +13,6 @@
     user-select: $value;
 }
 
-/* To be able to use angular directives for li items in group tab */
-.nav-deep {
-    margin-bottom: 0;
-    padding-left: 0; // Override default ul/ol
-    list-style: none;
-    @include clearfix;
-
-    li {
-        position: relative;
-        display: block;
-
-        a {
-            position: relative;
-            display: block;
-            padding: $nav-link-padding;
-            &:hover,
-            &:focus {
-                text-decoration: none;
-                background-color: $nav-link-hover-bg;
-            }
-        }
-
-        // Disabled state sets text to gray and nukes hover/tab effects
-        &.disabled a {
-            color: $nav-disabled-link-color;
-
-            &:hover,
-            &:focus {
-                color: $nav-disabled-link-hover-color;
-                text-decoration: none;
-                background-color: transparent;
-                cursor: $cursor-disabled;
-            }
-        }
-    }
-
-    // Prevent IE8 from misplacing imgs
-    //
-    // See https://github.com/h5bp/html5-boilerplate/issues/984#issuecomment-3985989
-    li a img {
-        max-width: none;
-    }
-}
-
 body {
     padding-top: 50px;
 }

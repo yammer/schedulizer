@@ -105,6 +105,7 @@ App.controller('GroupTabController', function(
 App.directive('groupItem', function() {
     return {
         restrict: 'E',
-        templateUrl: 'views/group_item.html'
+        templateUrl: 'views/group_item.html',
+        replace: true
     };
 });
