@@ -1083,12 +1083,12 @@ $progress-bar-bg: transparent;
                                                    }
 @media (max-width: 1136px)                         { .left-bar, .left-bar .stamp { width: 96px; }
                                                      .right-bar, .right-bar .stamp, .bucket { width: 102px; }
+                                                     .assignment-type-label { margin-left: 5px; }
                                                      .legend { display: none; }
                                                      .stats-label { display: none; }
                                                    }
 @media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
                                                      .stats-inputs-container .counter-control { display: none; }
-                                                     .assignment-type-label { margin-left: 5px; }
                                                      .right-sidebar-content { font-size: 10px; }
                                                    }
 
