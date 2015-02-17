@@ -82,7 +82,7 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
     function($stateProvider, $urlRouterProvider, NAV_TABS, NESTED_VIEWS) {
         //
         // For any unmatched url, redirect to /state1
-        $urlRouterProvider.otherwise(NAV_TABS.calendar.stateName);
+        $urlRouterProvider.otherwise(NAV_TABS.group.stateName);
         //
         // Now set up the states
 
