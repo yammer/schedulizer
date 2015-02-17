@@ -32,10 +32,6 @@
                 ng-enter="assignmentTypeInputEnter()"
                 />
         </div>
-
-
-
-
     </h1>
 
     <div st-name="progressBar.outer" class="st-progress-bar">
@@ -80,13 +76,19 @@
 
         </div>
         <calendar
-                class="calendar align-parent-bottom"
-                discount-height="70"
-                on-select-days="onSelectDays"
-                on-hover-day="onHoverDay"
-                on-load-day-content="onLoadDayContent"
-                expose-api-to="calendar"
-                >
+            class="calendar align-parent-bottom"
+            discount-height="70"
+            on-select-days="onSelectDays"
+            on-hover-day="onHoverDay"
+            on-load-day-content="onLoadDayContent"
+            expose-api-to="calendar"
+            cell-class=" {
+                'assigned': day.content && day.content.isAssigned(),
+                'mid-assigned': day.content && day.content.isMidAssigned()
+            }"
+            >
+
+
 
         </calendar>
         <div class="right-bar">

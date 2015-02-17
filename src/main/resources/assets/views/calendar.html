@@ -27,20 +27,12 @@
             'pending': week.pending || !week.loaded
         }">
             <td
+                class="day"
                 ng-repeat="day in week.days"
-                ng-class="{
-                    'day': true,
-                    'empty': !day.content,
-                    'even': day.date.getMonth() % 2 == 0,
-                    'odd': day.date.getMonth() % 2 == 1,
-                    'today': day.date.isToday(),
-                    'selected': day.selected,
-                    'assigned': day.content && day.content.isAssigned(),
-                    'mid-assigned': day.content && day.content.isMidAssigned()
-                }"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"
                 ng-mouseenter="onMouseEnter(day, $event)"
+                ng-class="cellClass(day, week)"
                 >
                 {{day.date.getDate()}}
             </td>
