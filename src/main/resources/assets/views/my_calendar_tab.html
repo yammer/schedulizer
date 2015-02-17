@@ -1,3 +1,90 @@
-<div>
-    Calendar
+<div class="dual-pane row">
+    <div class="span-height">
+        <h1 class="header">
+            My Calendar
+        </h1>
+
+        <div st-name="progressBar.outer" class="st-progress-bar">
+            <div
+                    st-name="progressBar.inner"
+                    class="st-progress"
+                    >
+            </div>
+        </div>
+
+        <div class="calendar-wrap align-parent-bottom" discount-height="70">
+            <div class="left-bar">
+                <div class="tools">
+                    <button type="button" ng-click="goToToday()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                        &nbsp; Today
+                    </button>
+                </div>
+                <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
+                    <div class="sub-label">{{dayStamp.getMonthName()}}</div>
+                    <div class="main-label">{{dayStamp.getDate()}}</div>
+                </div>
+            </div>
+            <calendar
+                    class="calendar align-parent-bottom"
+                    discount-height="70"
+                    on-select-days="onSelectDays"
+                    on-hover-day="onHoverDay"
+                    on-load-day-content="onLoadDayContent"
+                    expose-api-to="calendar"
+                    >
+
+            </calendar>
+            <div class="right-bar">
+
+                <div ng-if="selectedDays.length > 0">
+                    <div ng-click="clearSelection()" class="stamp selection-stamp" >
+                        <div class="main-label">{{selectedDays.length}}</div>
+                        <div class="sub-label">Days Selected</div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+                <table
+                        ng-init="legendToggle = false"
+                        class="legend hint"
+                        ng-mouseenter="legendToggle = true"
+                        ng-hide="legendToggle"
+                        >
+                    <tr>
+                        <td class="day today"></td>
+                        <td class="description">Legend</td>
+                    </tr>
+                </table>
+
+                <table
+                        class="legend full"
+                        ng-mouseleave="legendToggle = false"
+                        ng-show="legendToggle"
+                        >
+                    <tr>
+                        <td class="day odd"></td>
+                        <td class="day even"></td>
+                        <td class="description">Empty days</td>
+                    </tr>
+                    <tr ng-click="goToToday()">
+                        <td class="day today"></td>
+                        <td class="description" colspan="2">Today</td>
+                    </tr>
+                    <tr>
+                        <td class="day hover"></td>
+                        <td class="description" colspan="2">Selected</td>
+                    </tr>
+                    <tr>
+                        <td class="day mid-assigned"></td>
+                        <td class="description" colspan="2">Partially Assigned</td>
+                    </tr>
+                    <tr>
+                        <td class="day assigned"></td>
+                        <td class="description" colspan="2">Fully Assigned</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
