@@ -1094,6 +1094,8 @@ $progress-bar-bg: transparent;
                                                      .day-assignment .day-assignment-role span { font-size: 10px;
                                                                                                  padding-left: 7px;
                                                                                                  padding-right: 7px; }
+                                                     .bucket .bucket-name { font-size: 11px;
+                                                                            top: 5px; }
                                                    }
 @media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
                                                      .stats-inputs-container .counter-control { display: none; }
