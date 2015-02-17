@@ -1087,6 +1087,9 @@ $progress-bar-bg: transparent;
                                                                               padding-left: 10px; }
                                                      .legend { display: none; }
                                                      .stats-label { display: none; }
+                                                     .day-assignment .day-assignment-role span { font-size: 10px;
+                                                                                                 padding-left: 7px;
+                                                                                                 padding-right: 7px; }
                                                    }
 @media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
                                                      .stats-inputs-container .counter-control { display: none; }
