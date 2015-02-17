@@ -36,12 +36,23 @@ App.run(function($rootScope, $state, $timeout, AuthService, AUTH_EVENTS, NAV_TAB
                 event.preventDefault();
             }
         });
+
+        // TODO: figure out a good way of listening to $state.current.name so that we know when it is loaded
         // sometimes the current state name is not yet initialized, hence the timeout
-        $timeout(function(){
-            if (iAmNotAuthorizedToBeHere()) {
-                $state.go(NAV_TABS.group.stateName, {});
+        var numberRetries = 0;
+        function retryAuthorizationCheck() {
+            numberRetries++;
+            if (numberRetries > 20) return;
+            try {
+                if (iAmNotAuthorizedToBeHere()) {
+                    $state.go(NAV_TABS.group.stateName, {});
+                }
+            } catch (e) {
+                $timeout(retryAuthorizationCheck, 20);
             }
-        }, 10);
+        }
+        retryAuthorizationCheck();
+
     });
 });
 
