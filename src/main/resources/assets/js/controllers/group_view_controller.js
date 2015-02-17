@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, ProgressBar,
+App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -240,7 +240,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         })
     }
 
-    var progressBar = null;
+    $scope.progressBar = { trigger: function(){} };
 
     $scope.onLoadDayContent = function(terminate, days) {
         var startDate = days[0].date;
@@ -250,7 +250,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         if ($scope.selectedGroup == null || $scope.selectedGroup.id == null) {
             return terminate(true);
         }
-        progressBar.trigger();
+        $scope.progressBar.trigger();
         AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
@@ -313,43 +313,6 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             });
         });
     }
-
-    $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
-
-    // After errorThreshold number of errors that we consider an error worth displaying the user
-    var errorHits = 0;
-    var errorThreshold = 5;
-
-    function progressWatcher() {
-        var status = $scope.calendar.loadingStatus();
-        if (status.weeks.loaded < status.weeks.total && !status.active) {
-            if (errorHits >= errorThreshold) {
-                return -1;
-            } else {
-                errorHits++;
-            }
-        } else {
-            errorHits = 0;
-            var d = $scope.progressBar.previousLoadedWeeks;
-            if (status.weeks.total - d <= 0) return 1;
-            var p = Math.max(0, status.weeks.loaded - d) / Math.max(0, status.weeks.total - d);
-            return p;
-        }
-    }
-
-    function onBeforeWatch() {
-        var status = $scope.calendar.loadingStatus().weeks;
-        $scope.progressBar.previousLoadedWeeks = status.loaded;
-    }
-
-    $scope.$watchGroup(['progressBar.inner', 'progressBar.outer'], function(values) {
-        var bar = $scope.progressBar;
-        if (bar.inner == null || bar.outer == null) return;
-        progressBar = new ProgressBar(bar.inner, bar.outer, progressWatcher, {
-            onBeforeWatch: onBeforeWatch
-        });
-    });
-
     // TODO: Ugly hack!
     $timeout(function() {
         $rootScope.$broadcast('trigger-resize');

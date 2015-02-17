@@ -1,6 +1,7 @@
-App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, ProgressBar, AssignableDay) {
+App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, AssignableDay) {
 
     $scope.calendar = {};
+    $scope.progressBar = {};
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
@@ -17,46 +18,6 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     $scope.selectedDays = [];
     $scope.selectedDay = undefined;
 
-    // TODO: <extract>
-
-    $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
-
-    // After errorThreshold number of errors that we consider an error worth displaying the user
-    var errorHits = 0;
-    var errorThreshold = 5;
-
-    function progressWatcher() {
-        var status = $scope.calendar.loadingStatus();
-        if (status.weeks.loaded < status.weeks.total && !status.active) {
-            if (errorHits >= errorThreshold) {
-                return -1;
-            } else {
-                errorHits++;
-            }
-        } else {
-            errorHits = 0;
-            var d = $scope.progressBar.previousLoadedWeeks;
-            if (status.weeks.total - d <= 0) return 1;
-            var p = Math.max(0, status.weeks.loaded - d) / Math.max(0, status.weeks.total - d);
-            return p;
-        }
-    }
-
-    function onBeforeWatch() {
-        var status = $scope.calendar.loadingStatus().weeks;
-        $scope.progressBar.previousLoadedWeeks = status.loaded;
-    }
-
-    $scope.$watchGroup(['progressBar.inner', 'progressBar.outer'], function(values) {
-        var bar = $scope.progressBar;
-        if (bar.inner == null || bar.outer == null) return;
-        progressBar = new ProgressBar(bar.inner, bar.outer, progressWatcher, {
-            onBeforeWatch: onBeforeWatch
-        });
-    });
-
-    // TODO: </extract>
-
     $scope.onSelectDays = function(selection) {
         $scope.selectedDays = selection.dates();
     }
@@ -70,8 +31,9 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var startDate = days[0].date;
         var endDate = days[days.length - 1].date;
         var daysMap = indexDaysByISOString(days);
-       // progressBar.trigger();
-        terminate();
+        $scope.progressBar.trigger();
+        $timeout(terminate, 100);
+        //terminate();
     }
 
     function indexDaysByISOString(days) {
