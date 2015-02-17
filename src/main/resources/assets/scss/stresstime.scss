@@ -420,8 +420,11 @@ $calendar-cell-spacing: 4px;
     left: 37px;
     text-align: center;
     background: $grey-0;
-    cursor: pointer;
     display: none;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.editable {
+    cursor: pointer;
 }
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.global-admin {
