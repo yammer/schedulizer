@@ -1083,6 +1083,14 @@ $progress-bar-bg: transparent;
                                                      .left-bar { width: 110px; margin: 0 5px 0 0; }
                                                      .right-bar { margin: 0 0 0 5px; }
                                                      .form-control.stat-counter { width: 18px; }
+                                                     .header .group-name { font-size: 20px; }
+                                                     .assignment-type-label { margin-left: 14px;
+                                                                              padding-right: 17px;
+                                                                              padding-left: 17px; }
+                                                     .day-assignment .day-assignment-role span { font-size: 11px;
+                                                                                                 padding-left: 8px;
+                                                                                                 padding-right: 8px; }
+                                                     .left-sidebar .nav { font-size: 13px; }
                                                    }
 @media (max-width: 1136px)                         { .left-bar, .left-bar .stamp { width: 96px; }
                                                      .right-bar, .right-bar .stamp, .bucket { width: 102px; }
@@ -1096,6 +1104,8 @@ $progress-bar-bg: transparent;
                                                                                                  padding-right: 7px; }
                                                      .bucket .bucket-name { font-size: 11px;
                                                                             top: 5px; }
+                                                     .left-sidebar .nav { font-size: 12px; }
+                                                     .left-sidebar .nav li a { padding-left: 10px; padding-right: 10px; }
                                                    }
 @media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
                                                      .stats-inputs-container .counter-control { display: none; }
