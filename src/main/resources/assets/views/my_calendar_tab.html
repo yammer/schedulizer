@@ -1,6 +1,6 @@
 <div class="dual-pane row">
     <div class="span-height">
-        <h1 class="header">
+        <h1 class="header my-calendar-header">
             My Calendar
         </h1>
 
@@ -27,6 +27,11 @@
                     on-hover-day="onHoverDay"
                     on-load-day-content="onLoadDayContent"
                     expose-api-to="calendar"
+                    cell-class=" {
+                        'available': day.content && day.content.isAvailable(),
+                        'partially-available': day.content && day.content.isPartiallyAvailable(),
+                        'not-available': day.content && day.content.isNotAvailable(),
+                    }"
                     >
 
             </calendar>

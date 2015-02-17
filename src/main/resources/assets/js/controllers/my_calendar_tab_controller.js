@@ -36,6 +36,22 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         //terminate();
     }
 
+    var MyCalendarDayContent = function(assignableDay) {
+
+    }
+
+    MyCalendarDayContent.prototype.isAvailable = function() {
+        return true;
+    }
+
+    MyCalendarDayContent.prototype.isPartiallyAvailable = function() {
+        return false;
+    }
+
+    MyCalendarDayContent.prototype.isNotAvailable = function() {
+        return false;
+    }
+
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
             return day.date.toISOLocalDateString();
