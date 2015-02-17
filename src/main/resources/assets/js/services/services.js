@@ -234,7 +234,7 @@ services.factory('AdminsResource', ['$resource', function($resource) {
 }]);
 
 services.factory('GlobalAdminsResource', ['$resource', function($resource) {
-    var AssignableDay = $resource(PREFIX + 'employees/admins/:employee_id',  { employee_id: "@id"}, {
+    var GlobalAdminsResource = $resource(PREFIX + 'employees/admins/:employee_id',  { employee_id: "@id"}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -247,9 +247,5 @@ services.factory('GlobalAdminsResource', ['$resource', function($resource) {
         }
     });
 
-    AssignableDay.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
-    }
-
-    return AssignableDay;
+    return GlobalAdminsResource;
 }]);
