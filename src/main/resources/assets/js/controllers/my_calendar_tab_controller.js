@@ -22,7 +22,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
-        $scope.dayStamp = new Date();
+        $scope.dayStamp = Date.TODAY;
     }
 
     $scope.clearSelection = function() {
@@ -30,7 +30,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         $scope.selectedDays = [];
     }
 
-    $scope.dayStamp = new Date(); /* Extract TODAY constant from calendar stuff */
+    $scope.dayStamp = Date.TODAY; 
 
     $scope.selectedDays = [];
     $scope.selectedDay = undefined;

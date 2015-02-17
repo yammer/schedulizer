@@ -113,12 +113,11 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.goToToday = function() {
-        // TODO: Find another way to do this
         $scope.calendar.goToToday();
-        $scope.dayStamp = new Date();
+        $scope.dayStamp = Date.TODAY;
     }
 
-    $scope.dayStamp = new Date(); /* Extract TODAY constant from calendar stuff */
+    $scope.dayStamp = Date.TODAY;
 
     $scope.onHoverDay = function(day) {
         $scope.dayStamp = day.date;
