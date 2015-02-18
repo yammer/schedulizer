@@ -15,10 +15,16 @@
             </div>
         </div>
     </div>
-    <div class="name">
-        <span>{{employee.name}}</span>
+    <div
+        st-name="employeeNameContainer"
+        class="name"
+        >
+        <span st-name="employeeName" ng-style="employeeNameStyle">
+            {{employee.name | characters: 60}}
+        </span>
         <if st-if="isGroupMemberOrGlobalAdmin(group)">
             <div
+                st-name="sampleBadge"
                 ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
                 class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
                 ng-class="{'no-assignments-label': stat.count == 0 }"
