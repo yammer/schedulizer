@@ -531,11 +531,11 @@ $add-bg: $grey-2;
     &.with-input {
         padding-top: 0;
     }
-}
 
-.employee-card .name  span {
-    display: inline-block;
-    overflow: hidden;
+    span {
+        display: inline-block;
+        overflow: hidden;
+    }
 }
 
 .clear {
