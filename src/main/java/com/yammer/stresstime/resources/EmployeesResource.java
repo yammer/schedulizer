@@ -69,7 +69,7 @@ public class EmployeesResource {
         LocalDate endDate = LocalDate.parse(endDateString);
         List<Assignment> assignments = assignmentManager.getByEmployeePeriod(employee, startDate, endDate);
         for (Assignment assignment : assignments) {
-            assignment.setAnnotationProperty("day", assignment.getAssignableDay().getDateString());
+            assignment.setAnnotationProperty("date", assignment.getAssignableDay().getDateString());
             assignment.setAnnotationProperty("assignmentTypeName", assignment.getAssignmentType().getName());
             assignment.setAnnotationProperty("group", assignment.getAssignmentType().getGroup());
         }
