@@ -361,3 +361,19 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
 
     return ProgressBar;
 }]);
+
+App.directive('stTooltip', function(){
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs){
+            if (attrs.stTooltip == "true") {
+                $(element).tooltip({
+                    content: function() {
+                        return $(this).attr('title');
+                    },
+                    position: {my: 'left bottom-5', at: 'left top'}
+                });
+            }
+        }
+    };
+});

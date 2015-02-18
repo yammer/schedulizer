@@ -569,6 +569,7 @@ App.directive('calendar', function() {
             onHoverDayParent: '=onHoverDay',
             onLoadDayContent: '=onLoadDayContent',
             providedCellClass: '&cellClass',
+            tooltip: '=getDayTooltip',
             api: '=exposeApiTo'
         },
         templateUrl: 'views/calendar.html',

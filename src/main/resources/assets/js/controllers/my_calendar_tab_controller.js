@@ -32,6 +32,13 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         return classMap;
     }
 
+    $scope.getDayTooltip = function(day) {
+        if (day.content && day.content.assignments && day.content.assignments.length > 0) {
+            return day.content.assignments.map(function(a){ return a.group.name + " - " + a.assignmentTypeName; }).join("<br>");
+        }
+        return undefined;
+    }
+
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = Date.TODAY;

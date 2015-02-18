@@ -29,10 +29,13 @@
             <td
                 class="day"
                 ng-repeat="day in week.days"
+                title="{{tooltip(day)}}"
+                st-tooltip="{{tooltip != undefined}}"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"
                 ng-mouseenter="onMouseEnter(day, $event)"
                 ng-class="cellClass(day, week)"
+
                 >
                 {{day.date.getDate()}}
             </td>
