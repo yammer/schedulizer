@@ -72,8 +72,6 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
             }).catch(function(e) {
                 terminate(true);
         });
-        $timeout(terminate, 100);
-        //terminate();
     };
 
     function updateDayRestrictions(dayRestrictions) {
