@@ -33,6 +33,7 @@
                     </div>
                 </div>
             </div>
+
             <calendar
                     class="calendar align-parent-bottom"
                     discount-height="70"
@@ -43,6 +44,7 @@
                     cell-class="getCellClass(day)"
                     >
             </calendar>
+
             <div class="my-calendar-right-bar">
 
                 <div ng-if="selectedDays.length > 0">
@@ -56,22 +58,48 @@
                         <div class="panel-body">
                             <div class="availability-inputs-container">
                                 <div
-                                    ng-repeat="availabilityState in availabilityStates"
-                                    ng-init="availabilityState.clicked = true"
-                                    class="availability-input {{availabilityState.className}} glyphicon"
-                                    ng-click="availabilityState.clicked = !availabilityState.clicked"
-                                    ng-class="{ 'enabled {{availabilityState.glyphicon}}': availabilityState.clicked}"
+                                    ng-repeat="state in availabilityStates"
+                                    ng-click="availability.state = state.label"
+                                    class="availability-input {{state.label}}"
+                                    ng-class="{
+                                        'active': isStateToggleActive(state.label),
+                                        'invalid': availability.state == null
+                                    }"
                                     >
+                                    <span class="glyphicon {{state.glyphicon}}"></span>
                                 </div>
                                 <div class="clear"></div>
                             </div>
                             <div>
-                                <textarea class="availability-comment form-control" ng-model="availabilityComment"></textarea>
+                                <textarea
+                                    class="availability-comment form-control"
+                                    ng-model="availability.comment.text"
+                                    ng-trim="false"
+                                    ng-change="availability.comment.valid = true"
+                                    ng-class="{'invalid': !availability.comment.valid}"
+                                    placeholder="{{getCommentPlaceholder()}}"
+                                    >
+                                </textarea>
                                 <div class="clear"></div>
                             </div>
-                            <button type="button" class="btn btn-primary availability-confirm-button">
+
+                            <button
+                                type="button"
+                                class="btn btn-primary availability-confirm-button"
+                                ng-class="{'disabled': !canSubmitChange()}"
+                                ng-click="submitAvailabilityChange()"
+                                >
                                 Ok
                             </button>
+                            <p ng-if="canSubmitChange()" class="submit-message">
+                                {{selectedDays.length}} days will change
+                            </p>
+                            <p ng-if="!canSubmitChange()" class="submit-message">
+                                Change
+                                <span ng-if="!availability.comment.valid">comments</span>
+                                <span ng-if="!availability.comment.valid && availability.state == null">and</span>
+                                <span ng-if="availability.state == null">label</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -102,7 +130,7 @@
                         <td class="description" colspan="2">Selected</td>
                     </tr>
                     <tr ng-repeat="availabilityState in availabilityStates">
-                        <td class="day {{availabilityState.className}}"></td>
+                        <td class="day {{availabilityState.label}}"></td>
                         <td class="description" colspan="2">{{availabilityState.title}}</td>
                     </tr>
                 </table>

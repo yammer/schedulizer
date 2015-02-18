@@ -276,7 +276,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.addAssignment = function(employee, assignmentType) {
         var group = $scope.selectedGroup;
         var days = $scope.selectedDates;
-        var daysString = days.map(function(d) {return d.toISOLocalDateString();}).join();
+        var daysString = days.map(function(d) {return d.toISOLocalDateString();}).join(',');
         AssignableDay.save({
             groupId: group.id,
             employee_id:employee.id,

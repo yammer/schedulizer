@@ -2,23 +2,22 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     $scope.calendar = {};
     $scope.progressBar = {trigger: function() {}};
-    $scope.availabilityStates = [
-        {
-            className: "available",
-            title: "Available",
+    $scope.availabilityStates = [{
+            label: 'available',
+            level: 0,
+            title: 'Available',
             glyphicon: 'glyphicon-ok'
-        },
-        {
-            className: "mid-available",
-            title: "Partially Available",
+        }, {
+            label: 'mid-available',
+            level: 1,
+            title: 'Partially Available',
             glyphicon: 'glyphicon-minus'
-        },
-        {
-            className: "not-available",
-            title: "Not Available",
+        }, {
+            label: 'not-available',
+            level: 2,
+            title: 'Not Available',
             glyphicon: 'glyphicon-remove'
-        }
-    ];
+    }];
 
     $scope.getCellClass = function(day) {
         var classMap = {
@@ -49,13 +48,93 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         $scope.selectedDays = [];
     };
 
-    $scope.dayStamp = Date.TODAY; 
+    $scope.dayStamp = Date.TODAY;
+
+    var DEFAULT_AVAILABILITY = function() {
+        return {
+            comment: {
+                multiple: false,
+                valid: true,
+                text: ""
+            },
+            state: null
+        };
+    };
+
+    // Holds the info to be submitted
+    $scope.availability = DEFAULT_AVAILABILITY();
 
     $scope.selectedDays = [];
     $scope.selectedDay = undefined;
 
     $scope.onSelectDays = function(selection) {
-        $scope.selectedDays = selection.dates();
+        $scope.selectedDays = selection.getDays();
+        $scope.availability = DEFAULT_AVAILABILITY();
+        $scope.availability.comment = getAvailabilityCommentFromDays($scope.selectedDays);
+        $scope.availability.state = getAvailabilityStateLabelFromDays($scope.selectedDays);
+    };
+
+    function getAvailabilityCommentFromDays(days) {
+        var comments = _.chain(days)
+            .map('content')
+            .map(function(content) {return (!content) ? "" : content.dayRestriction.comment})
+            .value();
+        var uniq = _.uniq(comments).length == 1;
+        var text = (uniq) ? comments[0] : "";
+        return {valid: uniq, text: text};
+    }
+
+    function getAvailabilityStateLabelFromDays(days) {
+        var states = _.chain(days)
+            .map(getDayState)
+            .uniq()
+            .value();
+        return (states.length == 1) ? states[0] : null;
+    }
+
+    function getDayState(day) {
+        return (day.content) ? day.content.state() : 'available';
+    }
+
+    function isAnySelectedDayInState(stateLabel) {
+        return _.any($scope.selectedDays, function(day) {return getDayState(day) == stateLabel});
+    }
+
+    $scope.getCommentPlaceholder = function() {
+        return ($scope.availability.comment.valid) ? "Comments" : "Multiple values";
+    };
+
+    $scope.isStateToggleActive = function(stateLabel) {
+        return ($scope.availability.state != null)
+            ? $scope.availability.state == stateLabel
+            : isAnySelectedDayInState(stateLabel);
+    };
+
+    $scope.canSubmitChange = function() {
+        return $scope.availability.state != null && $scope.availability.comment.valid;
+    };
+
+
+
+    $scope.submitAvailabilityChange = function() {
+        if (!$scope.canSubmitChange()) return;
+
+        var dates = _.map($scope.selectedDays, function(day){
+            return day.date.toISOLocalDateString();
+        }).join(',');
+        var restrictionLevel = _.find($scope.availabilityStates, function(state) {
+            return state.label == $scope.availability.state;
+        }).level;
+
+        DayRestriction.save({
+            employeeId: $scope.employeeId,
+            dates: dates,
+            comment: $scope.availability.comment.text,
+            restriction_level: restrictionLevel
+        }, function(dayRestrictions) {
+            updateDayRestrictions(dayRestrictions);
+            $scope.clearSelection();
+        });
     };
 
     $scope.onHoverDay = function(day) {
@@ -154,17 +233,16 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     MyCalendarDayContent.prototype.dayRestriction = null;
     MyCalendarDayContent.prototype.assignments = null;
 
-    MyCalendarDayContent.prototype.isAvailable = function() {
-        return this.dayRestriction == undefined || this.dayRestriction.restrictionLevel == 0;
-    }
-
-    MyCalendarDayContent.prototype.isMidAvailable = function() {
-        return this.dayRestriction && this.dayRestriction.restrictionLevel == 1;
+    MyCalendarDayContent.prototype.state = function() {
+        var state = _.find($scope.availabilityStates, function(s) {
+            return this.dayRestriction && s.level == this.dayRestriction.restrictionLevel;
+        }, this);
+        return (state != null) ? state.label : 'available';
     };
 
-    MyCalendarDayContent.prototype.isNotAvailable = function() {
-        return this.dayRestriction && this.dayRestriction.restrictionLevel == 2;
-    };
+    MyCalendarDayContent.prototype.isAvailable = function() {return this.state() == 'available';};
+    MyCalendarDayContent.prototype.isMidAvailable = function() {return this.state() == 'mid-available';};
+    MyCalendarDayContent.prototype.isNotAvailable = function() {return this.state() == 'not-available';};
 
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
