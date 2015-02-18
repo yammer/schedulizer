@@ -142,10 +142,10 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     $scope.clearSelection = function() {
         $scope.calendar.clearSelectedDays();
-        $scope.selectedDays = [];
+        $scope.selectedDates = [];
     }
 
-    $scope.selectedDays = [];
+    $scope.selectedDates = [];
     $scope.selectedDay = undefined;
 
     function initAssignmentTypeBucket(assignmentType) {
@@ -186,7 +186,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.onSelectDays = function(selection) {
-        $scope.selectedDays = selection.dates();
+        $scope.selectedDates = selection.dates();
         $scope.assignmentTypeBuckets = {};
         initAssignmentBuckets();
 
@@ -275,7 +275,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     $scope.addAssignment = function(employee, assignmentType) {
         var group = $scope.selectedGroup;
-        var days = $scope.selectedDays;
+        var days = $scope.selectedDates;
         var daysString = days.map(function(d) {return d.toISOLocalDateString();}).join();
         AssignableDay.save({
             groupId: group.id,
