@@ -2,17 +2,18 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
-import com.yammer.stresstime.entities.Employee;
-import com.yammer.stresstime.entities.Group;
-import com.yammer.stresstime.entities.Membership;
-import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.managers.AssignableDayManager;
+import com.yammer.stresstime.managers.AssignmentManager;
 import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
+import org.joda.time.LocalDate;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Set;
 
 @Path("/employees")
@@ -20,9 +21,11 @@ import java.util.Set;
 public class EmployeesResource {
 
     private EmployeeManager employeeManager;
+    private AssignmentManager assignmentManager;
 
-    public EmployeesResource(EmployeeManager employeeManager) {
+    public EmployeesResource(EmployeeManager employeeManager, AssignmentManager assignmentManager) {
         this.employeeManager = employeeManager;
+        this.assignmentManager = assignmentManager;
     }
 
     @GET
@@ -45,6 +48,38 @@ public class EmployeesResource {
         Employee employee = employeeManager.getById(employeeId);
         return Response.ok().entity(employee).build();
     }
+
+    @GET
+    @Path("/{employee_id}/assignments")
+    @UnitOfWork
+    public Response getAssignableDays(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
+            @PathParam("employee_id") long employeeId,
+            @QueryParam("start_date") String startDateString,
+            @QueryParam("end_date") String endDateString) {
+
+        Employee employee = employeeManager.getById(employeeId);
+
+        ResourceUtils.checkConflictFree(user.getEmployee().getId() == employeeId, Employee.class);
+
+        ResourceUtils.checkParameter(startDateString != null, "start_date");
+        ResourceUtils.checkParameter(endDateString != null, "end_date");
+
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        List<Assignment> assignments = assignmentManager.getByEmployeePeriod(employee, startDate, endDate);
+        for (Assignment assignment : assignments) {
+            assignment.setAnnotationProperty("day", assignment.getAssignableDay().getDateString());
+            assignment.setAnnotationProperty("assignmentTypeName", assignment.getAssignmentType().getName());
+            assignment.setAnnotationProperty("group", assignment.getAssignmentType().getGroup());
+        }
+
+        // Avoid hibernate lazy eval problems with premature session closing
+        String response = ResourceUtils.preProcessResponse(assignments);
+        return Response.ok().entity(response).build();
+    }
+
+
 
     @GET
     @Path("admins")
