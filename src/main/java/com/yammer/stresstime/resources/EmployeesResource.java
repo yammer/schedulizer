@@ -74,9 +74,7 @@ public class EmployeesResource {
             assignment.setAnnotationProperty("group", assignment.getAssignmentType().getGroup());
         }
 
-        // Avoid hibernate lazy eval problems with premature session closing
-        String response = ResourceUtils.preProcessResponse(assignments);
-        return Response.ok().entity(response).build();
+        return Response.ok().entity(assignments).build();
     }
 
 
