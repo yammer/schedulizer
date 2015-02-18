@@ -1030,6 +1030,13 @@ $progress-bar-bg: transparent;
     padding-left: 30px;
 }
 
+.my-calendar-right-bar {
+    float: right;
+    width: 183px;
+    height: 50px;
+    margin: 0 10px;
+}
+
 $available-bg: #6FDF6F;
 $partially-available-bg: #EFC932;
 $not-available-bg: #e06969;
@@ -1047,6 +1054,71 @@ $not-available-bg: #e06969;
 .not-available {
     @include even-odd(color, $light-fg);
     @include colorize-day($not-available-bg);
+}
+
+.availability-input {
+    @include select(none);
+    opacity: 0.6;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    width: 41px;
+    height: 36px;
+    border-radius: 4px;
+    margin: 0 0 0 11px;
+    padding-top: 11px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.availability-input:first-child {
+    margin-left: 0;
+}
+
+.availability-input:hover {
+    opacity: 0.8;
+}
+
+.availability-input.enabled {
+    opacity: 1;
+}
+
+.availability-input.enabled:hover {
+    opacity: 0.8;
+}
+
+.availability-inputs-panel .panel-body {
+    padding: 17px 17px 15px 17px;
+}
+
+.availability-inputs-panel {
+    overflow: auto;
+    color: $dark-fg;
+    font-weight: bold;
+    background-color: #eeeeee;
+}
+
+$availability-status-height: 30px;
+
+.availability-inputs-container {
+    height: $availability-status-height;
+    line-height: $availability-status-height;
+    padding: 0 1px;
+}
+
+.availability-comment.form-control {
+    height: 140px;
+}
+
+.availability-comment {
+    width: 100%;
+    margin-top: 20px;
+    font-weight: normal;
+}
+
+.availability-confirm-button {
+    float: right;
+    margin-top: 10px;
 }
 
 /* Responsiveness */

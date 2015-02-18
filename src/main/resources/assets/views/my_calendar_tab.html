@@ -34,7 +34,7 @@
                     }"
                     >
             </calendar>
-            <div class="right-bar">
+            <div class="my-calendar-right-bar">
 
                 <div ng-if="selectedDays.length > 0">
                     <div ng-click="clearSelection()" class="stamp selection-stamp" >
@@ -42,8 +42,27 @@
                         <div class="sub-label">Days Selected</div>
                     </div>
                     <div class="clear"></div>
-                </div>
 
+                    <div class="panel panel-default availability-inputs-panel">
+                        <div class="panel-body">
+                            <div class="availability-inputs-container">
+                                <div ng-repeat="availabilityState in availabilityStates"
+                                     ng-init="availabilityState.clicked=true"
+                                     class="availability-input {{availabilityState.className}} glyphicon"
+                                     ng-click="availabilityState.clicked = !availabilityState.clicked"
+                                     ng-class="{ 'enabled {{availabilityState.glyphicon}}': availabilityState.clicked}"/>
+                                <div class="clear"></div>
+                            </div>
+                            <div>
+                                <textarea class="availability-comment form-control" ng-model="availabilityComment"></textarea>
+                                <div class="clear"></div>
+                            </div>
+                            <button type="button" class="btn btn-primary availability-confirm-button">
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <table
                         ng-init="legendToggle = false"
@@ -70,17 +89,9 @@
                         <td class="day hover"></td>
                         <td class="description" colspan="2">Selected</td>
                     </tr>
-                    <tr>
-                        <td class="day available"></td>
-                        <td class="description" colspan="2">Available</td>
-                    </tr>
-                    <tr>
-                        <td class="day partially-available"></td>
-                        <td class="description" colspan="2">Partially Available</td>
-                    </tr>
-                    <tr>
-                        <td class="day not-available"></td>
-                        <td class="description" colspan="2">Not Available</td>
+                    <tr ng-repeat="availabilityState in availabilityStates">
+                        <td class="day {{availabilityState.className}}"></td>
+                        <td class="description" colspan="2">{{availabilityState.title}}</td>
                     </tr>
                 </table>
             </div>

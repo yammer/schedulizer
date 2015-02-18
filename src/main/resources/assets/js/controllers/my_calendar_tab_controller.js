@@ -2,6 +2,23 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     $scope.calendar = {};
     $scope.progressBar = {};
+    $scope.availabilityStates = [
+        {
+            className: "available",
+            title: "Available",
+            glyphicon: 'glyphicon-ok'
+        },
+        {
+            className: "partially-available",
+            title: "Partially Available",
+            glyphicon: 'glyphicon-minus'
+        },
+        {
+            className: "not-available",
+            title: "Not Available",
+            glyphicon: 'glyphicon-remove'
+        }
+    ];
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
