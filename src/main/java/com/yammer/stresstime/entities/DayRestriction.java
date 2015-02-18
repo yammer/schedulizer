@@ -2,14 +2,11 @@ package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "day_restrictions",
@@ -68,7 +65,7 @@ public class DayRestriction extends JsonAnnotatedEntity {
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        this.comment = (comment != null) ? comment.trim() : null;
     }
 
     @JsonIgnore
