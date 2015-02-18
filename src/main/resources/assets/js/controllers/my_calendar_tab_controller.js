@@ -114,8 +114,6 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         return $scope.availability.state != null && $scope.availability.comment.valid;
     };
 
-
-
     $scope.submitAvailabilityChange = function() {
         if (!$scope.canSubmitChange()) return;
 
@@ -160,7 +158,13 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         }
 
         $scope.progressBar.trigger();
-        var partiallyFetched = false;
+
+        var i = 2;
+        var totalError = false;
+        var wrappedTerminate = function(error) {
+            totalError = totalError || error;
+            if (--i == 0) terminate(totalError);
+        };
 
         DayRestriction.query({
                 employee_id: $scope.employeeId,
@@ -168,15 +172,9 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(dayRestrictions) {
                 updateDayRestrictions(dayRestrictions);
-                if (partiallyFetched && terminate) {
-                    terminate();
-                }
-                else {
-                    partiallyFetched = true;
-                }
+                wrappedTerminate();
             }).catch(function(e) {
-                terminate(true);
-                terminate = undefined; // dont allow terminate to be called twice
+                wrappedTerminate(true);
         });
 
         EmployeeAssignmentsResource.query({
@@ -185,21 +183,15 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(assignments) {
                 updateAssignments(assignments);
-                if (partiallyFetched && terminate) {
-                    terminate();
-                }
-                else {
-                    partiallyFetched = true;
-                }
+                wrappedTerminate()
             }).catch(function(e) {
-                terminate(true);
-                terminate = undefined;
+                wrappedTerminate(true);
         });
     };
 
     $scope.hasAssignment = function(day) {
         return day && day.content && day.content.assignments && day.content.assignments.length > 0;
-    }
+    };
 
     function updateDayRestrictions(dayRestrictions) {
         var dates = _.map(dayRestrictions, function(d) {return d.getDate();});
@@ -210,7 +202,6 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
             }
             daysMap[dayRestriction.date].content.dayRestriction = dayRestriction;
         });
-
     }
 
     function updateAssignments(assignments) {
