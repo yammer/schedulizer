@@ -33,8 +33,8 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     }
 
     $scope.getDayTooltip = function(day) {
-        if (day.content && day.content.assignments && day.content.assignments.length > 0) {
-            return day.content.assignments.map(function(a){ return a.group.name + " - " + a.assignmentTypeName; }).join("<br>");
+        if ($scope.hasAssignment(day)) {
+            return day.content.assignments.map(function(a){ return a.getFullName(); }).join("<br>");
         }
         return undefined;
     }
@@ -117,6 +117,10 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
                 terminate = undefined;
         });
     };
+
+    $scope.hasAssignment = function(day) {
+        return day && day.content && day.content.assignments && day.content.assignments.length > 0;
+    }
 
     function updateDayRestrictions(dayRestrictions) {
         var dates = _.map(dayRestrictions, function(d) {return d.getDate();});

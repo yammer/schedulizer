@@ -280,5 +280,9 @@ services.factory('EmployeeAssignmentsResource', ['$resource', function($resource
         return Date.fromISOLocalString(this.date);
     };
 
+    EmployeeAssignmentsResource.prototype.getFullName = function() {
+        return this.group.name + " - " + this.assignmentTypeName;
+    }
+
     return EmployeeAssignmentsResource;
 }]);

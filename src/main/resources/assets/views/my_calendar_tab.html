@@ -8,7 +8,7 @@
         </calendar-progress-bar>
 
         <div class="calendar-wrap align-parent-bottom" discount-height="70">
-            <div class="left-bar">
+            <div class="my-calendar-left-bar">
                 <div class="tools">
                     <button type="button" ng-click="goToToday()" class="btn btn-primary">
                         <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
@@ -19,6 +19,19 @@
                     <div class="sub-label">{{dayStamp.getMonthName()}}</div>
                     <div class="main-label">{{dayStamp.getDate()}}</div>
                 </div>
+                <div ng-if="hasAssignment(hoveredDay)" class="day-assignments assignment-hover-text-group">
+                    <div
+                            ng-repeat="assignment in hoveredDay.content.assignments"
+                            class="day-assignment"
+                            >
+                        <div class="day-assignment-role">
+                            <span class="assignment-hover-text">
+                                {{assignment.getFullName()}}
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <calendar
                     class="calendar align-parent-bottom"
@@ -28,7 +41,6 @@
                     on-load-day-content="onLoadDayContent"
                     expose-api-to="calendar"
                     cell-class="getCellClass(day)"
-                    get-day-tooltip="getDayTooltip"
                     >
             </calendar>
             <div class="my-calendar-right-bar">

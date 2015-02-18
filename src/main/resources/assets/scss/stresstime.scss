@@ -1036,6 +1036,13 @@ $progress-bar-bg: transparent;
     margin: 0 10px;
 }
 
+.my-calendar-left-bar {
+    float: left;
+    width: 300px;
+    height: 50px;
+    margin: 0 10px;
+}
+
 $available-bg: #6FDF6F;
 $mid-available-bg: #EFC932;
 $not-available-bg: $light-red;
@@ -1145,6 +1152,15 @@ $availability-status-height: 30px;
             left: 34px;
         }
     }
+}
+
+.assignment-hover-text-group .day-assignment-role .assignment-hover-text {
+    color: white;
+    background: $grey-3;
+}
+
+.assignment-hover-text-group {
+    margin-top: 20px;
 }
 
 /* Tooltip style */
