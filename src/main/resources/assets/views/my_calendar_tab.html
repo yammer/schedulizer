@@ -33,7 +33,6 @@
                         'not-available': day.content && day.content.isNotAvailable(),
                     }"
                     >
-
             </calendar>
             <div class="right-bar">
 
@@ -44,6 +43,7 @@
                     </div>
                     <div class="clear"></div>
                 </div>
+
 
                 <table
                         ng-init="legendToggle = false"
@@ -62,11 +62,6 @@
                         ng-mouseleave="legendToggle = false"
                         ng-show="legendToggle"
                         >
-                    <tr>
-                        <td class="day odd"></td>
-                        <td class="day even"></td>
-                        <td class="description">Empty days</td>
-                    </tr>
                     <tr ng-click="goToToday()">
                         <td class="day today"></td>
                         <td class="description" colspan="2">Today</td>
@@ -76,12 +71,16 @@
                         <td class="description" colspan="2">Selected</td>
                     </tr>
                     <tr>
-                        <td class="day mid-assigned"></td>
-                        <td class="description" colspan="2">Partially Assigned</td>
+                        <td class="day available"></td>
+                        <td class="description" colspan="2">Available</td>
                     </tr>
                     <tr>
-                        <td class="day assigned"></td>
-                        <td class="description" colspan="2">Fully Assigned</td>
+                        <td class="day partially-available"></td>
+                        <td class="description" colspan="2">Partially Available</td>
+                    </tr>
+                    <tr>
+                        <td class="day not-available"></td>
+                        <td class="description" colspan="2">Not Available</td>
                     </tr>
                 </table>
             </div>

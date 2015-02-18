@@ -86,7 +86,7 @@ $day-border-thickness: 5px;
     }
 }
 
-@mixin even-odd($property-name, $color, $amount) {
+@mixin even-odd($property-name, $color, $amount: 0%) {
     #{$property-name}: $color;
     &.odd { #{$property-name}: darken($color, $amount); }
     &.even { #{$property-name}: lighten($color, $amount); }
@@ -1025,10 +1025,29 @@ $progress-bar-bg: transparent;
 }
 
 /* My Calendar */
+
 .my-calendar-header {
     padding-left: 30px;
 }
 
+$available-bg: #6FDF6F;
+$partially-available-bg: #EFC932;
+$not-available-bg: #e06969;
+
+.available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($available-bg);
+}
+
+.partially-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($partially-available-bg);
+}
+
+.not-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($not-available-bg);
+}
 
 /* Responsiveness */
 
