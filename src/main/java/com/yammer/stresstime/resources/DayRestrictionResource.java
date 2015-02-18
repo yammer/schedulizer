@@ -1,11 +1,13 @@
 package com.yammer.stresstime.resources;
 
 
-import com.google.common.collect.ImmutableMap;
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
-import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.managers.*;
+import com.yammer.stresstime.entities.DayRestriction;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.managers.DayRestrictionManager;
+import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.joda.time.LocalDate;
@@ -15,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Path("/employees/{employee_id}/restrictions")
@@ -65,12 +65,14 @@ public class DayRestrictionResource {
 
         Employee employee = employeeManager.getById(employeeId);
 
-        ResourceUtils.checkSameEmployee(employee, user.getEmployee());
+        ResourceUtils.checkConflictFree(user.getEmployee().getId() == employeeId, Employee.class);
         ResourceUtils.checkParameter(dates != null, "dates");
 
         List<DayRestriction> dayRestrictions = Arrays.stream(dates.split(","))
                 .map(LocalDate::parse)
-                .map(d -> dayRestrictionManager.getOrCreateByEmployeeDateComment(employee, d, comment, restrictionLevel))
+                .map(d -> dayRestrictionManager.getOrCreateByEmployeeAndDate(employee, d))
+                .peek(d -> d.setComment(comment))
+                .peek(d -> d.setRestrictionLevel(restrictionLevel))
                 .collect(Collectors.toList());
 
         dayRestrictionManager.save(dayRestrictions);
@@ -92,7 +94,7 @@ public class DayRestrictionResource {
         Employee employee = dayRestriction.getEmployee();
 
         ResourceUtils.checkConflictFree(employee.getId() == employeeId, Employee.class);
-        ResourceUtils.checkSameEmployee(employee, user.getEmployee());
+        ResourceUtils.checkConflictFree(user.getEmployee().getId() == employeeId, Employee.class);
 
         dayRestrictionManager.delete(dayRestriction);
         return Response.ok().build();

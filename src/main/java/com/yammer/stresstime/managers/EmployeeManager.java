@@ -13,10 +13,6 @@ public class EmployeeManager extends EntityManager<Employee> {
         super(sessionFactory, Employee.class);
     }
 
-    public List<Employee> all() {
-        return list(currentSession().createQuery("from Employee"));
-    }
-
     public Employee safeGetByYammerId(String yammerId) {
         return getUnique(currentSession()
                 .createCriteria(Employee.class)
@@ -28,10 +24,12 @@ public class EmployeeManager extends EntityManager<Employee> {
         return checkFound(employee);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Employee> getGlobalAdmins() {
         return currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("globalAdmin", true)).list();
+                .add(Restrictions.eq("globalAdmin", true))
+                .list();
     }
 
     /**

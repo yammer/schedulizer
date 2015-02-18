@@ -30,7 +30,7 @@ public class AssignableDayManager extends EntityManager<AssignableDay> {
         super(sessionFactory, AssignableDay.class);
     }
 
-    public AssignableDay getOrCreateByGroupDate(Group group, LocalDate date) {
+    public AssignableDay getOrCreateByGroupAndDate(Group group, LocalDate date) {
         AssignableDay assignableDay = getUnique(currentSession()
                 .createCriteria(AssignableDay.class)
                 .add(Restrictions.eq("date", date))

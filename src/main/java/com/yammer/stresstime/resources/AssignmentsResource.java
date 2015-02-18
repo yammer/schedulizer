@@ -82,7 +82,7 @@ public class AssignmentsResource {
 
         List<AssignableDay> assignableDays = Arrays.stream(dates.split(","))
                 .map(LocalDate::parse)
-                .map(d -> assignableDayManager.getOrCreateByGroupDate(group, d))
+                .map(d -> assignableDayManager.getOrCreateByGroupAndDate(group, d))
                 .collect(Collectors.toList());
 
         List<Assignment> assignments = assignableDays.stream()

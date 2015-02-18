@@ -14,6 +14,7 @@ public class DayRestrictionManager extends EntityManager<DayRestriction> {
         super(sessionFactory, DayRestriction.class);
     }
 
+    @SuppressWarnings("unchecked")
     public List<DayRestriction> getByEmployeePeriod(Employee employee, LocalDate startDate, LocalDate endDate) {
         return currentSession()
                 .createCriteria(DayRestriction.class)
@@ -23,7 +24,7 @@ public class DayRestrictionManager extends EntityManager<DayRestriction> {
                 .list();
     }
 
-    public DayRestriction getOrCreateByEmployeeDateComment(Employee employee, LocalDate date, String comment, int restrictionLevel) {
+    public DayRestriction getOrCreateByEmployeeAndDate(Employee employee, LocalDate date) {
         DayRestriction dayRestriction = getUnique(currentSession()
                 .createCriteria(DayRestriction.class)
                 .add(Restrictions.eq("employee.id", employee.getId()))
@@ -31,8 +32,6 @@ public class DayRestrictionManager extends EntityManager<DayRestriction> {
         if (dayRestriction == null) {
             dayRestriction = new DayRestriction(date, employee);
         }
-        dayRestriction.setComment(comment);
-        dayRestriction.setRestrictionLevel(restrictionLevel);
         save(dayRestriction);
         return dayRestriction;
     }

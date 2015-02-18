@@ -14,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class ResourceUtils {
 
@@ -74,12 +73,6 @@ public class ResourceUtils {
 
     public static void checkGroupMemberOrGlobalAdmin(Group group, Employee employee) {
         if (!employee.isGlobalAdmin() && !group.isMember(employee)) {
-            throw new UnauthorizedAccessException();
-        }
-    }
-
-    public static void checkSameEmployee(Employee employee, Employee employee2) {
-        if (employee.getId() != employee2.getId()) {
             throw new UnauthorizedAccessException();
         }
     }
