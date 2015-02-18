@@ -239,7 +239,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         })
     }
 
-    $scope.progressBar = { trigger: function(){} };
+    $scope.progressBar = {trigger: function() {console.log('empty trigger()');}};
 
     $scope.onLoadDayContent = function(terminate, days) {
         var startDate = days[0].date;
@@ -264,9 +264,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     function updateDayAssignments(assignableDays, daysMap) {
         if (daysMap == null) {
-            var dates = _.map(assignableDays, function(assignableDay) {
-                return assignableDay.getDate();
-            });
+            var dates = _.map(assignableDays, function(a) {return a.getDate();});
             daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
         }
 

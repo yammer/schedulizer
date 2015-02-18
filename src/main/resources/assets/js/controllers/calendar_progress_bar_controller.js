@@ -1,4 +1,5 @@
 App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
+
     $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
 
     // After errorThreshold number of errors that we consider an error worth displaying the user
@@ -38,7 +39,7 @@ App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
     });
 
     $scope.api.trigger = function () {
-        if(progressBar) {
+        if (progressBar) {
             progressBar.trigger();
         }
     }

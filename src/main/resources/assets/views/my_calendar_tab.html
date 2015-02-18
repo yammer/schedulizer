@@ -28,8 +28,8 @@
                     on-load-day-content="onLoadDayContent"
                     expose-api-to="calendar"
                     cell-class=" {
-                        'available': day.content && day.content.isAvailable(),
-                        'partially-available': day.content && day.content.isPartiallyAvailable(),
+                        'available': !day.content || day.content.isAvailable(),
+                        'mid-available': day.content && day.content.isMidAvailable(),
                         'not-available': day.content && day.content.isNotAvailable(),
                     }"
                     >
@@ -46,11 +46,14 @@
                     <div class="panel panel-default availability-inputs-panel">
                         <div class="panel-body">
                             <div class="availability-inputs-container">
-                                <div ng-repeat="availabilityState in availabilityStates"
-                                     ng-init="availabilityState.clicked=true"
-                                     class="availability-input {{availabilityState.className}} glyphicon"
-                                     ng-click="availabilityState.clicked = !availabilityState.clicked"
-                                     ng-class="{ 'enabled {{availabilityState.glyphicon}}': availabilityState.clicked}"/>
+                                <div
+                                    ng-repeat="availabilityState in availabilityStates"
+                                    ng-init="availabilityState.clicked = true"
+                                    class="availability-input {{availabilityState.className}} glyphicon"
+                                    ng-click="availabilityState.clicked = !availabilityState.clicked"
+                                    ng-class="{ 'enabled {{availabilityState.glyphicon}}': availabilityState.clicked}"
+                                    >
+                                </div>
                                 <div class="clear"></div>
                             </div>
                             <div>

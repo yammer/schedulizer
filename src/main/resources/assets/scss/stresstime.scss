@@ -22,6 +22,8 @@ body {
 }
 
 $blue: #398BCA;
+$dark-red: #C41E1E;
+$light-red: #E06969;
 /* $grey-N: higher N means darker */
 $grey-0: #F5F5F5; /* Sidebar and title bgs */
 $grey-1: #EEEEEE; /* Lighter months on calendar */
@@ -71,8 +73,6 @@ $selected-bg: #2EC3E5;
 $odd-bg: $grey-2;
 $even-bg: $grey-1;
 $today-bg: #FD8845;
-$assigned-bg: #6FDF6F;
-$mid-assigned-bg: #EFC932;
 
 $day-border-thickness: 5px;
 
@@ -97,12 +97,7 @@ $day-border-thickness: 5px;
 }
 
 .view-calendar td, .view-calendar th {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+    @include select(none);
 }
 
 $calendar-cell-spacing: 4px;
@@ -174,6 +169,9 @@ $calendar-cell-spacing: 4px;
 
 /* Group View Calendar */
 
+$assigned-bg: #6FDF6F;
+$mid-assigned-bg: #EFC932;
+
 .day.assigned {
     color: $light-fg;
     @include colorize-day($assigned-bg);
@@ -182,6 +180,8 @@ $calendar-cell-spacing: 4px;
     color: $light-fg;
     @include colorize-day($mid-assigned-bg);
 }
+
+/* Availability Calendar */
 
 /* Loading */
 
@@ -360,7 +360,7 @@ $calendar-cell-spacing: 4px;
 }
 
 .selection-stamp:hover {
-    background-color: #e06969;
+    background-color: $light-red;
 }
 
 /* Employee card */
@@ -636,7 +636,7 @@ $add-bg: $grey-2;
     }
 
     &:hover {
-        background-color: #e06969;
+        background-color: $light-red;
 
         .minus-span { visibility: visible; }
         img { visibility: hidden; }
@@ -683,7 +683,7 @@ a[disabled] {
 }
 /* Deletable card */
 
-$delete-bg: #C41E1E;
+$delete-bg: $dark-red;
 
 .deletable-card {
     position: relative;
@@ -700,7 +700,7 @@ $delete-bg: #C41E1E;
     width: 23px;
     border-radius: 50%;
     cursor: pointer;
-    background-color: #e06969;
+    background-color: $light-red;
 }
 
 .deletable-card .delete div {
@@ -1038,17 +1038,19 @@ $progress-bar-bg: transparent;
 }
 
 $available-bg: #6FDF6F;
-$partially-available-bg: #EFC932;
-$not-available-bg: #e06969;
+$mid-available-bg: #EFC932;
+$not-available-bg: $light-red;
+
+/* Calendar */
 
 .available {
     @include even-odd(color, $light-fg);
     @include colorize-day($available-bg);
 }
 
-.partially-available {
+.mid-available {
     @include even-odd(color, $light-fg);
-    @include colorize-day($partially-available-bg);
+    @include colorize-day($mid-available-bg);
 }
 
 .not-available {
