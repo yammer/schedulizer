@@ -20,6 +20,18 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         }
     ];
 
+    $scope.getCellClass = function(day) {
+        var classMap = {
+            'available': !day.content || day.content.isAvailable(),
+            'mid-available': day.content && day.content.isMidAvailable(),
+            'not-available': day.content && day.content.isNotAvailable(),
+        };
+        if (day.content && day.content.assignments.length > 0) {
+            classMap["assignment-count-" + day.content.assignments.length] = true;
+        }
+        return classMap;
+    }
+
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = Date.TODAY;
@@ -118,15 +130,18 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
             if (daysMap[assignment.date].content == undefined) {
                 daysMap[assignment.date].content = new MyCalendarDayContent();
             }
-            daysMap[assignment.date].content.assignment = assignment;
+            daysMap[assignment.date].content.assignments.push(assignment);
+            daysMap[assignment.date].content.assignments = _.unique(daysMap[assignment.date].content.assignments);
         });
 
     }
 
-    var MyCalendarDayContent = function() {};
+    var MyCalendarDayContent = function() {
+        this.assignments = [];
+    };
 
     MyCalendarDayContent.prototype.dayRestriction = null;
-    MyCalendarDayContent.prototype.assignment = null;
+    MyCalendarDayContent.prototype.assignments = null;
 
     MyCalendarDayContent.prototype.isAvailable = function() {
         return this.dayRestriction == undefined || this.dayRestriction.restrictionLevel == 0;

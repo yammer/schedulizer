@@ -27,11 +27,7 @@
                     on-hover-day="onHoverDay"
                     on-load-day-content="onLoadDayContent"
                     expose-api-to="calendar"
-                    cell-class=" {
-                        'available': !day.content || day.content.isAvailable(),
-                        'mid-available': day.content && day.content.isMidAvailable(),
-                        'not-available': day.content && day.content.isNotAvailable(),
-                    }"
+                    cell-class="getCellClass(day)"
                     >
             </calendar>
             <div class="my-calendar-right-bar">
