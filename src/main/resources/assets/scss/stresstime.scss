@@ -574,7 +574,7 @@ $add-bg: $grey-2;
 .assignment-type-buckets {
     /* On top of legend  */
     position: relative;
-    z-index: 1;
+    /*z-index: 1;*/
     background-color: #FFFFFF;
     /* Idk why, but below works */
     padding-bottom: 1px;
