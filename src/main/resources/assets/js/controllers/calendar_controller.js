@@ -9,8 +9,6 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     $scope.calendar = [];
 
-    var cellClassFunction = null;
-
     var baseCellClasses = function(day, week) {
         return {
             'empty': !day.content,
@@ -22,12 +20,9 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     };
 
     $scope.cellClass = function(day, week) {
-        if (cellClassFunction == null && $scope.providedCellClass != null) {
-            eval("cellClassFunction = function(day, week){return " + $scope.providedCellClass + "}");
-        }
         var classes = baseCellClasses(day, week);
-        if (cellClassFunction != null) {
-            _.extend(classes, cellClassFunction(day, week));
+        if ($scope.providedCellClass != null) {
+            _.extend(classes, $scope.providedCellClass({day: day, week: week}));
         }
         return classes;
     };
@@ -573,7 +568,7 @@ App.directive('calendar', function() {
             onSelectDaysParent: '=onSelectDays',
             onHoverDayParent: '=onHoverDay',
             onLoadDayContent: '=onLoadDayContent',
-            providedCellClass: '@cellClass',
+            providedCellClass: '&cellClass',
             api: '=exposeApiTo'
         },
         templateUrl: 'views/calendar.html',
