@@ -1,4 +1,4 @@
-App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction) {
+App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction, EmployeeAssignmentsResource) {
 
     $scope.calendar = {};
     $scope.progressBar = {trigger: function() {}};
@@ -62,15 +62,40 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         }
 
         $scope.progressBar.trigger();
+        var partiallyFetched = false;
+
         DayRestriction.query({
                 employee_id: $scope.employeeId,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(dayRestrictions) {
                 updateDayRestrictions(dayRestrictions);
-                terminate();
+                if (partiallyFetched && terminate) {
+                    terminate();
+                }
+                else {
+                    partiallyFetched = true;
+                }
             }).catch(function(e) {
                 terminate(true);
+                terminate = undefined; // dont allow terminate to be called twice
+        });
+
+        EmployeeAssignmentsResource.query({
+                employee_id: $scope.employeeId,
+                start_date: startDate.toISOLocalDateString(),
+                end_date: endDate.toISOLocalDateString()
+            }).$promise.then(function(assignments) {
+                updateAssignments(assignments);
+                if (partiallyFetched && terminate) {
+                    terminate();
+                }
+                else {
+                    partiallyFetched = true;
+                }
+            }).catch(function(e) {
+                terminate(true);
+                terminate = undefined;
         });
     };
 
@@ -78,27 +103,41 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var dates = _.map(dayRestrictions, function(d) {return d.getDate();});
         var daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
         _.each(dayRestrictions, function(dayRestriction) {
-            daysMap[dayRestriction.date].content = new MyCalendarDayContent(dayRestriction);
+            if (daysMap[dayRestriction.date].content == undefined) {
+                daysMap[dayRestriction.date].content = new MyCalendarDayContent();
+            }
+            daysMap[dayRestriction.date].content.dayRestriction = dayRestriction;
         });
 
     }
 
-    var MyCalendarDayContent = function(dayRestriction) {
-        this.dayRestriction = dayRestriction;
-    };
+    function updateAssignments(assignments) {
+        var dates = _.map(assignments, function(a) {return a.getDate();});
+        var daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
+        _.each(assignments, function(assignment) {
+            if (daysMap[assignment.date].content == undefined) {
+                daysMap[assignment.date].content = new MyCalendarDayContent();
+            }
+            daysMap[assignment.date].content.assignment = assignment;
+        });
+
+    }
+
+    var MyCalendarDayContent = function() {};
 
     MyCalendarDayContent.prototype.dayRestriction = null;
+    MyCalendarDayContent.prototype.assignment = null;
 
     MyCalendarDayContent.prototype.isAvailable = function() {
-        return this.dayRestriction.restrictionLevel == 0;
+        return this.dayRestriction == undefined || this.dayRestriction.restrictionLevel == 0;
     }
 
     MyCalendarDayContent.prototype.isMidAvailable = function() {
-        return this.dayRestriction.restrictionLevel == 1;
+        return this.dayRestriction && this.dayRestriction.restrictionLevel == 1;
     };
 
     MyCalendarDayContent.prototype.isNotAvailable = function() {
-        return this.dayRestriction.restrictionLevel == 2;
+        return this.dayRestriction && this.dayRestriction.restrictionLevel == 2;
     };
 
     function indexDaysByISOString(days) {

@@ -272,3 +272,13 @@ services.factory('GlobalAdminsResource', ['$resource', function($resource) {
 
     return GlobalAdminsResource;
 }]);
+
+services.factory('EmployeeAssignmentsResource', ['$resource', function($resource) {
+    var EmployeeAssignmentsResource = $resource(PREFIX + 'employees/:employee_id/assignments', {}, {});
+
+    EmployeeAssignmentsResource.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    };
+
+    return EmployeeAssignmentsResource;
+}]);
