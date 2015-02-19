@@ -1058,6 +1058,9 @@ $progress-bar-bg: transparent;
 .mini-assignment-type-label {
     width: 23px;
     margin-left: 6px;
+    &:first-child {
+        margin-left: 0;
+    }
 }
 
 @media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
@@ -1077,7 +1080,7 @@ $progress-bar-bg: transparent;
                                                      .right-sidebar-content { font-size: 13px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 13px;
                                                                                                padding-right: 13px; }
-                                                     .stats-space { width: 2.5px; }
+                                                     .stats-label-from { display: none; }
                                                      .mini-assignment-type-label { width: 21px; margin-left: 4px; }
                                                    }
 @media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
@@ -1089,7 +1092,6 @@ $progress-bar-bg: transparent;
                                                      .right-sidebar-content { font-size: 12px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 11px;
                                                                                                padding-right: 11px; }
-                                                     .stats-space { width: 0; }
                                                      .mini-assignment-type-label { width: 18px; margin-left: 3px; }
                                                      .main { padding: 0 5px; }
                                                      .st-progress-bar, .header { margin: 0 -5px; }
