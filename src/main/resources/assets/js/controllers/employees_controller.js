@@ -115,10 +115,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             return {
                 position: 'relative',
                 opacity: Utils.interpolate(current, srcScale, [0.25, 0.9]),
-                paddingTop: Utils.interpolate(current, srcScale, [2, 8]) + 'px',
-                bottom: Utils.interpolate(current, srcScale, [-3, 3]) + 'px'
+                paddingTop: Utils.interpolate(current, srcScale, [2, 8]) + 'px'
             };
-        }
+        };
 
         $scope.employeeOrder = []
         $scope.employeeOrderKey = []

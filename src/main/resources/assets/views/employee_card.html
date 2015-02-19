@@ -17,24 +17,34 @@
     </div>
     <div
         st-name="employeeNameContainer"
-        class="name"
+        class="employee-content"
         >
-        <span st-name="employeeName" ng-style="employeeNameStyle">
-            {{employee.name | characters: 60}}
-        </span>
-        <if st-if="isGroupMemberOrGlobalAdmin(group)">
-            <div
-                st-name="sampleBadge"
-                ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
-                class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
-                ng-class="{'no-assignments-label': stat.count == 0 }"
-                 >
-                {{stat.count}}
+        <div class="employee-actions">
+            <div class="v-center-wrap">
+                <div
+                    st-if="(group == undefined && isGlobalAdmin()) || isGroupAdmin(group)"
+                    class="delete-button"
+                    ng-click="remove()"
+                    >
+                    <span class="glyphicon glyphicon-minus"></span>
+                </div>
+                <if st-if="isGroupMemberOrGlobalAdmin(group)">
+                    <div
+                        st-name="sampleBadge"
+                        ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
+                        class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
+                        ng-class="{'no-assignments-label': stat.count == 0 }"
+                         >
+                        {{stat.count}}
+                    </div>
+                </if>
             </div>
-        </if>
-        <div st-if="(group == undefined && isGlobalAdmin()) || isGroupAdmin(group)" class="delete" ng-click="remove()">
-            <div>-</div>
+        </div>
+
+        <div class="employee-name" st-name="employeeName" ng-style="employeeNameStyle">
+            <div class="v-center-wrap">
+                {{employee.name | characters: 60}}
+            </div>
         </div>
     </div>
-    <div class="clear"></div>
 </div>

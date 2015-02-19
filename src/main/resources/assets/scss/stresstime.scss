@@ -369,46 +369,15 @@ $calendar-cell-spacing: 4px;
     padding-top: 6px;
     padding-bottom: 6px;
     color: $grey-4;
-}
 
-.employee-card.hoverable:hover {
-    background-color: $grey-1;
-}
+    &.hoverable:hover {
+        background-color: $grey-1;
+    }
 
-.employee-card .avatar-wrapper {
-    float: left;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    .ui-widget input.form-control {
+        font-size: 13px;
+    }
 }
-
-.employee-card .avatar-wrapper.with-image img {
-    border-radius: 50%;
-}
-
-.employee-card .avatar-wrapper.with-image .text-hover {
-    display: none;
-}
-
-.employee-card .avatar-wrapper.with-image:hover .text-hover {
-    font-size: 32px;
-    display: inline;
-    color: #FFF;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper {
-    width: 50px;
-    height: 50px;
-    position: relative;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .avatar-image {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
-/* Refactor styles to use SASS nesting */
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
     font-size: 14px;
@@ -421,121 +390,153 @@ $calendar-cell-spacing: 4px;
     text-align: center;
     background: $grey-0;
     display: none;
+
+    &.editable { cursor: pointer; }
+
+    &.global-admin {
+        display: inherit;
+        cursor: inherit;
+        color: #dbb800;
+    }
+    &.not-admin.editable {
+        display: inherit;
+        opacity: 0.7;
+    }
+
+    &.is-admin {
+        opacity: 1;
+        display: inherit;
+        &.editable {
+            background-color: #CC5555;
+
+            &:hover {
+                @include pulse(.6s);
+                opacity: 1;
+                .glyphicon { display: none; }
+                .delete-admin {
+                    display: inline-block;
+                    line-height: 0;
+                    vertical-align: middle;
+                    height: 6px;
+                    color: white;
+                }
+            }
+        }
+    }
+    .delete-admin { display: none; }
 }
 
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.editable {
-    cursor: pointer;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.global-admin {
-    display: inherit;
-    cursor: inherit;
-    color: #dbb800;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon .delete-admin {
-    display: none;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin {
-    opacity: 1;
-    display: inherit;
-}
-
-.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable {
-    display: inherit;
-    opacity: 0.7;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable:hover {
-    @include pulse(.6s);
-    opacity: 1;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover .glyphicon {
-    display: none;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover .delete-admin {
-    display: inline-block;
-    line-height: 0;
-    vertical-align: middle;
-    height: 6px;
-    color: white;
-}
-
-.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon.is-admin.editable:hover {
-    background-color: #CC5555;
-}
-
-.employee-card .avatar-wrapper.no-image {
-    font-size: 31px;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-}
-
-.employee-card .ui-widget input.form-control {
-    font-size: 13px;
-}
-
-$add-bg: $grey-2;
-
-.employee-card .avatar-wrapper.add {
-    color: $grey-4;
-    background-color: $add-bg;
-    position: relative;
-}
-
-.employee-card .avatar-wrapper.add.selected-employee-add span {
-    position: relative;
-    z-index: 2;
-    color: #FFFFFF;
-    text-shadow: 0 0 5px #000, 0 0 10px #000;
-}
-
-.employee-card .avatar-wrapper.add.selected-employee-add::before {
-    content: '';
-    display: block;
-    position: absolute;
-    z-index: 1;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(#000, 0.25);
+.employee-card .avatar-wrapper {
+    float: left;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-}
 
-.employee-card .avatar-wrapper.add.selected-employee-add:hover {
-    @include pulse(.6s);
-    &::before {
-        display: none;
+    &.with-image {
+        img { border-radius: 50%; }
+        .text-hover { display: none; }
+        &:hover {
+            .text-hover {
+                font-size: 32px;
+                display: inline;
+                color: #FFF;
+            }
+        }
     }
-    span {
-        display: none;
+
+    &.no-image {
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    $add-bg: $grey-2;
+
+    &.add {
+        color: $grey-4;
+        background-color: $add-bg;
+        position: relative;
+
+        &:hover {
+            color: #E9E9E9;
+            background-color: $grey-4;
+        }
+
+        &.selected-employee-add {
+            &:hover {
+                @include pulse(.6s);
+                &::before { display: none; }
+                span { display: none; }
+            }
+            &::before {
+                content: '';
+                display: block;
+                position: absolute;
+                z-index: 1;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(#000, 0.25);
+                border-radius: 50%;
+            }
+            span {
+                position: relative;
+                z-index: 2;
+                color: #FFFFFF;
+                text-shadow: 0 0 5px #000, 0 0 10px #000;
+            }
+        }
+    }
+
+    .avatar-image-wrapper {
+        width: 50px;
+        height: 50px;
+        position: relative;
+
+        .avatar-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     }
 }
 
-.employee-card .avatar-wrapper.add:hover {
-    color: #E9E9E9;
-    background-color: $grey-4;
-}
-
-.employee-card .name {
-    display: table-cell;
+.employee-card-add .employee-content .v-center-wrap {
     /* No idea why setting width as below worked and made the input span the entire parent */
     width: 999999px;
-    height: 50px;
+}
+
+.employee-card .employee-content {
+    $height: 50px;
+
+    overflow: hidden; /* float containing */
+    height: $height;
     vertical-align: middle;
-    padding: 6px 0px 0 10px;
+    padding: 0 0 0 10px;
 
     &.with-input {
         padding-top: 0;
     }
 
-    span {
-        display: inline-block;
+    .v-center-wrap {
+        /* vertical-align is already given by root .v-center-wrap (cmd+f it) */
+        height: $height;
+    }
+
+    .employee-name {
+        height: $height;
         overflow: hidden;
     }
+
+    .employee-actions {
+        float: right;
+    }
+}
+
+/* If using .v-center-wrap don't forget to specify height! */
+.v-center-wrap {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .clear {
@@ -543,22 +544,47 @@ $add-bg: $grey-2;
 }
 
 .mini-assignment-type-label {
-    border-radius: 2px;
-    padding: 2px 0px 1px 0px;
-    color: #ffffff;
-    font-size: inherit;
     display: inline-block;
+    border-radius: 2px;
+    padding: 2px 0 1px 0;
+    color: #FFFFFF;
     text-align: center;
     opacity: 0.7;
-    float: right;
+    &.no-assignments-label { opacity: 0.15; }
+    .employee-card:hover & { opacity: 1.0; }
 }
 
-.no-assignments-label {
-    opacity: 0.15;
-}
+$delete-bg: #C41E1E;
 
-.employee-card:hover .mini-assignment-type-label {
-    opacity: 1.0;
+.employee-card {
+
+    .delete-button {
+        display: inline-block;
+        font-size: 14px;
+        width: 23px;
+        height: 21px;
+        border-radius: 50%;
+        color: #FFFFFF;
+        background-color: #e06969;
+        cursor: pointer;
+        padding: 2px 0 0 4px;
+        position: relative;
+        bottom: -1px;
+    }
+
+    /* Hovers */
+
+    .delete-button {
+        display: none;
+    }
+
+    &:hover {
+        .delete-button {
+            display: inline-block;
+            &:hover { background-color: $delete-bg; }
+        }
+    }
+
 }
 
 .employees-container {
@@ -683,8 +709,6 @@ a[disabled] {
 }
 /* Deletable card */
 
-$delete-bg: #C41E1E;
-
 .deletable-card {
     position: relative;
 }
@@ -717,25 +741,6 @@ $delete-bg: #C41E1E;
 .deletable-card .delete:hover {
     display: block;
     background-color: $delete-bg;
-}
-
-.deletable-card.employee-card .delete div {
-    top: -65%;
-}
-
-.deletable-card.employee-card .delete {
-    top: 32%;
-}
-
-.deletable-card.employee-card .delete {
-    float: right;
-    margin-right: 4px;
-    position: inherit;
-    padding-top: 0.5px;
-
-    div {
-        position: relative;
-    }
 }
 
 .st-input-button  {
@@ -982,16 +987,20 @@ $counter-width: 20px;
         }
     }
 
-    .mini-assignment-type-label {
-        @include select(none);
+    .mini-assignment-type-headers {
+        padding-top: 3px;
+        float: right;
+        
+        .mini-assignment-type-label {
+            @include select(none);
 
-        color: $grey-0;
-        cursor: pointer;
-        margin-top: 6px;
+            color: $grey-0;
+            cursor: pointer;
 
-        &:hover {
-            opacity: 1 !important;
+            &:hover {
+                opacity: 1 !important;
 
+            }
         }
     }
 }
@@ -1109,7 +1118,8 @@ $progress-bar-bg: transparent;
                                                    }
 @media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
                                                      .stats-inputs-container .counter-control { display: none; }
-                                                     .assignment-type-label { margin-left: 5px; }
+                                                     .mini-assignment-type-label { padding-bottom: 2px; }
+                                                     .assignment-type-label { margin-left: 5px;  }
                                                      .right-sidebar-content { font-size: 10px; }
                                                    }
 

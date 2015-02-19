@@ -99,7 +99,7 @@ Array.prototype.clone = function() {
 
 Array.prototype.contains = function(item) {
     return this.indexOf(item) >= 0;
-}
+};
 
 // TODO: Change to Object
 Objects = {}; // Helper functions

@@ -201,14 +201,15 @@
                     >
                 </select>
 
-                <div
-                    ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
-                    ng-click="updateEmployeesOrder(assignmentType)"
-                    class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
-                    ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
-                    >
-                    <!-- Figure out a way to initialize -->
-                    <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                <div class="mini-assignment-type-headers">
+                    <div
+                        ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                        ng-click="updateEmployeesOrder(assignmentType)"
+                        class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
+                        ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
+                        >
+                        <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                    </div>
                 </div>
             </div>
             <div class="employees-container overflow-scroll align-parent-bottom" discount-height="65">
@@ -226,7 +227,7 @@
                 </div>
             </div>
 
-            <div st-if="isGroupAdmin(selectedGroup)" class="employee-card">
+            <div st-if="isGroupAdmin(selectedGroup)" class="employee-card employee-card-add">
                 <div
                     class="avatar-wrapper no-image add"
                     ng-class="{'selected-employee-add': newEmployee }"
@@ -236,16 +237,17 @@
                     <span>+</span>
                 </div>
 
-                <div class="name with-input ui-widget">
-                    <yammer-autocomplete-input
-                            on-select-autocomplete="onSelectAutocomplete"
-                            on-key-down="userInuptKeyDown"
-                            on-enter="userInputEnter"
-                            expose-api-to="employeeInput"
-                            display-above="true">
-                    </yammer-autocomplete-input>
+                <div class="employee-content with-input ui-widget">
+                    <div class="v-center-wrap">
+                        <yammer-autocomplete-input
+                                on-select-autocomplete="onSelectAutocomplete"
+                                on-key-down="userInuptKeyDown"
+                                on-enter="userInputEnter"
+                                expose-api-to="employeeInput"
+                                display-above="true">
+                        </yammer-autocomplete-input>
+                    </div>
                 </div>
-                <div class="clear"></div>
             </div>
         </ul>
     </div>
