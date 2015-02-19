@@ -1097,6 +1097,7 @@ $progress-bar-bg: transparent;
                                                      .right-bar { margin: 0 0 0 5px; }
                                                      .form-control.stat-counter { width: 18px; }
                                                      .header .group-name { font-size: 20px; }
+                                                     .stats-label { display: none; }
                                                      .assignment-type-label { margin-left: 14px;
                                                                               padding-right: 17px;
                                                                               padding-left: 17px; }
@@ -1111,7 +1112,6 @@ $progress-bar-bg: transparent;
                                                                               padding-right: 10px;
                                                                               padding-left: 10px; }
                                                      .legend { display: none; }
-                                                     .stats-label { display: none; }
                                                      .day-assignment .day-assignment-role span { font-size: 10px;
                                                                                                  padding-left: 7px;
                                                                                                  padding-right: 7px; }

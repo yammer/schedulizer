@@ -202,8 +202,10 @@
 
                 <div class="stats-range-selector-container">
                     <div class="v-center-wrap">
-                        From <span class="stats-date">{{stat.range.from | date: 'MM/dd/yyyy'}}</span>
-                        to <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
+                        <span class="stats-label">From </span>
+                        <span class="stats-date">{{stat.range.from | date: 'MM/dd/yyyy'}}</span>
+                        <span class="stats-label">to </span>
+                        <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
 
                         <div
                             class="stat-range-edit-button"
