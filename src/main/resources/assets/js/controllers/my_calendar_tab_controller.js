@@ -17,10 +17,14 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     }
 
     $scope.getDayTooltip = function(day) {
-        if ($scope.hasAssignment(day)) {
-            return day.content.assignments.map(function(a){ return a.getFullName(); }).join("<br>");
+        if (day.content == undefined) {
+            return undefined;
         }
-        return undefined;
+
+        if (day.content.dayRestriction == undefined) {
+            return undefined;
+        }
+        return day.content.dayRestriction.comment;
     }
 
     $scope.goToToday = function() {
