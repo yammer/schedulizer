@@ -41,6 +41,49 @@ $grey-4: #828282; /* + inside (+) button */
 $grey-2p5: mix($grey-2, $grey-3);
 $grey-3p5: mix($grey-3, $grey-4);
 
+/* General colors (Availability/employee mode) */
+
+$normal-mode-bg: #FFFFFF;
+$normal-mode-header-bg: $grey-0;
+$normal-mode-header-fg: $grey-3;
+
+$employee-mode-bg: #FBF8EF;
+$employee-mode-header-bg: #ECC635;/*#F1CF4A;*/
+$employee-mode-header-fg: #FFFFFF;
+
+.normal-mode {
+    background-color: $normal-mode-bg;
+    .header {
+        color: $normal-mode-header-fg;
+        background-color: $normal-mode-header-bg;
+        border-bottom: 1px solid darken($normal-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $normal-mode-header-fg;
+            &:hover {
+                color: darken($normal-mode-header-fg, 20%);
+            }
+        }
+    }
+    .assignment-type-buckets { background-color: $normal-mode-bg; }
+    .legend.full, .legend.full-legend { background-color: $normal-mode-bg; }
+}
+.employee-mode {
+    background-color: $employee-mode-bg;
+    box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    .header {
+        color: $employee-mode-header-fg;
+        background-color: $employee-mode-header-bg;
+        border-bottom: 1px solid darken($employee-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $employee-mode-header-fg;
+            &:hover { color: darken($employee-mode-header-fg, 20%); }
+        }
+    }
+    .assignment-type-buckets { background-color: $employee-mode-bg; }
+    .legend.full, .legend.full-legend { background-color: $employee-mode-bg; }
+}
+
 /* Global admins icon */
 
 .global-admins-icon {
@@ -228,10 +271,8 @@ $mid-assigned-bg: #EFC932;
     color: $grey-3;
     font-size: 22px;
     background-color: $grey-0;
-    border-bottom: 1px solid $grey-1;
     padding: 18px 15px 17px 15px;
 }
-
 
 /* Dual pane */
 
@@ -305,10 +346,6 @@ $mid-assigned-bg: #EFC932;
     bottom: 6px;
     padding-top: 10px;
     margin-left: -$calendar-cell-spacing;
-
-    &.full {
-        background-color: #FFFFFF;
-    }
 
     .description {
         padding-left: 5px;
@@ -566,11 +603,12 @@ $add-bg: $grey-2;
 }
 
 .employee-card.selected-employee.hoverable {
-    background-color: $grey-2;
+    .name, .employee-content { color: $employee-mode-header-fg; }
+    background-color: $employee-mode-header-bg;
 }
 
 .employee-card.selected-employee.hoverable:hover {
-    background-color: lighten($grey-2, 5%);
+    background-color: lighten($employee-mode-header-bg, 5%);
 }
 
 .clear {
@@ -610,7 +648,6 @@ $add-bg: $grey-2;
     /* On top of legend  */
     position: relative;
     /*z-index: 1;*/
-    background-color: #FFFFFF;
     /* Idk why, but below works */
     padding-bottom: 1px;
 }
@@ -855,11 +892,6 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     float: right;
     font-size: 38px;
     margin-top: -13px;
-    color: $grey-3;
-}
-
-.add-assignment-type:hover {
-    color: darken($grey-3, 20%);
 }
 
 .selected-employee-image {

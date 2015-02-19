@@ -1,4 +1,11 @@
-<div class="col-md-7 main align-parent-bottom" discount-height="70">
+<div
+    class="col-md-7 main align-parent-bottom"
+    discount-height="51"
+    ng-class="{
+        'employee-mode': availabilityCalendarMode,
+        'normal-mode': !availabilityCalendarMode
+    }"
+    >
     <h1 class="header">
         <img ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
