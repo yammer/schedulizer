@@ -6,6 +6,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     // Will hold the calendar api
     $scope.calendar = {};
+
+    // When availability calendar mode is false, the selected employee should be undefinde
     $scope.availabilityCalendarMode = false;
     $scope.selectedEmployee = undefined;
 
