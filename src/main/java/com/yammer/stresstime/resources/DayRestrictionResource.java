@@ -41,7 +41,10 @@ public class DayRestrictionResource {
 
         Employee employee = employeeManager.getById(employeeId);
 
-        ResourceUtils.checkGroupAdminOrGlobalAdmin(employee.getGroups(), user.getEmployee());
+        // The own user should be able to see its own restrictions
+        if (user.getEmployee().getId() != employeeId) {
+            ResourceUtils.checkGroupAdminOrGlobalAdmin(employee.getGroups(), user.getEmployee());
+        }
         ResourceUtils.checkParameter(startDateString != null, "start_date");
         ResourceUtils.checkParameter(endDateString != null, "end_date");
 
