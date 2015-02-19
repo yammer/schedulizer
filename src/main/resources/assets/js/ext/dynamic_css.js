@@ -1,5 +1,5 @@
 var count=0;
-App.run(function($window, $timeout, $rootScope) {
+App.run(function($window, $timeout, $rootScope, Utils) {
     function findNextParent(el) {
         var initial =$(el).height();
         do {
@@ -37,7 +37,7 @@ App.run(function($window, $timeout, $rootScope) {
         }
     }
 
-    $($window).resize(_.debounce(reAlignEls, 500));
+    $($window).resize(Utils.lastOfBurst(reAlignEls, 500));
 
-    $rootScope.$on('trigger-resize', _.debounce(reAlignEls, 500));
+    $rootScope.$on('trigger-resize', Utils.lastOfBurst(reAlignEls, 500));
 });
