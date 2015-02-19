@@ -10,6 +10,17 @@ Date.max = function(a, b) {
  return (a > b) ? a : b;
 };
 
+Date.SORT_BY = function(d) {
+    //noinspection JSConstructorReturnsPrimitive
+    return d.getTime();
+};
+
+Date.isRange = function(dates) {
+    if (dates.length == 0) return true;
+    var r = dates.maxMinBy(Date.SORT_BY);
+    return Date.differenceInDays(r.min, r.max) + 1 == dates.length
+};
+
 Date.fromISOLocalString = function(string) {
     var parts = string.split("-");
     var d = new Date();
@@ -99,6 +110,32 @@ Array.prototype.clone = function() {
 
 Array.prototype.contains = function(item) {
     return this.indexOf(item) >= 0;
+};
+
+Array.prototype.maxMin = function() {
+    return this.maxMinBy(function(e) {return e;});
+};
+
+Array.prototype.maxMinBy = function(map) {
+    if (this.length <= 0) {
+        return null;
+    }
+    var max = this[0];
+    var min = this[0];
+    var vmax = map(max);
+    var vmin = map(min);
+    for (var i = 1; i < this.length; i++) {
+        var e = this[i];
+        var v = map(e);
+        if (v > vmax) {
+            max = e;
+            vmax = v;
+        } else if (v < vmin) {
+            min = e;
+            vmin = v;
+        }
+    }
+    return {max: max, min: min};
 };
 
 // TODO: Change to Object
