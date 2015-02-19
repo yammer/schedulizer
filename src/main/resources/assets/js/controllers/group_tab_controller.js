@@ -32,7 +32,17 @@ App.controller('GroupTabController', function(
     }
     groupTabStateChangeSuccessOff = $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
         if(toState.stateName == NAV_TABS.group.stateName || toState.stateName == NESTED_VIEWS.groupsView.stateName) {
-            selectGroup();
+            if ($scope.groups == undefined || $scope.groups.$resolved == false) {
+                var unwatch = $scope.$watch('groups', function(groups) {
+                    if (groups == undefined) return;
+                    selectGroup();
+                    unwatch();
+                });
+            }
+            else {
+                selectGroup();
+            }
+
         }
     });
 
