@@ -31,7 +31,7 @@
                 <if st-if="isGroupMemberOrGlobalAdmin(group)">
                     <div
                         st-name="sampleBadge"
-                        ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name':true"
+                        ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name'"
                         class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
                         ng-class="{'no-assignments-label': stat.count == 0 }"
                          >

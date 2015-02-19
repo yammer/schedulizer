@@ -203,7 +203,7 @@
 
                 <div class="mini-assignment-type-headers">
                     <div
-                        ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                        ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
                         ng-click="updateEmployeesOrder(assignmentType)"
                         class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
                         ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
