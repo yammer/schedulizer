@@ -19,23 +19,25 @@
                         </employee-card>
                     </div>
                 </div>
-                <div class="employee-card">
+                <div class="employee-card employee-card-add">
                     <div
                             class="avatar-wrapper no-image add"
-                            ng-class="{'selected-employee-add': newGlobalAdmin }"
+                            ng-class="{'selected-employee-add': newGlobalAdmin}"
                             st-try-background-image="newGlobalAdmin.photo"
                             ng-click="triggerAddGlobalAdmin()"
                             >
                         <span>+</span>
                     </div>
 
-                    <div class="name with-input ui-widget">
-                        <yammer-autocomplete-input
-                                on-select-autocomplete="onSelectAutocomplete"
-                                on-key-down="onKeyDown"
-                                on-enter="triggerAddGlobalAdmin"
-                                expose-api-to="globalAdminInput">
-                        </yammer-autocomplete-input>
+                    <div class="employee-content with-input ui-widget">
+                        <div class="v-center-wrap">
+                            <yammer-autocomplete-input
+                                    on-select-autocomplete="onSelectAutocomplete"
+                                    on-key-down="onKeyDown"
+                                    on-enter="triggerAddGlobalAdmin"
+                                    expose-api-to="globalAdminInput">
+                            </yammer-autocomplete-input>
+                        </div>
                     </div>
                     <div class="clear"></div>
                 </div>
