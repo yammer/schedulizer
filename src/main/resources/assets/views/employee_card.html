@@ -32,7 +32,7 @@
                     <div
                         st-name="sampleBadge"
                         ng-repeat="(id, stat) in employee.statistics | orderObjectBy: 'assignmentType.name'"
-                        class="mini-assignment-type-label assignment-color-{{stat.assignmentType.index % 10}}"
+                        class="mini-assignment-type-label assignment-color-{{id % 10}}"
                         ng-class="{'no-assignments-label': stat.count == 0 }"
                          >
                         {{stat.count}}

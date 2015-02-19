@@ -117,9 +117,6 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
     Group.prototype.setAssignmentTypes = function(assignmentTypes) {
         this.assignmentTypes = _.chain(assignmentTypes)
             .sortBy(function(a) {return a.name.toLowerCase();})
-            .each(function(a, i) {
-                a.index = i;
-            })
             .value();
     }
 

@@ -4,7 +4,7 @@
         <div class="assignment-types-wrapper">
             <div
                 ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
-                class="assignment-type-label assignment-color-{{assignmentType.index % 10}}">
+                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
@@ -192,7 +192,7 @@
                         <div
                             ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
                             ng-click="updateEmployeesOrder(assignmentType)"
-                            class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
+                            class="mini-assignment-type-label assignment-color-{{index % 10}}"
                             ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
                             >
                             <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
