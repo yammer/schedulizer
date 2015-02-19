@@ -32,17 +32,19 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     var loadedWeeks = [];
     var pendingWeeks = [];
 
-    var cellHeight = null;
+    var weekElements = null;
 
     function getCellHeight() {
-        if (cellHeight === null) {
-            var h = $(".week").outerHeight();
-            if (h > 0) {
-                // +4 from border-spacing, TODO refactor
-                cellHeight = h + 4;
-            }
+        if (weekElements == null) {
+            weekElements = $(".week");
         }
-        return cellHeight;
+        var h = weekElements.outerHeight();
+        if (h == null || h <= 0) {
+            weekElements = null;
+            return null;
+        } else {
+            return h + 4;
+        }
     }
 
     function computeNumberOfWeeks(firstDay) {
