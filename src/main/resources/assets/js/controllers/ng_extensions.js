@@ -244,8 +244,14 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
                     func();
                 }, func._lastOfBurstThreshold);
             }
+        },
+        onInitialization: function (variableName, scope, callback) {
+            var unwatch = scope.$watch(variableName, function(variable) {
+                if (variable == undefined || variable.$resolved == false) return;
+                callback();
+                unwatch();
+            })
         }
-
     };
 }]);
 
