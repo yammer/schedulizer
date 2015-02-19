@@ -44,27 +44,37 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                     group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
                 });
             });
-        }
+        };
+
 
         $scope.stat = {
-            selected: {counter: 3, unit: 'months'},
-            units: {
-                days:   {label: 'days',   multiplier: 1  },
-                weeks:  {label: 'weeks',  multiplier: 7  },
-                months: {label: 'months', multiplier: 30 },
-                years:  {label: 'years',  multiplier: 365}
+            range: {
+                from: Date.TODAY.plusWeeks(-3 * 12),
+                to: Date.TODAY
             }
-        }
+        };
 
-        $scope.getDaysOffset = function() {
-            var counter = $scope.stat.selected.counter;
-            var unit = $scope.stat.units[$scope.stat.selected.unit];
-            return counter * unit.multiplier;
-        }
+        var MINIMUM_DAYS_SELECTED_TO_EDIT_MODE = 2;
 
-        $scope.incrementStatCounter = function(delta) {
-            $scope.stat.selected.counter = Math.max(0, $scope.stat.selected.counter + delta);
-        }
+        $scope.isStatEditMode = function() {
+            var days = $scope.selectedDays;
+            return days && Date.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
+        };
+
+        $scope.getStatEditHintAttr = function() {
+            return $scope.isStatEditMode()
+                ?  undefined // Hides the attribute
+                : "First selected a RANGE of days on the calendar then press this button.";
+        };
+
+        $scope.setStatRangeIfEditMode = function() {
+            if (!$scope.isStatEditMode) return;
+
+            var r = $scope.selectedDays.maxMinBy(Date.SORT_BY);
+            $scope.stat.range.from = r.min;
+            $scope.stat.range.to = r.max;
+            $scope.getAssignmentStats();
+        };
 
         $scope.getAssignmentStats = function() {
             var group = $scope.selectedGroup;
@@ -72,13 +82,10 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 return;
             }
 
-            var endDate = Date.TODAY;
-            var startDate = endDate.plusDays(- $scope.getDaysOffset());
-
             AssignmentStats.query({
                 group_id: group.id,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
+                start_date: $scope.stat.range.from.toISOLocalDateString(),
+                end_date: $scope.stat.range.to.toISOLocalDateString()
             }, function(assignmentStats) {
                 _.each(group.employees, function(e) {
                     e.statistics = {};
@@ -103,7 +110,6 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         }
 
         $scope.$watch('assignmentsChange', $scope.getAssignmentStats);
-        $scope.$watch('getDaysOffset()', $scope.getAssignmentStats);
 
         $scope.getAssignmentTypeHeaderStyle = function(assignmentType) {
             var ids = _.map($scope.employeeOrder, Math.abs);
@@ -255,8 +261,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             getGroupEmployeesData($scope.selectedGroup);
         });
 
-        $scope.$watch('selectedGroup.employees.length', Utils.lastOfBurst(touchAssignments));
-        $scope.$watch('selectedGroup.assignmentTypes.length', Utils.lastOfBurst(touchAssignments));
-        $scope.$watch('assignmentTypeBuckets', Utils.lastOfBurst(touchAssignments), true);
-
+        var debouncedTouchAssignments = Utils.lastOfBurst(touchAssignments, 150);
+        $scope.$watch('selectedGroup.employees.length', debouncedTouchAssignments);
+        $scope.$watch('selectedGroup.assignmentTypes.length', debouncedTouchAssignments);
+        $scope.$watch('assignmentTypeBuckets', debouncedTouchAssignments, true);
 });

@@ -13,6 +13,15 @@
     user-select: $value;
 }
 
+@mixin clearfix {
+    &:before, &:after {
+        content: '';
+        display: table;
+    }
+    &:after { clear: both; }
+}
+
+
 body {
     padding-top: 50px;
 }
@@ -298,7 +307,7 @@ $calendar-cell-spacing: 4px;
     padding-top: 10px;
     margin-left: -$calendar-cell-spacing;
 
-    &.full {
+    &.legend-full {
         background-color: #FFFFFF;
     }
 
@@ -506,11 +515,11 @@ $calendar-cell-spacing: 4px;
     width: 999999px;
 }
 
-.employee-card .employee-content {
-    $height: 50px;
+$employee-card-height: 50px; 
 
+.employee-card .employee-content {
     overflow: hidden; /* float containing */
-    height: $height;
+    height: $employee-card-height;
     vertical-align: middle;
     padding: 0 0 0 10px;
 
@@ -520,11 +529,11 @@ $calendar-cell-spacing: 4px;
 
     .v-center-wrap {
         /* vertical-align is already given by root .v-center-wrap (cmd+f it) */
-        height: $height;
+        height: $employee-card-height;
     }
 
     .employee-name {
-        height: $height;
+        height: $employee-card-height;
         overflow: hidden;
     }
 
@@ -940,57 +949,52 @@ $employee-autocomplete-height: 40px;
 $counter-width: 20px;
 
 .stats-inputs-container {
-    &, .form-control {
-        color: $grey-4;
-    }
+    $height: $employee-card-height + 12px;
 
-    text-align: left;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    color: $grey-4;
+    height: $height;
 
-    .form-control {
-        font-size: inherit; /* To inherit from right sidebar content for width responsiveness */
-    }
-
-    .stats-space {
+    .stat-range-edit-button {
         display: inline-block;
-    }
-
-    .stat-counter {
-        padding: 0;
-        text-align: center;
-
-        /* Hide arrows */
-        -moz-appearance:textfield;
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
+        width: 23px;
+        height: 22px;
+        padding: 3px 0 0 5px;
+        position: relative;
+        bottom: -1px;
+        font-size: 14px;
+        border-radius: 50%;
+        color: $grey-4;
+        background-color: $grey-2;
+        &.active {
+            color: #FFFFFF;
+            background-color: #337AB7;
+            cursor: pointer;
+            &:hover {
+                background-color: darken(#337AB7, 10%);
+            }
         }
     }
 
-    .counter-control {
-        @include select(none);
 
-        background-color: $grey-2;
-        color: mix($grey-3, $grey-4, 50%);
-        padding: 3px 4px;
-        border-radius: 50%;
-        font-size: 10px;
-        cursor: pointer;
+    .v-center-wrap {
+        height: $height;
+    }
 
-        &.plus { padding: 3px 4px 3px 5px; }
-        &.minus { padding: 3px 5px 3px 4px; }
+    .stats-range-selector-container {
+        @include clearfix;
 
-        &:hover {
-            background-color: mix($grey-3, $grey-4, 50%);
-            color: $grey-2;
+        .stats-date {
+            color: $grey-4;
+            padding: 5px 7px;
+            margin: 0 2px;
+            background-color: $grey-2;
+            border-radius: 2px;
         }
     }
 
     .mini-assignment-type-headers {
-        padding-top: 3px;
         float: right;
-        
+
         .mini-assignment-type-label {
             @include select(none);
 
@@ -1054,6 +1058,9 @@ $progress-bar-bg: transparent;
 .mini-assignment-type-label {
     width: 23px;
     margin-left: 6px;
+    &:first-child {
+        margin-left: 0;
+    }
 }
 
 @media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
@@ -1073,7 +1080,7 @@ $progress-bar-bg: transparent;
                                                      .right-sidebar-content { font-size: 13px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 13px;
                                                                                                padding-right: 13px; }
-                                                     .stats-space { width: 2.5px; }
+                                                     .stats-label-from { display: none; }
                                                      .mini-assignment-type-label { width: 21px; margin-left: 4px; }
                                                    }
 @media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
@@ -1085,7 +1092,6 @@ $progress-bar-bg: transparent;
                                                      .right-sidebar-content { font-size: 12px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 11px;
                                                                                                padding-right: 11px; }
-                                                     .stats-space { width: 0; }
                                                      .mini-assignment-type-label { width: 18px; margin-left: 3px; }
                                                      .main { padding: 0 5px; }
                                                      .st-progress-bar, .header { margin: 0 -5px; }
@@ -1093,6 +1099,7 @@ $progress-bar-bg: transparent;
                                                      .right-bar { margin: 0 0 0 5px; }
                                                      .form-control.stat-counter { width: 18px; }
                                                      .header .group-name { font-size: 20px; }
+                                                     .stats-label { display: none; }
                                                      .assignment-type-label { margin-left: 14px;
                                                                               padding-right: 17px;
                                                                               padding-left: 17px; }
@@ -1107,7 +1114,6 @@ $progress-bar-bg: transparent;
                                                                               padding-right: 10px;
                                                                               padding-left: 10px; }
                                                      .legend { display: none; }
-                                                     .stats-label { display: none; }
                                                      .day-assignment .day-assignment-role span { font-size: 10px;
                                                                                                  padding-left: 7px;
                                                                                                  padding-right: 7px; }

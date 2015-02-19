@@ -129,7 +129,7 @@
 
             <table
                 ng-init="legendToggle = false"
-                class="legend hint"
+                class="legend legend-hint"
                 ng-mouseenter="legendToggle = true"
                 ng-hide="legendToggle"
                 >
@@ -140,7 +140,7 @@
             </table>
 
             <table
-                class="legend full"
+                class="legend legend-full"
                 ng-mouseleave="legendToggle = false"
                 ng-show="legendToggle"
                 >
@@ -181,36 +181,47 @@
             discount-height="65"
             role="navigation"
             >
-            <div st-if="isGroupMemberOrGlobalAdmin(selectedGroup)" class="stats-inputs-container form-inline">
-                <span class="stats-label">Past</span>
-
-                <span class="stats-space"></span>
-
-                <span ng-click="incrementStatCounter(-1)" class="counter-control minus"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></span>
-
-                <input ng-model="stat.selected.counter" type="number" min="0" value="3" class="form-control stat-counter" />
-
-                <span ng-click="incrementStatCounter(+1)" class="counter-control plus"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span>
-
-                <span class="stats-space"></span>
-
-                <select
-                    ng-options="id as item.label for (id, item) in stat.units"
-                    ng-model="stat.selected.unit"
-                    class="form-control"
-                    >
-                </select>
+            <div
+                st-if="isGroupMemberOrGlobalAdmin(selectedGroup)"
+                class="stats-inputs-container form-inline"
+                ng-class="{'edit': isStatEditMode()}"
+                >
 
                 <div class="mini-assignment-type-headers">
-                    <div
-                        ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
-                        ng-click="updateEmployeesOrder(assignmentType)"
-                        class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
-                        ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
-                        >
-                        <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                    <div class="v-center-wrap">
+                        <div
+                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
+                            ng-click="updateEmployeesOrder(assignmentType)"
+                            class="mini-assignment-type-label assignment-color-{{assignmentType.index % 10}}"
+                            ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
+                            >
+                            <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                        </div>
                     </div>
                 </div>
+
+                <div class="stats-range-selector-container">
+                    <div class="v-center-wrap">
+                        <span class="stats-label stats-label-from">From </span>
+                        <span class="stats-date">{{stat.range.from | date: 'MM/dd/yyyy'}}</span>
+                        <span class="stats-label">to </span>
+                        <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
+
+                        <div
+                            class="stat-range-edit-button"
+                            ng-class="{
+                                'active': isStatEditMode(),
+                                'hint--no-animate hint--left': !isStatEditMode(),
+                            }"
+                            ng-attr-data-hint="{{getStatEditHintAttr()}}"
+                            ng-click="setStatRangeIfEditMode()"
+                            >
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
             <div class="employees-container overflow-scroll align-parent-bottom" discount-height="65">
                 <div ng-draggable="isGroupAdmin(selectedGroup)"
