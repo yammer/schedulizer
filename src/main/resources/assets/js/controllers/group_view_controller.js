@@ -5,6 +5,73 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     // Will hold the calendar api
     $scope.calendar = {};
+    $scope.availabilityCalendarMode = false;
+    $scope.selectedEmployee = undefined;
+
+    $scope.getCellClass = function(day) {
+        if (day.content == undefined) {
+            return {
+                'available': $scope.availabilityCalendarMode
+            };
+        }
+
+        var cellClass = {
+            'assigned': !$scope.availabilityCalendarMode && day.content.isAssigned(),
+            'mid-assigned': !$scope.availabilityCalendarMode && day.content.isMidAssigned(),
+            'available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isAvailable($scope.selectedEmployee.id),
+            'mid-available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isMidAvailable($scope.selectedEmployee.id),
+            'not-available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isNotAvailable($scope.selectedEmployee.id)
+        }
+
+        if ($scope.availabilityCalendarMode && day.content.assignments && $scope.selectedEmployee) {
+            var assignmentCount = getSelectedEmployeeAssignmentsCount(day);
+            if(assignmentCount > 0) {
+                cellClass["assignment-count-" + assignmentCount] = true;
+            }
+        }
+        return cellClass;
+    }
+
+    function getSelectedEmployeeAssignmentsCount(day) {
+        var assignments = _.filter(_.flatten(_.values(day.content.assignments)), function(a) { return a.id == $scope.selectedEmployee.id; });
+        return assignments == undefined ? 0 : assignments.length;
+    }
+
+    function clearEmployeeSelection() {
+        $scope.availabilityCalendarMode = false;
+        $scope.selectedEmployee = undefined;
+    }
+
+    $scope.selectEmployee = function(employee) {
+        $scope.clearSelection();
+        if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
+            clearEmployeeSelection();
+            return;
+        }
+        $scope.selectedEmployee = employee;
+        $scope.availabilityCalendarMode = true;
+    }
+
+    $scope.$watchCollection('selectedDates', function(value) {
+        if (value && value.length > 0) {
+            clearEmployeeSelection();
+        }
+    });
+
+    $scope.getDayTooltip = function(day) {
+        if (!$scope.availabilityCalendarMode || day.content == undefined) {
+            return undefined;
+        }
+        var restriction = _.find(day.content.restrictions, function(r) { return r.employeeId == $scope.selectedEmployee.id; });
+        if (restriction == undefined) {
+            return undefined;
+        }
+        if (restriction.comment == "" || restriction.comment == undefined) {
+            return "No comments";
+        }
+        return restriction.comment;
+    }
+
 
     function tryInvalidateCalendarContent() {
         if ($scope.calendar.invalidateContent != null) {
@@ -130,6 +197,11 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 }
             });
         }
+    }
+
+    $scope.showHoveredDayEmployees = function(hoveredDay, employees) {
+        return  (!$scope.availabilityCalendarMode && employees.length > 0) ||
+                ($scope.availabilityCalendarMode && _.find(employees, function(e){return e.id==$scope.selectedEmployee.id; }));
     }
 
     $scope.hasAssignment = function(day) {
@@ -259,6 +331,17 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     GroupViewDayContent.prototype.assign = function() {
     }
+
+    GroupViewDayContent.prototype.restrictionLevel = function(employee_id) {
+        var restriction = _.find(this.restrictions, function(r) {
+            return r.employeeId == employee_id;
+        });
+        return (restriction != null) ? restriction.restrictionLevel : 0;
+    };
+
+    GroupViewDayContent.prototype.isAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 0;};
+    GroupViewDayContent.prototype.isMidAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 1;};
+    GroupViewDayContent.prototype.isNotAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 2;};
 
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {

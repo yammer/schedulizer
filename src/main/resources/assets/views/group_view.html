@@ -53,14 +53,14 @@
                 <div
                     ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey: orderHoveredDayBy"
                     class="day-assignment"
-                    ng-if="employees.length > 0"
+                    ng-if="showHoveredDayEmployees(hoveredDay, employees)"
                     >
                     <div class="day-assignment-role">
                         <span class="assignment-color-{{index % 10}}">
                             {{selectedGroup.assignmentTypeFor(employees.key).name}}
                         </span>
                     </div>
-                    <div class="day-assignment-avatars">
+                    <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
                         <img
                             ng-repeat="employee in employees"
                             ng-src="{{employee.imageUrlTemplate}}"
@@ -77,10 +77,8 @@
             on-hover-day="onHoverDay"
             on-load-day-content="onLoadDayContent"
             expose-api-to="calendar"
-            cell-class="{
-                'assigned': day.content && day.content.isAssigned(),
-                'mid-assigned': day.content && day.content.isMidAssigned()
-            }"
+            cell-class="getCellClass(day)"
+            get-day-tooltip="getDayTooltip"
             >
 
 
@@ -218,6 +216,8 @@
                             group="$parent.selectedGroup"
                             remove="deleteEmployee(employee)"
                             toggle-admin="toggleAdmin"
+                            on-click="selectEmployee"
+                            select-employee="selectedEmployee.id == employee.id"
                             >
                     </employee-card>
                 </div>

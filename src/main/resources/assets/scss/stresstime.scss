@@ -553,6 +553,7 @@ $add-bg: $grey-2;
     height: 50px;
     vertical-align: middle;
     padding: 6px 0px 0 10px;
+    cursor: pointer;
 
     &.with-input {
         padding-top: 0;
@@ -562,6 +563,14 @@ $add-bg: $grey-2;
         display: inline-block;
         overflow: hidden;
     }
+}
+
+.employee-card.selected-employee.hoverable {
+    background-color: $grey-2;
+}
+
+.employee-card.selected-employee.hoverable:hover {
+    background-color: lighten($grey-2, 5%);
 }
 
 .clear {
