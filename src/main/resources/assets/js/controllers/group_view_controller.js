@@ -67,9 +67,6 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         if (restriction == undefined) {
             return undefined;
         }
-        if (restriction.comment == "" || restriction.comment == undefined) {
-            return "No comments";
-        }
         return restriction.comment;
     }
 
