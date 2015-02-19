@@ -371,7 +371,9 @@ App.directive('stTooltip', function(){
                     content: function() {
                         return $(this).attr('title');
                     },
-                    position: {my: 'left bottom-5', at: 'left top'}
+                    position: {my: 'left bottom-5', at: 'left top'},
+                    show: false,
+                    hide: false
                 });
             }
         }
