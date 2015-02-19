@@ -309,6 +309,11 @@ $calendar-cell-spacing: 4px;
 
     &.legend-full {
         background-color: #FFFFFF;
+        z-index: 2; /* on top of buckets */
+    }
+
+    &.legend-hint {
+        z-index: 0; /* covered by buckets */
     }
 
     .description {
@@ -609,7 +614,7 @@ $delete-bg: #C41E1E;
 .assignment-type-buckets {
     /* On top of legend  */
     position: relative;
-    /*z-index: 1;*/
+    z-index: 1;
     background-color: #FFFFFF;
     /* Idk why, but below works */
     padding-bottom: 1px;
