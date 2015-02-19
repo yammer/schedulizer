@@ -286,3 +286,13 @@ services.factory('EmployeeAssignmentsResource', ['$resource', function($resource
 
     return EmployeeAssignmentsResource;
 }]);
+
+services.factory('GroupRestrictionsResource', ['$resource', function($resource) {
+    var GroupRestrictionsResource = $resource(PREFIX + 'groups/:group_id/restrictions', {}, {});
+
+    GroupRestrictionsResource.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    };
+
+    return GroupRestrictionsResource;
+}]);
