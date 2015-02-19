@@ -416,6 +416,24 @@ $mid-assigned-bg: #EFC932;
     left: 0px;
 }
 
+$available-bg: #6FDF6F;
+$mid-available-bg: #F2D253;
+$not-available-bg: #DB8888;
+
+.employee-not-available {
+    background: rgba($not-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($not-available-bg, 5%), 0.5);
+    }
+}
+
+.employee-mid-available {
+    background: rgba($mid-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($mid-available-bg, 5%), 0.5);
+    }
+}
+
 /* Refactor styles to use SASS nesting */
 
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
@@ -1051,10 +1069,6 @@ $progress-bar-bg: transparent;
     margin: 0 10px;
 }
 
-$available-bg: #6FDF6F;
-$mid-available-bg: #F2D253;
-$not-available-bg: #DB8888;
-
 $available-input-bg: #25D025;
 $mid-available-input-bg: #FFC200;
 $not-available-input-bg: #DA4B4B;
@@ -1064,7 +1078,6 @@ $not-available-input-bg: #DA4B4B;
 .day.available {
     @include even-odd(color, $light-fg);
     @include colorize-day($available-bg);
-
 }
 
 .day.mid-available {

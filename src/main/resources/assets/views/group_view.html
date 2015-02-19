@@ -210,7 +210,9 @@
                 <div ng-draggable="isGroupAdmin(selectedGroup)"
                      ghost-element=".avatar-wrapper .avatar-image"
                      ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
-                     drag-data=employee>
+                     drag-data=employee
+                     ng-class="{'employee-mid-available': employeeRestrictions[employee.id] == 1,
+                                'employee-not-available': employeeRestrictions[employee.id] == 2}">
                     <employee-card
                             employee="employee"
                             group="$parent.selectedGroup"
