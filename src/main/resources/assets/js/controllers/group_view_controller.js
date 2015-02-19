@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils,
+App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, GroupRestrictionsResource,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -143,6 +143,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.clearSelection = function() {
         $scope.calendar.clearSelectedDays();
         $scope.selectedDates = [];
+        $scope.employeeRestrictions = {};
     }
 
     $scope.selectedDates = [];
@@ -196,10 +197,39 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             return day.content.assignableDay;
         });
         updateAssignmentTypeBuckets(assignableDays)
+
+        var restrictions = _.flatten(_.filter(selection.days, function(day){
+            return day.content != null && day.content.restrictions != null && day.content.restrictions.length > 0
+        }).map(function(day){
+            return day.content.restrictions;
+        }));
+        updateEmployeeRestrictions(restrictions);
+    }
+
+    function updateEmployeeRestrictions(restrictions) {
+        $scope.employeeRestrictions = {};
+        angular.forEach(restrictions, function(restriction) {
+            var currRestriction = $scope.employeeRestrictions[restriction.employeeId];
+            if (currRestriction == undefined ||
+                restriction.restrictionLevel > currRestriction) {
+                $scope.employeeRestrictions[restriction.employeeId] = restriction.restrictionLevel;
+            }
+        });
     }
 
     var GroupViewDayContent = function(assignableDay) {
-        this.assignableDay = assignableDay;
+        this.assignableDay = undefined;
+        this.restrictions = [];
+        this.assignments = {};
+    }
+
+    GroupViewDayContent.prototype.assignableDay = null;
+
+    GroupViewDayContent.prototype.assignments = {};
+
+    GroupViewDayContent.prototype.restrictions = null;
+
+    GroupViewDayContent.prototype.setAssignments = function(assignableDay) {
         this.assignments = _.groupBy(assignableDay.assignments, function(assignment) {
             return assignment.assignmentTypeId;
         });
@@ -209,11 +239,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }));
             return [id, employees]
         }));
+        this.assignableDay = assignableDay;
     }
-
-    GroupViewDayContent.prototype.assignableDay = null;
-
-    GroupViewDayContent.prototype.assignments = {};
 
     GroupViewDayContent.prototype.numberOfRoles = function() {
         var self = this;
@@ -250,15 +277,34 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             return terminate(true);
         }
         $scope.progressBar.trigger();
+
+        var i = 2;
+        var totalError = false;
+        var wrappedTerminate = function(error) {
+            totalError = totalError || error;
+            if (--i == 0) terminate(totalError);
+        };
+
         AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
                 start_date: startDate.toISOLocalDateString(),
                 end_date: endDate.toISOLocalDateString()
             }).$promise.then(function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
-                terminate();
+                wrappedTerminate();
             }).catch(function(e) {
-                terminate(true);
+                wrappedTerminate(true);
+        });
+
+        GroupRestrictionsResource.query({
+                group_id: $scope.selectedGroup.id,
+                start_date: startDate.toISOLocalDateString(),
+                end_date: endDate.toISOLocalDateString()
+            }).$promise.then(function(restrictions) {
+                updateDayRestrictions(restrictions, daysMap);
+                wrappedTerminate();
+            }).catch(function(e) {
+                wrappedTerminate(true);
         });
     }
 
@@ -269,7 +315,25 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
 
         _.each(assignableDays, function(assignableDay) {
-            daysMap[assignableDay.date].content = new GroupViewDayContent(assignableDay);
+            if (daysMap[assignableDay.date].content == undefined) {
+                daysMap[assignableDay.date].content = new GroupViewDayContent();
+            }
+            daysMap[assignableDay.date].content.setAssignments(assignableDay);
+        });
+    }
+
+    function updateDayRestrictions(restrictions, daysMap) {
+        if (daysMap == null) {
+            var dates = _.map(restrictions, function(a) {return a.getDate();});
+            daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
+        }
+
+        _.each(restrictions, function(restriction) {
+            if (daysMap[restriction.date].content == undefined) {
+                daysMap[restriction.date].content = new GroupViewDayContent();
+            }
+            daysMap[restriction.date].content.restrictions.push(restriction);
+            daysMap[restriction.date].content.restrictions = _.unique(daysMap[restriction.date].content.restrictions);
         });
     }
 
