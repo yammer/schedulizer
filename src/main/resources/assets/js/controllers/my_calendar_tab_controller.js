@@ -77,7 +77,11 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     function getAvailabilityCommentFromDays(days) {
         var comments = _.chain(days)
             .map('content')
-            .map(function(content) {return (!content) ? "" : content.dayRestriction.comment})
+            .map(function(content) {
+                return (content && content.dayRestriction && content.dayRestriction.comment)
+                    ? content.dayRestriction.comment
+                    : "";
+            })
             .value();
         var uniq = _.uniq(comments).length == 1;
         var text = (uniq) ? comments[0] : "";
