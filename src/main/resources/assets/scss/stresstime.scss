@@ -968,6 +968,7 @@ $counter-width: 20px;
     height: $height;
 
     .stat-range-edit-button {
+        @include select(none);
         display: inline-block;
         width: 23px;
         height: 22px;

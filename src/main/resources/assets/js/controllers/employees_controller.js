@@ -68,7 +68,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         };
 
         $scope.setStatRangeIfEditMode = function() {
-            if (!$scope.isStatEditMode) return;
+            if (!$scope.isStatEditMode()) return;
 
             var r = $scope.selectedDays.maxMinBy(Date.SORT_BY);
             $scope.stat.range.from = r.min;
