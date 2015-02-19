@@ -393,6 +393,11 @@ $calendar-cell-spacing: 4px;
     }
 }
 
+.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable {
+    display: inherit;
+    opacity: 0.7;
+}
+
 .employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
     font-size: 14px;
     width: 17px;
@@ -413,19 +418,19 @@ $calendar-cell-spacing: 4px;
         color: #dbb800;
     }
     &.not-admin.editable {
-        display: inherit;
-        opacity: 0.7;
+        &:hover {
+            @include pulse(.6s);
+            opacity: 1;
+        }
     }
 
     &.is-admin {
         opacity: 1;
         display: inherit;
-        &.editable {
-            background-color: #CC5555;
 
+        &.editable {
             &:hover {
-                @include pulse(.6s);
-                opacity: 1;
+                background-color: #CC5555;
                 .glyphicon { display: none; }
                 .delete-admin {
                     display: inline-block;
@@ -437,7 +442,10 @@ $calendar-cell-spacing: 4px;
             }
         }
     }
-    .delete-admin { display: none; }
+
+    .delete-admin {
+        display: none;
+    }
 }
 
 .employee-card .avatar-wrapper {
