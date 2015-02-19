@@ -1,5 +1,6 @@
 <div class="col-md-7 main align-parent-bottom" discount-height="70">
     <h1 class="header">
+        <img ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div
@@ -86,7 +87,7 @@
         </calendar>
         <div class="right-bar">
 
-            <div ng-if="selectedDates.length > 0">
+            <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
                 <div ng-click="clearSelection()" class="stamp selection-stamp" >
                     <div class="main-label">{{selectedDates.length}}</div>
                     <div class="sub-label">Days Selected</div>
@@ -114,10 +115,8 @@
                                     class="minus-span">-</span>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
 
             <table

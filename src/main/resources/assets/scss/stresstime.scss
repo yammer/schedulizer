@@ -862,6 +862,14 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     color: darken($grey-3, 20%);
 }
 
+.selected-employee-image {
+    height: 41px;
+    display: inline-block;
+    margin: -15px 4px -10px -4px;
+    border-radius: 28px;
+    opacity: 0.8;
+}
+
 .assignment-types-wrapper {
     float: right;
     margin-top: -1px;
