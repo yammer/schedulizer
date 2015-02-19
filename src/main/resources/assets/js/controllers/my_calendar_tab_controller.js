@@ -1,24 +1,9 @@
-App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction, EmployeeAssignmentsResource) {
+App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction,
+                                                    EmployeeAssignmentsResource, AVAILABILITY_STATES) {
 
     $scope.calendar = {};
     $scope.progressBar = {trigger: function() {}};
-    $scope.availabilityStates = [{
-            label: 'available',
-            level: 0,
-            title: 'Available',
-            glyphicon: 'glyphicon-ok'
-        }, {
-            label: 'mid-available',
-            level: 1,
-            title: 'Partially Available',
-            glyphicon: 'glyphicon-minus'
-        }, {
-            label: 'not-available',
-            level: 2,
-            title: 'Not Available',
-            glyphicon: 'glyphicon-remove'
-    }];
-
+    $scope.availabilityStates = AVAILABILITY_STATES;
     $scope.getCellClass = function(day) {
         var classMap = {
             'available': !day.content || day.content.isAvailable(),

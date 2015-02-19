@@ -1,7 +1,8 @@
 App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, GroupRestrictionsResource,
-                                               Group, AssignmentType, AssignableDay, EMPTY_GROUP) {
+                                               Group, AssignmentType, AssignableDay, EMPTY_GROUP, AVAILABILITY_STATES) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
+    $scope.availabilityStates = AVAILABILITY_STATES;
 
     // Will hold the calendar api
     $scope.calendar = {};

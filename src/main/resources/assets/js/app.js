@@ -51,6 +51,25 @@ App.constant('NAV_TABS', {
     }
 });
 
+App.constant('AVAILABILITY_STATES', [
+    {
+        label: 'available',
+        level: 0,
+        title: 'Available',
+        glyphicon: 'glyphicon-ok'
+    }, {
+        label: 'mid-available',
+        level: 1,
+        title: 'Partially Available',
+        glyphicon: 'glyphicon-minus'
+    }, {
+        label: 'not-available',
+        level: 2,
+        title: 'Not Available',
+        glyphicon: 'glyphicon-remove'
+}]
+);
+
 App.constant('NESTED_VIEWS', {
     groupsView: {
         title: 'Groups',

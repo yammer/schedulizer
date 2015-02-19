@@ -137,7 +137,7 @@
                 ng-mouseleave="legendToggle = false"
                 ng-show="legendToggle"
                 >
-                <tr>
+                <tr ng-if="!availabilityCalendarMode">
                     <td class="day odd"></td>
                     <td class="day even"></td>
                     <td class="description">Empty days</td>
@@ -150,13 +150,17 @@
                     <td class="day hover"></td>
                     <td class="description" colspan="2">Selected</td>
                 </tr>
-                <tr>
+                <tr  ng-if="!availabilityCalendarMode">
                     <td class="day mid-assigned"></td>
                     <td class="description" colspan="2">Partially Assigned</td>
                 </tr>
-                <tr>
+                <tr ng-if="!availabilityCalendarMode">
                     <td class="day assigned"></td>
                     <td class="description" colspan="2">Fully Assigned</td>
+                </tr>
+                <tr ng-if="availabilityCalendarMode" ng-repeat="availabilityState in availabilityStates">
+                    <td class="day {{availabilityState.label}}"></td>
+                    <td class="description" colspan="2">{{availabilityState.title}}</td>
                 </tr>
             </table>
         </div>
