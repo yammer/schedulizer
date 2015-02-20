@@ -28,6 +28,42 @@
     :-ms-input-placeholder      {@content}
 }
 
+.st-tooltip {
+    $tooltip-arrow-size: 10px;
+    $tooltip-color: #333333;
+    $tooltip-width: 300px;
+
+    .st-tooltip-title {
+        display: none;
+        position: absolute;
+        width: $tooltip-width;
+        top: 50%;
+        left: -$tooltip-arrow-size;
+        padding: 10px;
+        font-size: 13px;
+        transform: translate(-100%, -50%);
+        color: #FFF;
+        background-color: $tooltip-color;
+    }
+
+    &:hover .st-tooltip-title {
+        display: block;
+
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 0;
+            right: -$tooltip-arrow-size;
+            top: 50%;
+            transform: translate(0, -50%);
+            border-style: solid;
+            border-color: transparent $tooltip-color;
+            border-width: $tooltip-arrow-size 0 $tooltip-arrow-size $tooltip-arrow-size;
+        }
+    }
+}
+
 body {
     padding-top: 50px;
 }

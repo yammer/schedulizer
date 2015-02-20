@@ -61,12 +61,6 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             return days && Date.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
         };
 
-        $scope.getStatEditHintAttr = function() {
-            return $scope.isStatEditMode()
-                ?  undefined // Hides the attribute
-                : "First selected a RANGE of days on the calendar then press this button.";
-        };
-
         $scope.setStatRangeIfEditMode = function() {
             if (!$scope.isStatEditMode()) return;
 

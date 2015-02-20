@@ -211,14 +211,16 @@
                         <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
 
                         <div
-                            class="stat-range-edit-button"
+
+                            class="stat-range-edit-button st-tooltip"
                             ng-class="{
-                                'active': isStatEditMode(),
-                                'hint--no-animate hint--left': !isStatEditMode(),
+                                'active': isStatEditMode()
                             }"
-                            ng-attr-data-hint="{{getStatEditHintAttr()}}"
                             ng-click="setStatRangeIfEditMode()"
                             >
+                            <div ng-if="!isStatEditMode()" class="st-tooltip-title">
+                                First selected a RANGE of days on the calendar then press this button.
+                            </div>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </div>
 
