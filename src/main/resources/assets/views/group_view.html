@@ -70,7 +70,7 @@
                     </div>
                     <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
                         <img
-                            ng-repeat="employee in employees"
+                            ng-repeat="employee in employees | orderBy: 'name'"
                             ng-src="{{employee.imageUrlTemplate}}"
                             />
                     </div>
@@ -108,7 +108,7 @@
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
                         <div class="bucket-content">
                             <div
-                                ng-repeat="employee in assignmentTypeBucket.employeeList"
+                                ng-repeat="employee in assignmentTypeBucket.employeeList | orderObjectBy: 'employee.name'"
                                 class="assigned-employee"
                                 ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
                                 ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
