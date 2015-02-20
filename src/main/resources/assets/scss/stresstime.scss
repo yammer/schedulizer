@@ -1322,15 +1322,18 @@ $not-available-input-bg: #DA4B4B;
 /* Tooltip style */
 
 .ui-tooltip {
-    background: #666;
+    background: #333;
     color: white;
     border: none;
     padding: 0;
     opacity: 1;
+    border-radius: 1px;
+    min-width: 55px;
 }
 .ui-tooltip-content {
     position: relative;
-    padding: 1em;
+    padding: 0.8em;
+    font-size: 12px;
 }
 .ui-tooltip-content::after {
     content: '';
@@ -1339,8 +1342,8 @@ $not-available-input-bg: #DA4B4B;
     display: block;
     width: 0;
     bottom: -10px;
-    left: 15px;
-    border-color: #666 transparent;
+    left: 18px;
+    border-color: #333 transparent;
     border-width: 10px 10px 0;
 }
 
