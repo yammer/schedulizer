@@ -25,7 +25,7 @@
                 <div
                     st-if="(group == undefined && isGlobalAdmin()) || isGroupAdmin(group)"
                     class="delete-button"
-                    ng-click="remove()"
+                    ng-click="remove(); $event.preventDefault(); $event.stopPropagation();"
                     >
                     <span class="glyphicon glyphicon-minus"></span>
                 </div>
