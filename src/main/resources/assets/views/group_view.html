@@ -11,7 +11,7 @@
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div
-                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
+                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id':true"
                 class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
@@ -103,7 +103,7 @@
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
                     <div class="bucket"
-                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.name'"
+                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.id'"
                          ng-droppable="isGroupAdmin(selectedGroup)"
                          ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
@@ -198,7 +198,7 @@
                 <div class="mini-assignment-type-headers">
                     <div class="v-center-wrap">
                         <div
-                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
+                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id'"
                             ng-click="updateEmployeesOrder(assignmentType)"
                             class="mini-assignment-type-label assignment-color-{{index % 10}}"
                             ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
