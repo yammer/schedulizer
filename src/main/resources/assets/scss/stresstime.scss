@@ -36,6 +36,7 @@
     .st-tooltip-title {
         display: none;
         position: absolute;
+        z-index: 1;
         width: $tooltip-width;
         top: 50%;
         left: -$tooltip-arrow-size;
