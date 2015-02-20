@@ -45,6 +45,12 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         $scope.selectedEmployee = undefined;
     }
 
+    $scope.$watch('selectedGroup.employees.length', function() {
+        if (_.find($scope.selectedGroup.employees, function(e) { return e.id == $scope.selectedEmployee.id; }) == undefined) {
+            clearEmployeeSelection();
+        }
+    });
+
     $scope.selectEmployee = function(employee) {
         $scope.clearSelection();
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
