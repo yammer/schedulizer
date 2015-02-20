@@ -9,6 +9,10 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     $scope.calendar = [];
 
+    if ($scope.showHover == undefined) {
+        $scope.showHover = true;
+    }
+
     var baseCellClasses = function(day, week) {
         return {
             'empty': !day.content,
@@ -582,7 +586,8 @@ App.directive('calendar', function() {
             onLoadDayContent: '=onLoadDayContent',
             providedCellClass: '&cellClass',
             tooltip: '=getDayTooltip',
-            api: '=exposeApiTo'
+            api: '=exposeApiTo',
+            showHover: "="
         },
         templateUrl: 'views/calendar.html',
         controller: 'CalendarController'
