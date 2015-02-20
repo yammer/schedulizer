@@ -13,6 +13,7 @@ import io.dropwizard.jackson.Jackson;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 public class ResourceUtils {
 
@@ -60,6 +61,12 @@ public class ResourceUtils {
 
     public static void checkGroupAdminOrGlobalAdmin(Group group, Employee employee) {
         if (!employee.isGlobalAdmin() && !group.isAdmin(employee)) {
+            throw new UnauthorizedAccessException();
+        }
+    }
+
+    public static void checkGroupAdminOrGlobalAdmin(Collection<? extends Group> groups, Employee employee) {
+        if (!employee.isGlobalAdmin() && !groups.stream().anyMatch(g -> g.isAdmin(employee))) {
             throw new UnauthorizedAccessException();
         }
     }

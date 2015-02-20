@@ -1,16 +1,17 @@
 package com.yammer.stresstime.entities;
 
-import com.google.common.collect.ImmutableSet;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "day_restrictions")
+@Table(name = "day_restrictions",
+        uniqueConstraints = @UniqueConstraint(columnNames =
+                {"date", "employee_id"}))
 public class DayRestriction extends JsonAnnotatedEntity {
 
     @Id
@@ -25,25 +26,32 @@ public class DayRestriction extends JsonAnnotatedEntity {
     @Column(name = "comment")
     private String comment;
 
-    @ManyToMany
-    @JoinTable(name = "day_restriction_assignment_type",
-            joinColumns = { @JoinColumn(name = "day_restriction_id") },
-            inverseJoinColumns = { @JoinColumn(name = "assignment_type_id") })
-    private Set<AssignmentType> assignmentTypes = new HashSet<>();
-    // ^ This represents the assignment types the employee cannot fulfill
+    @Column(name = "restriction_level")
+    private int restrictionLevel;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     /* package private */ DayRestriction() {
         // Required by Hibernate
     }
 
-    public DayRestriction(LocalDate date) {
+    public DayRestriction(LocalDate date, Employee employee) {
         this.date = date;
+        this.employee = employee;
     }
 
     public long getId() {
         return id;
     }
 
+    @JsonProperty("date")
+    public String getDateString() {
+        return date.toString();
+    }
+
+    @JsonIgnore
     public LocalDate getDate() {
         return date;
     }
@@ -57,14 +65,28 @@ public class DayRestriction extends JsonAnnotatedEntity {
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        this.comment = (comment != null) ? comment.trim() : null;
     }
 
-    public Set<AssignmentType> getAssignmentTypes() {
-        return ImmutableSet.copyOf(assignmentTypes);
+    @JsonIgnore
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setAssignmentTypes(Set<AssignmentType> assignmentTypes) {
-        this.assignmentTypes = ImmutableSet.copyOf(assignmentTypes);
+    public long getEmployeeId() {
+        return getEmployee().getId();
     }
+
+    public int getRestrictionLevel() {
+        return restrictionLevel;
+    }
+
+    public void setRestrictionLevel(int restrictionLevel) {
+        this.restrictionLevel = restrictionLevel;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
 }

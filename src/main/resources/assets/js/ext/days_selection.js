@@ -54,7 +54,11 @@ DaysSelection.prototype.resetToPreviousState = function(days) {
 DaysSelection.prototype.dates = function() {
     return _.map(this.days, function(day) {
         return day.date;
-    }, this)
+    }, this);
+};
+
+DaysSelection.prototype.getDays = function() {
+    return _.clone(this.days);
 };
 
 DaysSelection.dateRange = function(a, b) {

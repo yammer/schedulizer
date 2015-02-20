@@ -21,6 +21,12 @@
     &:after { clear: both; }
 }
 
+@mixin placeholder {
+    ::-webkit-input-placeholder {@content}
+    :-moz-placeholder           {@content}
+    ::-moz-placeholder          {@content}
+    :-ms-input-placeholder      {@content}
+}
 
 body {
     padding-top: 50px;
@@ -31,6 +37,8 @@ body {
 }
 
 $blue: #398BCA;
+$dark-red: #C41E1E;
+$light-red: #E06969;
 /* $grey-N: higher N means darker */
 $grey-0: #F5F5F5; /* Sidebar and title bgs */
 $grey-1: #EEEEEE; /* Lighter months on calendar */
@@ -39,6 +47,50 @@ $grey-3: #A6A6A6; /* Title text color */
 $grey-4: #828282; /* + inside (+) button */
 
 $grey-2p5: mix($grey-2, $grey-3);
+$grey-3p5: mix($grey-3, $grey-4);
+
+/* General colors (Availability/employee mode) */
+
+$normal-mode-bg: #FFFFFF;
+$normal-mode-header-bg: $grey-0;
+$normal-mode-header-fg: $grey-3;
+
+$employee-mode-bg: #FBF8EF;
+$employee-mode-header-bg: #ECC635;/*#F1CF4A;*/
+$employee-mode-header-fg: #FFFFFF;
+
+.normal-mode {
+    background-color: $normal-mode-bg;
+    .header {
+        color: $normal-mode-header-fg;
+        background-color: $normal-mode-header-bg;
+        border-bottom: 1px solid darken($normal-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $normal-mode-header-fg;
+            &:hover {
+                color: darken($normal-mode-header-fg, 20%);
+            }
+        }
+    }
+    .assignment-type-buckets { background-color: $normal-mode-bg; }
+    .legend.full, .legend.legend-full { background-color: $normal-mode-bg; }
+}
+.employee-mode {
+    background-color: $employee-mode-bg;
+    box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    .header {
+        color: $employee-mode-header-fg;
+        background-color: $employee-mode-header-bg;
+        border-bottom: 1px solid darken($employee-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $employee-mode-header-fg;
+            &:hover { color: darken($employee-mode-header-fg, 20%); }
+        }
+    }
+    .assignment-type-buckets { background-color: $employee-mode-bg; }
+    .legend.full, .legend.legend-full { background-color: $employee-mode-bg; }
+}
 
 /* Global admins icon */
 
@@ -80,22 +132,20 @@ $selected-bg: #2EC3E5;
 $odd-bg: $grey-2;
 $even-bg: $grey-1;
 $today-bg: #FD8845;
-$assigned-bg: #6FDF6F;
-$mid-assigned-bg: #EFC932;
 
 $day-border-thickness: 5px;
 
-@mixin colorize-day($color) {
-    @include even-odd-bg($color, 7%);
+@mixin colorize-day($color, $amount: 5%) {
+    @include even-odd-bg($color, $amount);
     .hoverable &:hover, &.selected {
-        @include even-odd-bg(mix($selected-bg, $color, 80%), 7%);
+        @include even-odd-bg(mix($selected-bg, $color, 80%), $amount);
     }
     .hoverable &.selected:hover {
-        @include even-odd-bg(mix(lighten($selected-bg, 10%), $color, 70%), 7%);
+        @include even-odd-bg(mix(lighten($selected-bg, 10%), $color, 70%), $amount);
     }
 }
 
-@mixin even-odd($property-name, $color, $amount) {
+@mixin even-odd($property-name, $color, $amount: 0%) {
     #{$property-name}: $color;
     &.odd { #{$property-name}: darken($color, $amount); }
     &.even { #{$property-name}: lighten($color, $amount); }
@@ -106,12 +156,7 @@ $day-border-thickness: 5px;
 }
 
 .view-calendar td, .view-calendar th {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
+    @include select(none);
 }
 
 $calendar-cell-spacing: 4px;
@@ -161,13 +206,14 @@ $calendar-cell-spacing: 4px;
         @include even-odd-bg(lighten($selected-bg, 10%), 7%);
     }
 }
-
 .day.today {
     border: $day-border-thickness solid $today-bg;
     color: $light-fg;
     background-color: $today-bg;
 }
-
+.day.hint, .day[data-hint] {
+    display: table-cell;
+}
 .calendar-header {
     border-spacing: $calendar-cell-spacing 0;
     position: absolute;
@@ -183,6 +229,9 @@ $calendar-cell-spacing: 4px;
 
 /* Group View Calendar */
 
+$assigned-bg: #6FDF6F;
+$mid-assigned-bg: #EFC932;
+
 .day.assigned {
     color: $light-fg;
     @include colorize-day($assigned-bg);
@@ -191,6 +240,8 @@ $calendar-cell-spacing: 4px;
     color: $light-fg;
     @include colorize-day($mid-assigned-bg);
 }
+
+/* Availability Calendar */
 
 /* Loading */
 
@@ -231,7 +282,6 @@ $calendar-cell-spacing: 4px;
     background-color: $grey-0;
     padding: 18px 15px 17px 15px;
 }
-
 
 /* Dual pane */
 
@@ -280,7 +330,7 @@ $calendar-cell-spacing: 4px;
 
 /* Group tab */
 
-#group-tab .calendar-wrap {
+.calendar-wrap {
     display: table;
     margin: 0 auto;
     position: relative;
@@ -307,7 +357,6 @@ $calendar-cell-spacing: 4px;
     margin-left: -$calendar-cell-spacing;
 
     &.legend-full {
-        background-color: #FFFFFF;
         z-index: 2; /* on top of buckets */
     }
 
@@ -340,7 +389,7 @@ $calendar-cell-spacing: 4px;
     margin-bottom: 21px;
 }
 
-.right-bar .stamp {
+.right-bar .stamp, .my-calendar-right-bar .stamp {
     margin-bottom: 17px;
 }
 
@@ -373,7 +422,7 @@ $calendar-cell-spacing: 4px;
 }
 
 .selection-stamp:hover {
-    background-color: #e06969;
+    background-color: $light-red;
 }
 
 /* Employee card */
@@ -389,6 +438,24 @@ $calendar-cell-spacing: 4px;
 
     .ui-widget input.form-control {
         font-size: 13px;
+    }
+}
+
+$available-bg: #6FDF6F;
+$mid-available-bg: #F2D253;
+$not-available-bg: #DB8888;
+
+.employee-not-available {
+    background: rgba($not-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($not-available-bg, 5%), 0.5);
+    }
+}
+
+.employee-mid-available {
+    background: rgba($mid-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($mid-available-bg, 5%), 0.5);
     }
 }
 
@@ -534,10 +601,16 @@ $employee-card-height: 50px;
     height: $employee-card-height;
     vertical-align: middle;
     padding: 0 0 0 10px;
+    cursor: pointer;
 
     &.with-input {
         padding-top: 0;
     }
+
+    /*span {
+        display: inline-block;
+        overflow: hidden;
+    }*/
 
     .v-center-wrap {
         /* vertical-align is already given by root .v-center-wrap (cmd+f it) */
@@ -560,6 +633,15 @@ $employee-card-height: 50px;
     vertical-align: middle;
 }
 
+.employee-card.selected-employee.hoverable {
+    .name, .employee-content { color: $employee-mode-header-fg; }
+    background-color: $employee-mode-header-bg;
+}
+
+.employee-card.selected-employee.hoverable:hover {
+    background-color: lighten($employee-mode-header-bg, 5%);
+}
+
 .clear {
     clear: both;
 }
@@ -575,7 +657,7 @@ $employee-card-height: 50px;
     .employee-card:hover & { opacity: 1.0; }
 }
 
-$delete-bg: #C41E1E;
+$delete-bg: $dark-red;
 
 .employee-card {
 
@@ -622,7 +704,6 @@ $delete-bg: #C41E1E;
     /* On top of legend  */
     position: relative;
     z-index: 1;
-    background-color: #FFFFFF;
     /* Idk why, but below works */
     padding-bottom: 1px;
 }
@@ -683,7 +764,7 @@ $delete-bg: #C41E1E;
     }
 
     &:hover {
-        background-color: #e06969;
+        background-color: $light-red;
 
         .minus-span { visibility: visible; }
         img { visibility: hidden; }
@@ -745,7 +826,7 @@ a[disabled] {
     width: 23px;
     border-radius: 50%;
     cursor: pointer;
-    background-color: #e06969;
+    background-color: $light-red;
 }
 
 .deletable-card .delete div {
@@ -796,7 +877,6 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     .assignment-color-#{$i - 1} {
         background: nth($assignment-colors, $i);
     }
-
 }
 
 .assignment-type-label {
@@ -847,11 +927,14 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     float: right;
     font-size: 38px;
     margin-top: -13px;
-    color: $grey-3;
 }
 
-.add-assignment-type:hover {
-    color: darken($grey-3, 20%);
+.selected-employee-image {
+    height: 41px;
+    display: inline-block;
+    margin: -15px 4px -10px -4px;
+    border-radius: 28px;
+    opacity: 0.8;
 }
 
 .assignment-types-wrapper {
@@ -1048,6 +1131,192 @@ $progress-bar-bg: transparent;
             transition: none;
         }
     }
+}
+
+/* My Calendar */
+
+.my-calendar-header {
+    padding-left: 30px;
+}
+
+.my-calendar-right-bar {
+    float: right;
+    width: 207px;
+    height: 50px;
+    margin: 0 15px;
+}
+
+.my-calendar-left-bar {
+    float: left;
+    width: 300px;
+    height: 50px;
+    margin: 0 10px;
+}
+
+$available-input-bg: #25D025;
+$mid-available-input-bg: #FFC200;
+$not-available-input-bg: #DA4B4B;
+
+/* Calendar */
+
+.day.available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($available-bg);
+}
+
+.day.mid-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($mid-available-bg);
+}
+
+.day.not-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($not-available-bg);
+}
+
+@mixin invalid {
+//    border: 1px solid darken($delete-bg, 10%);
+//    box-shadow: inset 0 1px 1px rgba(#000,.075), 0 0 6px lighten($delete-bg, 20%);
+}
+
+.availability-input {
+    @include select(none);
+    color: $light-fg;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    width: 49px;
+    height: 41px;
+    border-radius: 4px;
+    margin: 0 0 0 11px;
+    &:first-child { margin-left: 0; }
+    padding-top: 10px;
+    text-align: center;
+    font-size: 16px;
+
+    &.available { background-color: $available-input-bg; }
+    &.mid-available { background-color: $mid-available-input-bg; }
+    &.not-available { background-color: $not-available-input-bg; }
+
+    opacity: 0.2;
+    span { opacity: 0; }
+
+    &.invalid {
+        @include invalid;
+    }
+
+    &:hover {
+        opacity: 0.7;
+        span { opacity: 0.7; }
+    }
+
+    &.active {
+        opacity: 1;
+        span { opacity: 1; }
+
+        &:hover {
+            opacity: 1;
+            span { opacity: 0.9; }
+        }
+    }
+
+}
+
+.availability-inputs-panel {
+    overflow: auto;
+    color: $dark-fg;
+    background-color: #eeeeee;
+
+    textarea {
+        font-size: 13px;
+        resize: vertical;
+        &.form-control { padding: 6px 9px; }
+        &.invalid {
+            opacity: 0.75;
+            color: $grey-3;
+            @include invalid;
+        }
+        @include placeholder {
+            opacity: 1; // FF
+            color: $grey-3;
+        }
+
+    }
+
+    .submit-message {
+        text-align: right;
+        height: 33px;
+        width: 122px;
+        display: table-cell;
+        vertical-align: middle;
+        padding-right: 6px;
+        color: $grey-3;
+        font-size: 13px;
+        line-height: 14px;
+    }
+
+    .panel-body {
+        padding: 17px 17px 15px 17px;
+    }
+}
+
+
+.availability-inputs-container {
+    padding: 0 1px;
+}
+
+.availability-comment {
+    width: 100%;
+    margin: 11px 0;
+    font-weight: normal;
+
+    &.form-control {
+        height: 140px;
+    }
+}
+
+.availability-confirm-button {
+    @include select(none);
+    float: right;
+}
+
+@for $i from 1 through 100 {
+    .assignment-count-#{$i} {
+        position: relative;
+
+        &::before {
+            content: "#{$i}";
+            position: absolute;
+            top: 63%;
+            left: 70%;
+            width: 26%;
+            height: 28%;
+            line-height: 100%;
+            border-radius: 30%;
+            background-color: $grey-1;
+            color: $grey-4;
+            font-size: 63%;
+            padding-top: 3%;
+            padding-right: 1%;
+        }
+
+        &.today::before {
+            top: 67%;
+            left: 70%;
+            width: 32%;
+            height: 36%;
+            padding-top: 4%;
+        }
+    }
+}
+
+.assignment-hover-text-group .day-assignment-role .assignment-hover-text {
+    color: white;
+    background: $grey-3;
+}
+
+.assignment-hover-text-group {
+    margin-top: 20px;
 }
 
 /* Responsiveness */

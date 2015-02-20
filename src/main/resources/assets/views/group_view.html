@@ -1,5 +1,13 @@
-<div class="col-md-7 main align-parent-bottom" discount-height="70">
+<div
+    class="col-md-7 main align-parent-bottom"
+    discount-height="51"
+    ng-class="{
+        'employee-mode': availabilityCalendarMode,
+        'normal-mode': !availabilityCalendarMode
+    }"
+    >
     <h1 class="header">
+        <img ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div
@@ -34,13 +42,8 @@
         </div>
     </h1>
 
-    <div st-name="progressBar.outer" class="st-progress-bar">
-        <div
-            st-name="progressBar.inner"
-            class="st-progress"
-            >
-        </div>
-    </div>
+    <calendar-progress-bar expose-api-to="progressBar" calendar="calendar">
+    </calendar-progress-bar>
 
     <div class="calendar-wrap align-parent-bottom" discount-height="70">
         <div class="left-bar">
@@ -58,14 +61,14 @@
                 <div
                     ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey: orderHoveredDayBy"
                     class="day-assignment"
-                    ng-if="employees.length > 0"
+                    ng-if="showHoveredDayEmployees(hoveredDay, employees)"
                     >
                     <div class="day-assignment-role">
                         <span class="assignment-color-{{index % 10}}">
                             {{selectedGroup.assignmentTypeFor(employees.key).name}}
                         </span>
                     </div>
-                    <div class="day-assignment-avatars">
+                    <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
                         <img
                             ng-repeat="employee in employees"
                             ng-src="{{employee.imageUrlTemplate}}"
@@ -82,10 +85,8 @@
             on-hover-day="onHoverDay"
             on-load-day-content="onLoadDayContent"
             expose-api-to="calendar"
-            cell-class="{
-                'assigned': day.content && day.content.isAssigned(),
-                'mid-assigned': day.content && day.content.isMidAssigned()
-            }"
+            cell-class="getCellClass(day)"
+            get-day-tooltip="getDayTooltip"
             >
 
 
@@ -93,9 +94,9 @@
         </calendar>
         <div class="right-bar">
 
-            <div ng-if="selectedDays.length > 0">
+            <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
                 <div ng-click="clearSelection()" class="stamp selection-stamp" >
-                    <div class="main-label">{{selectedDays.length}}</div>
+                    <div class="main-label">{{selectedDates.length}}</div>
                     <div class="sub-label">Days Selected</div>
                 </div>
                 <div class="clear"></div>
@@ -121,10 +122,8 @@
                                     class="minus-span">-</span>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
 
             <table
@@ -144,7 +143,7 @@
                 ng-mouseleave="legendToggle = false"
                 ng-show="legendToggle"
                 >
-                <tr>
+                <tr ng-if="!availabilityCalendarMode">
                     <td class="day odd"></td>
                     <td class="day even"></td>
                     <td class="description">Empty days</td>
@@ -157,13 +156,17 @@
                     <td class="day hover"></td>
                     <td class="description" colspan="2">Selected</td>
                 </tr>
-                <tr>
+                <tr ng-if="!availabilityCalendarMode">
                     <td class="day mid-assigned"></td>
                     <td class="description" colspan="2">Partially Assigned</td>
                 </tr>
-                <tr>
+                <tr ng-if="!availabilityCalendarMode">
                     <td class="day assigned"></td>
                     <td class="description" colspan="2">Fully Assigned</td>
+                </tr>
+                <tr ng-if="availabilityCalendarMode" ng-repeat="availabilityState in availabilityStates">
+                    <td class="day {{availabilityState.label}}"></td>
+                    <td class="description" colspan="2">{{availabilityState.title}}</td>
                 </tr>
             </table>
         </div>
@@ -227,12 +230,16 @@
                 <div ng-draggable="isGroupAdmin(selectedGroup)"
                      ghost-element=".avatar-wrapper .avatar-image"
                      ng-repeat="employee in selectedGroup.employees | filter: employeeSearch | orderBy: employeeOrderKey"
-                     drag-data=employee>
+                     drag-data=employee
+                     ng-class="{'employee-mid-available': employeeRestrictions[employee.id] == 1,
+                                'employee-not-available': employeeRestrictions[employee.id] == 2}">
                     <employee-card
                             employee="employee"
                             group="$parent.selectedGroup"
                             remove="deleteEmployee(employee)"
                             toggle-admin="toggleAdmin"
+                            on-click="selectEmployee"
+                            select-employee="selectedEmployee.id == employee.id"
                             >
                     </employee-card>
                 </div>

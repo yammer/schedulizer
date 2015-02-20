@@ -192,9 +192,32 @@ services.factory('AssignableDay', ['$resource', function($resource) {
 
     AssignableDay.prototype.getDate = function() {
         return Date.fromISOLocalString(this.date);
-    }
+    };
 
     return AssignableDay;
+}]);
+
+services.factory('DayRestriction', ['$resource', function($resource) {
+    var DayRestriction = $resource(PREFIX + 'employees/:employee_id/restrictions/:day_restriction_id', {employee_id: '@employeeId'}, {
+        save: {
+            method: 'POST',
+            isArray: true,
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        },
+        delete: {
+            method: 'DELETE',
+            params: { day_restriction_id: "@id" },
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
+
+    DayRestriction.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    };
+
+    return DayRestriction;
 }]);
 
 services.factory('AuthorizationResource', ['$resource', function($resource) {
@@ -210,7 +233,7 @@ services.factory('AssignmentStats', ['$resource', function($resource) {
 }]);
 
 services.factory('AdminsResource', ['$resource', function($resource) {
-    var AssignableDay = $resource(PREFIX + 'groups/:group_id/admins/:employee_id',  { employee_id: "@employeeId", group_id: "@groupId"}, {
+    var AssignableDay = $resource(PREFIX + 'groups/:group_id/admins/:employee_id',  {employee_id: "@employeeId", group_id: "@groupId"}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -245,4 +268,28 @@ services.factory('GlobalAdminsResource', ['$resource', function($resource) {
     });
 
     return GlobalAdminsResource;
+}]);
+
+services.factory('EmployeeAssignmentsResource', ['$resource', function($resource) {
+    var EmployeeAssignmentsResource = $resource(PREFIX + 'employees/:employee_id/assignments', {}, {});
+
+    EmployeeAssignmentsResource.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    };
+
+    EmployeeAssignmentsResource.prototype.getFullName = function() {
+        return this.group.name + " - " + this.assignmentTypeName;
+    }
+
+    return EmployeeAssignmentsResource;
+}]);
+
+services.factory('GroupRestrictionsResource', ['$resource', function($resource) {
+    var GroupRestrictionsResource = $resource(PREFIX + 'groups/:group_id/restrictions', {}, {});
+
+    GroupRestrictionsResource.prototype.getDate = function() {
+        return Date.fromISOLocalString(this.date);
+    };
+
+    return GroupRestrictionsResource;
 }]);

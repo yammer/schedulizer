@@ -15,7 +15,8 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             'even': day.date.getMonth() % 2 == 0,
             'odd': day.date.getMonth() % 2 == 1,
             'today': day.date.isToday(),
-            'selected': day.selected
+            'selected': day.selected,
+            'hint--top hint--no-animate': $scope.tooltip != undefined && $scope.tooltip(day) != null
         };
     };
 
@@ -571,6 +572,7 @@ App.directive('calendar', function() {
             onHoverDayParent: '=onHoverDay',
             onLoadDayContent: '=onLoadDayContent',
             providedCellClass: '&cellClass',
+            tooltip: '=getDayTooltip',
             api: '=exposeApiTo'
         },
         templateUrl: 'views/calendar.html',

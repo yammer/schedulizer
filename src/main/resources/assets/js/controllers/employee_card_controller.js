@@ -24,7 +24,9 @@ App.directive('employeeCard', function() {
             employee: "=",
             group: "=",
             remove: "&",
-            toggleAdmin: "="
+            toggleAdmin: "=",
+            onClick: "=",
+            selectEmployee: "="
         },
         templateUrl: 'views/employee_card.html',
         controller: 'EmployeeCardController'
