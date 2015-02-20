@@ -16,6 +16,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             $scope.calendar.invalidateContent();
         }
         $scope.clearEmployeeSelection();
+        $scope.clearSelection();
     }, 200), true);
 
 
