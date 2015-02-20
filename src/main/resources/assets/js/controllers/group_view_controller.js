@@ -46,6 +46,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.$watch('selectedGroup.employees.length', function() {
+        if ($scope.selectedEmployee == undefined) { return; }
         if (_.find($scope.selectedGroup.employees, function(e) { return e.id == $scope.selectedEmployee.id; }) == undefined) {
             clearEmployeeSelection();
         }
