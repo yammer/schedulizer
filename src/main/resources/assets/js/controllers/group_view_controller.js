@@ -66,16 +66,25 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
     });
 
+    var savedSelection = null;
+
     $scope.selectEmployee = function(employee) {
         if (!$scope.isGroupAdmin($scope.selectedGroup)) { return; }
-        $scope.clearSelection();
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
+            $scope.calendar.selectDates(savedSelection);
+            savedSelection = null;
             $scope.clearEmployeeSelection();
             return;
+        } else {
+            if (savedSelection == null) {
+                savedSelection = $scope.selectedDates.clone();
+            }
+            $scope.clearSelection();
         }
         $scope.selectedEmployee = employee;
         $scope.availabilityCalendarMode = true;
     }
+
 
     $scope.$watchCollection('selectedDates', function(value) {
         if (value && value.length > 0) {
