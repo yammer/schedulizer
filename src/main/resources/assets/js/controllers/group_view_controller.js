@@ -1,4 +1,4 @@
-App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, GroupRestrictionsResource,
+App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, Session, GroupRestrictionsResource,
                                                Group, AssignmentType, AssignableDay, EMPTY_GROUP, AVAILABILITY_STATES) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
@@ -10,6 +10,14 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     // When availability calendar mode is false, the selected employee should be undefinde
     $scope.availabilityCalendarMode = false;
     $scope.selectedEmployee = undefined;
+
+    $scope.$watch(function() {return Session; }, Utils.lastOfBurst(function() {
+        if ($scope.calendar && $scope.calendar.invalidateContent) {
+            $scope.calendar.invalidateContent();
+        }
+        $scope.clearEmployeeSelection();
+    }, 200), true);
+
 
     $scope.getCellClass = function(day) {
         if (day.content == undefined) {
@@ -53,6 +61,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     });
 
     $scope.selectEmployee = function(employee) {
+        if (!$scope.isGroupAdmin($scope.selectedGroup)) { return; }
         $scope.clearSelection();
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
             $scope.clearEmployeeSelection();
@@ -366,7 +375,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
         $scope.progressBar.trigger();
 
-        var i = 2;
+        var i = $scope.isGroupAdmin($scope.selectedGroup) ? 2 : 1;
         var totalError = false;
         var wrappedTerminate = function(error) {
             totalError = totalError || error;
@@ -383,6 +392,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }).catch(function(e) {
                 wrappedTerminate(true);
         });
+
+        if (!$scope.isGroupAdmin($scope.selectedGroup)) { return; }
 
         GroupRestrictionsResource.query({
                 group_id: $scope.selectedGroup.id,

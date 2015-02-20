@@ -18,6 +18,7 @@
     <div
         st-name="employeeNameContainer"
         class="employee-content"
+        ng-class="{'not-group-admin': !isGroupAdmin(group)}"
         ng-click="onClick(employee)"
         >
         <div class="employee-actions">

@@ -649,6 +649,9 @@ $employee-card-height: 50px;
         overflow: hidden;
     }*/
 
+    &.not-group-admin {
+        cursor: default;
+    }
     .v-center-wrap {
         /* vertical-align is already given by root .v-center-wrap (cmd+f it) */
         height: $employee-card-height;
