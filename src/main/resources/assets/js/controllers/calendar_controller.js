@@ -35,16 +35,19 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     var weekElements = null;
 
+    function hasPositiveHeight(element) {
+        return element != null && element.outerHeight() != null && element.outerHeight() > 0;
+    }
+
     function getCellHeight() {
-        if (weekElements == null) {
+        if (!hasPositiveHeight(weekElements)) {
             weekElements = $(".week");
         }
-        var h = weekElements.outerHeight();
-        if (h == null || h <= 0) {
+        if (!hasPositiveHeight(weekElements)) {
             weekElements = null;
             return null;
         } else {
-            return h + 4;
+            return weekElements.outerHeight() + 4;
         }
     }
 
