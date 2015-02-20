@@ -42,6 +42,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 employee.groupId = group.id;
                 employee.$delete().then(function() {
                     group.employees = _.without(group.employees, _.findWhere(group.employees, employee));
+                    if (employee.id == Session.userId) {
+                        AuthService.removeGroupAdminPrivileges($scope.selectedGroup.id);
+                    }
                 });
             });
         };
