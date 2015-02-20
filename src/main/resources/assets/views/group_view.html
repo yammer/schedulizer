@@ -7,7 +7,7 @@
     }"
     >
     <h1 class="header">
-        <img ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
+        <img ng-click="clearEmployeeSelection()" ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div

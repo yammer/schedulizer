@@ -40,7 +40,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         return assignments == undefined ? 0 : assignments.length;
     }
 
-    function clearEmployeeSelection() {
+    $scope.clearEmployeeSelection = function() {
         $scope.availabilityCalendarMode = false;
         $scope.selectedEmployee = undefined;
     }
@@ -48,14 +48,14 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.$watch('selectedGroup.employees.length', function() {
         if ($scope.selectedEmployee == undefined) { return; }
         if (_.find($scope.selectedGroup.employees, function(e) { return e.id == $scope.selectedEmployee.id; }) == undefined) {
-            clearEmployeeSelection();
+            $scope.clearEmployeeSelection();
         }
     });
 
     $scope.selectEmployee = function(employee) {
         $scope.clearSelection();
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
-            clearEmployeeSelection();
+            $scope.clearEmployeeSelection();
             return;
         }
         $scope.selectedEmployee = employee;
@@ -64,7 +64,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     $scope.$watchCollection('selectedDates', function(value) {
         if (value && value.length > 0) {
-            clearEmployeeSelection();
+            $scope.clearEmployeeSelection();
         }
     });
 
