@@ -71,19 +71,27 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.selectEmployee = function(employee) {
         if (!$scope.isGroupAdmin($scope.selectedGroup)) { return; }
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
-            $scope.calendar.selectDates(savedSelection);
-            savedSelection = null;
             $scope.clearEmployeeSelection();
             return;
-        } else {
+        }
+
+        $scope.selectedEmployee = employee;
+        $scope.availabilityCalendarMode = true;
+    }
+
+    $scope.$watch('availabilityCalendarMode', function(availabilityCalendarMode) {
+        if (availabilityCalendarMode == false && savedSelection) {
+            $scope.clearSelection();
+            $scope.calendar.selectDates(savedSelection);
+            savedSelection = null;
+        }
+        else if (availabilityCalendarMode) {
             if (savedSelection == null) {
                 savedSelection = $scope.selectedDates.clone();
             }
             $scope.clearSelection();
         }
-        $scope.selectedEmployee = employee;
-        $scope.availabilityCalendarMode = true;
-    }
+    })
 
 
     $scope.$watchCollection('selectedDates', function(value) {
