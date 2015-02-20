@@ -1420,6 +1420,7 @@ $not-available-input-bg: #DA4B4B;
                                                      .view-calendar-wrapper { margin-top: 51px; }
                                                      .calendar-header { margin-top: -51px; }
                                                      .legend .day { width: 36px; height: 32px; }
+                                                     .stats-label-from { display: none; }
                                                    }
 @media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
                                                      .view-calendar-wrapper { margin-top: 42px; }
