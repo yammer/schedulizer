@@ -12,7 +12,8 @@
         <div class="assignment-types-wrapper">
             <div
                 ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id':true"
-                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}">
+                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}"
+                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
