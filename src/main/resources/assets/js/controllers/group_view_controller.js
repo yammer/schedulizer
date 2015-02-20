@@ -11,14 +11,19 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.availabilityCalendarMode = false;
     $scope.selectedEmployee = undefined;
 
-    $scope.$watch(function() {return Session; }, Utils.lastOfBurst(function() {
+    function reloadView() {
         if ($scope.calendar && $scope.calendar.invalidateContent) {
             $scope.calendar.invalidateContent();
         }
         $scope.clearEmployeeSelection();
         $scope.clearSelection();
-    }, 200), true);
+    }
 
+    var debouncedReloadView = Utils.lastOfBurst(reloadView, 200);
+    $scope.$watch(function() {return Session;}, debouncedReloadView, true);
+    $scope.$watch(function() {
+        return $scope.isGroupAdmin($scope.selectedGroup);
+    }, debouncedReloadView, true);
 
     $scope.getCellClass = function(day) {
         if (day.content == undefined) {
