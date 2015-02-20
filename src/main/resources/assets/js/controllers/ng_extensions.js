@@ -371,13 +371,20 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
 App.directive('stTooltip', function(){
     return {
         restrict: 'A',
+        scope: {
+            stTooltip: "@",
+            my: "@",
+            at: "@"
+        },
         link: function(scope, element, attrs){
-            if (attrs.stTooltip == "true") {
+            if (scope.stTooltip == "true") {
+                var my = scope.my || 'left bottom-5';
+                var at = scope.at || 'left top';
                 $(element).tooltip({
                     content: function() {
                         return $(this).attr('title');
                     },
-                    position: {my: 'left bottom-5', at: 'left top'},
+                    position: {my: my, at: at},
                     show: false,
                     hide: false
                 });

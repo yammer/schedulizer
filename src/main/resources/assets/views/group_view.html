@@ -112,6 +112,10 @@
                                 class="assigned-employee"
                                 ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
                                 ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
+                                st-tooltip="true"
+                                title="{{employee.employee.name}}"
+                                my="left bottom-5"
+                                at="left-10 top"
                                 >
                                 <img
                                     ng-src="{{employee.employee.imageUrlTemplate}}"
