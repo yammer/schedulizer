@@ -28,9 +28,27 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         $scope.dayStamp = Date.TODAY;
     };
 
+    $scope.availabilityFormStatus = 0; // 0 if false mask 1 if restriction is checked and mask 2 if comments changed
+    $scope.AVAILABILITY_FORM_STATUS = {
+        RESTRICTION_CHANGED: 1,
+        COMMENT_CHANGED: 2,
+        FORM_COMPLETE: 3
+    };
+
     $scope.clearSelection = function() {
+        $scope.availabilityFormStatus = 0;
         $scope.calendar.clearSelectedDays();
         $scope.selectedDays = [];
+    };
+
+    $scope.onComment = function() {
+        $scope.availability.comment.valid = true;
+        $scope.availabilityFormStatus |= $scope.AVAILABILITY_FORM_STATUS.COMMENT_CHANGED;
+    };
+
+    $scope.onCheckRestriction = function(state) {
+        $scope.availability.state = state.label;
+        $scope.availabilityFormStatus |= $scope.AVAILABILITY_FORM_STATUS.RESTRICTION_CHANGED;
     };
 
     $scope.dayStamp = Date.TODAY;
@@ -54,9 +72,12 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     $scope.onSelectDays = function(selection) {
         $scope.selectedDays = selection.getDays();
-        $scope.availability = DEFAULT_AVAILABILITY();
-        $scope.availability.comment = getAvailabilityCommentFromDays($scope.selectedDays);
-        $scope.availability.state = getAvailabilityStateLabelFromDays($scope.selectedDays);
+        if ($scope.availabilityFormStatus != $scope.AVAILABILITY_FORM_STATUS.FORM_COMPLETE) {
+            $scope.availabilityFormStatus = 0;
+            $scope.availability = DEFAULT_AVAILABILITY();
+            $scope.availability.comment = getAvailabilityCommentFromDays($scope.selectedDays);
+            $scope.availability.state = getAvailabilityStateLabelFromDays($scope.selectedDays);
+        }
     };
 
     function getAvailabilityCommentFromDays(days) {
