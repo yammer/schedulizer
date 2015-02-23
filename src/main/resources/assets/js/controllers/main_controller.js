@@ -1,4 +1,7 @@
 App.controller("MainController", function(NAV_TABS, $scope, $http, $timeout, $location, $dialogs, AuthService, USER_ROLES, $rootScope) {
+    $scope.pendingRequests = function() {
+        return $rootScope.pendingRequests;
+    }
     /* injecting constants into scope */
     $scope.tabs = angular.copy(NAV_TABS);
 

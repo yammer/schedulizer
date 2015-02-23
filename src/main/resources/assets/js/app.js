@@ -105,3 +105,38 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
         });
 
 }]);
+
+/* Count pending requests */
+App.config(function ($provide, $httpProvider) {
+     $provide.factory('LoadingInterceptor', function ($q, $rootScope, $timeout) {
+         $rootScope.pendingRequests = 0;
+         return {
+             request: function (config) {
+                 $rootScope.pendingRequests++;
+                 return config || $q.when(config);
+             },
+             requestError: function (rejection) {
+                // The timeout is to prevent the loading spinner from blinking when there are a lot of
+                // successive requests
+                $timeout(function(){
+                    $rootScope.pendingRequests--;
+                }, 200);
+                return $q.reject(rejection);
+             },
+             response: function (response) {
+                 $timeout(function(){
+                     $rootScope.pendingRequests--;
+                 }, 200);
+                 return response || $q.when(response);
+             },
+             responseError: function (rejection) {
+                 $timeout(function(){
+                     $rootScope.pendingRequests--;
+                 }, 200);
+                 return $q.reject(rejection);
+             }
+         };
+     });
+
+     $httpProvider.interceptors.push('LoadingInterceptor');
+});
