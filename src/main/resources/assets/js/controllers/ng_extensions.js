@@ -392,10 +392,16 @@ App.directive('stTooltip', function($timeout){
             if (scope.temporaryTooltip) {
                 var delay = scope.tooltipDelay || 1000;
                 $timeout(function() {
-                    $(element).tooltip("open");
+                    try {
+                        $(element).tooltip("open");
+                    } catch (e) {
+                    }
                     $timeout(function() {
-                        $(element).tooltip("close");
-                        $(element).tooltip("disable");
+                        try {
+                            $(element).tooltip("close");
+                            $(element).tooltip("disable");
+                        } catch (e) {
+                        }
                     }, delay);
                 }, 100);
             }
