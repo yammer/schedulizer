@@ -10,6 +10,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     // When availability calendar mode is false, the selected employee should be undefinde
     $scope.availabilityCalendarMode = false;
     $scope.selectedEmployee = undefined;
+    $scope.availabilityModeTooltip = "Click here to quit employee's availability mode";
 
     function reloadView() {
         if ($scope.calendar && $scope.calendar.invalidateContent) {

@@ -368,13 +368,15 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
     return ProgressBar;
 }]);
 
-App.directive('stTooltip', function(){
+App.directive('stTooltip', function($timeout){
     return {
         restrict: 'A',
         scope: {
             stTooltip: "@",
             my: "@",
-            at: "@"
+            at: "@",
+            temporaryTooltip: "=?",
+            tooltipDelay: "=?"
         },
         link: function(scope, element, attrs){
             if (scope.stTooltip == "true") {
@@ -388,6 +390,17 @@ App.directive('stTooltip', function(){
                     show: false,
                     hide: false
                 });
+                if (scope.temporaryTooltip) {
+                    var delay = scope.tooltipDelay || 1000;
+                    $timeout(function() {
+                        $(element).tooltip("open");
+                        $timeout(function() {
+                            $(element).tooltip("close");
+                            $(element).tooltip("disable");
+                        }, delay);
+                    }, 100);
+                }
+
             }
         }
     };
