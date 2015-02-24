@@ -52,7 +52,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.stat = {
             range: {
-                from: Date.TODAY.plusWeeks(-3 * 12),
+                from: Date.TODAY.plusWeeks(-3 * 4),
                 to: Date.TODAY
             }
         };
@@ -66,12 +66,35 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.setStatRangeIfEditMode = function() {
             if (!$scope.isStatEditMode()) return;
-
             var r = $scope.selectedDates.maxMinBy(Date.SORT_BY);
             $scope.stat.range.from = r.min;
             $scope.stat.range.to = r.max;
             $scope.getAssignmentStats();
         };
+
+        $scope.from = $scope.stat.range.from;
+        $scope.to = $scope.stat.range.to;
+
+
+        $scope.dateInputChanged = function() {
+            if ($scope.from==undefined) {
+                $scope.from = $scope.stat.range.from;
+                return;
+            }
+            if ($scope.to == undefined) {
+                $scope.to = $scope.stat.range.to;
+                return;
+            }
+            if ($scope.to <= $scope.from) {
+                $scope.from = $scope.stat.range.from;
+                $scope.to = $scope.stat.range.to;
+                return;
+            }
+            $scope.stat.range.from = $scope.from;
+            $scope.stat.range.to = $scope.to;
+
+            $scope.getAssignmentStats();
+        }
 
         $scope.getAssignmentStats = function() {
             var group = $scope.selectedGroup;

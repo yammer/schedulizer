@@ -1106,7 +1106,7 @@ $counter-width: 20px;
         height: 22px;
         padding: 3px 0 0 5px;
         position: relative;
-        bottom: -1px;
+        bottom: -2px;
         font-size: 14px;
         border-radius: 50%;
         color: $grey-4;
@@ -1131,10 +1131,11 @@ $counter-width: 20px;
 
         .stats-date {
             color: $grey-4;
-            padding: 5px 7px;
+            padding: 0 2px;
             margin: 0 2px;
             background-color: $grey-2;
             border-radius: 2px;
+            height: 25px;
         }
     }
 
@@ -1367,6 +1368,26 @@ $not-available-input-bg: #DA4B4B;
 
 .assignment-hover-text-group {
     margin-top: 20px;
+}
+
+/* Datepicker */
+
+::-webkit-datetime-edit {
+  padding: 0em;
+  margin-right: -45px;
+}
+
+::-webkit-calendar-picker-indicator {
+    width:0;
+    margin-left:-100px;
+    padding-left:100px;
+    z-index:10;
+    opacity:0;
+    height: 30px;
+}
+
+::-webkit-inner-spin-button {
+  display: none;
 }
 
 /* Tooltip style */

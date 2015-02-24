@@ -131,7 +131,6 @@
                     </div>
                 </div>
             </div>
-
             <table
                 ng-init="legendToggle = false"
                 class="legend legend-hint"
@@ -212,12 +211,10 @@
                 <div class="stats-range-selector-container">
                     <div class="v-center-wrap">
                         <span class="stats-label stats-label-from">From </span>
-                        <span class="stats-date">{{stat.range.from | date: 'MM/dd/yyyy'}}</span>
+                        <input class="form-control stats-date" type="date" placeholder='mm/dd/yyyy' ng-model="from" required ng-change="dateInputChanged();"/>
                         <span class="stats-label">to </span>
-                        <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
-
+                        <input class="form-control stats-date" type="date" placeholder='mm/dd/yyyy'  ng-model="to" required ng-change="dateInputChanged()"/>
                         <div
-
                             class="stat-range-edit-button st-tooltip"
                             ng-class="{
                                 'active': isStatEditMode()
