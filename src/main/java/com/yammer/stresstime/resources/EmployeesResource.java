@@ -21,11 +21,9 @@ import java.util.Set;
 public class EmployeesResource {
 
     private EmployeeManager employeeManager;
-    private AssignmentManager assignmentManager;
 
-    public EmployeesResource(EmployeeManager employeeManager, AssignmentManager assignmentManager) {
+    public EmployeesResource(EmployeeManager employeeManager) {
         this.employeeManager = employeeManager;
-        this.assignmentManager = assignmentManager;
     }
 
     @GET
@@ -46,75 +44,6 @@ public class EmployeesResource {
             @PathParam("employee_id") long employeeId) {
 
         Employee employee = employeeManager.getById(employeeId);
-        return Response.ok().entity(employee).build();
-    }
-
-    @GET
-    @Path("/{employee_id}/assignments")
-    @UnitOfWork
-    public Response getAssignableDays(
-            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
-            @PathParam("employee_id") long employeeId,
-            @QueryParam("start_date") String startDateString,
-            @QueryParam("end_date") String endDateString) {
-
-        Employee employee = employeeManager.getById(employeeId);
-
-        ResourceUtils.checkConflictFree(user.getEmployee().getId() == employeeId, Employee.class);
-
-        ResourceUtils.checkParameter(startDateString != null, "start_date");
-        ResourceUtils.checkParameter(endDateString != null, "end_date");
-
-        LocalDate startDate = LocalDate.parse(startDateString);
-        LocalDate endDate = LocalDate.parse(endDateString);
-        List<Assignment> assignments = assignmentManager.getByEmployeePeriod(employee, startDate, endDate);
-        for (Assignment assignment : assignments) {
-            assignment.setAnnotationProperty("date", assignment.getAssignableDay().getDateString());
-            assignment.setAnnotationProperty("assignmentTypeName", assignment.getAssignmentType().getName());
-            assignment.setAnnotationProperty("group", assignment.getAssignmentType().getGroup());
-        }
-
-        return Response.ok().entity(assignments).build();
-    }
-
-
-
-    @GET
-    @Path("admins")
-    @UnitOfWork
-    public Response getGlobalAdmins(
-            @Authorize({Role.ADMIN}) User user,
-            @PathParam("employee_id") long employeeId) {
-        return Response.ok().entity(employeeManager.getGlobalAdmins()).build();
-    }
-
-    @POST
-    @Path("admins")
-    @UnitOfWork
-    public Response addGlobalAdmin(
-            @Authorize({Role.ADMIN}) User user,
-            @FormParam("yammerId") String yammerId,
-            @FormParam("name") String name,
-            @FormParam("imageUrlTemplate") String imageUrlTemplate) {
-        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {
-            e.setName(name);
-            e.setImageUrlTemplate(imageUrlTemplate);
-        });
-        employee.setGlobalAdmin(true);
-        employeeManager.save(employee);
-        return Response.ok().entity(employee).build();
-    }
-
-    @DELETE
-    @Path("admins/{employee_id}")
-    @UnitOfWork
-    public Response removeGlobalAdmin(
-            @Authorize({Role.ADMIN}) User user,
-            @PathParam("employee_id") long employeeId) {
-        ResourceUtils.checkState(employeeManager.getGlobalAdmins().size() > 1, "You cannot delete the last global admin");
-        Employee employee = employeeManager.getById(employeeId);
-        employee.setGlobalAdmin(false);
-        employeeManager.save(employee);
         return Response.ok().entity(employee).build();
     }
 }

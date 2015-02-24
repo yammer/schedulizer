@@ -24,11 +24,9 @@ import java.util.stream.Collectors;
 public class GroupsResource {
 
     private GroupManager groupManager;
-    private DayRestrictionManager dayRestrictionManager;
 
-    public GroupsResource(GroupManager groupManager, DayRestrictionManager dayRestrictionManager) {
+    public GroupsResource(GroupManager groupManager) {
         this.groupManager = groupManager;
-        this.dayRestrictionManager = dayRestrictionManager;
     }
 
     @GET
@@ -79,26 +77,6 @@ public class GroupsResource {
         Group group = groupManager.getById(groupId);
         Group response = wrapGroup(group, user);
         return Response.ok().entity(response).build();
-    }
-
-    @GET
-    @Path("/{group_id}/restrictions")
-    @UnitOfWork
-    public Response getGroupRestrictions(
-            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
-            @PathParam("group_id") long groupId,
-            @QueryParam("start_date") String startDateString,
-            @QueryParam("end_date") String endDateString) {
-
-        Group group = groupManager.getById(groupId);
-        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
-        ResourceUtils.checkParameter(startDateString != null, "start_date");
-        ResourceUtils.checkParameter(endDateString != null, "end_date");
-
-        LocalDate startDate = LocalDate.parse(startDateString);
-        LocalDate endDate = LocalDate.parse(endDateString);
-
-        return Response.ok().entity(dayRestrictionManager.getByGroupPeriod(group, startDate, endDate)).build();
     }
 
     private Group wrapGroup(Group group, User user) {

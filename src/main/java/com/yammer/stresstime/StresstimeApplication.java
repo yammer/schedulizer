@@ -64,15 +64,18 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         dayRestrictionManager = new DayRestrictionManager(sessionFactory);
 
         env.jersey().setUrlPattern(config.getRootPath());
-        env.jersey().register(new GroupsResource(groupManager, dayRestrictionManager));
+        env.jersey().register(new GroupsResource(groupManager));
+        env.jersey().register(new GroupDayRestrictionsResource(groupManager, dayRestrictionManager));
         env.jersey().register(new GroupEmployeesResource(employeeManager, groupManager, membershipManager));
-        env.jersey().register(new EmployeesResource(employeeManager, assignmentManager));
+        env.jersey().register(new GlobalAdminsResource(employeeManager));
+        env.jersey().register(new EmployeesResource(employeeManager));
+        env.jersey().register(new EmployeeAssignmentsResource(employeeManager, assignmentManager));
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
         env.jersey().register(new AuthorizationResource());
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
-        env.jersey().register(new DayRestrictionResource(employeeManager, dayRestrictionManager));
+        env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
 
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())

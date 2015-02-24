@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 
 @Path("/employees/{employee_id}/restrictions")
 @Produces(MediaType.APPLICATION_JSON)
-public class DayRestrictionResource {
+public class DayRestrictionsResource {
 
     private EmployeeManager employeeManager;
     private DayRestrictionManager dayRestrictionManager;
 
-    public DayRestrictionResource(EmployeeManager employeeManager, DayRestrictionManager dayRestrictionManager) {
+    public DayRestrictionsResource(EmployeeManager employeeManager, DayRestrictionManager dayRestrictionManager) {
         this.employeeManager = employeeManager;
         this.dayRestrictionManager = dayRestrictionManager;
     }
