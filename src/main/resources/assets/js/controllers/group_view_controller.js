@@ -497,6 +497,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             });
         });
     }
+
     // TODO: Ugly hack!
     $timeout(function() {
         $rootScope.$broadcast('trigger-resize');

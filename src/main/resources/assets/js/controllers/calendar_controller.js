@@ -539,7 +539,16 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         }
     };
 
+    $scope.showTooltip = false;
+
     $scope.onMouseEnter = function(day) {
+        if ($scope.tooltip != undefined && $scope.tooltip(day) != undefined) {
+            $scope.showTooltip = true;
+        }
+        else {
+            $scope.showTooltip = false;
+        }
+
         $scope.onHoverDayParent(day);
         if (state == States.DOWN) {
             if (state.day != day) {

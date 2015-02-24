@@ -30,7 +30,7 @@
             <td
                 class="day"
                 ng-repeat="day in week.days"
-                st-tooltip="{{tooltip != undefined}}"
+                st-tooltip="{{showTooltip}}"
                 ng-attr-title="{{tooltip(day)}}"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"

@@ -379,29 +379,33 @@ App.directive('stTooltip', function($timeout){
             tooltipDelay: "=?"
         },
         link: function(scope, element, attrs){
-            if (scope.stTooltip == "true") {
-                var my = scope.my || 'left bottom-5';
-                var at = scope.at || 'left top';
-                $(element).tooltip({
-                    content: function() {
-                        return $(this).attr('title');
-                    },
-                    position: {my: my, at: at},
-                    show: false,
-                    hide: false
-                });
-                if (scope.temporaryTooltip) {
-                    var delay = scope.tooltipDelay || 1000;
+            var my = scope.my || 'left bottom-5';
+            var at = scope.at || 'left top';
+            $(element).tooltip({
+                content: function() {
+                    return $(this).attr('title');
+                },
+                position: {my: my, at: at},
+                show: false,
+                hide: false
+            });
+            if (scope.temporaryTooltip) {
+                var delay = scope.tooltipDelay || 1000;
+                $timeout(function() {
+                    $(element).tooltip("open");
                     $timeout(function() {
-                        $(element).tooltip("open");
-                        $timeout(function() {
-                            $(element).tooltip("close");
-                            $(element).tooltip("disable");
-                        }, delay);
-                    }, 100);
-                }
-
+                        $(element).tooltip("close");
+                        $(element).tooltip("disable");
+                    }, delay);
+                }, 100);
             }
+            scope.$watch('stTooltip', function () {
+                if (scope.stTooltip == "true") {
+                    $(element).tooltip('enable');
+                } else {
+                    $(element).tooltip('disable');
+                }
+            });
         }
     };
 });
