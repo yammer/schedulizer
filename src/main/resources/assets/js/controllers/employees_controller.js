@@ -69,6 +69,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             var r = $scope.selectedDates.maxMinBy(Date.SORT_BY);
             $scope.stat.range.from = r.min;
             $scope.stat.range.to = r.max;
+            $scope.from = r.min;
+            $scope.to = r.max;
             $scope.getAssignmentStats();
         };
 
