@@ -7,7 +7,16 @@
     }"
     >
     <h1 class="header">
-        <img st-tooltip="true" ng-attr-title="{{availabilityModeTooltip}}" temporary-tooltip="true" tooltip-delay="2000" ng-click="clearEmployeeSelection()" ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
+        <div st-tooltip="true"
+             ng-attr-title="{{availabilityModeTooltip}}"
+             temporary-tooltip="true" tooltip-delay="2000"
+             ng-click="clearEmployeeSelection()"
+             ng-if="availabilityCalendarMode"
+             class="availability-mode-image-container"
+             >
+            <img ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
+            <span class="minus-span">-</span>
+        </div>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div
