@@ -7,12 +7,13 @@
     }"
     >
     <h1 class="header">
-        <img ng-click="clearEmployeeSelection()" ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
+        <img st-tooltip="true" ng-attr-title="{{availabilityModeTooltip}}" temporary-tooltip="true" tooltip-delay="2000" ng-click="clearEmployeeSelection()" ng-if="availabilityCalendarMode" ng-src="{{selectedEmployee.imageUrlTemplate}}" class="selected-employee-image"/>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
         <div class="assignment-types-wrapper">
             <div
-                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name':true"
-                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}">
+                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id':true"
+                class="assignment-type-label assignment-color-{{(selectedGroup.assignmentTypes.length - 1 - index) % 10}}"
+                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}">
                 {{assignmentType.name}}
                 <div st-if="isGroupAdmin(selectedGroup)" class="delete" ng-click="deleteAssignmentType(assignmentType)">-</div>
             </div>
@@ -70,7 +71,7 @@
                     </div>
                     <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
                         <img
-                            ng-repeat="employee in employees"
+                            ng-repeat="employee in employees | orderBy: 'name'"
                             ng-src="{{employee.imageUrlTemplate}}"
                             />
                     </div>
@@ -87,6 +88,7 @@
             expose-api-to="calendar"
             cell-class="getCellClass(day)"
             get-day-tooltip="getDayTooltip"
+            show-hover="!availabilityCalendarMode"
             >
 
 
@@ -102,16 +104,20 @@
                 <div class="clear"></div>
                 <div class="assignment-type-buckets">
                     <div class="bucket"
-                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.name'"
+                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.id'"
                          ng-droppable="isGroupAdmin(selectedGroup)"
                          ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
                         <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
                         <div class="bucket-content">
                             <div
-                                ng-repeat="employee in assignmentTypeBucket.employeeList"
+                                ng-repeat="employee in assignmentTypeBucket.employeeList | orderObjectBy: 'employee.name'"
                                 class="assigned-employee"
                                 ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
                                 ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
+                                st-tooltip="true"
+                                ng-attr-title="{{employee.employee.name}}"
+                                my="left bottom-5"
+                                at="left-10 top"
                                 >
                                 <img
                                     ng-src="{{employee.employee.imageUrlTemplate}}"
@@ -125,7 +131,6 @@
                     </div>
                 </div>
             </div>
-
             <table
                 ng-init="legendToggle = false"
                 class="legend legend-hint"
@@ -193,7 +198,7 @@
                 <div class="mini-assignment-type-headers">
                     <div class="v-center-wrap">
                         <div
-                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'name'"
+                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id'"
                             ng-click="updateEmployeesOrder(assignmentType)"
                             class="mini-assignment-type-label assignment-color-{{index % 10}}"
                             ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
@@ -206,12 +211,10 @@
                 <div class="stats-range-selector-container">
                     <div class="v-center-wrap">
                         <span class="stats-label stats-label-from">From </span>
-                        <span class="stats-date">{{stat.range.from | date: 'MM/dd/yyyy'}}</span>
+                        <input class="form-control stats-date" type="date" placeholder='mm/dd/yyyy' ng-model="from" required ng-change="dateInputChanged();"/>
                         <span class="stats-label">to </span>
-                        <span class="stats-date">{{stat.range.to | date: 'MM/dd/yyyy'}}</span>
-
+                        <input class="form-control stats-date" type="date" placeholder='mm/dd/yyyy'  ng-model="to" required ng-change="dateInputChanged()"/>
                         <div
-
                             class="stat-range-edit-button st-tooltip"
                             ng-class="{
                                 'active': isStatEditMode()

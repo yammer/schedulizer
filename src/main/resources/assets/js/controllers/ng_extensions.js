@@ -368,20 +368,50 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
     return ProgressBar;
 }]);
 
-App.directive('stTooltip', function(){
+App.directive('stTooltip', function($timeout){
     return {
         restrict: 'A',
+        scope: {
+            stTooltip: "@",
+            my: "@",
+            at: "@",
+            temporaryTooltip: "=?",
+            tooltipDelay: "=?"
+        },
         link: function(scope, element, attrs){
-            if (attrs.stTooltip == "true") {
-                $(element).tooltip({
-                    content: function() {
-                        return $(this).attr('title');
-                    },
-                    position: {my: 'left bottom-5', at: 'left top'},
-                    show: false,
-                    hide: false
-                });
+            var my = scope.my || 'left bottom-5';
+            var at = scope.at || 'left top';
+            $(element).tooltip({
+                content: function() {
+                    return $(this).attr('title');
+                },
+                position: {my: my, at: at},
+                show: false,
+                hide: false
+            });
+            if (scope.temporaryTooltip) {
+                var delay = scope.tooltipDelay || 1000;
+                $timeout(function() {
+                    try {
+                        $(element).tooltip("open");
+                    } catch (e) {
+                    }
+                    $timeout(function() {
+                        try {
+                            $(element).tooltip("close");
+                            $(element).tooltip("disable");
+                        } catch (e) {
+                        }
+                    }, delay);
+                }, 100);
             }
+            scope.$watch('stTooltip', function () {
+                if (scope.stTooltip == "true") {
+                    $(element).tooltip('enable');
+                } else {
+                    $(element).tooltip('disable');
+                }
+            });
         }
     };
 });

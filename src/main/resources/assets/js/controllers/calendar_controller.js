@@ -9,6 +9,10 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     $scope.calendar = [];
 
+    if ($scope.showHover == undefined) {
+        $scope.showHover = true;
+    }
+
     var baseCellClasses = function(day, week) {
         return {
             'empty': !day.content,
@@ -454,6 +458,12 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         $scope.onSelectDaysParent(selection);
     }
 
+    $scope.api.selectDates = function(dates) {
+        var days = $scope.api.getDays(dates);
+        selection.select(days);
+        onSelectDays();
+    };
+
     function isCtrl(e) {
         return e.ctrlKey || e.metaKey; // metaKey is apple's cmd
     }
@@ -529,7 +539,16 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         }
     };
 
+    $scope.showTooltip = false;
+
     $scope.onMouseEnter = function(day) {
+        if ($scope.tooltip != undefined && $scope.tooltip(day) != undefined) {
+            $scope.showTooltip = true;
+        }
+        else {
+            $scope.showTooltip = false;
+        }
+
         $scope.onHoverDayParent(day);
         if (state == States.DOWN) {
             if (state.day != day) {
@@ -575,8 +594,9 @@ App.directive('calendar', function() {
             onHoverDayParent: '=onHoverDay',
             onLoadDayContent: '=onLoadDayContent',
             providedCellClass: '&cellClass',
-            tooltip: '=getDayTooltip',
-            api: '=exposeApiTo'
+            tooltip: '=?getDayTooltip',
+            api: '=exposeApiTo',
+            showHover: "=?"
         },
         templateUrl: 'views/calendar.html',
         controller: 'CalendarController'

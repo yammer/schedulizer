@@ -20,7 +20,8 @@
         </tr>
     </table>
 
-    <table class="view-calendar hoverable">
+    <table class="view-calendar"
+            ng-class="{'hoverable': showHover}">
         <tr ng-repeat="week in calendar" ng-class="{
             'first': week.firstOfTheMonth,
             'week': true,
@@ -29,8 +30,8 @@
             <td
                 class="day"
                 ng-repeat="day in week.days"
-                st-tooltip="{{tooltip != undefined}}"
-                title="{{tooltip(day)}}"
+                st-tooltip="{{showTooltip}}"
+                ng-attr-title="{{tooltip(day)}}"
                 ng-mousedown="onMouseDown(day, $event)"
                 ng-mouseup="onMouseUp(day, $event)"
                 ng-mouseenter="onMouseEnter(day, $event)"

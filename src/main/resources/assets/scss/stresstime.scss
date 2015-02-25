@@ -73,6 +73,13 @@ body {
     height: 20px;
 }
 
+.loading-spinner {
+    display: inherit;
+    height: 22px;
+    margin-top: 14px;
+    margin-left: 10px;
+}
+
 $blue: #398BCA;
 $dark-red: #C41E1E;
 $light-red: #E06969;
@@ -929,7 +936,6 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
     color: white;
 
     font-weight: normal;
-    cursor: pointer;
     position: relative;
 
     .delete {
@@ -944,10 +950,9 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
         line-height: 12px;
         border: 1px solid $delete-bg;
         visibility: hidden;
-
     }
 
-    &:hover {
+    &.is-admin:hover {
         background-color: $delete-bg;
 
         .delete {
@@ -958,6 +963,10 @@ $assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e05
                 background-color: $delete-bg;
             }
         }
+    }
+
+    &.is-admin {
+        cursor: pointer;
     }
 
 }
@@ -1097,7 +1106,7 @@ $counter-width: 20px;
         height: 22px;
         padding: 3px 0 0 5px;
         position: relative;
-        bottom: -1px;
+        bottom: -2px;
         font-size: 14px;
         border-radius: 50%;
         color: $grey-4;
@@ -1122,10 +1131,11 @@ $counter-width: 20px;
 
         .stats-date {
             color: $grey-4;
-            padding: 5px 7px;
+            padding: 0 2px;
             margin: 0 2px;
             background-color: $grey-2;
             border-radius: 2px;
+            height: 25px;
         }
     }
 
@@ -1358,6 +1368,26 @@ $not-available-input-bg: #DA4B4B;
 
 .assignment-hover-text-group {
     margin-top: 20px;
+}
+
+/* Datepicker */
+
+::-webkit-datetime-edit {
+  padding: 0em;
+  margin-right: -45px;
+}
+
+::-webkit-calendar-picker-indicator {
+    width:0;
+    margin-left:-100px;
+    padding-left:100px;
+    z-index:10;
+    opacity:0;
+    height: 30px;
+}
+
+::-webkit-inner-spin-button {
+  display: none;
 }
 
 /* Tooltip style */

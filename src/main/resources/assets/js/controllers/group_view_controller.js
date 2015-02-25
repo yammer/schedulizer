@@ -10,6 +10,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     // When availability calendar mode is false, the selected employee should be undefinde
     $scope.availabilityCalendarMode = false;
     $scope.selectedEmployee = undefined;
+    $scope.availabilityModeTooltip = "Click here to quit employee's availability mode";
 
     function reloadView() {
         if ($scope.calendar && $scope.calendar.invalidateContent) {
@@ -66,16 +67,33 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
     });
 
+    var savedSelection = null;
+
     $scope.selectEmployee = function(employee) {
         if (!$scope.isGroupAdmin($scope.selectedGroup)) { return; }
-        $scope.clearSelection();
         if ($scope.availabilityCalendarMode && $scope.selectedEmployee && $scope.selectedEmployee.id == employee.id) {
             $scope.clearEmployeeSelection();
             return;
         }
+
         $scope.selectedEmployee = employee;
         $scope.availabilityCalendarMode = true;
     }
+
+    $scope.$watch('availabilityCalendarMode', function(availabilityCalendarMode) {
+        if (availabilityCalendarMode == false && savedSelection) {
+            $scope.clearSelection();
+            $scope.calendar.selectDates(savedSelection);
+            savedSelection = null;
+        }
+        else if (availabilityCalendarMode) {
+            if (savedSelection == null) {
+                savedSelection = $scope.selectedDates.clone();
+            }
+            $scope.clearSelection();
+        }
+    })
+
 
     $scope.$watchCollection('selectedDates', function(value) {
         if (value && value.length > 0) {
@@ -229,7 +247,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.orderHoveredDayBy = function(key){
-        return $scope.selectedGroup.assignmentTypeFor(key).name.toLowerCase();
+        return $scope.selectedGroup.assignmentTypeFor(key).id;
     }
 
     $scope.clearSelection = function() {
@@ -479,6 +497,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             });
         });
     }
+
     // TODO: Ugly hack!
     $timeout(function() {
         $rootScope.$broadcast('trigger-resize');

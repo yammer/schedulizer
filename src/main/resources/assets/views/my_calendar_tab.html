@@ -60,7 +60,7 @@
                             <div class="availability-inputs-container">
                                 <div
                                     ng-repeat="state in availabilityStates"
-                                    ng-click="availability.state = state.label"
+                                    ng-click="onCheckRestriction(state)"
                                     class="availability-input {{state.label}}"
                                     ng-class="{
                                         'active': isStateToggleActive(state.label),
@@ -76,7 +76,7 @@
                                     class="availability-comment form-control"
                                     ng-model="availability.comment.text"
                                     ng-trim="false"
-                                    ng-change="availability.comment.valid = true"
+                                    ng-change="onComment()"
                                     ng-class="{'invalid': !availability.comment.valid}"
                                     placeholder="{{getCommentPlaceholder()}}"
                                     >
