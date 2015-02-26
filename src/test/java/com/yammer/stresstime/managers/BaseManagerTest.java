@@ -3,6 +3,8 @@ package com.yammer.stresstime.managers;
 import com.yammer.stresstime.entities.BaseEntity;
 import com.yammer.stresstime.test.DatabaseTest;
 
+import org.hibernate.Session;
+import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +22,12 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
     @Before
     @Override
     public void setUp() throws Exception {
+        Session session = getSessionFactory().openSession();
+        ManagedSessionContext.bind(session);
         initialize();
+        session.flush();
+        session.close();
+        ManagedSessionContext.unbind(getSessionFactory());
         this.manager = getEntityManager();
         this.entities = getEntities();
         super.setUp();
