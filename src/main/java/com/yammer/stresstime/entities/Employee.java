@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "employees",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"yammer_id"}))
-public class Employee extends JsonAnnotatedEntity {
+public class Employee extends JsonAnnotatedEntity implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
