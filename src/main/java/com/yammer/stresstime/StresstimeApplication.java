@@ -1,7 +1,7 @@
 package com.yammer.stresstime;
 
 import com.sun.jersey.api.client.Client;
-import com.yammer.stresstime.auth.Authenticator;
+import com.yammer.stresstime.auth.AbstractAuthenticator;
 import com.yammer.stresstime.auth.AuthorizeProvider;
 import com.yammer.stresstime.config.StresstimeConfiguration;
 import com.yammer.stresstime.entities.*;
@@ -80,7 +80,11 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        Authenticator authenticator = new Authenticator(client, userManager, employeeManager);
+        Class authenticatorClass = Class.forName(config.getAuthenticatorClass());
+        AbstractAuthenticator authenticator =
+                (AbstractAuthenticator) authenticatorClass
+                        .getConstructor(Client.class, UserManager.class, EmployeeManager.class)
+                        .newInstance(client, userManager, employeeManager);
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
 

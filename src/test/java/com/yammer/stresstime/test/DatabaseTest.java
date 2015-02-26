@@ -18,22 +18,25 @@ import java.sql.Statement;
  * TODO: non-db test methods */
 public class DatabaseTest {
 
-    private SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
     private Session session;
     private boolean flushSession;
+    private static StresstimeApplication app;
 
-    public DatabaseTest() {
-        StresstimeApplication app = TestSuite.RULE.getApplication();
+    {{
+        app = TestSuite.RULE.getApplication();
         sessionFactory = app.getSessionFactory();
-    }
+    }}
 
-    public SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
     public Session currentSession() {
         return sessionFactory.getCurrentSession();
     }
+
+    public StresstimeApplication getApp() { return app; }
 
     public void refresh(Object... entities) {
         currentSession().flush();
@@ -63,6 +66,5 @@ public class DatabaseTest {
         session.close();
         ManagedSessionContext.unbind(sessionFactory);
     }
-
 
 }
