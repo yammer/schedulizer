@@ -13,6 +13,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class EmployeeManagerTest extends BaseManagerTest<Employee> {
 
@@ -66,5 +67,22 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
         assertThat(found, equalTo(globalAdmin));
         employeeManager.delete(globalAdmin);
         employeeManager.delete(employee);
+    }
+
+    @Test
+    public void testGetOrCreateByYammerId() {
+        String yammerId = TestUtils.nextYammerId();
+        Employee employee = new Employee("John Doe", yammerId);
+        employeeManager.save(employee);
+        Employee found = employeeManager.getOrCreateByYammerId(employee.getYammerId(), (Employee e) -> {});
+        assertNotNull(found);
+        assertThat(found, equalTo(employee));
+        Employee newEmployee = employeeManager.getOrCreateByYammerId(TestUtils.nextYammerId(), (Employee e) -> {
+            e.setName("Amanda");
+            e.setImageUrlTemplate("lol");
+        });
+        Employee newFound = employeeManager.getByYammerId(newEmployee.getYammerId());
+        assertNotNull(newFound);
+        assertThat(newFound, equalTo(newEmployee));
     }
 }

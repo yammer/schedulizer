@@ -36,6 +36,7 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
         // Save getById delete
         manager.save(entity);
         Entity e = manager.getById(entity.getId());
+        assertNotNull(e);
         assertThat(e, equalTo(entity));
         manager.delete(entity);
         Entity nullEntity = manager.safeGetById(entity.getId());
@@ -44,6 +45,7 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
         // DeleteById
         manager.save(entity);
         e = manager.getById(entity.getId());
+        assertNotNull(e);
         assertThat(e, equalTo(entity));
         manager.deleteById(entity.getId());
         nullEntity = manager.safeGetById(entity.getId());
