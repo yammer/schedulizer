@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNull;
 public class GroupManagerTest extends BaseManagerTest<Group> {
 
     private GroupManager groupManager;
-    List<Group> testGroups;
+    private List<Group> testGroups;
 
     @Override
     protected EntityManager<Group> getEntityManager() {
