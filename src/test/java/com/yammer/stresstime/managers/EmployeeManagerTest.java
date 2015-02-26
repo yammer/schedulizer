@@ -1,9 +1,11 @@
 package com.yammer.stresstime.managers;
 
+import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,28 +14,38 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 
-public class EmployeeManagerTest extends DatabaseTest {
+public class EmployeeManagerTest extends BaseManagerTest<Employee> {
 
     private EmployeeManager employeeManager;
+    List<Employee> testEmployees;
 
-    @Before
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    protected EntityManager<Employee> getEntityManager() {
+        return employeeManager;
+    }
+
+    @Override
+    protected List<Employee> getEntities() {
+        return testEmployees;
+    }
+
+    @Override
+    protected void initialize() {
         employeeManager = new EmployeeManager(getSessionFactory());
+        testEmployees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
+                new Employee("Mary", TestUtils.nextYammerId()),
+                new Employee("Louise", TestUtils.nextYammerId()));
     }
 
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
-        String yammerId = TestUtils.nextYammerId();
-        Employee employee = new Employee("John Doe", yammerId);
+        Employee employee = testEmployees.get(0);
         employeeManager.save(employee);
         refresh(employee);
-        Employee found = employeeManager.getByYammerId(yammerId);
+        Employee found = employeeManager.getByYammerId(employee.getYammerId());
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
-
         employeeManager.delete(employee);
     }
 
