@@ -8,6 +8,11 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.After;
 import org.junit.Before;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 /* TODO: Extract this class into a rule (allowing test classes to subclass other classes) and create an annotation
  * TODO: for tests that want to be wrapped in a hibernate session, allowing classes to have db test methods and
  * TODO: non-db test methods */
@@ -44,6 +49,7 @@ public class DatabaseTest {
     @Before
     public void setUp() throws Exception {
         session = sessionFactory.openSession();
+        session.getTransaction().begin();
         ManagedSessionContext.bind(session);
         flushSession = true;
     }
@@ -53,7 +59,10 @@ public class DatabaseTest {
         if (flushSession) {
             session.flush();
         }
+        session.getTransaction().rollback();
         session.close();
         ManagedSessionContext.unbind(sessionFactory);
     }
+
+
 }
