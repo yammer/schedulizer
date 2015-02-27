@@ -133,7 +133,7 @@ public class AssignmentsResource {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         List<AssignableDay> assignableDays = assignableDayManager.getByGroupPeriod(group, startDate, endDate);
-        Map<Employee, Map<AssignmentType, Long>> statistics = AssignableDayManager.getStatistics(assignableDays);
+        Map<Employee, Map<AssignmentType, Long>> statistics = assignmentManager.getStatistics(assignableDays);
 
         Map<Long, Set<Map<String, Long>>> response = processStatisticsResponse(statistics);
         return Response.ok().entity(response).build();

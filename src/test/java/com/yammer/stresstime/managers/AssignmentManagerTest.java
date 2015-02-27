@@ -10,7 +10,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.yammer.stresstime.test.TestUtils.assertCauses;
@@ -89,7 +91,8 @@ public class AssignmentManagerTest extends BaseManagerTest<Assignment> {
         assignableDays.stream().forEach(a -> assignableDayManager.save(a));
         employees.stream().forEach(e -> refresh(e));
         groups.stream().forEach(g -> refresh(g));
-        testAssignments = Lists.newArrayList(new Assignment(employees.get(0), assignableDays.get(0), assignmentTypes.get(0)),
+        testAssignments = Lists.newArrayList(
+                new Assignment(employees.get(0), assignableDays.get(0), assignmentTypes.get(0)),
                 new Assignment(employees.get(0), assignableDays.get(3), assignmentTypes.get(0)),
                 new Assignment(employees.get(0), assignableDays.get(6), assignmentTypes.get(0)),
                 new Assignment(employees.get(0), assignableDays.get(9), assignmentTypes.get(1)),
@@ -194,6 +197,39 @@ public class AssignmentManagerTest extends BaseManagerTest<Assignment> {
         testEmployeePeriod(employees.get(2), new LocalDate(2015,1,10), new LocalDate(2015,3,31));
         testEmployeePeriod(employees.get(2), new LocalDate(2015,1,10), new LocalDate(2015,2,12));
         testEmployeePeriod(employees.get(2), new LocalDate(2015,5,17), new LocalDate(2015,6,20));
-        testEmployeePeriod(employees.get(2), new LocalDate(2014,12,31), new LocalDate(2015,1,12));
+        testEmployeePeriod(employees.get(2), new LocalDate(2014, 12, 31), new LocalDate(2015, 1, 12));
+    }
+
+    @Test
+    public void testGetStatistics(){
+        testAssignments.stream().forEach(a -> assignmentManager.save(a));
+        assignableDays.stream().forEach(a -> refresh(a));
+        Map<Employee, Map<AssignmentType, Long>> statistics = assignmentManager.getStatistics(assignableDays);
+        assertThat(statistics.get(employees.get(0)).get(assignmentTypes.get(0)), equalTo(3L));
+        assertThat(statistics.get(employees.get(0)).get(assignmentTypes.get(1)), equalTo(2L));
+        assertThat(statistics.get(employees.get(0)).get(assignmentTypes.get(2)), equalTo(3L));
+        assertNull(statistics.get(employees.get(0)).get(assignmentTypes.get(3)));
+        assertNull(statistics.get(employees.get(0)).get(assignmentTypes.get(4)));
+        assertNull(statistics.get(employees.get(0)).get(assignmentTypes.get(5)));
+        assertNull(statistics.get(employees.get(0)).get(assignmentTypes.get(6)));
+        assertThat(statistics.get(employees.get(0)).get(assignmentTypes.get(7)), equalTo(1L));
+
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(0)), equalTo(2L));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(1)), equalTo(2L));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(2)), equalTo(3L));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(3)), equalTo(2L));
+        assertNull(statistics.get(employees.get(1)).get(assignmentTypes.get(4)));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(5)), equalTo(3L));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(6)), equalTo(1L));
+        assertThat(statistics.get(employees.get(1)).get(assignmentTypes.get(7)), equalTo(3L));
+
+        assertNull(statistics.get(employees.get(2)).get(assignmentTypes.get(0)));
+        assertNull(statistics.get(employees.get(2)).get(assignmentTypes.get(1)));
+        assertNull(statistics.get(employees.get(2)).get(assignmentTypes.get(2)));
+        assertThat(statistics.get(employees.get(2)).get(assignmentTypes.get(3)), equalTo(3L));
+        assertThat(statistics.get(employees.get(2)).get(assignmentTypes.get(4)), equalTo(2L));
+        assertThat(statistics.get(employees.get(2)).get(assignmentTypes.get(5)), equalTo(1L));
+        assertThat(statistics.get(employees.get(2)).get(assignmentTypes.get(6)), equalTo(3L));
+        assertThat(statistics.get(employees.get(2)).get(assignmentTypes.get(7)), equalTo(4L));
     }
 }
