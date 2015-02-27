@@ -2,18 +2,14 @@ package com.yammer.stresstime.managers;
 
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.cglib.core.Local;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.yammer.stresstime.test.TestUtils.assertCauses;
+import static com.yammer.stresstime.test.TestUtils.assertListOfEntitiesEqualsAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertArrayEquals;
@@ -74,7 +70,7 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
             expected = Lists.newArrayList();
         }
         List<DayRestriction> found = dayRestrictionManager.getByEmployeePeriod(employee, startDate, endDate);
-        assertArrayEquals(expected.toArray(), found.toArray());
+        assertListOfEntitiesEqualsAnyOrder(expected, found);
     }
 
     void testGroupPeriod(Group group, LocalDate startDate, LocalDate endDate) {
@@ -89,7 +85,7 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
             expected = Lists.newArrayList();
         }
         List<DayRestriction> found = dayRestrictionManager.getByGroupPeriod(group, startDate, endDate);
-        assertArrayEquals(expected.toArray(), found.toArray());
+        assertListOfEntitiesEqualsAnyOrder(expected, found);
     }
 
     @Test

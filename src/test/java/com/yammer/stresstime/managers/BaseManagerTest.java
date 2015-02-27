@@ -3,14 +3,13 @@ package com.yammer.stresstime.managers;
 import com.yammer.stresstime.entities.BaseEntity;
 import com.yammer.stresstime.test.DatabaseTest;
 
-import org.hibernate.Session;
-import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 
+import static com.yammer.stresstime.test.TestUtils.assertListOfEntitiesEqualsAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.*;
@@ -83,7 +82,7 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
         for (Entity e : entities) {
             manager.save(e);
         }
-        assertArrayEquals(manager.all().toArray(), entities.toArray());
+        assertListOfEntitiesEqualsAnyOrder(manager.all(), entities);
         for (Entity e : entities) {
             manager.delete(e);
         }

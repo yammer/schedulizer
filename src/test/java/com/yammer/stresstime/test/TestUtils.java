@@ -1,13 +1,16 @@
 package com.yammer.stresstime.test;
 
 import com.google.common.base.Throwables;
+import com.yammer.stresstime.entities.BaseEntity;
 import org.junit.Assert;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertArrayEquals;
 
 public class TestUtils {
 
@@ -45,6 +48,12 @@ public class TestUtils {
                 throw e;
             }
         }
+    }
+
+    public static void assertListOfEntitiesEqualsAnyOrder(List<? extends BaseEntity> expected, List<? extends BaseEntity> found) {
+        found.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
+        expected.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
+        assertArrayEquals(expected.toArray(), found.toArray());
     }
 
     // Prevents instantiation
