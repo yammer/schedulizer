@@ -1,6 +1,7 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yammer.stresstime.utils.ResourceUtils;
 
 import javax.persistence.*;
 
@@ -31,6 +32,9 @@ public class Assignment extends JsonAnnotatedEntity implements BaseEntity {
     }
 
     public Assignment(Employee employee, AssignableDay assignableDay, AssignmentType assignmentType) {
+        // TODO: create a constraint validators
+        ResourceUtils.checkState(assignableDay.getGroup().getId() == assignmentType.getGroup().getId(),
+                "Assignable day and assignmentType belong to different groups");
         this.employee = employee;
         this.assignableDay = assignableDay;
         this.assignmentType = assignmentType;
@@ -46,6 +50,8 @@ public class Assignment extends JsonAnnotatedEntity implements BaseEntity {
     }
 
     public void setAssignmentType(AssignmentType assignmentType) {
+        ResourceUtils.checkState(assignableDay.getGroup().getId() == assignmentType.getGroup().getId(),
+                "Assignable day and assignmentType belong to different groups");
         this.assignmentType = assignmentType;
     }
 
@@ -55,6 +61,8 @@ public class Assignment extends JsonAnnotatedEntity implements BaseEntity {
     }
 
     public void setAssignableDay(AssignableDay assignableDay) {
+        ResourceUtils.checkState(assignableDay.getGroup().getId() == assignmentType.getGroup().getId(),
+                "Assignable day and assignmentType belong to different groups");
         this.assignableDay = assignableDay;
     }
 
