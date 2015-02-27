@@ -1,6 +1,8 @@
 package com.yammer.stresstime.entities;
 
+import com.sun.tools.internal.jxc.ap.Const;
 import com.yammer.stresstime.managers.*;
+import com.yammer.stresstime.managers.exceptions.StresstimeException;
 import com.yammer.stresstime.test.DatabaseTest;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.LocalDate;
@@ -41,6 +43,32 @@ public class AssignmentTest extends DatabaseTest {
         assertCauses(ConstraintViolationException.class, () -> assignmentManager.save(clone));
 
         hibernateThrewException();
+    }
+
+    @Test
+    public void testAssignableDayAndAssignmentTypeBelongToSameGroup() {
+        Assignment assignment = createAssignment();
+        Group otherGroup = new Group("group");
+        groupManager.save(otherGroup);
+
+        // Must not throw
+        AssignableDay assignableDay =
+                new AssignableDay(assignment.getAssignableDay().getGroup(), new LocalDate(2015,10,10));
+        assignableDayManager.save(assignableDay);
+        assignment.setAssignableDay(assignableDay);
+        // Must not throw
+        AssignmentType assignmentType = new AssignmentType("AT 1", assignment.getAssignmentType().getGroup());
+        assignmentTypeManager.save(assignmentType);
+        assignment.setAssignmentType(assignmentType);
+
+        assertCauses(StresstimeException.class,
+                () -> assignment.setAssignableDay(new AssignableDay(otherGroup, new LocalDate(2015, 1, 1))));
+        assertCauses(StresstimeException.class,
+                () -> assignment.setAssignmentType(new AssignmentType("AT 2", otherGroup)));
+        assertCauses(StresstimeException.class,
+                () -> new Assignment(assignment.getEmployee(),
+                        assignment.getAssignableDay(),
+                        new AssignmentType("AT 3", otherGroup)));
     }
 
     private Assignment createAssignment() {
