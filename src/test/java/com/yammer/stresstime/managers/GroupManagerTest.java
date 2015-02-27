@@ -38,4 +38,7 @@ public class GroupManagerTest extends BaseManagerTest<Group> {
         groupManager = new GroupManager(getSessionFactory());
         testGroups = Lists.newArrayList(new Group("Core Services"), new Group("API"), new Group("IOS"));
     }
+
+    @Override
+    protected void clean() {}
 }

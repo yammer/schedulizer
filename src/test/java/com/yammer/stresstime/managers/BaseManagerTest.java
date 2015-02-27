@@ -5,6 +5,7 @@ import com.yammer.stresstime.test.DatabaseTest;
 
 import org.hibernate.Session;
 import org.hibernate.context.internal.ManagedSessionContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,20 +23,23 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
     @Before
     @Override
     public void setUp() throws Exception {
-        Session session = getSessionFactory().openSession();
-        ManagedSessionContext.bind(session);
+        super.setUp();
         initialize();
-        session.flush();
-        session.close();
-        ManagedSessionContext.unbind(getSessionFactory());
         this.manager = getEntityManager();
         this.entities = getEntities();
-        super.setUp();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        clean();
+        super.tearDown();
     }
 
     protected abstract EntityManager<Entity> getEntityManager();
     protected abstract List<Entity> getEntities();
     protected abstract void initialize();
+    protected abstract void clean();
 
     @Test
     public void testSaveGetAndDelete() {

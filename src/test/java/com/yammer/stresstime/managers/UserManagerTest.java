@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.yammer.stresstime.test.TestUtils.assertCauses;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +21,8 @@ import static org.junit.Assert.assertNull;
 public class UserManagerTest extends BaseManagerTest<User> {
 
     private UserManager userManager;
-    List<User> testUsers;
+    private List<User> testUsers;
+    private List<Employee> employees;
 
     @Override
     protected EntityManager<User> getEntityManager() {
@@ -35,23 +37,20 @@ public class UserManagerTest extends BaseManagerTest<User> {
     @Override
     protected void initialize() {
         userManager = new UserManager(getSessionFactory());
-        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
-        Employee john = new Employee("John", TestUtils.nextYammerId());
-        Employee mary = new Employee("Mary", TestUtils.nextYammerId());
-        Employee catlin = new Employee("Catlin", TestUtils.nextYammerId());
-        employeeManager.save(john);
-        employeeManager.save(mary);
-        employeeManager.save(catlin);
-        testUsers = Lists.newArrayList(new User(john, null),
-                new User(mary, null),
-                new User(catlin, null));
+        employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
+                new Employee("Mary", TestUtils.nextYammerId()),
+                new Employee("Catlin", TestUtils.nextYammerId()));
+        employees.stream().forEach(e -> currentSession().save(e));
+        testUsers = employees.stream().map(e -> new User(e, null)).collect(Collectors.toList());
     }
+
+    @Override
+    protected void clean() {}
 
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
         User user = testUsers.get(0);
         userManager.save(user);
-        refresh(user);
         User found = userManager.safeGetByYammerId(user.getEmployee().getYammerId());
         assertNotNull(found);
         assertThat(found, equalTo(user));

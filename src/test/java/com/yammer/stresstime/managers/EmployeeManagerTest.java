@@ -38,6 +38,9 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
                 new Employee("Louise", TestUtils.nextYammerId()));
     }
 
+    @Override
+    protected void clean() {}
+
     @Test
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
         Employee employee = testEmployees.get(0);

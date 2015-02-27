@@ -54,6 +54,9 @@ public class MembershipManagerTest extends BaseManagerTest<Membership> {
                 new Membership(employees.get(2), groups.get(2)));
     }
 
+    @Override
+    protected void clean() {}
+
     @Test
     public void testJoin() {
         Membership membership = membershipManager.join(groups.get(2), employees.get(0));
