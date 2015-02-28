@@ -40,7 +40,8 @@ public class UserManagerTest extends BaseManagerTest<User> {
         employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
                 new Employee("Mary", TestUtils.nextYammerId()),
                 new Employee("Catlin", TestUtils.nextYammerId()));
-        employees.stream().forEach(e -> currentSession().save(e));
+        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
+        employees.stream().forEach(e -> employeeManager.save(e));
         testUsers = employees.stream().map(e -> new User(e, null)).collect(Collectors.toList());
     }
 

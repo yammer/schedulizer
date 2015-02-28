@@ -43,8 +43,10 @@ public class MembershipManagerTest extends BaseManagerTest<Membership> {
                 new Employee("Mary", TestUtils.nextYammerId()),
                 new Employee("Louise", TestUtils.nextYammerId()));
         groups = Lists.newArrayList(new Group("Core Services"), new Group("API"), new Group("IOS"));
-        employees.stream().forEach(e -> currentSession().save(e));
-        groups.stream().forEach(g -> currentSession().save(g));
+        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
+        GroupManager groupManager = new GroupManager(getSessionFactory());
+        employees.stream().forEach(e -> employeeManager.save(e));
+        groups.stream().forEach(g -> groupManager.save(g));
         testMemberships = Lists.newArrayList(new Membership(employees.get(0), groups.get(0)),
                 new Membership(employees.get(0), groups.get(1)),
                 new Membership(employees.get(1), groups.get(1)),

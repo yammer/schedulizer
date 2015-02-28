@@ -38,7 +38,8 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
         employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
                 new Employee("Mary", TestUtils.nextYammerId()),
                 new Employee("Louise", TestUtils.nextYammerId()));
-        employees.stream().forEach(e -> currentSession().save(e));
+        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
+        employees.stream().forEach(e -> employeeManager.save(e));
         testDayRestrictions = Lists.newArrayList(new DayRestriction(new LocalDate(2015,2,9), employees.get(0)),
                 new DayRestriction(new LocalDate(2015,2,10), employees.get(0)),
                 new DayRestriction(new LocalDate(2015,2,11), employees.get(0)),
