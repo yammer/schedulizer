@@ -73,6 +73,7 @@ public abstract class BaseManagerTest<Entity extends BaseEntity> extends Databas
         }
         for (Entity e : entities) {
             manager.delete(e);
+            currentSession().flush();
             assertThat(manager.count(), equalTo(--count));
         }
     }

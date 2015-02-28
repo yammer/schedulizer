@@ -2,6 +2,8 @@ package com.yammer.stresstime.test;
 
 import com.yammer.stresstime.StresstimeApplication;
 import com.yammer.stresstime.TestSuite;
+import com.yammer.stresstime.entities.BaseEntity;
+import com.yammer.stresstime.managers.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
@@ -12,6 +14,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 
 /* TODO: Extract this class into a rule (allowing test classes to subclass other classes) and create an annotation
  * TODO: for tests that want to be wrapped in a hibernate session, allowing classes to have db test methods and
@@ -52,19 +56,34 @@ public class DatabaseTest {
     @Before
     public void setUp() throws Exception {
         session = sessionFactory.openSession();
-        session.getTransaction().begin();
         ManagedSessionContext.bind(session);
         flushSession = true;
     }
 
+    private List<EntityManager> entityManagers = Arrays.asList(
+            new AssignableDayManager(getSessionFactory()),
+            new AssignmentManager(getSessionFactory()),
+            new AssignmentTypeManager(getSessionFactory()),
+            new DayRestrictionManager(getSessionFactory()),
+            new EmployeeManager(getSessionFactory()),
+            new GroupManager(getSessionFactory()),
+            new MembershipManager(getSessionFactory()),
+            new UserManager(getSessionFactory()));
     @After
     public void tearDown() throws Exception {
+        // Clear database for next test
+        for (EntityManager manager : entityManagers) {
+            List<BaseEntity> entities = manager.all();
+            for (BaseEntity entity : entities) {
+                manager.delete(entity);
+            }
+        }
         if (flushSession) {
             session.flush();
         }
-        session.getTransaction().rollback();
         session.close();
         ManagedSessionContext.unbind(sessionFactory);
+
     }
 
 }
