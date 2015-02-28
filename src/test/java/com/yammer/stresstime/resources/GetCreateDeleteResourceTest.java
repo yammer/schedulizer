@@ -16,7 +16,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public abstract class GetCreateDeleteResource<E extends BaseEntity> extends BaseResourceTest {
+public abstract class GetCreateDeleteResourceTest<E extends BaseEntity> extends BaseResourceTest {
 
     MultivaluedMap postForm;
     String resourcePath;
