@@ -42,8 +42,7 @@ public abstract class GetCreateDeleteResource<E extends BaseEntity> extends Base
         E entity = (E) resource(resourcePath).entity(postForm).post(getEntityClass());
         assertNotNull(entity);
         assertTrue(checkCreatedEntity(entity));
-        @SuppressWarnings("unchecked")
-        List<E> entities = (List<E>)(List<?>)Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
+        List<E> entities = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
         assertNotNull(entities);
         assertThat(entities.size(), equalTo(1));
         assertThat(entities.get(0).getId(), equalTo(entity.getId()));
@@ -55,13 +54,12 @@ public abstract class GetCreateDeleteResource<E extends BaseEntity> extends Base
         E entity = (E) resource(resourcePath).entity(postForm).post(getEntityClass());
         assertNotNull(entity);
         assertTrue(checkCreatedEntity(entity));
-        @SuppressWarnings("unchecked")
-        List<E> entities = (List<E>)(List<?>)Arrays.asList((Object[])resource(resourcePath).get(getEntityArrayClass()));
+        List<E> entities = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
         assertNotNull(entities);
         assertThat(entities.size(), equalTo(1));
         assertThat(entities.get(0).getId(), equalTo(entity.getId()));
         resource(resourcePath + "/" + entity.getId()).delete();
-        List<Group> empty = (List<Group>)(List<?>)Arrays.asList((Object[])resource(resourcePath).get(getEntityArrayClass()));
+        List<E> empty = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
         assertNotNull(empty);
         assertThat(empty.size(), equalTo(0));
     }
