@@ -39,4 +39,7 @@ public class GroupsResourceTest extends GetCreateDeleteResourceTest<Group> {
     protected Class getEntityArrayClass() {
         return Group[].class;
     }
+
+    @Override
+    protected void initialize() {}
 }

@@ -24,6 +24,7 @@ public abstract class GetCreateDeleteResourceTest<E extends BaseEntity> extends 
     @Before
     public void setup() throws Exception {
         super.setUp();
+        initialize();
         postForm = getSamplePostForm();
         resourcePath = getResourcePath();
         if (resourcePath.endsWith("/")) {
@@ -36,6 +37,7 @@ public abstract class GetCreateDeleteResourceTest<E extends BaseEntity> extends 
     protected abstract boolean checkCreatedEntity(E entity);
     protected abstract Class<E> getEntityClass();
     protected abstract Class<E[]> getEntityArrayClass();
+    protected abstract void initialize();
 
     @Test
     public void testCreateGetGroups() throws Exception{
