@@ -30,7 +30,7 @@ public class EmployeeAssignmentsResource {
 
     @GET
     @UnitOfWork
-    public Response getAssignableDays(
+    public Response getAssignments(
             @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("employee_id") long employeeId,
             @QueryParam("start_date") String startDateString,
