@@ -18,12 +18,14 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class GetCreateDeleteResourceTest<E extends BaseEntity> extends BaseResourceTest {
 
-    MultivaluedMap postForm;
-    String resourcePath;
+    private MultivaluedMap postForm;
+    private String resourcePath;
+    private int initialSize; // In case the initialize function creates entities that will be retrieved by the resource
 
     @Before
     public void setup() throws Exception {
         super.setUp();
+        initialSize = 0;
         initialize();
         postForm = getSamplePostForm();
         resourcePath = getResourcePath();
@@ -39,31 +41,37 @@ public abstract class GetCreateDeleteResourceTest<E extends BaseEntity> extends 
     protected abstract Class<E[]> getEntityArrayClass();
     protected abstract void initialize();
 
-    @Test
-    public void testCreateGetGroups() throws Exception{
-        E entity = (E) resource(resourcePath).entity(postForm).post(getEntityClass());
-        assertNotNull(entity);
-        assertTrue(checkCreatedEntity(entity));
-        List<E> entities = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
-        assertNotNull(entities);
-        assertThat(entities.size(), equalTo(1));
-        assertThat(entities.get(0).getId(), equalTo(entity.getId()));
-        assertTrue(checkCreatedEntity(entities.get(0)));
+    protected void setNumberCreatedEntities(int n) {
+        initialSize = n;
     }
 
     @Test
-    public void testDeleteGroup() {
+    public void testCreateGet() throws Exception{
+        E entity = (E) resource(resourcePath).entity(postForm).post(getEntityClass());
+        assertNotNull(entity);
+        assertTrue(checkCreatedEntity(entity));
+        List<E> entities = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
+        entities.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
+        assertNotNull(entities);
+        assertThat(entities.size(), equalTo(initialSize + 1));
+        assertThat(entities.get(initialSize).getId(), equalTo(entity.getId()));
+        assertTrue(checkCreatedEntity(entities.get(initialSize)));
+    }
+
+    @Test
+    public void testDelete() {
         E entity = (E) resource(resourcePath).entity(postForm).post(getEntityClass());
         assertNotNull(entity);
         assertTrue(checkCreatedEntity(entity));
         List<E> entities = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
         assertNotNull(entities);
-        assertThat(entities.size(), equalTo(1));
-        assertThat(entities.get(0).getId(), equalTo(entity.getId()));
+        assertThat(entities.size(), equalTo(initialSize + 1));
+        entities.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
+        assertThat(entities.get(initialSize).getId(), equalTo(entity.getId()));
         resource(resourcePath + "/" + entity.getId()).delete();
         List<E> empty = Arrays.asList(resource(resourcePath).get(getEntityArrayClass()));
         assertNotNull(empty);
-        assertThat(empty.size(), equalTo(0));
+        assertThat(empty.size(), equalTo(initialSize));
     }
 
 }

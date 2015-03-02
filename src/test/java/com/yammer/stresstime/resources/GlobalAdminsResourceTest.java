@@ -17,14 +17,12 @@ import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
 import java.util.List;
 
-public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Employee> {
+public class GlobalAdminsResourceTest extends GetCreateDeleteResourceTest<Employee> {
 
     private String employeeName = "Luiz Filipe";
     private String imageUrlTemplate = "imageUrlTemplate";
     private String yammerId = TestUtils.nextYammerId();
     private Group group;
-    private Group otherGroup;
-
 
     @Override
     protected MultivaluedMap getSamplePostForm() {
@@ -37,7 +35,7 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
 
     @Override
     protected String getResourcePath() {
-        return String.format("/groups/%d/employees", group.getId());
+        return "/employees/admins";
     }
 
     @Override
@@ -59,21 +57,6 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
 
     @Override
     protected void initialize() {
-        GroupsFixture groupsFixture = new GroupsFixture();
-        groupsFixture.save(getSessionFactory());
-        group = groupsFixture.getGroups().get(0);
-        otherGroup = groupsFixture.getGroups().get(1);
-    }
-
-    @Test
-    public void testCreateRetrieveFromOtherGroup() {
-        Employee entity = (Employee) resource(getResourcePath()).entity(getSamplePostForm()).post(getEntityClass());
-        assertNotNull(entity);
-        assertTrue(checkCreatedEntity(entity));
-        System.out.println(otherGroup.getId());
-        List<Employee> entities =
-                Arrays.asList(resource(String.format("/groups/%d/employees", otherGroup.getId())).get(Employee[].class));
-        assertNotNull(entities);
-        assertThat(entities.size(), equalTo(0));
+        setNumberCreatedEntities(1); // Database test create a global admin by default
     }
 }
