@@ -2,6 +2,7 @@ package com.yammer.stresstime.managers;
 
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.fixtures.EmployeesFixture;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
@@ -33,9 +34,8 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
     @Override
     protected void initialize() {
         employeeManager = new EmployeeManager(getSessionFactory());
-        testEmployees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
-                new Employee("Mary", TestUtils.nextYammerId()),
-                new Employee("Louise", TestUtils.nextYammerId()));
+        EmployeesFixture employeesFixture = new EmployeesFixture();
+        testEmployees = employeesFixture.getEmployees();
     }
 
     @Override

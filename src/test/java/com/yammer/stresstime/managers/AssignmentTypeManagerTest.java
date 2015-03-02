@@ -5,6 +5,8 @@ import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.AssignmentType;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.fixtures.AssignmentTypesFixture;
+import com.yammer.stresstime.fixtures.GroupsFixture;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
@@ -38,17 +40,11 @@ public class AssignmentTypeManagerTest extends BaseManagerTest<AssignmentType> {
     @Override
     protected void initialize() {
         assignmentTypeManager = new AssignmentTypeManager(getSessionFactory());
-        groups = Lists.newArrayList(new Group("group 1"), new Group("group 2"), new Group("group 3"));
-        GroupManager groupManager = new GroupManager(getSessionFactory());
-        groups.stream().forEach(g -> groupManager.save(g));
-        testAssignmentTypes = Lists.newArrayList(new AssignmentType("Primary", groups.get(0)),
-                new AssignmentType("Secondary", groups.get(0)),
-                new AssignmentType("Primary Support", groups.get(0)),
-                new AssignmentType("AT 1", groups.get(1)),
-                new AssignmentType("AT 2", groups.get(1)),
-                new AssignmentType("AT 3", groups.get(1)),
-                new AssignmentType("AT 4", groups.get(1)),
-                new AssignmentType("Name", groups.get(2)));
+        GroupsFixture groupsFixture = new GroupsFixture();
+        groupsFixture.save(getSessionFactory());
+        groups = groupsFixture.getGroups();
+        AssignmentTypesFixture assignmentTypesFixture = new AssignmentTypesFixture(groupsFixture);
+        testAssignmentTypes = assignmentTypesFixture.getAssignmentTypes();
     }
 
     @Override

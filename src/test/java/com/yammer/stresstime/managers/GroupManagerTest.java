@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.fixtures.GroupsFixture;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
@@ -36,7 +37,8 @@ public class GroupManagerTest extends BaseManagerTest<Group> {
     @Override
     protected void initialize() {
         groupManager = new GroupManager(getSessionFactory());
-        testGroups = Lists.newArrayList(new Group("Core Services"), new Group("API"), new Group("IOS"));
+        GroupsFixture groupsFixture = new GroupsFixture();
+        testGroups = groupsFixture.getGroups();
     }
 
     @Override

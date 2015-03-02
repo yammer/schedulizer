@@ -5,6 +5,9 @@ import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.Membership;
 import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.fixtures.EmployeesFixture;
+import com.yammer.stresstime.fixtures.GroupsFixture;
+import com.yammer.stresstime.fixtures.MembershipsFixture;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
@@ -39,21 +42,14 @@ public class MembershipManagerTest extends BaseManagerTest<Membership> {
     @Override
     protected void initialize() {
         membershipManager = new MembershipManager(getSessionFactory());
-        employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
-                new Employee("Mary", TestUtils.nextYammerId()),
-                new Employee("Louise", TestUtils.nextYammerId()));
-        groups = Lists.newArrayList(new Group("Core Services"), new Group("API"), new Group("IOS"));
-        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
-        GroupManager groupManager = new GroupManager(getSessionFactory());
-        employees.stream().forEach(e -> employeeManager.save(e));
-        groups.stream().forEach(g -> groupManager.save(g));
-        testMemberships = Lists.newArrayList(new Membership(employees.get(0), groups.get(0)),
-                new Membership(employees.get(0), groups.get(1)),
-                new Membership(employees.get(1), groups.get(1)),
-                new Membership(employees.get(1), groups.get(2)),
-                new Membership(employees.get(2), groups.get(0)),
-                new Membership(employees.get(2), groups.get(1)),
-                new Membership(employees.get(2), groups.get(2)));
+        EmployeesFixture employeesFixture = new EmployeesFixture();
+        employeesFixture.save(getSessionFactory());
+        employees = employeesFixture.getEmployees();
+        GroupsFixture groupsFixture = new GroupsFixture();
+        groupsFixture.save(getSessionFactory());
+        groups = groupsFixture.getGroups();
+        MembershipsFixture membershipsFixture = new MembershipsFixture(employeesFixture, groupsFixture);
+        testMemberships = membershipsFixture.getMemberships();
     }
 
     @Override

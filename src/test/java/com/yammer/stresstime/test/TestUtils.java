@@ -1,16 +1,21 @@
 package com.yammer.stresstime.test;
 
 import com.google.common.base.Throwables;
-import com.yammer.stresstime.entities.BaseEntity;
+import com.yammer.stresstime.entities.*;
+import org.joda.time.LocalDate;
 import org.junit.Assert;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
 
 public class TestUtils {
 
@@ -54,6 +59,64 @@ public class TestUtils {
         found.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
         expected.sort((e1, e2) -> Long.compare(e1.getId(), e2.getId()));
         assertArrayEquals(expected.toArray(), found.toArray());
+    }
+
+    private static <E extends BaseEntity> void testPeriod(List<E> all, List<E> found, Predicate<? super E> filter){
+        List<E> expected = all
+                .stream()
+                .filter(filter)
+                .collect(Collectors.toList());
+        assertListOfEntitiesEqualsAnyOrder(expected, found);
+    }
+
+    public static boolean isDateBetween(LocalDate d, LocalDate startDate, LocalDate endDate) {
+        return ((d.isAfter(startDate) && d.isBefore(endDate)) ||
+                d.isEqual(startDate) ||
+                d.isEqual(endDate));
+    }
+
+    public static void testDayRestrictionEmployeePeriod(Employee employee, LocalDate startDate, LocalDate endDate,
+                                                        List<DayRestriction> allDayRestrictions, List<DayRestriction> found) {
+        if (startDate.isAfter(endDate)) {
+            assertThat(found.size(), equalTo(0));
+            return;
+        }
+        testPeriod(allDayRestrictions,
+                found,
+                d -> (d.getEmployee().equals(employee) && isDateBetween(d.getDate(), startDate, endDate)));
+    }
+
+    public static void testDayRestrictionGroupPeriod(Group group, LocalDate startDate, LocalDate endDate,
+                                                        List<DayRestriction> allDayRestrictions, List<DayRestriction> found) {
+        if (startDate.isAfter(endDate)) {
+            assertThat(found.size(), equalTo(0));
+            return;
+        }
+        testPeriod(allDayRestrictions,
+                found,
+                d -> (group.getEmployees().contains(d.getEmployee()) && isDateBetween(d.getDate(), startDate, endDate)));
+    }
+
+    public static void testAssignmentsEmployeePeriod(Employee employee, LocalDate startDate, LocalDate endDate,
+                                                     List<Assignment> allAssignments, List<Assignment> found) {
+        if (startDate.isAfter(endDate)) {
+            assertThat(found.size(), equalTo(0));
+            return;
+        }
+        testPeriod(allAssignments,
+                found,
+                a -> (a.getEmployee().equals(employee) && isDateBetween(a.getAssignableDay().getDate(), startDate, endDate)));
+    }
+
+    public static void testAssignableDaysGroupPeriod(Group group, LocalDate startDate, LocalDate endDate,
+                                                     List<AssignableDay> allAssignableDays, List<AssignableDay> found) {
+        if (startDate.isAfter(endDate)) {
+            assertThat(found.size(), equalTo(0));
+            return;
+        }
+        testPeriod(allAssignableDays,
+                found,
+                a -> (a.getGroup().equals(group) && isDateBetween(a.getDate(), startDate, endDate)));
     }
 
     // Prevents instantiation

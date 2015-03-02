@@ -3,6 +3,7 @@ package com.yammer.stresstime.managers;
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.User;
+import com.yammer.stresstime.fixtures.EmployeesFixture;
 import com.yammer.stresstime.test.DatabaseTest;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Before;
@@ -37,11 +38,9 @@ public class UserManagerTest extends BaseManagerTest<User> {
     @Override
     protected void initialize() {
         userManager = new UserManager(getSessionFactory());
-        employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
-                new Employee("Mary", TestUtils.nextYammerId()),
-                new Employee("Catlin", TestUtils.nextYammerId()));
-        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
-        employees.stream().forEach(e -> employeeManager.save(e));
+        EmployeesFixture employeesFixture = new EmployeesFixture();
+        employeesFixture.save(getSessionFactory());
+        employees = employeesFixture.getEmployees();
         testUsers = employees.stream().map(e -> new User(e, null)).collect(Collectors.toList());
     }
 

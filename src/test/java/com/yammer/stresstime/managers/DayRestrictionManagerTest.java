@@ -2,6 +2,8 @@ package com.yammer.stresstime.managers;
 
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.fixtures.DayRestrictionsFixture;
+import com.yammer.stresstime.fixtures.EmployeesFixture;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -21,6 +23,7 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
     private DayRestrictionManager dayRestrictionManager;
     private List<DayRestriction> testDayRestrictions;
     private List<Employee> employees;
+    private DayRestrictionsFixture dayRestrictionsFixture;
 
     @Override
     protected EntityManager<DayRestriction> getEntityManager() {
@@ -35,71 +38,37 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
     @Override
     protected void initialize() {
         dayRestrictionManager = new DayRestrictionManager(getSessionFactory());
-        employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
-                new Employee("Mary", TestUtils.nextYammerId()),
-                new Employee("Louise", TestUtils.nextYammerId()));
-        EmployeeManager employeeManager = new EmployeeManager(getSessionFactory());
-        employees.stream().forEach(e -> employeeManager.save(e));
-        testDayRestrictions = Lists.newArrayList(new DayRestriction(new LocalDate(2015,2,9), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,2,10), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,2,11), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,2,15), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,3,10), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,3,12), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,3,15), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,5,10), employees.get(0)),
-                new DayRestriction(new LocalDate(2015,2,11), employees.get(1)),
-                new DayRestriction(new LocalDate(2015,2,12), employees.get(1)),
-                new DayRestriction(new LocalDate(2015,2,13), employees.get(1)),
-                new DayRestriction(new LocalDate(2015,2,15), employees.get(1)),
-                new DayRestriction(new LocalDate(2015,2,20), employees.get(1)),
-                new DayRestriction(new LocalDate(2015,2,10), employees.get(2)));
+        EmployeesFixture employeesFixture = new EmployeesFixture();
+        employeesFixture.save(getSessionFactory());
+        employees = employeesFixture.getEmployees();
+        dayRestrictionsFixture = new DayRestrictionsFixture(employeesFixture);
+        testDayRestrictions = dayRestrictionsFixture.getDayRestrictions();
     }
 
     @Override
     protected void clean() {}
 
-    void testPeriod(Employee employee, LocalDate startDate, LocalDate endDate) {
-        List<DayRestriction> expected = testDayRestrictions
-                .stream()
-                .filter(d -> (d.getEmployee().equals(employee) &&
-                        ((d.getDate().isAfter(startDate) && d.getDate().isBefore(endDate)) ||
-                                d.getDate().isEqual(startDate) ||
-                                d.getDate().isEqual(endDate))))
-                .collect(Collectors.toList());
-        if (startDate.isAfter(endDate)) {
-            expected = Lists.newArrayList();
-        }
+    void testEmployeePeriod(Employee employee, LocalDate startDate, LocalDate endDate) {
         List<DayRestriction> found = dayRestrictionManager.getByEmployeePeriod(employee, startDate, endDate);
-        assertListOfEntitiesEqualsAnyOrder(expected, found);
+        TestUtils.testDayRestrictionEmployeePeriod(employee, startDate, endDate, testDayRestrictions, found);
     }
 
     void testGroupPeriod(Group group, LocalDate startDate, LocalDate endDate) {
-        List<DayRestriction> expected = testDayRestrictions
-                .stream()
-                .filter(d -> (group.getEmployees().contains(d.getEmployee()) &&
-                        ((d.getDate().isAfter(startDate) && d.getDate().isBefore(endDate)) ||
-                                d.getDate().isEqual(startDate) ||
-                                d.getDate().isEqual(endDate))))
-                .collect(Collectors.toList());
-        if (startDate.isAfter(endDate)) {
-            expected = Lists.newArrayList();
-        }
         List<DayRestriction> found = dayRestrictionManager.getByGroupPeriod(group, startDate, endDate);
-        assertListOfEntitiesEqualsAnyOrder(expected, found);
+        TestUtils.testDayRestrictionGroupPeriod(group, startDate, endDate, testDayRestrictions, found);
     }
 
     @Test
     public void testGetByEmployeePeriod() {
-        testDayRestrictions.stream().forEach(d -> dayRestrictionManager.save(d));
-        testPeriod(employees.get(0), new LocalDate(2015,2,10), new LocalDate(2015,3,10));
-        testPeriod(employees.get(0), new LocalDate(2015,2,5), new LocalDate(2015,2,10));
-        testPeriod(employees.get(0), new LocalDate(2020,2,5), new LocalDate(2015,2,10));
-        testPeriod(employees.get(0), new LocalDate(2020,2,5), new LocalDate(2050,2,10));
-        testPeriod(employees.get(1), new LocalDate(2015,2,10), new LocalDate(2016,3,10));
-        testPeriod(employees.get(1), new LocalDate(2015,2,11), new LocalDate(2015,2,11));
-        testPeriod(employees.get(2), new LocalDate(2020,2,10), new LocalDate(2015,2,10));
-        testPeriod(employees.get(2), new LocalDate(2020,2,11), new LocalDate(2050,2,22));
+        dayRestrictionsFixture.save(getSessionFactory());
+        testEmployeePeriod(employees.get(0), new LocalDate(2015, 2, 10), new LocalDate(2015, 3, 10));
+        testEmployeePeriod(employees.get(0), new LocalDate(2015, 2, 5), new LocalDate(2015, 2, 10));
+        testEmployeePeriod(employees.get(0), new LocalDate(2020, 2, 5), new LocalDate(2015, 2, 10));
+        testEmployeePeriod(employees.get(0), new LocalDate(2020, 2, 5), new LocalDate(2050, 2, 10));
+        testEmployeePeriod(employees.get(1), new LocalDate(2015, 2, 10), new LocalDate(2016, 3, 10));
+        testEmployeePeriod(employees.get(1), new LocalDate(2015, 2, 11), new LocalDate(2015, 2, 11));
+        testEmployeePeriod(employees.get(2), new LocalDate(2020, 2, 10), new LocalDate(2015, 2, 10));
+        testEmployeePeriod(employees.get(2), new LocalDate(2020, 2, 11), new LocalDate(2050, 2, 22));
     }
 
     @Test
@@ -118,7 +87,7 @@ public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
 
     @Test
     public void testGetByGroupPeriod() {
-        testDayRestrictions.stream().forEach(d -> dayRestrictionManager.save(d));
+        dayRestrictionsFixture.save(getSessionFactory());
         GroupManager groupManager = new GroupManager(getSessionFactory());
         Group group1 = new Group("group 1");
         Group group2 = new Group("group 2");
