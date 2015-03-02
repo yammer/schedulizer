@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "day_restrictions",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"date", "employee_id"}))
-public class DayRestriction extends JsonAnnotatedEntity implements BaseEntity {
+public class DayRestriction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

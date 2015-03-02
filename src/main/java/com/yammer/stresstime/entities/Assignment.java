@@ -12,7 +12,7 @@ import org.hibernate.exception.ConstraintViolationException;
 @Table(name = "assignments",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"assignment_type_id", "assignable_day_id", "employee_id"}))
-public class Assignment extends JsonAnnotatedEntity implements BaseEntity {
+public class Assignment extends  BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

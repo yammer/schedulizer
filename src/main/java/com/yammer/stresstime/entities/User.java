@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User extends JsonAnnotatedEntity implements BaseEntity {
+public class User extends BaseEntity {
 
     public static User fresh(Employee employee, String accessToken) {
         User user = new User(employee, accessToken);
