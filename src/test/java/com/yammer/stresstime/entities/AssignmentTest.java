@@ -1,6 +1,5 @@
 package com.yammer.stresstime.entities;
 
-import com.sun.tools.internal.jxc.ap.Const;
 import com.yammer.stresstime.managers.*;
 import com.yammer.stresstime.managers.exceptions.StresstimeException;
 import com.yammer.stresstime.test.DatabaseTest;
