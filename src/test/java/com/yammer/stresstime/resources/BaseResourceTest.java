@@ -59,10 +59,13 @@ public class BaseResourceTest  extends DatabaseTest {
 
     protected WebResource.Builder resource(String path) {
         if (path.startsWith("/")) path = path.substring(1);
-        return client.resource(
+        WebResource.Builder resource = client.resource(
                 String.format("http://localhost:%d/service/%s", TestSuite.RULE.getLocalPort(), path))
-                    .header("Authorization", getAuthorizationHeader())
                     .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        if (currentUser != null) {
+            return resource.header("Authorization", getAuthorizationHeader());
+        }
+        return resource;
     }
 
     private String getAuthorizationHeader() {
