@@ -24,5 +24,6 @@ public class UserManager extends EntityManager<User> {
     public void save(User user) {
         checkState(!user.isGuest(), "Cannot save a guest");
         super.save(user);
+        currentSession().refresh(user.getEmployee());
     }
 }

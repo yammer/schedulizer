@@ -15,17 +15,6 @@ import java.util.stream.Collectors;
 
 public class AssignableDayManager extends EntityManager<AssignableDay> {
 
-    public static Map<Employee, Map<AssignmentType, Long>> getStatistics(
-            Collection<? extends AssignableDay> assignableDays) {
-
-        Map<Employee, List<Assignment>> employeeAssignments = assignableDays.stream()
-                .map(day -> day.getAssignments().stream().collect(Collectors.groupingBy(Assignment::getEmployee)))
-                .collect(CoreUtils.mergingMapCollector(HashMap::new, CoreUtils::concatLists));
-
-        return Maps.transformValues(employeeAssignments,
-                as -> as.stream().collect(CoreUtils.countingByCollector(Assignment::getAssignmentType)));
-    }
-
     public AssignableDayManager(SessionFactory sessionFactory) {
         super(sessionFactory, AssignableDay.class);
     }

@@ -1,14 +1,18 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
+import com.yammer.stresstime.managers.exceptions.InvalidStateException;
+import com.yammer.stresstime.utils.ResourceUtils;
 
 import javax.persistence.*;
+import org.hibernate.exception.ConstraintViolationException;
 
 @Entity
 @Table(name = "assignments",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"assignment_type_id", "assignable_day_id", "employee_id"}))
-public class Assignment extends JsonAnnotatedEntity {
+public class Assignment extends  BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +35,10 @@ public class Assignment extends JsonAnnotatedEntity {
     }
 
     public Assignment(Employee employee, AssignableDay assignableDay, AssignmentType assignmentType) {
+        // TODO: create a constraint validators
+        if (assignableDay.getGroup().getId() != assignmentType.getGroup().getId()) {
+                throw new InvalidStateException("Assignable day and assignmentType belong to different groups");
+        }
         this.employee = employee;
         this.assignableDay = assignableDay;
         this.assignmentType = assignmentType;
@@ -46,6 +54,9 @@ public class Assignment extends JsonAnnotatedEntity {
     }
 
     public void setAssignmentType(AssignmentType assignmentType) {
+        if (assignableDay.getGroup().getId() != assignmentType.getGroup().getId()) {
+            throw new InvalidStateException("Assignable day and assignmentType belong to different groups");
+        }
         this.assignmentType = assignmentType;
     }
 
@@ -55,6 +66,9 @@ public class Assignment extends JsonAnnotatedEntity {
     }
 
     public void setAssignableDay(AssignableDay assignableDay) {
+        if (assignableDay.getGroup().getId() != assignmentType.getGroup().getId()) {
+            throw new InvalidStateException("Assignable day and assignmentType belong to different groups");
+        }
         this.assignableDay = assignableDay;
     }
 

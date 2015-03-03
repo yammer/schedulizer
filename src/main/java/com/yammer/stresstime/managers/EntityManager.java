@@ -1,6 +1,7 @@
 package com.yammer.stresstime.managers;
 
 import com.google.common.collect.ImmutableList;
+import com.yammer.stresstime.entities.BaseEntity;
 import com.yammer.stresstime.managers.exceptions.EntityNonUniqueException;
 import com.yammer.stresstime.managers.exceptions.EntityNotFoundException;
 import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
@@ -13,7 +14,7 @@ import org.hibernate.criterion.Projections;
 
 import java.util.List;
 
-public class EntityManager<E> extends AbstractDAO<E> {
+public class EntityManager<E extends BaseEntity> extends AbstractDAO<E> {
 
     private final Class<? extends E> entityClass;
     private static final int MAX_BATCH_SIZE = 20; // should be the same as hibernate.jdbc.batch_size property in app.yml

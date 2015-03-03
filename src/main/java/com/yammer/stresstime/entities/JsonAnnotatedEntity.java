@@ -1,10 +1,12 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class JsonAnnotatedEntity {
 
     private Map<String, Object> annotations = new HashMap<>();

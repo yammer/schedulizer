@@ -1,4 +1,5 @@
 rootPath: /service/*
+authenticatorClass: com.yammer.stresstime.auth.MockAuthenticator
 
 server:
   applicationConnectors:

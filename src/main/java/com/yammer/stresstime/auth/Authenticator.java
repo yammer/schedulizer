@@ -16,20 +16,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 
-public class Authenticator implements io.dropwizard.auth.Authenticator<Credentials, User> {
+public class Authenticator extends AbstractAuthenticator {
 
     private static final String YAMMER_CURRENT_USER_ENDPOINT = "https://www.yammer.com/api/v1/users/current.json";
     private static final String YAMMER_AUTHORIZATION_HEADER_VALUE = "Bearer %s";
     private static final int YAMMER_REQUEST_RETRIES = 3;
 
-    private final Client client;
-    private final UserManager userManager;
-    private final EmployeeManager employeeManager;
-
     public Authenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
-        this.client = client;
-        this.userManager = userManager;
-        this.employeeManager = employeeManager;
+        super(client, userManager, employeeManager);
     }
 
     @Override

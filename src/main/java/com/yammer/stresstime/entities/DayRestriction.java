@@ -2,6 +2,8 @@ package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.joda.deser.LocalDateDeserializer;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -12,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "day_restrictions",
         uniqueConstraints = @UniqueConstraint(columnNames =
                 {"date", "employee_id"}))
-public class DayRestriction extends JsonAnnotatedEntity {
+public class DayRestriction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,7 @@ public class DayRestriction extends JsonAnnotatedEntity {
     @Column(name = "date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     @NotNull
+    @JsonDeserialize(using=LocalDateDeserializer.class)
     private LocalDate date;
 
     @Column(name = "comment")

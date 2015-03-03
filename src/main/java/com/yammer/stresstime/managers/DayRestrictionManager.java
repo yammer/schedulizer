@@ -43,12 +43,7 @@ public class DayRestrictionManager extends EntityManager<DayRestriction> {
         Set<Employee> employees = group.getEmployees();
         List<DayRestriction> dayRestrictions = new ArrayList<>();
         for(Employee employee : employees) {
-            dayRestrictions.addAll(currentSession()
-                    .createCriteria(DayRestriction.class)
-                    .add(Restrictions.ge("date", startDate))
-                    .add(Restrictions.le("date", endDate))
-                    .add(Restrictions.eq("employee.id", employee.getId()))
-                    .list());
+            dayRestrictions.addAll(getByEmployeePeriod(employee, startDate, endDate));
         }
         return dayRestrictions;
     }
