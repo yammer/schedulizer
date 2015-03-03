@@ -34,6 +34,10 @@ public class TestUtils {
         return "<yid-" + nextInt() + ">";
     }
 
+    public static String nextRandomString() {
+        return "<random-string-" + nextInt() + ">";
+    }
+
     public static void assertCauses(Class<? extends Throwable> exception, Runnable runnable) {
         try {
             runnable.run();

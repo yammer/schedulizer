@@ -40,6 +40,7 @@ public class EmployeeAssignmentsResourceTest extends BaseResourceTest {
                 new AssignmentsFixture(employeesFixture, assignmentTypesFixture, assignableDaysFixture);
         assignmentsFixture.save(getSessionFactory());
         assignments = assignmentsFixture.getAssignments();
+        setCurrentUser(getGlobalAdmin());
     }
 
     private void testEmployeePeriod(Employee employee, LocalDate startDate, LocalDate endDate) {
