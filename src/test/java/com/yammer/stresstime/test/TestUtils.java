@@ -5,6 +5,7 @@ import com.yammer.stresstime.entities.*;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -65,12 +66,13 @@ public class TestUtils {
         assertArrayEquals(expected.toArray(), found.toArray());
     }
 
-    private static <E extends BaseEntity> void testPeriod(List<E> all, List<E> found, Predicate<? super E> filter){
+    private static <E extends BaseEntity> List<E> testPeriod(List<E> all, List<E> found, Predicate<? super E> filter){
         List<E> expected = all
                 .stream()
                 .filter(filter)
                 .collect(Collectors.toList());
         assertListOfEntitiesEqualsAnyOrder(expected, found);
+        return expected;
     }
 
     public static boolean isDateBetween(LocalDate d, LocalDate startDate, LocalDate endDate) {
@@ -118,9 +120,17 @@ public class TestUtils {
             assertThat(found.size(), equalTo(0));
             return;
         }
-        testPeriod(allAssignableDays,
-                found,
-                a -> (a.getGroup().equals(group) && isDateBetween(a.getDate(), startDate, endDate)));
+        List<AssignableDay> expected =
+                testPeriod(allAssignableDays,
+                    found,
+                    a -> (a.getGroup().equals(group) && isDateBetween(a.getDate(), startDate, endDate)));
+        expected.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        found.sort((a, b) -> Long.compare(a.getId(), b.getId()));
+        for (int i = 0; i < expected.size(); i++) {
+            List<Assignment> a1 = new ArrayList<>(expected.get(i).getAssignments());
+            List<Assignment> a2 = new ArrayList<>(found.get(i).getAssignments());
+            assertListOfEntitiesEqualsAnyOrder(a1, a2);
+        }
     }
 
     // Prevents instantiation
