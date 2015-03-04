@@ -1,6 +1,17 @@
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
 
+        $scope.CUSTOM_STAT_ID =  Number.MAX_SAFE_INTEGER; // large number to be the last label
+
+        $scope.customOrder = {
+            id: $scope.CUSTOM_STAT_ID,
+            desc: false
+        }
+        var customStatFunction = function(stats) {
+            if (stats == undefined) return 0;
+            return _.values(stats).sum(function(s) { return s.count; });
+        }
+
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP || group == null) {
                 group.employees = [];
@@ -128,6 +139,16 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                         };
                     });
                 });
+                // Custom user statistic
+                _.each(group.employees, function(e) {
+                    e.statistics[$scope.CUSTOM_STAT_ID] = {
+                        assignmentTypeId: $scope.CUSTOM_STAT_ID,
+                        assignmentType: {
+                            id: $scope.CUSTOM_STAT_ID
+                        },
+                        count: customStatFunction(e.statistics)
+                    }
+                });
             });
         }
 
@@ -173,6 +194,11 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             if (assignmentTypes == null || assignmentTypes.length <= 0) return;
             var map = _.indexBy(assignmentTypes, 'id');
             var newIds = _.map(assignmentTypes, 'id');
+
+            // Add custom order
+            map[$scope.CUSTOM_STAT_ID] = $scope.customOrder;
+            newIds.push($scope.CUSTOM_STAT_ID);
+
             var currentIds = _.map($scope.employeeOrder, Math.abs);
             var newOrder = _.chain(currentIds)       // [unorderedId]
                 .union(newIds)                       // [unorderedId]

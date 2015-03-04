@@ -138,6 +138,19 @@ Array.prototype.maxMinBy = function(map) {
     return {max: max, min: min};
 };
 
+Array.prototype.sum = function(selector) {
+    if (typeof selector !== 'function') {
+        selector = function(item) {
+            return item;
+        }
+    }
+    var sum = 0;
+    for (var i = 0; i < this.length; i++) {
+        sum += parseFloat(selector(this[i]));
+    }
+    return sum;
+};
+
 // TODO: Change to Object
 Objects = {}; // Helper functions
 
