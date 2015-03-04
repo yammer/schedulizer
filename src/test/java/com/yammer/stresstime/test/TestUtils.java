@@ -12,9 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.fail;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertThat;
 

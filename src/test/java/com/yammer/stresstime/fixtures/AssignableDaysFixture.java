@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.AssignableDay;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.AssignableDayManager;
-import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.SessionFactory;
 import org.joda.time.LocalDate;
 

@@ -2,8 +2,9 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
-import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.managers.AssignableDayManager;
+import com.yammer.stresstime.entities.Assignment;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.AssignmentManager;
 import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.utils.ResourceUtils;
@@ -14,7 +15,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Set;
 
 @Path("/employees/{employee_id}/assignments")
 @Produces(MediaType.APPLICATION_JSON)

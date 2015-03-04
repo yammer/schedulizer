@@ -1,20 +1,20 @@
 package com.yammer.stresstime.resources;
 
 import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.entities.AssignableDay;
+import com.yammer.stresstime.entities.Assignment;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.fixtures.*;
 import com.yammer.stresstime.test.TestUtils;
-import junit.framework.Assert;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.core.UriBuilder;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.TestCase.assertTrue;

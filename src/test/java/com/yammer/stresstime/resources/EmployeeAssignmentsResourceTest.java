@@ -1,8 +1,8 @@
 package com.yammer.stresstime.resources;
 
-import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.entities.Assignment;
+import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.fixtures.*;
-import com.yammer.stresstime.managers.AssignmentManager;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
 import org.junit.Before;

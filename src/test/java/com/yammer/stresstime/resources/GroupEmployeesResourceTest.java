@@ -7,15 +7,14 @@ import com.yammer.stresstime.fixtures.GroupsFixture;
 import com.yammer.stresstime.test.TestUtils;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Employee> {
 

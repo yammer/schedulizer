@@ -2,12 +2,11 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
-import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.managers.AssignableDayManager;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.EmployeeManager;
 import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
-import org.joda.time.LocalDate;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

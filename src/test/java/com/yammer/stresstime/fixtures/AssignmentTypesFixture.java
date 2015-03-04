@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.AssignmentType;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.AssignmentTypeManager;
-import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.SessionFactory;
 
 import java.util.List;

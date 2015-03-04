@@ -2,7 +2,6 @@ package com.yammer.stresstime.healthchecks;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.yammer.stresstime.auth.AbstractAuthenticator;
-import com.yammer.stresstime.auth.Authenticator;
 
 public class AuthenticatorHealthCheck extends HealthCheck {
 

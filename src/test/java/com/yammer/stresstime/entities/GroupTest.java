@@ -5,7 +5,7 @@ import com.yammer.stresstime.test.DatabaseTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 

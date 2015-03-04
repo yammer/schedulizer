@@ -5,7 +5,7 @@ import com.yammer.stresstime.entities.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 public class UserManager extends EntityManager<User> {
 

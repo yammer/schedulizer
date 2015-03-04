@@ -1,9 +1,6 @@
 package com.yammer.stresstime.resources;
 
-import com.google.common.reflect.TypeToken;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.yammer.stresstime.entities.BaseEntity;
-import com.yammer.stresstime.entities.Group;
 import org.junit.Before;
 import org.junit.Test;
 

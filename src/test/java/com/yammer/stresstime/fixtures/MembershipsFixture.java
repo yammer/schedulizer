@@ -5,7 +5,6 @@ import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.Membership;
 import com.yammer.stresstime.managers.MembershipManager;
-import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.SessionFactory;
 
 import java.util.List;

@@ -10,10 +10,6 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.After;
 import org.junit.Before;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 

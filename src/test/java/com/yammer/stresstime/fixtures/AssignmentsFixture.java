@@ -1,9 +1,11 @@
 package com.yammer.stresstime.fixtures;
 
 import com.google.common.collect.Lists;
-import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.entities.AssignableDay;
+import com.yammer.stresstime.entities.Assignment;
+import com.yammer.stresstime.entities.AssignmentType;
+import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.managers.AssignmentManager;
-import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.SessionFactory;
 
 import java.util.List;

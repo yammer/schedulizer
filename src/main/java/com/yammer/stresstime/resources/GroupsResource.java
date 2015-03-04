@@ -5,16 +5,13 @@ import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.User;
-import com.yammer.stresstime.managers.DayRestrictionManager;
 import com.yammer.stresstime.managers.GroupManager;
 import com.yammer.stresstime.utils.ResourceUtils;
 import io.dropwizard.hibernate.UnitOfWork;
-import org.joda.time.LocalDate;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.CollationElementIterator;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

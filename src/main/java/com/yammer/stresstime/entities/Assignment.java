@@ -1,12 +1,9 @@
 package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.yammer.stresstime.managers.exceptions.HibernateUncaughtException;
 import com.yammer.stresstime.managers.exceptions.InvalidStateException;
-import com.yammer.stresstime.utils.ResourceUtils;
 
 import javax.persistence.*;
-import org.hibernate.exception.ConstraintViolationException;
 
 @Entity
 @Table(name = "assignments",

@@ -1,7 +1,8 @@
 package com.yammer.stresstime.managers;
 
-import com.google.common.collect.Lists;
-import com.yammer.stresstime.entities.*;
+import com.yammer.stresstime.entities.DayRestriction;
+import com.yammer.stresstime.entities.Employee;
+import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.fixtures.DayRestrictionsFixture;
 import com.yammer.stresstime.fixtures.EmployeesFixture;
 import com.yammer.stresstime.test.TestUtils;
@@ -9,14 +10,10 @@ import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.yammer.stresstime.test.TestUtils.assertListOfEntitiesEqualsAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class DayRestrictionManagerTest extends BaseManagerTest<DayRestriction> {
 

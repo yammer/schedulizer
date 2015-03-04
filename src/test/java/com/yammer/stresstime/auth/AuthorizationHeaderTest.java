@@ -8,7 +8,8 @@ import java.util.Map;
 import static com.yammer.stresstime.test.TestUtils.assertCauses;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 public class AuthorizationHeaderTest {
 
