@@ -12,8 +12,6 @@ public class StresstimeConfiguration extends Configuration {
 
     private final String rootPath;
 
-    private final String authenticatorClass;
-
     @Valid @NotNull @JsonProperty
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
@@ -23,14 +21,11 @@ public class StresstimeConfiguration extends Configuration {
     public StresstimeConfiguration(@JsonProperty("rootPath") String rootPath,
                                    @JsonProperty("authenticatorClass") String authenticatorClass) {
         this.rootPath = rootPath;
-        this.authenticatorClass = authenticatorClass;
     }
 
     public String getRootPath() {
         return rootPath;
     }
-
-    public String getAuthenticatorClass() { return authenticatorClass; }
 
     public JerseyClientConfiguration getJerseyClientConfiguration() {
         return httpClient;
