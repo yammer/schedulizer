@@ -45,6 +45,7 @@ App.controller('GroupTabController', function(
     var debouncedTriggerGroupsUpdate = Utils.lastOfBurst(triggerGroupsUpdate, 100);
     $scope.$watchCollection('selectedGroup.employees', debouncedTriggerGroupsUpdate);
     $rootScope.$on('global-admins-changed', debouncedTriggerGroupsUpdate);
+    $rootScope.$on('group-name-changed', debouncedTriggerGroupsUpdate);
     $scope.$watch(function() {return Session;}, debouncedTriggerGroupsUpdate, true);
 
     $scope.groupInput = null;

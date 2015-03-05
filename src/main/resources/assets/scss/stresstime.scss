@@ -1442,6 +1442,31 @@ $not-available-input-bg: #DA4B4B;
     border-width: 10px 10px 0;
 }
 
+/* Group Settings */
+
+.group-settings {
+    .assignment-type-name-form {
+        margin-top: 10px;
+    }
+}
+
+.group-settings-cog {
+    display: inline-block;
+    font-size: 20px;
+    cursor: pointer;
+    .glyphicon {
+        position: relative;
+        top: 3px;
+    }
+}
+
+.custom-stat-question-sign {
+    position: relative;
+    top: 0px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
 /* Responsiveness */
 
 .stats-space {

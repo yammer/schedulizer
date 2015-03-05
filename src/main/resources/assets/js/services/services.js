@@ -83,7 +83,7 @@ services.factory('yammer', ['$window', function($window) {
 }]);
 
 services.factory('Group', ['$resource', 'Employee', function($resource, Employee) {
-    var Group = $resource(PREFIX + 'groups/:group_id', {}, {
+    var Group = $resource(PREFIX + 'groups/:group_id', {group_id: "@id"}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -91,7 +91,6 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
         },
         delete: {
             method: 'DELETE',
-            params: { group_id: "@id" },
             transformRequest: [urlencodedTransformRequest],
             headers: SHARED_HEADERS
         }
@@ -159,7 +158,7 @@ services.factory('Employee', ['$resource', function($resource) {
 }]);
 
 services.factory('AssignmentType', ['$resource', function($resource) {
-    return $resource(PREFIX + 'groups/:group_id/assignment-types/:assignment_type_id', {group_id: '@groupId'}, {
+    return $resource(PREFIX + 'groups/:group_id/assignment-types/:assignment_type_id', {group_id: '@groupId', assignment_type_id: "@id"}, {
         save: {
             method: 'POST',
             transformRequest: [urlencodedTransformRequest],
@@ -167,7 +166,6 @@ services.factory('AssignmentType', ['$resource', function($resource) {
         },
         delete: {
             method: 'DELETE',
-            params: { assignment_type_id: "@id" },
             transformRequest: [urlencodedTransformRequest],
             headers: SHARED_HEADERS
         }
@@ -292,4 +290,53 @@ services.factory('GroupRestrictionsResource', ['$resource', function($resource) 
     };
 
     return GroupRestrictionsResource;
+}]);
+
+services.factory('CustomStat', ['$window', function($window) {
+    return {
+        load: function(id) {
+            var value = $window.localStorage.getItem("customStat-" + id);
+            if(value == undefined) {
+                return undefined;
+            }
+            return JSON.parse(value);
+
+        },
+        save: function(id, value) {
+            $window.localStorage.setItem("customStat-" + id, JSON.stringify(value));
+        },
+        evaluate: function(string, group) {
+            for (var i = 0; i < group.assignmentTypes.length; i++) {
+                // replace all $i with its stats count
+                string = string.split("$" + i).join("stats[" + group.assignmentTypes[i].id + "].count");
+            }
+            try {
+                eval("var f = function(stats){ return " + string + "; };");
+            } catch(e) {
+                return undefined;
+            }
+            return f;
+        },
+        validate: function(string, group) {
+            if (string == undefined || string == "") return false;
+            // Only numbers operators and $ allowed
+            var match = /[\$\+\-*\/\s\(\)0-9]+/.exec(string);
+            if (match != string) return false;
+            var testStats = {}; // to test function
+            for (var i = 0; i < group.assignmentTypes.length; i++) {
+                testStats[group.assignmentTypes[i].id] = {count: 1};
+            }
+            var f = this.evaluate(string, group);
+            if (f == undefined) return false;
+            try {
+                var result = f(testStats);
+                if(result == undefined || isNaN(result)) {
+                    return false;
+                }
+            } catch(e) {
+                return false;
+            }
+            return true;
+        }
+    }
 }]);

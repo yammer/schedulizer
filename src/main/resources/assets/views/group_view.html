@@ -18,6 +18,9 @@
             <span class="minus-span">-</span>
         </div>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
+        <div ng-if="isGroupAdmin(selectedGroup)" class="group-settings-cog">
+            <span class="glyphicon glyphicon-cog" ng-click="groupSettingsModal()"></span>
+        </div>
         <div class="assignment-types-wrapper">
             <div
                 ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id':true"

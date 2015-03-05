@@ -1,5 +1,6 @@
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
-                                               Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
+                                               Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
+                                               CustomStat) {
 
         $scope.CUSTOM_STAT_ID =  Number.MAX_SAFE_INTEGER; // large number to be the last label
 
@@ -7,9 +8,35 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             id: $scope.CUSTOM_STAT_ID,
             desc: false
         }
+
+        var usersCustomStatFunction = undefined;
+
+        function loadUsersCustomStatFunction() {
+            $scope.selectedGroup.assignmentTypes = _.sortBy($scope.selectedGroup.assignmentTypes, "id");
+            var string = CustomStat.load($scope.selectedGroup.id);
+            if (string == undefined || CustomStat.validate(string, $scope.selectedGroup) == false) {
+                string = "";
+                for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+                    if (i != 0) {
+                        string = string + " + ";
+                    }
+                    string = string + "$" + i;
+                }
+                CustomStat.save($scope.selectedGroup.id, string);
+            }
+
+            usersCustomStatFunction = CustomStat.evaluate(string, $scope.selectedGroup);
+            for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+                // replace all $i with its stats count
+                string = string.split("$" + i).join("stats[" + $scope.selectedGroup.assignmentTypes[i].id + "].count");
+            }
+            eval("usersCustomStatFunction = function(stats){ return " + string + "; };");
+
+        }
+
         var customStatFunction = function(stats) {
             if (stats == undefined) return 0;
-            return _.values(stats).sum(function(s) { return s.count; });
+            return usersCustomStatFunction(stats);
         }
 
         function getGroupEmployeesData(group) {
@@ -139,7 +166,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                         };
                     });
                 });
+
                 // Custom user statistic
+                loadUsersCustomStatFunction();
                 _.each(group.employees, function(e) {
                     e.statistics[$scope.CUSTOM_STAT_ID] = {
                         assignmentTypeId: $scope.CUSTOM_STAT_ID,
