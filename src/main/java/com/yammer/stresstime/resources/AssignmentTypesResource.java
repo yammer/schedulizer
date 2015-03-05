@@ -75,4 +75,25 @@ public class AssignmentTypesResource {
         assignmentTypeManager.delete(assignmentType);
         return Response.noContent().build();
     }
+
+    @POST
+    @Path("/{assignment_type_id}")
+    @UnitOfWork
+    public Response updateAssignmentType(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
+            @PathParam("group_id") long groupId,
+            @PathParam("assignment_type_id") long assignmentTypeId,
+            @FormParam("name") String name) {
+
+        AssignmentType assignmentType = assignmentTypeManager.getById(assignmentTypeId);
+        Group group = assignmentType.getGroup();
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+        ResourceUtils.checkConflictFree(group.getId() == groupId, Group.class);
+
+        assignmentType.setName(name);
+
+        assignmentTypeManager.save(assignmentType);
+        return Response.ok().entity(assignmentType).build();
+    }
 }
