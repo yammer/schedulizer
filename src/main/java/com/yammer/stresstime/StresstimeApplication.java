@@ -2,6 +2,7 @@ package com.yammer.stresstime;
 
 import com.sun.jersey.api.client.Client;
 import com.yammer.stresstime.auth.AbstractAuthenticator;
+import com.yammer.stresstime.auth.Authenticator;
 import com.yammer.stresstime.auth.AuthorizeProvider;
 import com.yammer.stresstime.config.StresstimeConfiguration;
 import com.yammer.stresstime.entities.*;
@@ -51,18 +52,7 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         return "stresstime";
     }
 
-    @Override
-    public void run(StresstimeConfiguration config, Environment env) throws Exception {
-        SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
-        userManager = new UserManager(sessionFactory);
-        groupManager = new GroupManager(sessionFactory);
-        employeeManager = new EmployeeManager(sessionFactory);
-        membershipManager = new MembershipManager(sessionFactory);
-        assignmentTypeManager = new AssignmentTypeManager(sessionFactory);
-        assignmentManager = new AssignmentManager(sessionFactory);
-        assignableDayManager = new AssignableDayManager(sessionFactory);
-        dayRestrictionManager = new DayRestrictionManager(sessionFactory);
-
+    protected void registerResources(StresstimeConfiguration config, Environment env) {
         env.jersey().setUrlPattern(config.getRootPath());
         env.jersey().register(new GroupsResource(groupManager));
         env.jersey().register(new GroupDayRestrictionsResource(groupManager, dayRestrictionManager));
@@ -76,16 +66,30 @@ public class StresstimeApplication extends Application<StresstimeConfiguration> 
         env.jersey().register(new AuthorizationResource());
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
+    }
 
+    protected void registerAuthenticator(StresstimeConfiguration config, Environment env) {
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        Class authenticatorClass = Class.forName(config.getAuthenticatorClass());
-        AbstractAuthenticator authenticator =
-                (AbstractAuthenticator) authenticatorClass
-                        .getConstructor(Client.class, UserManager.class, EmployeeManager.class)
-                        .newInstance(client, userManager, employeeManager);
+        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager);
         env.jersey().register(new AuthorizeProvider<>(authenticator));
+    }
+
+    @Override
+    public void run(StresstimeConfiguration config, Environment env) throws Exception {
+        SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
+        userManager = new UserManager(sessionFactory);
+        groupManager = new GroupManager(sessionFactory);
+        employeeManager = new EmployeeManager(sessionFactory);
+        membershipManager = new MembershipManager(sessionFactory);
+        assignmentTypeManager = new AssignmentTypeManager(sessionFactory);
+        assignmentManager = new AssignmentManager(sessionFactory);
+        assignableDayManager = new AssignableDayManager(sessionFactory);
+        dayRestrictionManager = new DayRestrictionManager(sessionFactory);
+
+        registerResources(config, env);
+        registerAuthenticator(config, env);
     }
 
     // For tests

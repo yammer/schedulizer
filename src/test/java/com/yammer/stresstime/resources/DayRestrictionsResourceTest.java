@@ -5,7 +5,6 @@ import com.yammer.stresstime.entities.DayRestriction;
 import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.fixtures.DayRestrictionsFixture;
 import com.yammer.stresstime.fixtures.EmployeesFixture;
-import com.yammer.stresstime.managers.DayRestrictionManager;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;

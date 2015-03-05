@@ -18,6 +18,9 @@
             <span class="minus-span">-</span>
         </div>
         <span class="group-name">{{selectedGroup.name}}</span>&nbsp;
+        <div ng-if="isGroupAdmin(selectedGroup)" class="group-settings-cog">
+            <span class="glyphicon glyphicon-cog" ng-click="groupSettingsModal()"></span>
+        </div>
         <div class="assignment-types-wrapper">
             <div
                 ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id':true"
@@ -207,12 +210,19 @@
                 <div class="mini-assignment-type-headers">
                     <div class="v-center-wrap">
                         <div
-                            ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id'"
-                            ng-click="updateEmployeesOrder(assignmentType)"
-                            class="mini-assignment-type-label assignment-color-{{index % 10}}"
-                            ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
-                            >
+                                ng-repeat="(index, assignmentType) in selectedGroup.assignmentTypes | orderBy: 'id'"
+                                ng-click="updateEmployeesOrder(assignmentType)"
+                                class="mini-assignment-type-label assignment-color-{{index % 10}}"
+                                ng-style="getAssignmentTypeHeaderStyle(assignmentType)"
+                                >
                             <span class="glyphicon glyphicon-triangle-{{(assignmentType.desc) ? 'bottom' : 'top'}}"></span>
+                        </div>
+                        <div
+                                ng-click="updateEmployeesOrder(customOrder)"
+                                class="mini-assignment-type-label assignment-color-{{selectedGroup.assignmentTypes.length % 10}}"
+                                ng-style="getAssignmentTypeHeaderStyle(customOrder)"
+                                >
+                            <span class="glyphicon glyphicon-sort-by-attributes{{(customOrder.desc) ? '-alt' : ''}}"></span>
                         </div>
                     </div>
                 </div>

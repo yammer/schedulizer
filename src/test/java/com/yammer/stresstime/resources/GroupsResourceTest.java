@@ -3,10 +3,6 @@ package com.yammer.stresstime.resources;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.yammer.stresstime.entities.Group;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 public class GroupsResourceTest extends GetCreateDeleteResourceTest<Group> {

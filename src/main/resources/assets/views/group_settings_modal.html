@@ -1,0 +1,46 @@
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    Settings
+                </h4>
+            </div>
+            <div class="modal-body group-settings">
+                <div>
+                    <h4>Group Name</h4>
+                    <input class="form-control" st-name="groupName.input" ng-model="group.name"/>
+                </div>
+                <div>
+                    <h4>Assignment Types</h4>
+                    <div class="assignment-type-name-form"
+                         ng-repeat="(index, assignmentType) in group.assignmentTypes | orderBy: 'id'">
+                        <input class="form-control" ng-model="assignmentType.name"/>
+                    </div>
+                </div>
+                <div>
+                    <h4>Custom statistic
+                        <span class="glyphicon glyphicon-question-sign custom-stat-question-sign"
+                                st-tooltip="true"
+                                ng-attr-title="{{customStatHelp()}}"
+                                my="left-20 bottom"
+                                at="left top-10"></span>
+                    </h4>
+                    <input class="form-control" st-name="customStat.input" ng-model="customStat.value"/>
+                </div>
+                <div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="ok()">
+                    Ok
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="cancel()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

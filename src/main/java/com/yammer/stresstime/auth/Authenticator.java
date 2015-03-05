@@ -35,7 +35,7 @@ public class Authenticator extends AbstractAuthenticator {
             String yammerId = credentials.getYammerId();
             Employee employee = employeeManager.safeGetByYammerId(yammerId);
             if (employee == null) {
-                employee = getTokenOwner(credentials.getAccessToken());
+                employee = getTokenOwner(credentials);
                 if (employee == null || !employee.getYammerId().equals(yammerId)) {
                     return Optional.absent();
                 }
@@ -56,15 +56,16 @@ public class Authenticator extends AbstractAuthenticator {
                 }
             }
         }
-        return authenticate(user, credentials.getAcceptedRoles());
+        return authenticate(user, credentials);
     }
 
     // Don't save the user if cannot verify
-    private Optional<User> authenticate(User user, Set<Role> acceptedRoles) throws AuthenticationException {
+    private Optional<User> authenticate(User user, Credentials credentials) throws AuthenticationException {
+        Set<Role> acceptedRoles = credentials.getAcceptedRoles();
         if (!user.isGuest()) {
             if (!user.isUpToDate()) {
                 // Don't need to save the employee, just verify identity
-                Employee tokenOwner = getTokenOwner(user.getAccessToken());
+                Employee tokenOwner = getTokenOwner(credentials);
                 if (tokenOwner != null && tokenOwner.getYammerId().equals(user.getEmployee().getYammerId())) {
                     user.renew();
                 } else {
@@ -78,7 +79,8 @@ public class Authenticator extends AbstractAuthenticator {
     }
 
     // Return null means unauthorized
-    private Employee getTokenOwner(String accessToken) throws AuthenticationException {
+    protected Employee getTokenOwner(Credentials credentials) throws AuthenticationException {
+        String accessToken = credentials.getAccessToken();
         Exception last = null;
         for (int i = 0; i < YAMMER_REQUEST_RETRIES; i++) {
             try {

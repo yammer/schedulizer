@@ -1,17 +1,12 @@
 package com.yammer.stresstime.managers;
 
-import com.google.common.collect.Maps;
-import com.yammer.stresstime.entities.*;
-import com.yammer.stresstime.utils.CoreUtils;
+import com.yammer.stresstime.entities.AssignableDay;
+import com.yammer.stresstime.entities.Group;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.LocalDate;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AssignableDayManager extends EntityManager<AssignableDay> {
 

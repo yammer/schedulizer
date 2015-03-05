@@ -1,21 +1,16 @@
 package com.yammer.stresstime.managers;
 
-import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.*;
 import com.yammer.stresstime.fixtures.*;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.yammer.stresstime.test.TestUtils.assertListOfEntitiesEqualsAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class AssignableDayManagerTest extends BaseManagerTest<AssignableDay> {
 

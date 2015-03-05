@@ -2,7 +2,6 @@ package com.yammer.stresstime.managers;
 
 import com.yammer.stresstime.entities.BaseEntity;
 import com.yammer.stresstime.test.DatabaseTest;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,8 @@ import java.util.List;
 import static com.yammer.stresstime.test.TestUtils.assertListOfEntitiesEqualsAnyOrder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public abstract class BaseManagerTest<Entity extends BaseEntity> extends DatabaseTest {
 

@@ -1,5 +1,5 @@
 App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, Session, GroupRestrictionsResource,
-                                               Group, AssignmentType, AssignableDay, EMPTY_GROUP, AVAILABILITY_STATES) {
+                                               Group, AssignmentType, AssignableDay, CustomStat, EMPTY_GROUP, AVAILABILITY_STATES) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
     $scope.availabilityStates = AVAILABILITY_STATES;
@@ -180,6 +180,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             group.addAssignmentType(assignmentType);
             $scope.newAssignmentTypeName = "";
             initAssignmentTypeBucket(assignmentType);
+            CustomStat.save($scope.selectedGroup.id, ""); // Force default
         });
         return true;
     }
@@ -495,6 +496,19 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                     delete bucketEmployeeList[bucketEmployee.employee.id];
                 }
             });
+        });
+    }
+
+    $scope.groupSettingsModal = function() {
+        dlg = $dialogs.create('/views/group_settings_modal.html','GroupSettingsModalController',{group: $scope.selectedGroup},{key: false, back: 'static'});
+        dlg.result.then(function(group) {
+            if (group) {
+                if (group.name != $scope.selectedGroup.name) {
+                    $rootScope.$broadcast("group-name-changed");
+                }
+                $scope.selectedGroup = group;
+
+            }
         });
     }
 

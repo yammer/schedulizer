@@ -2,8 +2,8 @@ package com.yammer.stresstime.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.stresstime.auth.Role;
 import com.yammer.stresstime.auth.Authentication;
+import com.yammer.stresstime.auth.Role;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 

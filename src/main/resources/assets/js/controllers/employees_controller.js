@@ -1,5 +1,46 @@
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
-                                               Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP) {
+                                               Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
+                                               CustomStat) {
+
+        $scope.CUSTOM_STAT_ID =  Number.MAX_SAFE_INTEGER; // large number to be the last label
+
+        $scope.customOrder = {
+            id: $scope.CUSTOM_STAT_ID,
+            desc: false
+        }
+
+        var usersCustomStatFunction = undefined;
+
+        function loadUsersCustomStatFunction() {
+            $scope.selectedGroup.assignmentTypes = _.sortBy($scope.selectedGroup.assignmentTypes, "id");
+            var string = CustomStat.load($scope.selectedGroup.id);
+            if (string == undefined || CustomStat.validate(string, $scope.selectedGroup) == false) {
+                string = "";
+                for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+                    if (i != 0) {
+                        string = string + " + ";
+                    }
+                    string = string + "$" + i;
+                }
+                if (string == "") { // No assignment types
+                    string = "0";
+                }
+                CustomStat.save($scope.selectedGroup.id, string);
+            }
+
+            usersCustomStatFunction = CustomStat.evaluate(string, $scope.selectedGroup);
+            for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+                // replace all $i with its stats count
+                string = string.split("$" + i).join("stats[" + $scope.selectedGroup.assignmentTypes[i].id + "].count");
+            }
+            eval("usersCustomStatFunction = function(stats){ return " + string + "; };");
+
+        }
+
+        var customStatFunction = function(stats) {
+            if (stats == undefined) return 0;
+            return usersCustomStatFunction(stats);
+        }
 
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP || group == null) {
@@ -128,6 +169,18 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                         };
                     });
                 });
+
+                // Custom user statistic
+                loadUsersCustomStatFunction();
+                _.each(group.employees, function(e) {
+                    e.statistics[$scope.CUSTOM_STAT_ID] = {
+                        assignmentTypeId: $scope.CUSTOM_STAT_ID,
+                        assignmentType: {
+                            id: $scope.CUSTOM_STAT_ID
+                        },
+                        count: customStatFunction(e.statistics)
+                    }
+                });
             });
         }
 
@@ -173,6 +226,11 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             if (assignmentTypes == null || assignmentTypes.length <= 0) return;
             var map = _.indexBy(assignmentTypes, 'id');
             var newIds = _.map(assignmentTypes, 'id');
+
+            // Add custom order
+            map[$scope.CUSTOM_STAT_ID] = $scope.customOrder;
+            newIds.push($scope.CUSTOM_STAT_ID);
+
             var currentIds = _.map($scope.employeeOrder, Math.abs);
             var newOrder = _.chain(currentIds)       // [unorderedId]
                 .union(newIds)                       // [unorderedId]

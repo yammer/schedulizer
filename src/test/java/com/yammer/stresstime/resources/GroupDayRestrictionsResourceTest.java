@@ -1,15 +1,11 @@
 package com.yammer.stresstime.resources;
 
-import com.sun.jersey.api.uri.UriBuilderImpl;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.yammer.stresstime.entities.DayRestriction;
 import com.yammer.stresstime.entities.Group;
-import com.yammer.stresstime.entities.Membership;
 import com.yammer.stresstime.fixtures.DayRestrictionsFixture;
 import com.yammer.stresstime.fixtures.EmployeesFixture;
 import com.yammer.stresstime.fixtures.GroupsFixture;
 import com.yammer.stresstime.fixtures.MembershipsFixture;
-import com.yammer.stresstime.managers.DayRestrictionManager;
 import com.yammer.stresstime.test.TestUtils;
 import org.joda.time.LocalDate;
 import org.junit.Before;

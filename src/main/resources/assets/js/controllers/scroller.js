@@ -47,7 +47,6 @@ App.directive('scroller', function($timeout) {
                             }, 0);
                         }
                     });
-
                 }
             });
         }

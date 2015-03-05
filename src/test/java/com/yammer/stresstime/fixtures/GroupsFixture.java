@@ -3,7 +3,6 @@ package com.yammer.stresstime.fixtures;
 import com.google.common.collect.Lists;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.managers.GroupManager;
-import com.yammer.stresstime.test.TestUtils;
 import org.hibernate.SessionFactory;
 
 import java.util.List;

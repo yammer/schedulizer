@@ -2,7 +2,6 @@ package com.yammer.stresstime.resources;
 
 import com.yammer.stresstime.auth.Authorize;
 import com.yammer.stresstime.auth.Role;
-import com.yammer.stresstime.entities.Employee;
 import com.yammer.stresstime.entities.Group;
 import com.yammer.stresstime.entities.User;
 import com.yammer.stresstime.managers.DayRestrictionManager;
@@ -14,10 +13,6 @@ import org.joda.time.LocalDate;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.CollationElementIterator;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/groups/{group_id}/restrictions")
 @Produces(MediaType.APPLICATION_JSON)

@@ -1,7 +1,5 @@
 package com.yammer.stresstime.auth;
 
-import com.yammer.stresstime.auth.Role;
-
 import java.lang.annotation.*;
 
 @Documented
