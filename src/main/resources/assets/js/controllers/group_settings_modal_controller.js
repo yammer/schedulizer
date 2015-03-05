@@ -42,6 +42,11 @@ App.controller("GroupSettingsModalController", function($scope, $modalInstance, 
 
     function updateAssignmentStatsName(callback) {
         var count = 0;
+        if ($scope.group.assignmentTypes.length == 0) {
+            callback();
+            return;
+        }
+
         function wrappedCallback() {
             count++;
             if (count == $scope.group.assignmentTypes.length) callback();

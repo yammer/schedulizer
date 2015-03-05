@@ -22,6 +22,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                     }
                     string = string + "$" + i;
                 }
+                if (string == "") { // No assignment types
+                    string = "0";
+                }
                 CustomStat.save($scope.selectedGroup.id, string);
             }
 
