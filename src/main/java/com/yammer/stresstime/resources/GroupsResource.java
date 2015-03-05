@@ -63,6 +63,22 @@ public class GroupsResource {
         return Response.noContent().build();
     }
 
+    @POST
+    @Path("/{group_id}")
+    @UnitOfWork
+    public Response updateGroup(
+            @Authorize({Role.ADMIN, Role.MEMBER}) User user,
+            @PathParam("group_id") long groupId,
+            @FormParam("name") String name) {
+
+        Group group = groupManager.getById(groupId);
+
+        ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
+        group.setName(name);
+        groupManager.save(group);
+        return Response.ok().entity(group).build();
+    }
+
 
     @GET
     @Path("/{group_id}")
