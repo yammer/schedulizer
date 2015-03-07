@@ -6,7 +6,7 @@
     <groupId>com.yammer</groupId>
     <artifactId>stresstime</artifactId>
     <packaging>jar</packaging>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
 
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
@@ -25,7 +25,7 @@
         <connection>scm:git:git://github.int.yammer.com/yammer/stresstime.git</connection>
         <developerConnection>scm:git:git@github.int.yammer.com:yammer/stresstime.git</developerConnection>
         <url>http://github.int.yammer.com/yammer/stresstime/</url>
-        <tag>HEAD</tag>
+        <tag>stresstime-1.2</tag>
     </scm>
     
     <distributionManagement>
