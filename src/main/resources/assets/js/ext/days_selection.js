@@ -23,7 +23,7 @@ DaysSelection.prototype.unselect = function(days) {
         day.previousSelectedState = day.selected;
         day.selected = false;
         if (this.contains(day)) {
-          this.days.remove(day);
+          this.days = _.without(this.days, day);
         }
     }, this);
 };
@@ -33,7 +33,7 @@ DaysSelection.prototype.clear = function() {
         day.previousSelectedState = true;
         day.selected = false;
     }, this);
-    this.days.clear();
+    this.days = [];
 };
 
 DaysSelection.prototype.contains = function(day) {
@@ -46,7 +46,7 @@ DaysSelection.prototype.resetToPreviousState = function(days) {
         if (day.selected && !this.contains(day)) {
             this.days.push(day);
         } else if (!day.selected && this.contains(day)) {
-            this.days.remove(day);
+            this.days = _.without(this.days, day);
         }
     }, this);
 };

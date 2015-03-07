@@ -107,11 +107,12 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.setStatRangeIfEditMode = function() {
             if (!$scope.isStatEditMode()) return;
-            var r = $scope.selectedDates.maxMinBy(Date.SORT_BY);
-            $scope.stat.range.from = r.min;
-            $scope.stat.range.to = r.max;
-            $scope.from = r.min;
-            $scope.to = r.max;
+            var min = _.min($scope.selectedDates, Date.SORT_BY)
+            var max = _.max($scope.selectedDates, Date.SORT_BY)
+            $scope.stat.range.from = min;
+            $scope.stat.range.to = max;
+            $scope.from = min;
+            $scope.to = max;
             $scope.getAssignmentStats();
         };
 
@@ -296,7 +297,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 var groupId = $scope.selectedGroup.id;
                 AdminsResource.save({groupId: groupId, employeeId: employee.id}, function() {
                     employee.groupAdmin = true;
-                    if (employee.id == Session.userId && !Session.groupsAdmin.contains(groupId)) {
+                    if (employee.id == Session.userId && !_.contains(Session.groupsAdmin, groupId)) {
                         Session.groupAdmin.push(groupId);
                     }
                 });

@@ -60,7 +60,7 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
                         AuthService.removeGlobalAdminPrivileges();
                         $modalInstance.close(changed);
                     }
-                    $scope.globalAdmins.remove(employee);
+                    $scope.globalAdmins = _.without($scope.globalAdmins, employee);
                 }, function(m){
                     $dialogs.error("Something went wrong");
                 });

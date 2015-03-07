@@ -260,7 +260,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     // return true to stop subsequent requests
     function onDayContentLoaded(days, weeks, error, id) {
-        if (!authorizedRequests.contains(id)) {
+        if (!_.contains(authorizedRequests, id)) {
             // Even though invalidate clears the weeks, when the invalidated request returns
             // the caller (above us) can (and will) change the day objects, so we invalidate
             // them again here, before Angular take over the ui

@@ -88,7 +88,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
         else if (availabilityCalendarMode) {
             if (savedSelection == null) {
-                savedSelection = $scope.selectedDates.clone();
+                savedSelection = _.clone($scope.selectedDates);
             }
             $scope.clearSelection();
         }
@@ -210,7 +210,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 var group = $scope.selectedGroup;
                 assignmentType.groupId = group.id;
                 assignmentType.$delete({}, function() {
-                    group.assignmentTypes.remove(assignmentType);
+                    group.assignmentTypes = _.without(group.assignmentTypes, assignmentType);
                     delete $scope.assignmentTypeBuckets[assignmentType.id];
                 });
                 focusOnAssignmentTypeInput();
