@@ -1,6 +1,6 @@
 // Class to manipulate a selection of days, in which day is an object defined in calendar_controller.js
 
-App.factory('DaysSelection', ['DateUtils', function(DateUtils) {
+calendarUtils.factory('DaysSelection', ['DateUtils', function(DateUtils) {
     function DaysSelection() {
         this.days = [];
     };
@@ -66,11 +66,11 @@ App.factory('DaysSelection', ['DateUtils', function(DateUtils) {
         var i = DateUtils.min(a, b);
         b = DateUtils.max(a, b);
         var range = []
-        while (i < b || i.equalsDate(b)) {
+        while (i < b || DateUtils.equalsDate(i, b)) {
             // Because Date holds a moment (timestamp) the last iteration relies on the time of each
             // date object, hence we make sure to include the last day here
             range.push(i);
-            i = i.next();
+            i = DateUtils.nextDay(i);
         }
         return range;
     };

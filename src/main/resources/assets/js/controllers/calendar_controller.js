@@ -1,4 +1,4 @@
-App.controller('CalendarController', function ($timeout, $scope, Utils, GenerativeJobQueue, DateUtils, DaysSelection) {
+calendarUtils.controller('CalendarController', function ($timeout, $scope, Utils, GenerativeJobQueue, DateUtils, DaysSelection) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
@@ -18,7 +18,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             'empty': !day.content,
             'even': day.date.getMonth() % 2 == 0,
             'odd': day.date.getMonth() % 2 == 1,
-            'today': day.date.isToday(),
+            'today': DateUtils.isToday(day.date),
             'selected': day.selected,
             'hint--top hint--no-animate': $scope.tooltip != undefined && $scope.tooltip(day) != null
         };
@@ -32,8 +32,8 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         return classes;
     };
 
-    var firstDay = Date.firstDayOfThisMonth().lastSunday();
-    var lastDay = firstDay.clone();
+    var firstDay = DateUtils.lastSunday(DateUtils.firstDayOfThisMonth());
+    var lastDay = DateUtils.clone(firstDay);
     var loadedWeeks = [];
     var pendingWeeks = [];
 
@@ -57,19 +57,19 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
 
     function computeNumberOfWeeks(firstDay) {
         // Get first day of the next month
-        var lastDay = firstDay.plusDays(27);
+        var lastDay = DateUtils.plusDays(firstDay, 27);
         while (lastDay.getDate() != 1) {
-            lastDay = lastDay.next();
+            lastDay = DateUtils.nextDay(lastDay);
         }
-        lastDay = lastDay.lastSunday();
-        var days = Date.differenceInDays(firstDay, lastDay);
+        lastDay = DateUtils.lastSunday(lastDay);
+        var days = DateUtils.differenceInDays(firstDay, lastDay);
         return Math.ceil(days / 7.0);
     }
 
     function createMonth(day, nweeks) {
         return {
             number: day.getMonth(),
-            name: day.getMonthName(),
+            name: DateUtils.getMonthName(day),
             year: day.getFullYear(),
             nweeks: nweeks
         };
@@ -96,14 +96,14 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
             selected: false,
             previousSelectedState: false,
             content: null,
-            date: date.clone()
+            date: DateUtils.clone(date)
         });
     }
 
     $scope.loadPreviousMonth = function() {
         var isBeginningOfMonth = false;
         while (!isBeginningOfMonth) {
-            firstDay = firstDay.plusWeeks(-1);
+            firstDay = DateUtils.plusWeeks(firstDay, -1);
             var currentWeek = createWeek(firstDay);
 
             for (var i = 0; i < 7; i++) {
@@ -113,7 +113,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                     currentWeek.month = createMonthByFirstDay(firstDay);
                 }
                 pushDayIntoWeek(currentWeek, firstDay);
-                firstDay = firstDay.next();
+                firstDay = DateUtils.nextDay(firstDay);
             }
 
             if ($scope.calendar.length > 0) {
@@ -121,7 +121,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                 $scope.calendar[0].previousUnloadedWeek = currentWeek;
             }
             $scope.calendar.unshift(currentWeek);
-            firstDay = firstDay.plusWeeks(-1);
+            firstDay = DateUtils.plusWeeks(firstDay, -1);
         }
         // calendar[0].month.nweeks is the number of weeks (lines) added, so
         // cellHeight * it will give us the height
@@ -132,7 +132,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         var isBeginningOfMonth = false;
         if ($scope.calendar.length > 0) {
             lastWeek = $scope.calendar[$scope.calendar.length - 1];
-            lastWeek.month.name = lastDay.getMonthName();
+            lastWeek.month.name = DateUtils.getMonthName(lastDay);
             lastWeek.month.year = lastDay.getFullYear();
         }
         while (!isBeginningOfMonth) {
@@ -145,7 +145,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
                     currentWeek.month = createMonthByFirstDay(lastDay);
                 }
                 pushDayIntoWeek(currentWeek, lastDay);
-                lastDay = lastDay.next();
+                lastDay = DateUtils.nextDay(lastDay);
             }
 
             var n = $scope.calendar.length;
@@ -308,8 +308,8 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
         if (weeks.length == 0) {
             return '<empty weeks>'
         }
-        return 'end = ' + weeks[weeks.length - 1].days[6].date.toISOLocalDateString() + ', start = ' + weeks[0].days[0]
-        .date.toISOLocalDateString();
+        return 'end = ' + DateUtils.toISOLocalDateString(weeks[weeks.length - 1].days[6].date) +
+               ', start = ' + DateUtils.toISOLocalDateString(weeks[0].days[0].date);
     }
 
     // To prevent requests returned after calendar was invalidated from changing it
@@ -431,14 +431,14 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     function getDay(date) {
         var w = getWeekIndex(date);
         var day = $scope.calendar[w].days[date.getDay()];
-        if (!date.equalsDate(day.date)) {
+        if (!DateUtils.equalsDate(date, day.date)) {
             console.log("Error! CalendarController getDay() not working")
         }
         return day;
     }
 
     function getWeekIndex(date) {
-        var days = Date.differenceInDays(firstDay.lastSunday(), date);
+        var days = DateUtils.differenceInDays(DateUtils.lastSunday(firstDay), date);
         return Math.floor(days / 7);
     }
 

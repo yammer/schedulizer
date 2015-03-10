@@ -93,8 +93,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.stat = {
             range: {
-                from: Date.TODAY.plusWeeks(-3 * 4),
-                to: Date.TODAY
+                from: DateUtils.plusWeeks(DateUtils.TODAY, -3 * 4),
+                to: DateUtils.TODAY
             }
         };
 
@@ -148,8 +148,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
             AssignmentStats.query({
                 group_id: group.id,
-                start_date: $scope.stat.range.from.toISOLocalDateString(),
-                end_date: $scope.stat.range.to.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString($scope.stat.range.from),
+                end_date: DateUtils.toISOLocalDateString($scope.stat.range.to)
             }, function(assignmentStats) {
                 _.each(group.employees, function(e) {
                     e.statistics = {};

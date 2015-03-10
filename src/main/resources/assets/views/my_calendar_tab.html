@@ -16,7 +16,7 @@
                     </button>
                 </div>
                 <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
-                    <div class="sub-label">{{dayStamp.getMonthName()}}</div>
+                    <div class="sub-label">{{getMonthName(dayStamp)}}</div>
                     <div class="main-label">{{dayStamp.getDate()}}</div>
                 </div>
                 <div ng-if="hasAssignment(hoveredDay)" class="day-assignments assignment-hover-text-group">

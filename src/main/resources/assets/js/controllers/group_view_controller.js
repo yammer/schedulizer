@@ -1,5 +1,6 @@
 App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, Session, GroupRestrictionsResource,
-                                               Group, AssignmentType, AssignableDay, CustomStat, EMPTY_GROUP, AVAILABILITY_STATES) {
+                                               Group, AssignmentType, AssignableDay, CustomStat, DateUtils,
+                                               EMPTY_GROUP, AVAILABILITY_STATES) {
 
     var NEW_EMPLOYEE = {name: undefined, image: undefined}
     $scope.availabilityStates = AVAILABILITY_STATES;
@@ -220,10 +221,10 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
-        $scope.dayStamp = Date.TODAY;
+        $scope.dayStamp = DateUtils.TODAY;
     }
 
-    $scope.dayStamp = Date.TODAY;
+    $scope.dayStamp = DateUtils.TODAY;
 
     $scope.onHoverDay = function(day) {
         $scope.dayStamp = day.date;
@@ -384,7 +385,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
-            return day.date.toISOLocalDateString();
+            return DateUtils.toISOLocalDateString(day.date);
         })
     }
 
@@ -409,8 +410,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
         AssignableDay.query({
                 group_id: $scope.selectedGroup.id,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString(startDate),
+                end_date: DateUtils.toISOLocalDateString(endDate)
             }).$promise.then(function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
                 wrappedTerminate();
@@ -422,8 +423,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
         GroupRestrictionsResource.query({
                 group_id: $scope.selectedGroup.id,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString(startDate),
+                end_date: DateUtils.toISOLocalDateString(endDate)
             }).$promise.then(function(restrictions) {
                 updateDayRestrictions(restrictions, daysMap);
                 wrappedTerminate();
@@ -464,7 +465,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.addAssignment = function(employee, assignmentType) {
         var group = $scope.selectedGroup;
         var days = $scope.selectedDates;
-        var daysString = days.map(function(d) {return d.toISOLocalDateString();}).join(',');
+        var daysString = days.map(function(d) {return DateUtils.toISOLocalDateString(d);}).join(',');
         AssignableDay.save({
             groupId: group.id,
             employee_id:employee.id,
@@ -511,6 +512,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }
         });
     }
+
+    $scope.getMonthName = DateUtils.getMonthName;
 
     // TODO: Ugly hack!
     $timeout(function() {
