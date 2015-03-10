@@ -1,4 +1,4 @@
-var services = angular.module('services', ['ngResource']);
+var services = angular.module('services', ['ngResource', 'calendarUtils']);
 
 // Got from http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
 var param = function(obj) {
@@ -172,7 +172,7 @@ services.factory('AssignmentType', ['$resource', function($resource) {
     });
 }]);
 
-services.factory('AssignableDay', ['$resource', function($resource) {
+services.factory('AssignableDay', ['$resource', 'DateUtils', function($resource, DateUtils) {
     var AssignableDay = $resource(PREFIX + 'groups/:group_id/assignments/:assignment_id', {group_id: '@groupId'}, {
         save: {
             method: 'POST',
@@ -189,13 +189,13 @@ services.factory('AssignableDay', ['$resource', function($resource) {
     });
 
     AssignableDay.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
+        return DateUtils.fromISOLocalString(this.date);
     };
 
     return AssignableDay;
 }]);
 
-services.factory('DayRestriction', ['$resource', function($resource) {
+services.factory('DayRestriction', ['$resource', 'DateUtils', function($resource, DateUtils) {
     var DayRestriction = $resource(PREFIX + 'employees/:employee_id/restrictions/:day_restriction_id', {employee_id: '@employeeId'}, {
         save: {
             method: 'POST',
@@ -212,7 +212,7 @@ services.factory('DayRestriction', ['$resource', function($resource) {
     });
 
     DayRestriction.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
+        return DateUtils.fromISOLocalString(this.date);
     };
 
     return DayRestriction;
@@ -230,7 +230,7 @@ services.factory('AssignmentStats', ['$resource', function($resource) {
     });
 }]);
 
-services.factory('AdminsResource', ['$resource', function($resource) {
+services.factory('AdminsResource', ['$resource', 'DateUtils', function($resource, DateUtils) {
     var AssignableDay = $resource(PREFIX + 'groups/:group_id/admins/:employee_id',  {employee_id: "@employeeId", group_id: "@groupId"}, {
         save: {
             method: 'POST',
@@ -245,7 +245,7 @@ services.factory('AdminsResource', ['$resource', function($resource) {
     });
 
     AssignableDay.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
+        return DateUtils.fromISOLocalString(this.date);
     }
 
     return AssignableDay;
@@ -268,11 +268,11 @@ services.factory('GlobalAdminsResource', ['$resource', function($resource) {
     return GlobalAdminsResource;
 }]);
 
-services.factory('EmployeeAssignmentsResource', ['$resource', function($resource) {
+services.factory('EmployeeAssignmentsResource', ['$resource', 'DateUtils', function($resource, DateUtils) {
     var EmployeeAssignmentsResource = $resource(PREFIX + 'employees/:employee_id/assignments', {}, {});
 
     EmployeeAssignmentsResource.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
+        return DateUtils.fromISOLocalString(this.date);
     };
 
     EmployeeAssignmentsResource.prototype.getFullName = function() {
@@ -282,11 +282,11 @@ services.factory('EmployeeAssignmentsResource', ['$resource', function($resource
     return EmployeeAssignmentsResource;
 }]);
 
-services.factory('GroupRestrictionsResource', ['$resource', function($resource) {
+services.factory('GroupRestrictionsResource', ['$resource', 'DateUtils', function($resource, DateUtils) {
     var GroupRestrictionsResource = $resource(PREFIX + 'groups/:group_id/restrictions', {}, {});
 
     GroupRestrictionsResource.prototype.getDate = function() {
-        return Date.fromISOLocalString(this.date);
+        return DateUtils.fromISOLocalString(this.date);
     };
 
     return GroupRestrictionsResource;

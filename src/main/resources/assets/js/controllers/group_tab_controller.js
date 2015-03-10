@@ -79,7 +79,7 @@ App.controller('GroupTabController', function(
                                                  'Are you really sure?');
             doubleConfirm.result.then(function(btn2) {
                 group.$delete({}, function() {
-                    $scope.groups.remove(group);
+                    $scope.groups = _.without($scope.groups, group);
                     if ($scope.isSelectedGroup(group)) {
                         if ($scope.groups.length == 0) {
                             $location.path('groups');

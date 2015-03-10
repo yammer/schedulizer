@@ -1,4 +1,4 @@
-App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction,
+App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction, DateUtils,
                                                     EmployeeAssignmentsResource, AVAILABILITY_STATES) {
 
     $scope.calendar = {};
@@ -25,7 +25,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
-        $scope.dayStamp = Date.TODAY;
+        $scope.dayStamp = DateUtils.TODAY;
     };
 
     $scope.availabilityFormStatus = 0; // 0 if false mask 1 if restriction is checked and mask 2 if comments changed
@@ -51,7 +51,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         $scope.availabilityFormStatus |= $scope.AVAILABILITY_FORM_STATUS.RESTRICTION_CHANGED;
     };
 
-    $scope.dayStamp = Date.TODAY;
+    $scope.dayStamp = DateUtils.TODAY;
 
     var DEFAULT_AVAILABILITY = function() {
         return {
@@ -128,7 +128,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         if (!$scope.canSubmitChange()) return;
 
         var dates = _.map($scope.selectedDays, function(day){
-            return day.date.toISOLocalDateString();
+            return DateUtils.toISOLocalDateString(day.date);
         }).join(',');
         var restrictionLevel = _.find($scope.availabilityStates, function(state) {
             return state.label == $scope.availability.state;
@@ -178,8 +178,8 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
         DayRestriction.query({
                 employee_id: $scope.employeeId,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString(startDate),
+                end_date: DateUtils.toISOLocalDateString(endDate)
             }).$promise.then(function(dayRestrictions) {
                 updateDayRestrictions(dayRestrictions);
                 wrappedTerminate();
@@ -189,8 +189,8 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
         EmployeeAssignmentsResource.query({
                 employee_id: $scope.employeeId,
-                start_date: startDate.toISOLocalDateString(),
-                end_date: endDate.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString(startDate),
+                end_date: DateUtils.toISOLocalDateString(endDate)
             }).$promise.then(function(assignments) {
                 updateAssignments(assignments);
                 wrappedTerminate()
@@ -247,9 +247,11 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
 
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
-            return day.date.toISOLocalDateString();
+            return DateUtils.toISOLocalDateString(day.date);
         })
     }
+
+    $scope.getMonthName = DateUtils.getMonthName;
 
     // TODO: Ugly hack!
     $timeout(function() {

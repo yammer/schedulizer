@@ -5,7 +5,7 @@
  */
 var StresstimeApp = {};
 
-var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'ui.router', 'dialogs', 'truncate']);
+var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'calendarUtils', 'ui.router', 'dialogs', 'truncate']);
 
 App.constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',

@@ -1,6 +1,6 @@
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
-                                               CustomStat) {
+                                               CustomStat, DateUtils) {
 
         $scope.CUSTOM_STAT_ID =  Number.MAX_SAFE_INTEGER; // large number to be the last label
 
@@ -93,8 +93,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.stat = {
             range: {
-                from: Date.TODAY.plusWeeks(-3 * 4),
-                to: Date.TODAY
+                from: DateUtils.plusWeeks(DateUtils.TODAY, -3 * 4),
+                to: DateUtils.TODAY
             }
         };
 
@@ -102,16 +102,17 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.isStatEditMode = function() {
             var days = $scope.selectedDates;
-            return days && Date.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
+            return days && DateUtils.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
         };
 
         $scope.setStatRangeIfEditMode = function() {
             if (!$scope.isStatEditMode()) return;
-            var r = $scope.selectedDates.maxMinBy(Date.SORT_BY);
-            $scope.stat.range.from = r.min;
-            $scope.stat.range.to = r.max;
-            $scope.from = r.min;
-            $scope.to = r.max;
+            var min = _.min($scope.selectedDates, DateUtils.SORT_BY)
+            var max = _.max($scope.selectedDates, DateUtils.SORT_BY)
+            $scope.stat.range.from = min;
+            $scope.stat.range.to = max;
+            $scope.from = min;
+            $scope.to = max;
             $scope.getAssignmentStats();
         };
 
@@ -147,8 +148,8 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
             AssignmentStats.query({
                 group_id: group.id,
-                start_date: $scope.stat.range.from.toISOLocalDateString(),
-                end_date: $scope.stat.range.to.toISOLocalDateString()
+                start_date: DateUtils.toISOLocalDateString($scope.stat.range.from),
+                end_date: DateUtils.toISOLocalDateString($scope.stat.range.to)
             }, function(assignmentStats) {
                 _.each(group.employees, function(e) {
                     e.statistics = {};
@@ -296,7 +297,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 var groupId = $scope.selectedGroup.id;
                 AdminsResource.save({groupId: groupId, employeeId: employee.id}, function() {
                     employee.groupAdmin = true;
-                    if (employee.id == Session.userId && !Session.groupsAdmin.contains(groupId)) {
+                    if (employee.id == Session.userId && !_.contains(Session.groupsAdmin, groupId)) {
                         Session.groupAdmin.push(groupId);
                     }
                 });

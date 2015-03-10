@@ -244,7 +244,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
     }
 
     authService.removeGroupAdminPrivileges = function(groupId) {
-        Session.groupsAdmin.remove(groupId);
+        Session.groupsAdmin = _.without(Session.groupsAdmin, groupId);
         SessionStorage.save("session", Session);
     }
 

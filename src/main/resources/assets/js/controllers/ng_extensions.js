@@ -1,3 +1,74 @@
+App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope, $animate, $timeout) {
+    return {
+        animate: function(type, element) {
+            return $animate.addClass(element, type + ' animated').then(function() {
+                $rootScope.$apply(function() {
+                    $animate.removeClass(element, type + ' animated');
+                });
+            });
+        },
+        shakeOnError: function(input) {
+            var parent = input.parent();
+            parent.addClass('has-error');
+            this.animate('shake', input).then(function() {
+                parent.removeClass('has-error');
+            });
+        },
+        interpolate: function(current, srcScale, tgtScale) {
+            return tgtScale[0] + (current - srcScale[0]) * (tgtScale[1] - tgtScale[0]) / (srcScale[1] - srcScale[0]);
+        },
+        // Angular-friendly ($timeout) versions of _.debounce()
+        preventBurst: function(func, threshold) {
+            if (threshold) func._burstThreshold = threshold;
+            if (!func._burstThreshold) func._burstThreshold = 50;
+
+            return function() {
+                if (!func._okToIssue) return func._lastValue;
+                func._okToIssue = false;
+                $timeout(function() {func._okToIssue = true;}, func._burstThreshold);
+                func._lastValue = func();
+                return func._lastValue;
+            }
+        },
+        lastOfBurst: function(func, threshold) {
+            if (threshold) func._lastOfBurstThreshold = threshold;
+            if (!func._lastOfBurstThreshold) func._lastOfBurstThreshold = 50;
+
+            func._burstTimeout = null;
+            return function() {
+                if (func._burstTimeout != null) {
+                    $timeout.cancel(func._burstTimeout);
+                }
+                func._burstTimeout = $timeout(function() {
+                    func._burstTimeout = null;
+                    func();
+                }, func._lastOfBurstThreshold);
+            }
+        },
+        onInitialization: function (variableName, scope, callback) {
+            var unwatch = scope.$watch(variableName, function(variable) {
+                if (variable == undefined || variable.$resolved == false) return;
+                callback();
+                unwatch();
+            })
+        },
+        Objects: {
+            deepField: function(object, deepField, value) {
+               var fields = deepField.split('.');
+               var last = fields.pop();
+               var previous = _.reduce(fields, function(proxy, field) {
+                   return proxy[field];
+               }, object);
+               if (arguments.length == 3) {
+                   previous[last] = value;
+                   return value;
+               } else {
+                   return previous[last];
+               }
+            }
+        }
+    };
+}]);
 
 App.directive('ngEnter', function() {
     return function(scope, element, attrs) {
@@ -117,7 +188,7 @@ App.directive('stTryBackgroundImage', function($timeout) {
     }
 })
 
-App.directive('stName', function() {
+App.directive('stName', function(Utils) {
     return {
         restrict: 'A',
         // acts as below without requiring isolated scope
@@ -125,7 +196,7 @@ App.directive('stName', function() {
         //    stName: '='
         //},
         link: function(scope, element, attrs) {
-            Objects.deepField(scope, attrs.stName, element);
+            Utils.Objects.deepField(scope, attrs.stName, element);
         }
     }
 });
@@ -198,63 +269,6 @@ App.filter('orderByExpressionAppliedOnTheKey', function() {
     };
 });
 
-App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope, $animate, $timeout) {
-    return {
-        animate: function(type, element) {
-            return $animate.addClass(element, type + ' animated').then(function() {
-                $rootScope.$apply(function() {
-                    $animate.removeClass(element, type + ' animated');
-                });
-            });
-        },
-        shakeOnError: function(input) {
-            var parent = input.parent();
-            parent.addClass('has-error');
-            this.animate('shake', input).then(function() {
-                parent.removeClass('has-error');
-            });
-        },
-        interpolate: function(current, srcScale, tgtScale) {
-            return tgtScale[0] + (current - srcScale[0]) * (tgtScale[1] - tgtScale[0]) / (srcScale[1] - srcScale[0]);
-        },
-        // Angular-friendly ($timeout) versions of _.debounce()
-        preventBurst: function(func, threshold) {
-            if (threshold) func._burstThreshold = threshold;
-            if (!func._burstThreshold) func._burstThreshold = 50;
-
-            return function() {
-                if (!func._okToIssue) return func._lastValue;
-                func._okToIssue = false;
-                $timeout(function() {func._okToIssue = true;}, func._burstThreshold);
-                func._lastValue = func();
-                return func._lastValue;
-            }
-        },
-        lastOfBurst: function(func, threshold) {
-            if (threshold) func._lastOfBurstThreshold = threshold;
-            if (!func._lastOfBurstThreshold) func._lastOfBurstThreshold = 50;
-
-            func._burstTimeout = null;
-            return function() {
-                if (func._burstTimeout != null) {
-                    $timeout.cancel(func._burstTimeout);
-                }
-                func._burstTimeout = $timeout(function() {
-                    func._burstTimeout = null;
-                    func();
-                }, func._lastOfBurstThreshold);
-            }
-        },
-        onInitialization: function (variableName, scope, callback) {
-            var unwatch = scope.$watch(variableName, function(variable) {
-                if (variable == undefined || variable.$resolved == false) return;
-                callback();
-                unwatch();
-            })
-        }
-    };
-}]);
-
 function JobQueue(/* arguments */) {
     return this.initialize.apply(this, arguments);
 }
@@ -271,25 +285,26 @@ App.factory('GenerativeJobQueue', [function() {
     GenerativeJobQueue.prototype.pool = [];
 
     GenerativeJobQueue.prototype.terminator = function(job, stop) {
-        this.pool.remove(job);
+        this.pool.splice(this.pool.indexOf(job), 1);
+
         if (!stop) {
             this.trigger();
         }
     }
 
     /* public */
-
+    var maxJobId = 0;
     GenerativeJobQueue.prototype.trigger = function() {
         var terminators = [];
         while (this.pool.length < this.bottleneck) {
-            var job = {};
+            var job = {id: maxJobId++};
             this.pool.push(job);
-            terminators.push(this.terminator.curry(this, job));
+            terminators.push(this.terminator.bind(this, job));
         }
         // Separate loop because terminator can be sync
         _.each(terminators, function(terminator) {
             this.executor(terminator);
-        }.curry(this));
+        }.bind(this));
     }
 
     GenerativeJobQueue.prototype.active = function() {
@@ -346,14 +361,14 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
         if (this.promise != null) return;
         this.onBeforeWatch();
         this.inner.css({visibility: 'visible'});
-        this.promise = $interval(this.wrappedWatcher.curry(this), this.interval)
+        this.promise = $interval(this.wrappedWatcher.bind(this), this.interval)
 
         // timeout
         $timeout(function() {
             if (this.promise != null) {
                 this.dismiss();
             }
-        }.curry(this), this.timeout);
+        }.bind(this), this.timeout);
     }
 
     ProgressBar.prototype.dismiss = function() {
@@ -362,7 +377,7 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
         $timeout(function() {
             this.inner.removeClass('error');
             this.inner.css({visibility: 'hidden', width: '0%'});
-        }.curry(this), this.delay);
+        }.bind(this), this.delay);
     }
 
     return ProgressBar;
