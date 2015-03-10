@@ -2,26 +2,6 @@ Date.MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 Date.TODAY = new Date();
 
-Date.min = function(a, b) {
-    return (a < b) ? a : b;
-};
-
-Date.max = function(a, b) {
- return (a > b) ? a : b;
-};
-
-Date.SORT_BY = function(d) {
-    //noinspection JSConstructorReturnsPrimitive
-    return d.getTime();
-};
-
-Date.isRange = function(dates) {
-    if (dates.length == 0) return true;
-    var min = _.min(dates, Date.SORT_BY);
-    var max = _.max(dates, Date.SORT_BY);
-    return Date.differenceInDays(min, max) + 1 == dates.length;
-};
-
 Date.fromISOLocalString = function(string) {
     var parts = string.split("-");
     var d = new Date();
@@ -92,3 +72,4 @@ Date.prototype.toISOLocalDateString = function() {
         '-' + pad(this.getMonth() + 1) +
         '-' + pad(this.getDate());
 };
+

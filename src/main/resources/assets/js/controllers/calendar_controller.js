@@ -1,4 +1,4 @@
-App.controller('CalendarController', function ($timeout, $scope, Utils, GenerativeJobQueue) {
+App.controller('CalendarController', function ($timeout, $scope, Utils, GenerativeJobQueue, DateUtils, DaysSelection) {
 
     var INITIAL_MONTHS_SHOWN = 15;
     var WEEKS_OFFSET = 2;
@@ -399,7 +399,7 @@ App.controller('CalendarController', function ($timeout, $scope, Utils, Generati
     };
 
     $scope.api.goToToday = function(duration) {
-        $scope.api.goToDate(Date.TODAY, duration);
+        $scope.api.goToDate(DateUtils.TODAY, duration);
 
         // Better way to get the today cell
         var today = $(".view-calendar .day.today");

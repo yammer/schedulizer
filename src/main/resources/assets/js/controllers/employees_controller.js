@@ -1,6 +1,6 @@
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
-                                               CustomStat) {
+                                               CustomStat, DateUtils) {
 
         $scope.CUSTOM_STAT_ID =  Number.MAX_SAFE_INTEGER; // large number to be the last label
 
@@ -102,13 +102,13 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
         $scope.isStatEditMode = function() {
             var days = $scope.selectedDates;
-            return days && Date.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
+            return days && DateUtils.isRange(days) && days.length >= MINIMUM_DAYS_SELECTED_TO_EDIT_MODE;
         };
 
         $scope.setStatRangeIfEditMode = function() {
             if (!$scope.isStatEditMode()) return;
-            var min = _.min($scope.selectedDates, Date.SORT_BY)
-            var max = _.max($scope.selectedDates, Date.SORT_BY)
+            var min = _.min($scope.selectedDates, DateUtils.SORT_BY)
+            var max = _.max($scope.selectedDates, DateUtils.SORT_BY)
             $scope.stat.range.from = min;
             $scope.stat.range.to = max;
             $scope.from = min;
