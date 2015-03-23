@@ -306,7 +306,7 @@ $mid-assigned-bg: #EFC932;
     background-size: $shimmer-width 100%;
 }*/
 
-.week.pending .day.empty {
+.week.pending .day {
     color: lighten($dark-fg, 20%);
     &.odd { background-color: lighten($odd-bg, 5%); }
     &.even { background-color: lighten($even-bg, 5%); }
