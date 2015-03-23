@@ -1,5 +1,5 @@
 App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction, DateUtils,
-                                                    EmployeeAssignmentsResource, AVAILABILITY_STATES) {
+                                                    Utils, EmployeeAssignmentsResource, AVAILABILITY_STATES) {
 
     $scope.calendar = {};
     $scope.progressBar = {trigger: function() {}};
@@ -26,6 +26,8 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = DateUtils.TODAY;
+        var today = $(".view-calendar .day.today");
+        Utils.animate('tada', today);
     };
 
     $scope.availabilityFormStatus = 0; // 0 if false mask 1 if restriction is checked and mask 2 if comments changed

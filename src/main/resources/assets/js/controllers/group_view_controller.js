@@ -222,6 +222,8 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = DateUtils.TODAY;
+        var today = $(".view-calendar .day.today");
+        Utils.animate('tada', today);
     }
 
     $scope.dayStamp = DateUtils.TODAY;

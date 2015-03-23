@@ -400,10 +400,6 @@ calendarUtils.controller('CalendarController', function ($timeout, $scope, Utils
 
     $scope.api.goToToday = function(duration) {
         $scope.api.goToDate(DateUtils.TODAY, duration);
-
-        // Better way to get the today cell
-        var today = $(".view-calendar .day.today");
-        Utils.animate('tada', today);
     };
 
     $scope.showCalendar = true;
