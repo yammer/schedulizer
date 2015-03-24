@@ -137,7 +137,7 @@ function createAuthorizationHeader($http, yammerSession) {
 }
 
 App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
-                                     AuthorizationResource, USER_ROLES, AUTH_EVENTS) {
+                                    AuthorizationResource, Employee, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
     function destroyAuthorizationHeader() {
@@ -172,6 +172,13 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
         });
     }
 
+    function updateUserInformation(employeeId, yammerResponse) {
+        var employee = new Employee({employeeId: employeeId});
+        employee.imageUrlTemplate = yammerResponse.user.mugshot_url;
+        employee.name = yammerResponse.user.full_name;
+        employee.$save();
+    }
+
     function initializeAuthService() {
         yammer.getLoginStatus(function(response) {
             updateYammerSession(response);
@@ -182,6 +189,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                 } else {
                     loginStresstime(YammerSession).then(function(userStatus) {
+                        updateUserInformation(userStatus.employeeId, response);
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
                 }

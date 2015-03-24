@@ -49,4 +49,12 @@ public class EmployeeManager extends EntityManager<Employee> {
         }
         return employee;
     }
+
+    public void updateByEmployeeId(long id, Consumer<Employee> callback) {
+        Employee employee = getById(id);
+        if (employee != null) {
+            callback.accept(employee);
+            save(employee);
+        }
+    }
 }

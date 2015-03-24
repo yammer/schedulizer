@@ -154,7 +154,13 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
 }]);
 
 services.factory('Employee', ['$resource', function($resource) {
-    return $resource(PREFIX + 'employees/:employee_id', {employee_id: '@employeeId'}, {});
+    return $resource(PREFIX + 'employees/:employee_id', {employee_id: '@employeeId'}, {
+        save: {
+            method: 'POST',
+            transformRequest: [urlencodedTransformRequest],
+            headers: SHARED_HEADERS
+        }
+    });
 }]);
 
 services.factory('AssignmentType', ['$resource', function($resource) {
