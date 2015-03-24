@@ -269,50 +269,6 @@ App.filter('orderByExpressionAppliedOnTheKey', function() {
     };
 });
 
-function JobQueue(/* arguments */) {
-    return this.initialize.apply(this, arguments);
-}
-
-App.factory('GenerativeJobQueue', [function() {
-
-    function GenerativeJobQueue(options, executor) {
-        this.executor = options.executor;
-        this.bottleneck = options.bottleneck || this.bottleneck;
-    }
-
-    GenerativeJobQueue.prototype.bottleneck = 2; // Generally used for xhr calls
-
-    GenerativeJobQueue.prototype.pool = [];
-
-    GenerativeJobQueue.prototype.terminator = function(job, stop) {
-        this.pool.splice(this.pool.indexOf(job), 1);
-
-        if (!stop) {
-            this.trigger();
-        }
-    }
-
-    /* public */
-    var maxJobId = 0;
-    GenerativeJobQueue.prototype.trigger = function() {
-        var terminators = [];
-        while (this.pool.length < this.bottleneck) {
-            var job = {id: maxJobId++};
-            this.pool.push(job);
-            terminators.push(this.terminator.bind(this, job));
-        }
-        // Separate loop because terminator can be sync
-        _.each(terminators, function(terminator) {
-            this.executor(terminator);
-        }.bind(this));
-    }
-
-    GenerativeJobQueue.prototype.active = function() {
-        return this.pool.length > 0;
-    }
-
-    return GenerativeJobQueue;
-}]);
 
 App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interval) {
 

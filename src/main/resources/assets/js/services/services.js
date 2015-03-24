@@ -1,4 +1,4 @@
-var services = angular.module('services', ['ngResource', 'calendarUtils']);
+var services = angular.module('services', ['ngResource', 'calendar-flow']);
 
 // Got from http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
 var param = function(obj) {

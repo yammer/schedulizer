@@ -199,76 +199,11 @@ $day-border-thickness: 5px;
     @include even-odd(background-color, $color, $amount);
 }
 
-.view-calendar td, .view-calendar th {
-    @include select(none);
-}
-
 $calendar-cell-spacing: 4px;
 
-.view-calendar, .legend {
+.legend {
     border-collapse: separate;
     border-spacing: $calendar-cell-spacing;
-}
-.view-calendar-wrapper {
-    display: inline-block;
-    overflow: scroll !important;
-}
-.month, .day {
-    color: $dark-fg;
-    border-radius: 2px;
-    font-size: 15px;
-    cursor: default;
-}
-.month {
-    width: 85px;
-    padding: 5px;
-    text-align: left;
-    vertical-align: top;
-}
-
-.day {
-    vertical-align: middle;
-    text-align: center;
-    cursor: default;
-}
-.day.odd, .month.odd {
-    color: $dark-fg;
-    background-color: $odd-bg;
-}
-.day.even, .month.even {
-    color: $dark-fg;
-    background-color: $even-bg;
-}
-.hoverable .day:hover, .day.hover {
-    color: $light-fg;
-    @include even-odd-bg($selected-bg, 7%);
-}
-.day.selected {
-    color: $light-fg;
-    @include even-odd-bg($selected-bg, 7%);
-    .hoverable &:hover {
-        @include even-odd-bg(lighten($selected-bg, 10%), 7%);
-    }
-}
-.day.today {
-    border: $day-border-thickness solid $today-bg;
-    color: $light-fg;
-    background-color: $today-bg;
-}
-.day.hint, .day[data-hint] {
-    display: table-cell;
-}
-.calendar-header {
-    border-spacing: $calendar-cell-spacing 0;
-    position: absolute;
-}
-.calendar-header .month {
-    vertical-align: middle;
-    text-align: center;
-}
-.calendar-header .day, .calendar-header .month {
-    color: #E9E9E9;
-    background-color: $grey-4;
 }
 
 /* Group View Calendar */
@@ -276,47 +211,16 @@ $calendar-cell-spacing: 4px;
 $assigned-bg: #6FDF6F;
 $mid-assigned-bg: #EFC932;
 
-.day.assigned {
+.cf-day.assigned {
     color: $light-fg;
     @include colorize-day($assigned-bg);
 }
-.day.mid-assigned {
+.cf-day.mid-assigned {
     color: $light-fg;
     @include colorize-day($mid-assigned-bg);
 }
 
 /* Availability Calendar */
-
-/* Loading */
-
-/*$shimmer-width: 35px;
-
-@include keyframes(moving-day-bg) {
-    0%   { background-position: (-$shimmer-width/2) 0; }
-    100% { background-position: ($day-width - $shimmer-width/2) 0; }
-}
-
-@mixin shimmer($color) {
-    background: linear-gradient(to right,
-        $color 1%,
-        lighten($color, 3%) 35%,
-        lighten($color, 3%) 65%,
-        $color 99%
-    ) no-repeat $color;
-    background-size: $shimmer-width 100%;
-}*/
-
-.week.pending .day {
-    color: lighten($dark-fg, 20%);
-    &.odd { background-color: lighten($odd-bg, 5%); }
-    &.even { background-color: lighten($even-bg, 5%); }
-
-    /* Animation is too demanding */
-    /*&.odd { @include shimmer($odd-bg) }
-    &.even { @include shimmer($even-bg) }
-    @include prefixed(animation, moving-day-bg .8s ease-in-out 0s infinite alternate none running);*/
-}
-
 
 /* Header */
 
@@ -341,12 +245,6 @@ $mid-assigned-bg: #EFC932;
     bottom: 0;
     width: 100%;
     height: 100%;
-}
-
-.dual-pane .view-calendar-wrapper {
-    /* height: Height defined on runtime */
-    /* TODO: Remove scrolbar */
-    height: 700px;
 }
 
 .dual-pane .sidebar {
@@ -451,7 +349,7 @@ $mid-assigned-bg: #EFC932;
     float: right;
 }
 
-.day-stamp.today {
+.day-stamp.cf-today {
     color: $light-fg;
     background-color: $today-bg;
 }
@@ -1223,7 +1121,7 @@ $progress-bar-bg: transparent;
 
 .my-calendar-left-bar {
     float: left;
-    width: 300px;
+    width: 144px;
     height: 50px;
     margin: 0 10px;
 }
@@ -1234,17 +1132,17 @@ $not-available-input-bg: #DA4B4B;
 
 /* Calendar */
 
-.day.available {
+.cf-day.available {
     @include even-odd(color, $light-fg);
     @include colorize-day($available-bg);
 }
 
-.day.mid-available {
+.cf-day.mid-available {
     @include even-odd(color, $light-fg);
     @include colorize-day($mid-available-bg);
 }
 
-.day.not-available {
+.cf-day.not-available {
     @include even-odd(color, $light-fg);
     @include colorize-day($not-available-bg);
 }
@@ -1375,7 +1273,7 @@ $not-available-input-bg: #DA4B4B;
             padding-right: 1%;
         }
 
-        &.today::before {
+        &.cf-today::before {
             top: 67%;
             left: 70%;
             width: 32%;
@@ -1493,33 +1391,19 @@ $not-available-input-bg: #DA4B4B;
     }
 }
 
-@media (min-width: 2000px)                         { .day { width: 60px; height: 50px; }
-                                                     .view-calendar-wrapper { margin-top: 54px; }
-                                                     .calendar-header { margin-top: -54px; }
-                                                     .legend .day { width: 36px; height: 32px; }
+@media (min-width: 2000px)                         { .legend .cf-day { width: 36px; height: 32px; }
                                                    }
-@media (min-width: 1648px) and (max-width: 2000px) { .day { width: 55px; height: 47px; }
-                                                     .view-calendar-wrapper { margin-top: 51px; }
-                                                     .calendar-header { margin-top: -51px; }
-                                                     .legend .day { width: 36px; height: 32px; }
+@media (min-width: 1648px) and (max-width: 2000px) { .legend .cf-day { width: 36px; height: 32px; }
                                                      .stats-label-from { display: none; }
                                                    }
-@media (min-width: 1355px) and (max-width: 1648px) { .day { width: 45px; height: 38px; }
-                                                     .view-calendar-wrapper { margin-top: 42px; }
-                                                     .calendar-header { margin-top: -42px; }
-                                                     .legend .day { width: 36px; height: 32px; }
+@media (min-width: 1355px) and (max-width: 1648px) { .legend .cf-day { width: 36px; height: 32px; }
                                                      .right-sidebar-content { font-size: 13px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 13px;
                                                                                                padding-right: 13px; }
                                                      .stats-label-from { display: none; }
                                                      .mini-assignment-type-label { width: 21px; margin-left: 4px; }
                                                    }
-@media (max-width: 1355px)                         { .day { width: 38px; height: 33px; }
-                                                     .view-calendar-wrapper { margin-top: 29px; }
-                                                     .calendar-header { margin-top: -29px; }
-                                                     .calendar-header .month, .month { width: 75px; }
-                                                     .legend .day { width: 26px; height: 23px; }
-                                                     .month, .day { font-size: 13px; }
+@media (max-width: 1355px)                         { .legend .cf-day { width: 26px; height: 23px; }
                                                      .right-sidebar-content { font-size: 12px; }
                                                      .stats-inputs-container, .employee-card { padding-left: 11px;
                                                                                                padding-right: 11px; }
@@ -1553,13 +1437,82 @@ $not-available-input-bg: #DA4B4B;
                                                      .left-sidebar .nav { font-size: 12px; }
                                                      .left-sidebar .nav li a { padding-left: 10px; padding-right: 10px; }
                                                    }
-@media (max-width: 1020px)                         { .day { width: 32px; height: 28px; }
-                                                     .stats-inputs-container .counter-control { display: none; }
+@media (max-width: 1020px)                         { .stats-inputs-container .counter-control { display: none; }
                                                      .mini-assignment-type-label { padding-bottom: 2px; }
                                                      .assignment-type-label { margin-left: 5px;  }
                                                      .right-sidebar-content { font-size: 10px; }
                                                    }
 
+/* Calendar resizing */
 
+@media (min-width: 2000px) {
+  .cf-day {
+    width: 60px;
+    height: 50px;
+  }
+
+  .cf-view-calendar-wrapper {
+    top: 54px;
+  }
+
+  .cf-calendar-container {
+    width: 541px;
+  }
+}
+@media (min-width: 1648px) and (max-width: 2000px) {
+  .cf-day {
+    width: 55px;
+    height: 47px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 51px;
+  }
+  .cf-calendar-container {
+    width: 506px;
+  }
+}
+@media (min-width: 1355px) and (max-width: 1648px) {
+  .cf-day {
+    width: 45px;
+    height: 38px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 42px;
+  }
+  .cf-calendar-container {
+    width: 436px;
+  }
+}
+@media (max-width: 1355px) {
+  .cf-day {
+    width: 38px;
+    height: 33px;
+  }
+  .cf-calendar-header .cf-month, .cf-month {
+    width: 75px;
+  }
+  .cf-month, .cf-day {
+    font-size: 13px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 37px;
+  }
+  .cf-calendar-container {
+    width: 377px;
+  }
+}
+
+@media (max-width: 1020px) {
+  .cf-day {
+    width: 32px;
+    height: 28px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 32px;
+  }
+  .cf-calendar-container {
+    width: 335px;
+  }
+}
 
 
