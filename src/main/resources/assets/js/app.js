@@ -3,9 +3,9 @@
 /*
     Angularjs initialization
  */
-var StresstimeApp = {};
+var SchedulizerApp = {};
 
-var App = angular.module('StresstimeApp', ['ngAnimate', 'ui.bootstrap', 'services', 'calendar-flow', 'ui.router', 'dialogs', 'truncate']);
+var App = angular.module('SchedulizerApp', ['ngAnimate', 'ui.bootstrap', 'services', 'calendar-flow', 'ui.router', 'dialogs', 'truncate']);
 
 App.constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',

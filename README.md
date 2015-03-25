@@ -1,4 +1,4 @@
-# Stress Time
+# Schedulizer
 
 On-call schedule manager
 
@@ -9,5 +9,5 @@ Open a terminal session and leave it running with:
 ```
 gem install sass
 mkdir src/main/resources/assets/css/out/
-sass --watch src/main/resources/assets/scss/stresstime.scss:src/main/resources/assets/css/out/stresstime.css
+sass --watch src/main/resources/assets/scss/schedulizer.scss:src/main/resources/assets/css/out/schedulizer.css
 ```

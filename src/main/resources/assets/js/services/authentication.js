@@ -144,7 +144,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
         $http.defaults.headers.common.Authorization = undefined;
     }
 
-    function getStresstimeUserStatus() {
+    function getSchedulizerUserStatus() {
         return AuthorizationResource.get().$promise;
 
     }
@@ -159,9 +159,9 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
         }
     }
 
-    function loginStresstime(yammerSession) {
+    function loginSchedulizer(yammerSession) {
         createAuthorizationHeader($http, yammerSession);
-        return getStresstimeUserStatus().then(function(userStatus) {
+        return getSchedulizerUserStatus().then(function(userStatus) {
             if (userStatus.role ==  USER_ROLES.guest) {
                 console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
                 return;
@@ -188,7 +188,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
                     Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                 } else {
-                    loginStresstime(YammerSession).then(function(userStatus) {
+                    loginSchedulizer(YammerSession).then(function(userStatus) {
                         updateUserInformation(userStatus.employeeId, response);
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
@@ -212,7 +212,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
         }
         var deferred = $q.defer();
         deferredYammerResponse.promise.then(function(yammerSession) {
-            loginStresstime(yammerSession).then(function(userStatus) {
+            loginSchedulizer(yammerSession).then(function(userStatus) {
                 deferred.resolve(userStatus);
             });
         });

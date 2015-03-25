@@ -13,7 +13,7 @@ database:
   driverClass: org.h2.Driver
   user: test
   password: test
-  url: jdbc:h2:mem:stresstime_test # In memory database for faster tests
+  url: jdbc:h2:mem:schedulizer_test # In memory database for faster tests
   properties:
     hibernate.generate_statistics: true
     hibernate.hbm2ddl.auto: create-drop # create-drop to clear database

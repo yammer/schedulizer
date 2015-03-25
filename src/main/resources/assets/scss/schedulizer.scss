@@ -1,0 +1,1518 @@
+@import "bootstrap/_bootstrap-schedulizer.scss";
+@import "bootstrap/_bootstrap.scss";
+@import "animate/animate.scss";
+@import "hover/hover.scss";
+
+/* TODO: Extract this */
+@mixin select($value) {
+    -webkit-touch-callout: $value;
+    -webkit-user-select: $value;
+    -khtml-user-select: $value;
+    -moz-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}
+
+@mixin clearfix {
+    &:before, &:after {
+        content: '';
+        display: table;
+    }
+    &:after { clear: both; }
+}
+
+@mixin placeholder {
+    ::-webkit-input-placeholder {@content}
+    :-moz-placeholder           {@content}
+    ::-moz-placeholder          {@content}
+    :-ms-input-placeholder      {@content}
+}
+
+.st-tooltip {
+    $tooltip-arrow-size: 10px;
+    $tooltip-color: #333333;
+    $tooltip-width: 300px;
+
+    .st-tooltip-title {
+        display: none;
+        position: absolute;
+        z-index: 1;
+        width: $tooltip-width;
+        top: 50%;
+        left: -$tooltip-arrow-size;
+        padding: 10px;
+        font-size: 13px;
+        transform: translate(-100%, -50%);
+        color: #FFF;
+        background-color: $tooltip-color;
+    }
+
+    &:hover .st-tooltip-title {
+        display: block;
+
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 0;
+            right: -$tooltip-arrow-size;
+            top: 50%;
+            transform: translate(0, -50%);
+            border-style: solid;
+            border-color: transparent $tooltip-color;
+            border-width: $tooltip-arrow-size 0 $tooltip-arrow-size $tooltip-arrow-size;
+        }
+    }
+}
+
+body {
+    padding-top: 50px;
+}
+
+.navbar-nav li a.with-icon {
+    height: 20px;
+}
+
+.loading-spinner {
+    display: inherit;
+    height: 22px;
+    margin-top: 14px;
+    margin-left: 10px;
+}
+
+$blue: #398BCA;
+$dark-red: #C41E1E;
+$light-red: #E06969;
+/* $grey-N: higher N means darker */
+$grey-0: #F5F5F5; /* Sidebar and title bgs */
+$grey-1: #EEEEEE; /* Lighter months on calendar */
+$grey-2: #D9D9D9; /* Darker months and (+) employee button bg */
+$grey-3: #A6A6A6; /* Title text color */
+$grey-4: #828282; /* + inside (+) button */
+
+$grey-2p5: mix($grey-2, $grey-3);
+$grey-3p5: mix($grey-3, $grey-4);
+
+/* General colors (Availability/employee mode) */
+
+$normal-mode-bg: #FFFFFF;
+$normal-mode-header-bg: $grey-0;
+$normal-mode-header-fg: $grey-3;
+
+$employee-mode-bg: #FBF8EF;
+$employee-mode-header-bg: #ECC635;/*#F1CF4A;*/
+$employee-mode-header-fg: #FFFFFF;
+
+.normal-mode {
+    background-color: $normal-mode-bg;
+    .header {
+        color: $normal-mode-header-fg;
+        background-color: $normal-mode-header-bg;
+        border-bottom: 1px solid darken($normal-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $normal-mode-header-fg;
+            &:hover {
+                color: darken($normal-mode-header-fg, 20%);
+            }
+        }
+    }
+    .assignment-type-buckets { background-color: $normal-mode-bg; }
+    .legend.full, .legend.legend-full { background-color: $normal-mode-bg; }
+}
+.employee-mode {
+    background-color: $employee-mode-bg;
+    box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.25);
+    z-index: 1;
+    .header {
+        color: $employee-mode-header-fg;
+        background-color: $employee-mode-header-bg;
+        border-bottom: 1px solid darken($employee-mode-header-bg, 3%);
+        .add-assignment-type {
+            color: $employee-mode-header-fg;
+            &:hover { color: darken($employee-mode-header-fg, 20%); }
+        }
+    }
+    .assignment-type-buckets { background-color: $employee-mode-bg; }
+    .legend.full, .legend.legend-full { background-color: $employee-mode-bg; }
+}
+
+/* Global admins icon */
+
+.global-admins-icon {
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/* Text rotation */
+
+.rotate90deg {
+    -ms-transform:rotate(-90deg); /* IE 9 */
+    -moz-transform:rotate(-90deg); /* Firefox */
+    -webkit-transform:rotate(-90deg); /* Safari and Chrome */
+    -o-transform:rotate(-90deg); /* Opera */
+}
+
+/* Login-Logout buttons */
+
+.login-button {
+    margin: 7px 7px 7px 20px;
+}
+
+/* Responsiveness */
+
+$inner-padding: 15px;
+
+.main { padding: 0 $inner-padding; }
+.st-progress-bar, .header { margin: 0 (-$inner-padding); }
+.left-bar { margin: 0 $inner-padding 0 0; }
+.right-bar { margin: 0 0 0 $inner-padding; }
+
+/* Calendar */
+
+$light-fg: #FFFFFF;
+$dark-fg: $grey-4;
+
+$selected-bg: #2EC3E5;
+$odd-bg: $grey-2;
+$even-bg: $grey-1;
+$today-bg: #FD8845;
+
+$day-border-thickness: 5px;
+
+@mixin colorize-day($color, $amount: 5%) {
+    @include even-odd-bg($color, $amount);
+    .hoverable &:hover, &.selected {
+        @include even-odd-bg(mix($selected-bg, $color, 80%), $amount);
+    }
+    .hoverable &.selected:hover {
+        @include even-odd-bg(mix(lighten($selected-bg, 10%), $color, 70%), $amount);
+    }
+}
+
+@mixin even-odd($property-name, $color, $amount: 0%) {
+    #{$property-name}: $color;
+    &.odd { #{$property-name}: darken($color, $amount); }
+    &.even { #{$property-name}: lighten($color, $amount); }
+}
+
+@mixin even-odd-bg($color, $amount) {
+    @include even-odd(background-color, $color, $amount);
+}
+
+$calendar-cell-spacing: 4px;
+
+.legend {
+    border-collapse: separate;
+    border-spacing: $calendar-cell-spacing;
+}
+
+/* Group View Calendar */
+
+$assigned-bg: #6FDF6F;
+$mid-assigned-bg: #EFC932;
+
+.cf-day.assigned {
+    color: $light-fg;
+    @include colorize-day($assigned-bg);
+}
+.cf-day.mid-assigned {
+    color: $light-fg;
+    @include colorize-day($mid-assigned-bg);
+}
+
+/* Availability Calendar */
+
+/* Header */
+
+.header {
+    color: $grey-3;
+    font-size: 22px;
+    background-color: $grey-0;
+    padding: 18px 15px 17px 15px;
+}
+
+/* Dual pane */
+
+.sidebar {
+    padding: 15px 0 0 0;
+    background-color: #f5f5f5;
+    height: 100%;
+}
+
+.dual-pane {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dual-pane .sidebar {
+    padding: 20px;
+}
+
+.dual-pane .sidebar .top-search {
+    margin: -20px -20px 0 -20px;
+    padding: 13px 12px 13px 12px;
+    background-color: $grey-1;
+}
+
+.dual-pane .sidebar ul {
+    margin: 0 -20px;
+}
+
+.dual-pane .sidebar .active, .dual-pane .sidebar .active a {
+    color: #FFFFFF;
+    background-color: $blue;
+}
+
+.dual-pane .span-height {
+    height: 100%;
+}
+
+/* Group tab */
+
+.calendar-wrap {
+    display: table;
+    margin: 0 auto;
+    position: relative;
+    padding-top: $inner-padding;
+}
+
+.left-bar {
+    float: left;
+    width: 144px;
+}
+
+.right-bar {
+    float: right;
+    /* Making up space for the legend */
+    width: 150px;
+    height: 50px;
+}
+
+.legend {
+    color: $grey-4;
+    position: absolute;
+    bottom: 6px;
+    padding-top: 10px;
+    margin-left: -$calendar-cell-spacing;
+
+    &.legend-full {
+        z-index: 2; /* on top of buckets */
+    }
+
+    &.legend-hint {
+        z-index: 0; /* covered by buckets */
+    }
+
+    .description {
+        padding-left: 5px;
+    }
+}
+
+.tools {
+    text-align: right;
+    margin: 0 0 20px 0;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* Stamps */
+
+.stamp {
+    width: 106px;
+    padding: 12px 0 12px 0;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+    margin-bottom: 21px;
+}
+
+.right-bar .stamp, .my-calendar-right-bar .stamp {
+    margin-bottom: 17px;
+}
+
+.stamp .sub-label {
+    font-size: 19px;
+}
+.stamp .main-label {
+    font-size: 32px;
+    line-height: 38px;
+}
+
+.day-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: right;
+}
+
+.day-stamp.cf-today {
+    color: $light-fg;
+    background-color: $today-bg;
+}
+
+
+
+.selection-stamp {
+    color: #FFF;
+    background-color: #2EC3E5;
+    float: left;
+    cursor: pointer;
+}
+
+.selection-stamp:hover {
+    background-color: $light-red;
+}
+
+/* Employee card */
+
+.employee-card {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    color: $grey-4;
+
+    &.hoverable:hover {
+        background-color: $grey-1;
+    }
+
+    .ui-widget input.form-control {
+        font-size: 13px;
+    }
+}
+
+$available-bg: #6FDF6F;
+$mid-available-bg: #F2D253;
+$not-available-bg: #DB8888;
+
+.employee-not-available {
+    background: rgba($not-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($not-available-bg, 5%), 0.5);
+    }
+}
+
+.employee-mid-available {
+    background: rgba($mid-available-bg, 0.5);
+    .employee-card.hoverable:hover {
+        background-color: rgba(darken($mid-available-bg, 5%), 0.5);
+    }
+}
+
+.employee-card:hover .avatar-wrapper .avatar-image-wrapper .admin-icon.not-admin.editable {
+    display: inherit;
+    opacity: 0.7;
+}
+
+.employee-card .avatar-wrapper .avatar-image-wrapper .admin-icon {
+    font-size: 14px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    position: absolute;
+    top: 34px;
+    left: 37px;
+    text-align: center;
+    background: $grey-0;
+    display: none;
+
+    &.editable { cursor: pointer; }
+
+    &.global-admin {
+        display: inherit;
+        cursor: inherit;
+        color: #dbb800;
+    }
+    &.not-admin.editable {
+        &:hover {
+            @include pulse(.6s);
+            opacity: 1;
+        }
+    }
+
+    &.is-admin {
+        opacity: 1;
+        display: inherit;
+
+        &.editable {
+            &:hover {
+                background-color: #CC5555;
+                .glyphicon { display: none; }
+                .delete-admin {
+                    display: inline-block;
+                    line-height: 0;
+                    vertical-align: middle;
+                    height: 6px;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    .delete-admin {
+        display: none;
+    }
+}
+
+.employee-card .avatar-wrapper {
+    float: left;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+    &.with-image {
+        img { border-radius: 50%; }
+        .text-hover { display: none; }
+        &:hover {
+            .text-hover {
+                font-size: 32px;
+                display: inline;
+                color: #FFF;
+            }
+        }
+    }
+
+    &.no-image {
+        font-size: 31px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    $add-bg: $grey-2;
+
+    &.add {
+        color: $grey-4;
+        background-color: $add-bg;
+        position: relative;
+
+        &:hover {
+            color: #E9E9E9;
+            background-color: $grey-4;
+        }
+
+        &.selected-employee-add {
+            &:hover {
+                @include pulse(.6s);
+                &::before { display: none; }
+                span { display: none; }
+            }
+            &::before {
+                content: '';
+                display: block;
+                position: absolute;
+                z-index: 1;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(#000, 0.25);
+                border-radius: 50%;
+            }
+            span {
+                position: relative;
+                z-index: 2;
+                color: #FFFFFF;
+                text-shadow: 0 0 5px #000, 0 0 10px #000;
+            }
+        }
+    }
+
+    .avatar-image-wrapper {
+        width: 50px;
+        height: 50px;
+        position: relative;
+
+        .avatar-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+}
+
+.employee-card-add .employee-content .v-center-wrap {
+    /* No idea why setting width as below worked and made the input span the entire parent */
+    width: 999999px;
+}
+
+$employee-card-height: 50px; 
+
+.employee-card .employee-content {
+    overflow: hidden; /* float containing */
+    height: $employee-card-height;
+    vertical-align: middle;
+    padding: 0 0 0 10px;
+    cursor: pointer;
+
+    &.with-input {
+        padding-top: 0;
+    }
+
+    /*span {
+        display: inline-block;
+        overflow: hidden;
+    }*/
+
+    &.not-group-admin {
+        cursor: default;
+    }
+    .v-center-wrap {
+        /* vertical-align is already given by root .v-center-wrap (cmd+f it) */
+        height: $employee-card-height;
+    }
+
+    .employee-name {
+        height: $employee-card-height;
+        overflow: hidden;
+    }
+
+    .employee-actions {
+        float: right;
+    }
+}
+
+/* If using .v-center-wrap don't forget to specify height! */
+.v-center-wrap {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.employee-card.selected-employee.hoverable {
+    .name, .employee-content { color: $employee-mode-header-fg; }
+    background-color: $employee-mode-header-bg;
+}
+
+.employee-card.selected-employee.hoverable:hover {
+    background-color: lighten($employee-mode-header-bg, 5%);
+}
+
+.clear {
+    clear: both;
+}
+
+.mini-assignment-type-label {
+    display: inline-block;
+    border-radius: 2px;
+    padding: 2px 0 1px 0;
+    color: #FFFFFF;
+    text-align: center;
+    opacity: 0.7;
+    &.no-assignments-label { opacity: 0.15; }
+    .employee-card:hover & { opacity: 1.0; }
+}
+
+$delete-bg: $dark-red;
+
+.employee-card {
+
+    .delete-button {
+        display: inline-block;
+        font-size: 14px;
+        width: 23px;
+        height: 21px;
+        border-radius: 50%;
+        color: #FFFFFF;
+        background-color: #e06969;
+        cursor: pointer;
+        padding: 2px 0 0 4px;
+        position: relative;
+        bottom: -1px;
+    }
+
+    /* Hovers */
+
+    .delete-button {
+        display: none;
+    }
+
+    &:hover {
+        .delete-button {
+            display: inline-block;
+            &:hover { background-color: $delete-bg; }
+        }
+    }
+
+}
+
+.employees-container {
+    margin-bottom: 10px;
+}
+
+.overflow-scroll {
+    overflow: scroll;
+}
+
+/* AssignmentType buckets */
+
+.assignment-type-buckets {
+    /* On top of legend  */
+    position: relative;
+    z-index: 1;
+    /* Idk why, but below works */
+    padding-bottom: 1px;
+}
+
+.bucket {
+    border: 1px dashed $grey-3;
+    border-radius: 4px;
+    width: 150px;
+    margin: 0 0 17px 0;
+    background-color: $grey-0;
+    padding: 27px 5px 5px 5px;
+    position: relative;
+}
+
+.bucket .bucket-name {
+    color: mix($grey-4, $grey-3, 60%);
+    font-size: 14px;
+    margin: 5px;
+    position: absolute;
+    top: 3px;
+    left: 5px;
+}
+
+.bucket .bucket-content {
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    overflow: scroll;
+    min-height: 45px;
+}
+
+.bucket .bucket-content .assigned-employee {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    margin: 5px;
+    border-radius: 14%;
+    position: relative;
+}
+
+.bucket .bucket-content .assigned-employee img {
+    max-width: 35px;
+    max-height: 35px;
+    border-radius: 14%;
+    opacity: 0.75;
+}
+
+.bucket .bucket-content .assigned-employee.is-admin {
+    cursor: pointer;
+
+    .minus-span {
+        font-size: 30px;
+        color: white;
+        visibility: hidden;
+        position: absolute;
+        top: -6px;
+        left: 11px;
+    }
+
+    &:hover {
+        background-color: $light-red;
+
+        .minus-span { visibility: visible; }
+        img { visibility: hidden; }
+    }
+}
+
+/* New Group form */
+
+.new-group-form {
+    padding: 10px 10px 0px 10px;
+}
+
+/* Group list */
+
+a[disabled] {
+    pointer-events: none;
+}
+
+
+.nav li.groups-divider {
+    background-color: darken($grey-2, 5%);
+    font-size: 13px;
+    text-align: center;
+
+    &, a {
+        color: $light-fg;
+    }
+    a {
+        text-shadow: 0 0 2px rgba(#000000, 0.2);
+        padding: 4px 15px;
+    }
+}
+
+.group-item {
+    .glyphicon {
+        top: 2px;
+        left: 3px;
+        opacity: 0.2;
+    }
+
+    &:hover .glyphicon {
+        opacity: 1;
+    }
+}
+/* Deletable card */
+
+.deletable-card {
+    position: relative;
+}
+
+.deletable-card .delete {
+    position: absolute;
+    top: 23%;
+    right: 15px;
+    display: none;
+    font-size: 30px;
+    color: white;
+    height: 21px;
+    width: 23px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: $light-red;
+}
+
+.deletable-card .delete div {
+    text-align: center;
+    position: absolute;
+    top: -62%;
+    width: 23px;
+}
+
+.deletable-card:hover .delete {
+    display: block;
+}
+
+.deletable-card .delete:hover {
+    display: block;
+    background-color: $delete-bg;
+}
+
+.st-input-button  {
+    padding-top: 6px;
+    padding-bottom: 7px;
+}
+
+/* Drag and drop */
+
+.drag-over {
+    border: 1px dashed black !important;
+}
+
+.drop-target {
+    opacity: .5;
+}
+
+.drag-in-progress * {
+    pointer-events: none !important; /* prevent children to interfere with drag and drop */
+}
+
+[draggable] {
+    cursor: move;
+    cursor: -webkit-grab; // hand for chrome and safari
+}
+
+/* Assignment types */
+
+$assignment-colors: #37af8e, #e06636, #34a5b4, #dac63a, #fc8686, #bbbbbb, #94e057, #aa11cc, #1ba2a5, #123456;
+
+@for $i from 1 through length($assignment-colors) {
+    .assignment-color-#{$i - 1} {
+        background: nth($assignment-colors, $i);
+    }
+}
+
+.assignment-type-label {
+    float: right;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 7px 30px 7px 29px;
+    margin-left: 20px;
+    color: white;
+
+    font-weight: normal;
+    position: relative;
+
+    .delete {
+        position: absolute;
+        right: -6px;
+        top: 6px;
+        border-radius: 8px;
+        color: $delete-bg;
+        background-color: $grey-0;
+        padding: 0px 3px 1px 3px;
+        font-size: 18px;
+        line-height: 12px;
+        border: 1px solid $delete-bg;
+        visibility: hidden;
+    }
+
+    &.is-admin:hover {
+        background-color: $delete-bg;
+
+        .delete {
+            visibility: visible;
+
+            &:hover {
+                color: #FFFFFF;
+                background-color: $delete-bg;
+            }
+        }
+    }
+
+    &.is-admin {
+        cursor: pointer;
+    }
+
+}
+
+.add-assignment-type {
+    cursor: pointer;
+    float: right;
+    font-size: 38px;
+    margin-top: -13px;
+}
+
+
+.availability-mode-image-container {
+
+    display: inline-block;
+    margin: -15px 4px -10px -4px;
+    cursor: pointer;
+    .selected-employee-image {
+        height: 41px;
+        border-radius: 28px;
+        opacity: 0.8;
+    }
+
+    &:hover .selected-employee-image {
+        display: none;
+    }
+
+    .minus-span {
+        height: 41px;
+        width: 41px;
+        line-height: 37px;
+        border-radius: 28px;
+        background: $delete-bg;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 31px;
+        display: none;
+    }
+
+    &:hover .minus-span {
+        display: inherit;
+    }
+}
+
+.assignment-types-wrapper {
+    float: right;
+    margin-top: -1px;
+}
+
+.assignment-type-form {
+    float: right !important;
+    width: 150px;
+    margin-right: 20px;
+    margin-top: -5px;
+    font-weight: normal;
+}
+
+/* Assignments details on hovered day (column to the left of calendar) */
+
+
+.day-assignments {
+    clear: both;
+}
+
+.day-assignment {
+    margin: 5px 0 17px 0;
+    text-align: right;
+
+    .day-assignment-role {
+        margin: 7px 0;
+
+        span {
+            font-size: 12px;
+            color: #FFFFFF;
+            border-radius: 4px;
+            padding: 7px 10px;
+        }
+    }
+
+    .day-assignment-avatars {
+        margin: 8px 0 12px 0;
+
+        img {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin: 4px 0 4px 8px;
+        }
+    }
+}
+
+/* Form shake */
+
+.shake-animation {
+    @include shake(1, 1s);
+}
+
+/* Employee autocomplete */
+
+$employee-autocomplete-height: 40px;
+
+/* jQuery ui autocomplete on top of everything */
+.ui-autocomplete.ui-menu {
+    z-index: 10000;
+}
+
+.ui-autocomplete.ui-menu {
+    display: table;
+    border: 0;
+    box-shadow: 0 0 5px 1px rgba(#000000, 0.25);
+    max-height: 100px;
+    overflow-y: auto;
+
+    li.employee-autocomplete-item.ui-menu-item {
+        display: table-row;
+        padding: 0px;
+        height: $employee-autocomplete-height;
+
+        &.ui-state-focus {
+            color: #FFFFFF;
+            background-image: none;
+            background-color: $blue;
+        }
+
+        .employee-image {
+            display: table-cell;
+            &, img {
+                width: 34px;
+                height: $employee-autocomplete-height - 6px;
+            }
+            img {
+                margin: 3px;
+            }
+        }
+
+        .employee-name {
+            font-size: 12px;
+            display: table-cell;
+            height: $employee-autocomplete-height;
+            vertical-align: middle;
+            padding-left: 4px;
+            text-align: left;
+        }
+    }
+}
+
+/* Stats inputs */
+
+$counter-width: 20px;
+
+.stats-inputs-container {
+    $height: $employee-card-height + 12px;
+
+    color: $grey-4;
+    height: $height;
+
+    .stat-range-edit-button {
+        @include select(none);
+        display: inline-block;
+        width: 23px;
+        height: 22px;
+        padding: 3px 0 0 5px;
+        position: relative;
+        bottom: -2px;
+        font-size: 14px;
+        border-radius: 50%;
+        color: $grey-4;
+        background-color: $grey-2;
+        &.active {
+            color: #FFFFFF;
+            background-color: #337AB7;
+            cursor: pointer;
+            &:hover {
+                background-color: darken(#337AB7, 10%);
+            }
+        }
+    }
+
+
+    .v-center-wrap {
+        height: $height;
+    }
+
+    .stats-range-selector-container {
+        @include clearfix;
+
+        .stats-date {
+            color: $grey-4;
+            padding: 0 2px;
+            margin: 0 2px;
+            background-color: $grey-2;
+            border-radius: 2px;
+            height: 25px;
+        }
+    }
+
+    .mini-assignment-type-headers {
+        float: right;
+
+        .mini-assignment-type-label {
+            @include select(none);
+
+            color: $grey-0;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1 !important;
+
+            }
+        }
+    }
+}
+
+/* Progress bar */
+
+$progress-bar-height: 2px;
+$progress-bar-color: #337AB7;
+$progress-bar-error-color: #DD4444;
+$progress-bar-bg: transparent;
+
+.st-progress-bar {
+    background-color: $progress-bar-bg;
+
+    &, .st-progress {
+        height: $progress-bar-height;
+        border-radius: 0 $progress-bar-height / 2 $progress-bar-height / 2 0;
+    }
+
+    .st-progress {
+        background-color: $progress-bar-color;
+        width: 0%;
+        transition: width 300ms linear;
+
+        &.error {
+            width: 100% !important;
+            background-color: $progress-bar-error-color;
+            transition: none;
+        }
+    }
+}
+
+/* My Calendar */
+
+.my-calendar-header {
+    padding-left: 30px;
+}
+
+.my-calendar-right-bar {
+    float: right;
+    width: 207px;
+    height: 50px;
+    margin: 0 15px;
+}
+
+.my-calendar-left-bar {
+    float: left;
+    width: 144px;
+    height: 50px;
+    margin: 0 10px;
+}
+
+$available-input-bg: #25D025;
+$mid-available-input-bg: #FFC200;
+$not-available-input-bg: #DA4B4B;
+
+/* Calendar */
+
+.cf-day.available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($available-bg);
+}
+
+.cf-day.mid-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($mid-available-bg);
+}
+
+.cf-day.not-available {
+    @include even-odd(color, $light-fg);
+    @include colorize-day($not-available-bg);
+}
+
+@mixin invalid {
+//    border: 1px solid darken($delete-bg, 10%);
+//    box-shadow: inset 0 1px 1px rgba(#000,.075), 0 0 6px lighten($delete-bg, 20%);
+}
+
+.availability-input {
+    @include select(none);
+    color: $light-fg;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    width: 49px;
+    height: 41px;
+    border-radius: 4px;
+    margin: 0 0 0 11px;
+    &:first-child { margin-left: 0; }
+    padding-top: 10px;
+    text-align: center;
+    font-size: 16px;
+
+    &.available { background-color: $available-input-bg; }
+    &.mid-available { background-color: $mid-available-input-bg; }
+    &.not-available { background-color: $not-available-input-bg; }
+
+    opacity: 0.2;
+    span { opacity: 0; }
+
+    &.invalid {
+        @include invalid;
+    }
+
+    &:hover {
+        opacity: 0.7;
+        span { opacity: 0.7; }
+    }
+
+    &.active {
+        opacity: 1;
+        span { opacity: 1; }
+
+        &:hover {
+            opacity: 1;
+            span { opacity: 0.9; }
+        }
+    }
+
+}
+
+.availability-inputs-panel {
+    overflow: auto;
+    color: $dark-fg;
+    background-color: #eeeeee;
+
+    textarea {
+        font-size: 13px;
+        resize: vertical;
+        &.form-control { padding: 6px 9px; }
+        &.invalid {
+            opacity: 0.75;
+            color: $grey-3;
+            @include invalid;
+        }
+        @include placeholder {
+            opacity: 1; // FF
+            color: $grey-3;
+        }
+
+    }
+
+    .submit-message {
+        text-align: right;
+        height: 33px;
+        width: 122px;
+        display: table-cell;
+        vertical-align: middle;
+        padding-right: 6px;
+        color: $grey-3;
+        font-size: 13px;
+        line-height: 14px;
+    }
+
+    .panel-body {
+        padding: 17px 17px 15px 17px;
+    }
+}
+
+
+.availability-inputs-container {
+    padding: 0 1px;
+}
+
+.availability-comment {
+    width: 100%;
+    margin: 11px 0;
+    font-weight: normal;
+
+    &.form-control {
+        height: 140px;
+    }
+}
+
+.availability-confirm-button {
+    @include select(none);
+    float: right;
+}
+
+@for $i from 1 through 100 {
+    .assignment-count-#{$i} {
+        position: relative;
+
+        &::before {
+            content: "#{$i}";
+            position: absolute;
+            top: 63%;
+            left: 70%;
+            width: 26%;
+            height: 28%;
+            line-height: 100%;
+            border-radius: 30%;
+            background-color: $grey-1;
+            color: $grey-4;
+            font-size: 63%;
+            padding-top: 3%;
+            padding-right: 1%;
+        }
+
+        &.cf-today::before {
+            top: 67%;
+            left: 70%;
+            width: 32%;
+            height: 36%;
+            padding-top: 4%;
+        }
+    }
+}
+
+.assignment-hover-text-group .day-assignment-role .assignment-hover-text {
+    color: white;
+    background: $grey-3;
+}
+
+.assignment-hover-text-group {
+    margin-top: 20px;
+}
+
+/* Datepicker */
+
+::-webkit-datetime-edit {
+  padding: 0em;
+  margin-right: -45px;
+}
+
+::-webkit-calendar-picker-indicator {
+    width:0;
+    margin-left:-100px;
+    padding-left:100px;
+    z-index:10;
+    opacity:0;
+    height: 30px;
+}
+
+::-webkit-inner-spin-button {
+  display: none;
+}
+
+/* Tooltip style */
+
+.ui-tooltip {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 0;
+    opacity: 1;
+    border-radius: 1px;
+    min-width: 55px;
+}
+.ui-tooltip-content {
+    position: relative;
+    padding: 0.8em;
+    font-size: 12px;
+}
+.ui-tooltip-content::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+    bottom: -10px;
+    left: 18px;
+    border-color: #333 transparent;
+    border-width: 10px 10px 0;
+}
+
+/* Group Settings */
+
+.group-settings {
+    .assignment-type-name-form {
+        margin-top: 10px;
+    }
+}
+
+.group-settings-cog {
+    display: inline-block;
+    font-size: 20px;
+    cursor: pointer;
+    .glyphicon {
+        position: relative;
+        top: 3px;
+    }
+}
+
+.custom-stat-question-sign {
+    position: relative;
+    top: 0px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* Responsiveness */
+
+.stats-space {
+    width: 5px;
+}
+
+.right-sidebar-content {
+    font-size: 14px;
+}
+
+.stats-inputs-container, .employee-card {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.form-control.stat-counter {
+    width: 28px;
+}
+
+.mini-assignment-type-label {
+    width: 23px;
+    margin-left: 6px;
+    &:first-child {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 2000px)                         { .legend .cf-day { width: 36px; height: 32px; }
+                                                   }
+@media (min-width: 1648px) and (max-width: 2000px) { .legend .cf-day { width: 36px; height: 32px; }
+                                                     .stats-label-from { display: none; }
+                                                   }
+@media (min-width: 1355px) and (max-width: 1648px) { .legend .cf-day { width: 36px; height: 32px; }
+                                                     .right-sidebar-content { font-size: 13px; }
+                                                     .stats-inputs-container, .employee-card { padding-left: 13px;
+                                                                                               padding-right: 13px; }
+                                                     .stats-label-from { display: none; }
+                                                     .mini-assignment-type-label { width: 21px; margin-left: 4px; }
+                                                   }
+@media (max-width: 1355px)                         { .legend .cf-day { width: 26px; height: 23px; }
+                                                     .right-sidebar-content { font-size: 12px; }
+                                                     .stats-inputs-container, .employee-card { padding-left: 11px;
+                                                                                               padding-right: 11px; }
+                                                     .mini-assignment-type-label { width: 18px; margin-left: 3px; }
+                                                     .main { padding: 0 5px; }
+                                                     .st-progress-bar, .header { margin: 0 -5px; }
+                                                     .left-bar { width: 110px; margin: 0 5px 0 0; }
+                                                     .right-bar { margin: 0 0 0 5px; }
+                                                     .form-control.stat-counter { width: 18px; }
+                                                     .header .group-name { font-size: 20px; }
+                                                     .stats-label { display: none; }
+                                                     .assignment-type-label { margin-left: 14px;
+                                                                              padding-right: 17px;
+                                                                              padding-left: 17px; }
+                                                     .day-assignment .day-assignment-role span { font-size: 11px;
+                                                                                                 padding-left: 8px;
+                                                                                                 padding-right: 8px; }
+                                                     .left-sidebar .nav { font-size: 13px; }
+                                                   }
+@media (max-width: 1136px)                         { .left-bar, .left-bar .stamp { width: 96px; }
+                                                     .right-bar, .right-bar .stamp, .bucket { width: 102px; }
+                                                     .assignment-type-label { margin-left: 10px;
+                                                                              padding-right: 10px;
+                                                                              padding-left: 10px; }
+                                                     .legend { display: none; }
+                                                     .day-assignment .day-assignment-role span { font-size: 10px;
+                                                                                                 padding-left: 7px;
+                                                                                                 padding-right: 7px; }
+                                                     .bucket .bucket-name { font-size: 11px;
+                                                                            top: 5px; }
+                                                     .left-sidebar .nav { font-size: 12px; }
+                                                     .left-sidebar .nav li a { padding-left: 10px; padding-right: 10px; }
+                                                   }
+@media (max-width: 1020px)                         { .stats-inputs-container .counter-control { display: none; }
+                                                     .mini-assignment-type-label { padding-bottom: 2px; }
+                                                     .assignment-type-label { margin-left: 5px;  }
+                                                     .right-sidebar-content { font-size: 10px; }
+                                                   }
+
+/* Calendar resizing */
+
+@media (min-width: 2000px) {
+  .cf-day {
+    width: 60px;
+    height: 50px;
+  }
+
+  .cf-view-calendar-wrapper {
+    top: 54px;
+  }
+
+  .cf-calendar-container {
+    width: 541px;
+  }
+}
+@media (min-width: 1648px) and (max-width: 2000px) {
+  .cf-day {
+    width: 55px;
+    height: 47px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 51px;
+  }
+  .cf-calendar-container {
+    width: 506px;
+  }
+}
+@media (min-width: 1355px) and (max-width: 1648px) {
+  .cf-day {
+    width: 45px;
+    height: 38px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 42px;
+  }
+  .cf-calendar-container {
+    width: 436px;
+  }
+}
+@media (max-width: 1355px) {
+  .cf-day {
+    width: 38px;
+    height: 33px;
+  }
+  .cf-calendar-header .cf-month, .cf-month {
+    width: 75px;
+  }
+  .cf-month, .cf-day {
+    font-size: 13px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 37px;
+  }
+  .cf-calendar-container {
+    width: 377px;
+  }
+}
+
+@media (max-width: 1020px) {
+  .cf-day {
+    width: 32px;
+    height: 28px;
+  }
+  .cf-view-calendar-wrapper {
+    top: 32px;
+  }
+  .cf-calendar-container {
+    width: 335px;
+  }
+}
+
+
