@@ -15,7 +15,7 @@
                         &nbsp; Today
                     </button>
                 </div>
-                <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
+                <div class="stamp day-stamp" ng-class="{'cf-today': dayStamp.isToday()}">
                     <div class="sub-label">{{getMonthName(dayStamp)}}</div>
                     <div class="main-label">{{dayStamp.getDate()}}</div>
                 </div>
@@ -33,18 +33,6 @@
                     </div>
                 </div>
             </div>
-
-            <calendar
-                    class="calendar align-parent-bottom"
-                    discount-height="70"
-                    on-select-days="onSelectDays"
-                    on-hover-day="onHoverDay"
-                    on-load-day-content="onLoadDayContent"
-                    expose-api-to="calendar"
-                    cell-class="getCellClass(day)"
-                    get-day-tooltip="getDayTooltip"
-                    >
-            </calendar>
 
             <div class="my-calendar-right-bar">
 
@@ -112,7 +100,7 @@
                         ng-hide="legendToggle"
                         >
                     <tr>
-                        <td class="day today"></td>
+                        <td class="cf-day cf-today"></td>
                         <td class="description">Legend</td>
                     </tr>
                 </table>
@@ -123,18 +111,31 @@
                         ng-show="legendToggle"
                         >
                     <tr ng-click="goToToday()">
-                        <td class="day today"></td>
+                        <td class="cf-day cf-today"></td>
                         <td class="description" colspan="2">Today</td>
                     </tr>
                     <tr>
-                        <td class="day hover"></td>
+                        <td class="cf-day cf-hover"></td>
                         <td class="description" colspan="2">Selected</td>
                     </tr>
                     <tr ng-repeat="availabilityState in availabilityStates">
-                        <td class="day {{availabilityState.label}}"></td>
+                        <td class="cf-day {{availabilityState.label}}"></td>
                         <td class="description" colspan="2">{{availabilityState.title}}</td>
                     </tr>
                 </table>
+            </div>
+
+            <div style="overflow: hidden;" class="align-parent-bottom" discount-height="66">
+                <calendar
+                        class="calendar"
+                        on-select-days="onSelectDays"
+                        on-hover-day="onHoverDay"
+                        on-load-day-content="onLoadDayContent"
+                        expose-api-to="calendar"
+                        cell-class="getCellClass(day)"
+                        get-day-tooltip="getDayTooltip"
+                        >
+                </calendar>
             </div>
         </div>
     </div>

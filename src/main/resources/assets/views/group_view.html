@@ -91,23 +91,7 @@
             </div>
 
         </div>
-        <calendar
-            class="calendar align-parent-bottom"
-            discount-height="70"
-            on-select-days="onSelectDays"
-            on-hover-day="onHoverDay"
-            on-load-day-content="onLoadDayContent"
-            expose-api-to="calendar"
-            cell-class="getCellClass(day)"
-            get-day-tooltip="getDayTooltip"
-            show-hover="!availabilityCalendarMode"
-            >
-
-
-
-        </calendar>
         <div class="right-bar">
-
             <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
                 <div ng-click="clearSelection()" class="stamp selection-stamp" >
                     <div class="main-label">{{selectedDates.length}}</div>
@@ -150,7 +134,7 @@
                 ng-hide="legendToggle"
                 >
                 <tr>
-                    <td class="day today"></td>
+                    <td class="cf-day cf-today"></td>
                     <td class="description">Legend</td>
                 </tr>
             </table>
@@ -161,31 +145,44 @@
                 ng-show="legendToggle"
                 >
                 <tr ng-if="!availabilityCalendarMode">
-                    <td class="day odd"></td>
-                    <td class="day even"></td>
+                    <td class="cf-day cf-odd"></td>
+                    <td class="cf-day cf-even"></td>
                     <td class="description">Empty days</td>
                 </tr>
                 <tr ng-click="goToToday()">
-                    <td class="day today"></td>
+                    <td class="cf-day cf-today"></td>
                     <td class="description" colspan="2">Today</td>
                 </tr>
                 <tr ng-if="!availabilityCalendarMode">
-                    <td class="day hover"></td>
+                    <td class="cf-day cf-hover"></td>
                     <td class="description" colspan="2">Selected</td>
                 </tr>
                 <tr ng-if="!availabilityCalendarMode">
-                    <td class="day mid-assigned"></td>
+                    <td class="cf-day mid-assigned"></td>
                     <td class="description" colspan="2">Partially Assigned</td>
                 </tr>
                 <tr ng-if="!availabilityCalendarMode">
-                    <td class="day assigned"></td>
+                    <td class="cf-day assigned"></td>
                     <td class="description" colspan="2">Fully Assigned</td>
                 </tr>
                 <tr ng-if="availabilityCalendarMode" ng-repeat="availabilityState in availabilityStates">
-                    <td class="day {{availabilityState.label}}"></td>
+                    <td class="cf-day {{availabilityState.label}}"></td>
                     <td class="description" colspan="2">{{availabilityState.title}}</td>
                 </tr>
             </table>
+        </div>
+        <div style="overflow: hidden;" class="align-parent-bottom" discount-height="66">
+            <calendar
+                    class="calendar"
+                    on-select-days="onSelectDays"
+                    on-hover-day="onHoverDay"
+                    on-load-day-content="onLoadDayContent"
+                    expose-api-to="calendar"
+                    cell-class="getCellClass(day)"
+                    get-day-tooltip="getDayTooltip"
+                    show-hover="!availabilityCalendarMode"
+                    >
+            </calendar>
         </div>
     </div>
 

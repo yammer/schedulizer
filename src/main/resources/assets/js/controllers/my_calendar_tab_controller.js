@@ -26,7 +26,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = DateUtils.TODAY;
-        var today = $(".view-calendar .day.today");
+        var today = $(".cf-view-calendar .cf-day.cf-today");
         Utils.animate('tada', today);
     };
 

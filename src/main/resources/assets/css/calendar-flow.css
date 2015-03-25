@@ -1,0 +1,176 @@
+/**
+ * calendarjs
+ * @version 0.1.1
+ */
+@charset "UTF-8";
+
+.cf-calendar-container * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+.cf-calendar-container {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  height: 100%; 
+  width: 436px;
+  position: relative;
+  overflow: hidden; /*  New block formatting context */
+}
+
+.cf-view-calendar-wrapper {
+  position: absolute;
+}
+
+/* Calendar */
+.cf-view-calendar td, .cf-view-calendar th {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cf-view-calendar {
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+
+.cf-view-calendar-wrapper {
+  height: 100%;
+  display: inline-block;
+  overflow: scroll !important;
+  top: 42px;
+}
+
+.cf-month, .cf-day {
+  color: #828282;
+  border-radius: 2px;
+  font-size: 15px;
+  cursor: default;
+  word-break: break-all;
+}
+
+.cf-month {
+  width: 85px;
+  padding: 5px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.cf-day {
+  vertical-align: middle;
+  text-align: center;
+  cursor: default;
+  width: 45px;
+  height: 38px;
+}
+
+.cf-day.cf-odd, .cf-month.cf-odd {
+  color: #828282;
+  background-color: #D9D9D9;
+}
+
+.cf-day.cf-even, .cf-month.cf-even {
+  color: #828282;
+  background-color: #EEEEEE;
+}
+
+.cf-week.cf-pending .cf-day {
+  color: #b5b5b5;
+}
+
+.cf-week.cf-pending .cf-day.cf-odd {
+  background-color: #e6e6e6; 
+}
+
+.cf-week.cf-pending .cf-day.cf-even {
+  background-color: #fbfbfb; 
+}
+
+.cf-hoverable .cf-day:hover, .cf-day.cf-hover {
+  color: #FFFFFF;
+  background-color: #2EC3E5;
+}
+.cf-hoverable .cf-day:hover.cf-odd, .cf-day.cf-hover.cf-odd {
+  background-color: #1ab2d5;
+}
+.cf-hoverable .cf-day:hover.cf-even, .cf-day.cf-hover.cf-even {
+  background-color: #4ecce9;
+}
+
+.cf-day.cf-selected {
+  color: #FFFFFF;
+  background-color: #2EC3E5; }
+.cf-day.cf-selected.cf-odd {
+  background-color: #1ab2d5;
+}
+.cf-day.cf-selected.cf-even {
+  background-color: #4ecce9;
+}
+.cf-hoverable .cf-day.cf-selected:hover {
+  background-color: #5bd0eb;
+}
+.cf-hoverable .cf-day.cf-selected:hover.cf-odd {
+  background-color: #3cc7e7;
+}
+.cf-hoverable .cf-day.cf-selected:hover.cf-even {
+  background-color: #7bd9ef;
+}
+
+.cf-day.cf-today {
+  border: 5px solid #FD8845;
+  color: #FFFFFF;
+  background-color: #FD8845;
+}
+
+.cf-day.cf-hint, .cf-day[data-hint] {
+  display: table-cell;
+}
+
+.cf-calendar-header {
+  border-spacing: 4px 0;
+  position: absolute;
+  top: 0;
+}
+
+.cf-calendar-header .cf-month {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.cf-calendar-header .cf-day, .cf-calendar-header .cf-month {
+  color: #E9E9E9;
+  background-color: #828282;
+}
+
+/* Tooltip style */
+/**
+ * I Had to use ui-tooltip and ui-widget to be more specific and
+ * not get overriden by jquery-ui style.
+ */
+.ui-tooltip.ui-widget {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 0;
+  opacity: 1;
+  border-radius: 1px;
+  min-width: 55px; }
+
+.ui-tooltip.ui-widget .ui-tooltip-content {
+  position: relative;
+  padding: 0.8em;
+  font-size: 12px; }
+
+.ui-tooltip.ui-widget .ui-tooltip-content::after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  display: block;
+  width: 0;
+  bottom: -10px;
+  left: 18px;
+  border-color: #333 transparent;
+  border-width: 10px 10px 0; 
+}
