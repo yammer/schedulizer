@@ -10,18 +10,18 @@ public class Authentication {
     /**
      * Scheme used in the standard http authorization header (case insensitive).
      * Syntax:
-     *   Authorization: ST-AUTH access-token = <value>, yammer-id = <value>
+     *   Authorization: SC-AUTH access-token = <value>, ext-api-id = <value>
      */
-    public static final String SCHEME = "ST-AUTH";
+    public static final String SCHEME = "SC-AUTH";
 
     /**
      * Parameters used in the standard http authorization header, after the scheme.
      * Syntax:
-     *   Authorization: ST-AUTH access-token = <value>, yammer-id = <value>
+     *   Authorization: SC-AUTH access-token = <value>, ext-api-id = <value>
      */
     public static class Param {
         public static final String ACCESS_TOKEN = "access-token";
-        public static final String YAMMER_ID = "yammer-id";
+        public static final String EXT_API_ID = "ext-api-id";
     }
     
     // Prevents instantiation

@@ -81,7 +81,7 @@ App.factory('AuthInterceptor', function ($rootScope, $q,
 });
 
 
-App.service('YammerSession', function() {
+App.service('ExtApiSession', function() {
     this.create = function(token, userId) {
         this.token = token;
         this.userId = userId;
@@ -127,16 +127,16 @@ App.factory('SessionStorage', ['$window', function($window) {
 
 }]);
 
-function createAuthorizationHeader($http, yammerSession) {
-    $http.defaults.headers.common.Authorization = 'ST-AUTH access-token = \"' +
-                                                  yammerSession.token +
+function createAuthorizationHeader($http, extApiSession) {
+    $http.defaults.headers.common.Authorization = 'SC-AUTH access-token = \"' +
+                                                  extApiSession.token +
                                                   '\",' +
-                                                  " yammer-id = \"" +
-                                                  yammerSession.userId  +
+                                                  " ext-api-id = \"" +
+                                                  extApiSession.userId  +
                                                   "\"";
 }
 
-App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, YammerSession, SessionStorage, yammer,
+App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, ExtApiSession, SessionStorage, yammer,
                                     AuthorizationResource, Employee, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
@@ -149,46 +149,46 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
 
     }
 
-    function updateYammerSession(yammerResponse) {
-        if (yammerResponse.authResponse) {
-            YammerSession.create(yammerResponse.access_token.token, yammerResponse.access_token.user_id);
-            SessionStorage.save("yammerSession", YammerSession);
+    function updateExtApiSession(extApiResponse) {
+        if (extApiResponse.authResponse) {
+            ExtApiSession.create(extApiResponse.access_token.token, extApiResponse.access_token.user_id);
+            SessionStorage.save("extApiSession", ExtApiSession);
         } else {
-            YammerSession.destroy();
-            SessionStorage.save("yammerSession", YammerSession);
+            ExtApiSession.destroy();
+            SessionStorage.save("extApiSession", ExtApiSession);
         }
     }
 
-    function loginSchedulizer(yammerSession) {
-        createAuthorizationHeader($http, yammerSession);
+    function loginSchedulizer(extApiSession) {
+        createAuthorizationHeader($http, extApiSession);
         return getSchedulizerUserStatus().then(function(userStatus) {
             if (userStatus.role ==  USER_ROLES.guest) {
                 console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
                 return;
             }
-            Session.create(yammerSession.token, userStatus.employeeId, userStatus.role, userStatus.groupsAdmin);
+            Session.create(extApiSession.token, userStatus.employeeId, userStatus.role, userStatus.groupsAdmin);
             SessionStorage.save('session', Session);
             return userStatus;
         });
     }
 
-    function updateUserInformation(employeeId, yammerResponse) {
+    function updateUserInformation(employeeId, extApiResponse) {
         var employee = new Employee({employeeId: employeeId});
-        employee.imageUrlTemplate = yammerResponse.user.mugshot_url;
-        employee.name = yammerResponse.user.full_name;
+        employee.imageUrlTemplate = extApiResponse.user.mugshot_url;
+        employee.name = extApiResponse.user.full_name;
         employee.$save();
     }
 
     function initializeAuthService() {
         yammer.getLoginStatus(function(response) {
-            updateYammerSession(response);
+            updateExtApiSession(response);
             var session = SessionStorage.load('session');
-            if (YammerSession.token && session) {
+            if (ExtApiSession.token && session) {
                 if (session.userRole == USER_ROLES.guest) {
                     Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                 } else {
-                    loginSchedulizer(YammerSession).then(function(userStatus) {
+                    loginSchedulizer(ExtApiSession).then(function(userStatus) {
                         updateUserInformation(userStatus.employeeId, response);
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
@@ -201,18 +201,18 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
     }
 
     authService.login = function() {
-        var deferredYammerResponse = $q.defer();
-        if (!YammerSession.token) {
+        var deferredExtApiResponse = $q.defer();
+        if (!ExtApiSession.token) {
             yammer.login(function(response) {
-                updateYammerSession(response);
-                deferredYammerResponse.resolve(YammerSession);
+                updateExtApiSession(response);
+                deferredExtApiResponse.resolve(ExtApiSession);
             });
         } else {
-            deferredYammerResponse.resolve(YammerSession);
+            deferredExtApiResponse.resolve(ExtApiSession);
         }
         var deferred = $q.defer();
-        deferredYammerResponse.promise.then(function(yammerSession) {
-            loginSchedulizer(yammerSession).then(function(userStatus) {
+        deferredExtApiResponse.promise.then(function(extApiSession) {
+            loginSchedulizer(extApiSession).then(function(userStatus) {
                 deferred.resolve(userStatus);
             });
         });
@@ -267,11 +267,11 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ya
     return authService;
 });
 
-App.run(["SessionStorage", "Session", "YammerSession", "$http", function(SessionStorage, Session, YammerSession, $http) {
-    var yammerSession = SessionStorage.load("yammerSession");
-    if(yammerSession && yammerSession.token && yammerSession.userId){
-        createAuthorizationHeader($http, yammerSession);
-        YammerSession.create(YammerSession.token, YammerSession.userId);
+App.run(["SessionStorage", "Session", "ExtApiSession", "$http", function(SessionStorage, Session, ExtApiSession, $http) {
+    var extApiSession = SessionStorage.load("extApiSession");
+    if(extApiSession && extApiSession.token && extApiSession.userId){
+        createAuthorizationHeader($http, extApiSession);
+        ExtApiSession.create(extApiSession.token, extApiSession.userId);
     }
     var session = SessionStorage.load("session");
     if (session) {
