@@ -18,7 +18,7 @@ public class GlobalAdminsResourceTest extends GetCreateDeleteResourceTest<Employ
     protected MultivaluedMap getSamplePostForm() {
         MultivaluedMapImpl values = new MultivaluedMapImpl();
         values.add("name",  employeeName);
-        values.add("extApiId", yammerId);
+        values.add("extAppId", yammerId);
         values.add("imageUrlTemplate", imageUrlTemplate);
         return values;
     }

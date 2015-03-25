@@ -26,7 +26,7 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
                                        'He will have ALL possible privileges in this website!');
         confirm.result.then(function(btn){
             var employee = new GlobalAdminsResource();
-            employee.extApiId = yEmployee.id;
+            employee.extAppId = yEmployee.id;
             employee.name = yEmployee.full_name;
             employee.imageUrlTemplate = yEmployee.photo;
             employee.$save({}, function(employee) {

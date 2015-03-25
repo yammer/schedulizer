@@ -44,7 +44,7 @@ public class Credentials {
     public String toString() {
         return Objects.toStringHelper(Credentials.class)
                 .add("accessToken", accessToken)
-                .add("extApiId", yammerId)
+                .add("extAppId", yammerId)
                 .add("acceptedRoles", acceptedRoles)
                 .toString();
     }

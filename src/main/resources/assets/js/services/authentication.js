@@ -81,7 +81,7 @@ App.factory('AuthInterceptor', function ($rootScope, $q,
 });
 
 
-App.service('ExtApiSession', function() {
+App.service('ExtAppSession', function() {
     this.create = function(token, userId) {
         this.token = token;
         this.userId = userId;
@@ -127,16 +127,16 @@ App.factory('SessionStorage', ['$window', function($window) {
 
 }]);
 
-function createAuthorizationHeader($http, extApiSession) {
+function createAuthorizationHeader($http, extAppSession) {
     $http.defaults.headers.common.Authorization = 'SC-AUTH access-token = \"' +
-                                                  extApiSession.token +
+                                                  extAppSession.token +
                                                   '\",' +
-                                                  " ext-api-id = \"" +
-                                                  extApiSession.userId  +
+                                                  " ext-app-id = \"" +
+                                                  extAppSession.userId  +
                                                   "\"";
 }
 
-App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, ExtApiSession, SessionStorage, yammer,
+App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, ExtAppSession, SessionStorage, yammer,
                                     AuthorizationResource, Employee, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
@@ -149,46 +149,46 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
 
     }
 
-    function updateExtApiSession(extApiResponse) {
-        if (extApiResponse.authResponse) {
-            ExtApiSession.create(extApiResponse.access_token.token, extApiResponse.access_token.user_id);
-            SessionStorage.save("extApiSession", ExtApiSession);
+    function updateExtAppSession(extAppResponse) {
+        if (extAppResponse.authResponse) {
+            ExtAppSession.create(extAppResponse.access_token.token, extAppResponse.access_token.user_id);
+            SessionStorage.save("extAppSession", ExtAppSession);
         } else {
-            ExtApiSession.destroy();
-            SessionStorage.save("extApiSession", ExtApiSession);
+            ExtAppSession.destroy();
+            SessionStorage.save("extAppSession", ExtAppSession);
         }
     }
 
-    function loginSchedulizer(extApiSession) {
-        createAuthorizationHeader($http, extApiSession);
+    function loginSchedulizer(extAppSession) {
+        createAuthorizationHeader($http, extAppSession);
         return getSchedulizerUserStatus().then(function(userStatus) {
             if (userStatus.role ==  USER_ROLES.guest) {
                 console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
                 return;
             }
-            Session.create(extApiSession.token, userStatus.employeeId, userStatus.role, userStatus.groupsAdmin);
+            Session.create(extAppSession.token, userStatus.employeeId, userStatus.role, userStatus.groupsAdmin);
             SessionStorage.save('session', Session);
             return userStatus;
         });
     }
 
-    function updateUserInformation(employeeId, extApiResponse) {
+    function updateUserInformation(employeeId, extAppResponse) {
         var employee = new Employee({employeeId: employeeId});
-        employee.imageUrlTemplate = extApiResponse.user.mugshot_url;
-        employee.name = extApiResponse.user.full_name;
+        employee.imageUrlTemplate = extAppResponse.user.mugshot_url;
+        employee.name = extAppResponse.user.full_name;
         employee.$save();
     }
 
     function initializeAuthService() {
         yammer.getLoginStatus(function(response) {
-            updateExtApiSession(response);
+            updateExtAppSession(response);
             var session = SessionStorage.load('session');
-            if (ExtApiSession.token && session) {
+            if (ExtAppSession.token && session) {
                 if (session.userRole == USER_ROLES.guest) {
                     Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                 } else {
-                    loginSchedulizer(ExtApiSession).then(function(userStatus) {
+                    loginSchedulizer(ExtAppSession).then(function(userStatus) {
                         updateUserInformation(userStatus.employeeId, response);
                         $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                     });
@@ -201,18 +201,18 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     }
 
     authService.login = function() {
-        var deferredExtApiResponse = $q.defer();
-        if (!ExtApiSession.token) {
+        var deferredExtAppResponse = $q.defer();
+        if (!ExtAppSession.token) {
             yammer.login(function(response) {
-                updateExtApiSession(response);
-                deferredExtApiResponse.resolve(ExtApiSession);
+                updateExtAppSession(response);
+                deferredExtAppResponse.resolve(ExtAppSession);
             });
         } else {
-            deferredExtApiResponse.resolve(ExtApiSession);
+            deferredExtAppResponse.resolve(ExtAppSession);
         }
         var deferred = $q.defer();
-        deferredExtApiResponse.promise.then(function(extApiSession) {
-            loginSchedulizer(extApiSession).then(function(userStatus) {
+        deferredExtAppResponse.promise.then(function(extAppSession) {
+            loginSchedulizer(extAppSession).then(function(userStatus) {
                 deferred.resolve(userStatus);
             });
         });
@@ -267,11 +267,11 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     return authService;
 });
 
-App.run(["SessionStorage", "Session", "ExtApiSession", "$http", function(SessionStorage, Session, ExtApiSession, $http) {
-    var extApiSession = SessionStorage.load("extApiSession");
-    if(extApiSession && extApiSession.token && extApiSession.userId){
-        createAuthorizationHeader($http, extApiSession);
-        ExtApiSession.create(extApiSession.token, extApiSession.userId);
+App.run(["SessionStorage", "Session", "ExtAppSession", "$http", function(SessionStorage, Session, ExtAppSession, $http) {
+    var extAppSession = SessionStorage.load("extAppSession");
+    if(extAppSession && extAppSession.token && extAppSession.userId){
+        createAuthorizationHeader($http, extAppSession);
+        ExtAppSession.create(extAppSession.token, extAppSession.userId);
     }
     var session = SessionStorage.load("session");
     if (session) {
