@@ -40,7 +40,7 @@ public class GroupEmployeesResource {
     public Response joinGroup(
             @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
-            @FormParam("yammerId") String yammerId,
+            @FormParam("extApiId") String yammerId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
 

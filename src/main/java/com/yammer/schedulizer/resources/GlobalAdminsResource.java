@@ -34,7 +34,7 @@ public class GlobalAdminsResource {
     @UnitOfWork
     public Response addGlobalAdmin(
             @Authorize({Role.ADMIN}) User user,
-            @FormParam("yammerId") String yammerId,
+            @FormParam("extApiId") String yammerId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
         Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {

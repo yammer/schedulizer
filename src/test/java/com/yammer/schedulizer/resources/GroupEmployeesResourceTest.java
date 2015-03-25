@@ -29,7 +29,7 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
     protected MultivaluedMap getSamplePostForm() {
         MultivaluedMapImpl values = new MultivaluedMapImpl();
         values.add("name",  employeeName);
-        values.add("yammerId", yammerId);
+        values.add("extApiId", yammerId);
         values.add("imageUrlTemplate", imageUrlTemplate);
         return values;
     }

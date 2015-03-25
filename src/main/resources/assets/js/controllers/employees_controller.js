@@ -58,13 +58,13 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             if (yid == undefined || yid == "") {
                 return false;
             }
-            if (_.find(group.employees, function(e){ return e.yammerId == yid; })) {
+            if (_.find(group.employees, function(e){ return e.extApiId == yid; })) {
                 $scope.employeeInput.setValue("");
                 return false;
             }
 
             var employee = new GroupEmployee({groupId: group.id});
-            employee.yammerId = yid;
+            employee.extApiId = yid;
             employee.name = yEmployee.full_name;
             employee.imageUrlTemplate = yEmployee.photo;
             employee.$save({}, function(response) {
