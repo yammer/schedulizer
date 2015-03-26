@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
                                                CustomStat, DateUtils) {
 

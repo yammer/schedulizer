@@ -136,7 +136,7 @@ function createAuthorizationHeader($http, extAppSession) {
                                                   "\"";
 }
 
-App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, ExtAppSession, SessionStorage, yammer,
+App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, ExtAppSession, SessionStorage, extAppApi,
                                     AuthorizationResource, Employee, USER_ROLES, AUTH_EVENTS) {
     var authService = {};
 
@@ -180,7 +180,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     }
 
     function initializeAuthService() {
-        yammer.getLoginStatus(function(response) {
+        extAppApi.getLoginStatus(function(response) {
             updateExtAppSession(response);
             var session = SessionStorage.load('session');
             if (ExtAppSession.token && session) {
@@ -203,7 +203,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     authService.login = function() {
         var deferredExtAppResponse = $q.defer();
         if (!ExtAppSession.token) {
-            yammer.login(function(response) {
+            extAppApi.login(function(response) {
                 updateExtAppSession(response);
                 deferredExtAppResponse.resolve(ExtAppSession);
             });

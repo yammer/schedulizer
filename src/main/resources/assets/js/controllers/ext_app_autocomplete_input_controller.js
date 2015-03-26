@@ -1,4 +1,4 @@
-App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, yammer, Utils) {
+App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, extAppApi, Utils) {
     $scope.autocompleteList = [];
     window.autocompleteScope = $scope;
 
@@ -12,7 +12,7 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, y
             $timeout.cancel(timeout);
         }
         timeout = $timeout(function() {
-            yammer.autocomplete(prefix, function(response) {
+            extAppApi.autocomplete(prefix, function(response) {
                 if (response == undefined) {
                     return;
                 }

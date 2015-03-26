@@ -43,9 +43,9 @@ var SHARED_HEADERS = {
     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
 };
 
-services.factory('yammer', ['$window', function($window) {
+services.factory('extAppApi', ['$window', function($window) {
     var yam = $window.yam;
-    if (!yam) throw new Error('Yammer did not load');
+    if (!yam) throw new Error('Could not load external api');
     var autocompleteCache = {};
 
     return {
