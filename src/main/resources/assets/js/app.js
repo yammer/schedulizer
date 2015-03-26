@@ -25,7 +25,15 @@ var USER_ROLES_CONSTANT = {
     guest: 'GUEST'
 }
 
+// Same here... we need to inject this constant into EXT_APP
+var EXT_APP_TYPES_CONSTANT = {
+    yammer: "yammer"
+};
+
 App.constant('USER_ROLES', USER_ROLES_CONSTANT);
+
+App.constant('EXT_APP', EXT_APP_TYPES_CONSTANT.yammer);
+App.constant('EXT_APP_TYPES', EXT_APP_TYPES_CONSTANT);
 
 App.constant('NAV_TABS', {
     calendar: {
