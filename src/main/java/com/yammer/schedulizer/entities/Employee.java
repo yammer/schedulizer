@@ -1,6 +1,7 @@
 package com.yammer.schedulizer.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -69,6 +70,7 @@ public class Employee extends BaseEntity {
         return id;
     }
 
+    @JsonProperty("extAppId")
     public String getYammerId() {
         return yammerId;
     }
