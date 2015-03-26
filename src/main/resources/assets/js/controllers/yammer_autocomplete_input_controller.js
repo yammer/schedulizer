@@ -20,6 +20,9 @@ App.controller("YammerAutocompleteInputController", function($scope, $timeout, y
                 $timeout(function(){
                     $scope.autocompleteList =
                         (users.map(function(user) {
+                            if (user.full_name == undefined) { // test user
+                                user.full_name = "";
+                            }
                             var names = user.full_name.split(" ");
                             user.label = names[0] + " " + names[names.length - 1];
                             return {
