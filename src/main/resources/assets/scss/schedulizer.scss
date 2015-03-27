@@ -209,6 +209,17 @@ $calendar-cell-spacing: 4px;
     border-spacing: $calendar-cell-spacing;
 }
 
+/* Remind Users */
+
+.remind-users-container {
+    position: absolute;
+    bottom: 11px;
+    left: -5px;
+}
+ .remind-users-container .users-span {
+    padding-right: 3px;
+ }
+
 /* Group View Calendar */
 
 $assigned-bg: #6FDF6F;
@@ -294,6 +305,8 @@ $mid-assigned-bg: #EFC932;
 .left-bar {
     float: left;
     width: $left-bar-width;
+    /* Making up space for the remind users button */
+    height: 220px;
 }
 
 .right-bar {
@@ -1438,6 +1451,9 @@ $not-available-input-bg: #DA4B4B;
                                                                                                  padding-left: 8px;
                                                                                                  padding-right: 8px; }
                                                      .left-sidebar .nav { font-size: 13px; }
+                                                     .remind-users-container { left: 5px; }
+                                                     .remind-users-container .users-span { display: none; }
+                                                     .remind-users-container .remind-span { margin-left: -6px; padding-right: 3px; }
                                                    }
 @media (max-width: 1136px)                         { .left-bar, .left-bar .stamp { width: 96px; }
                                                      .right-bar, .right-bar .stamp, .bucket { width: 103px; }
@@ -1452,6 +1468,7 @@ $not-available-input-bg: #DA4B4B;
                                                                             top: 5px; }
                                                      .left-sidebar .nav { font-size: 12px; }
                                                      .left-sidebar .nav li a { padding-left: 10px; padding-right: 10px; }
+                                                     .remind-users-container { left: -6px; }
                                                    }
 @media (max-width: 1020px)                         { .stats-inputs-container .counter-control { display: none; }
                                                      .mini-assignment-type-label { padding-bottom: 2px; }

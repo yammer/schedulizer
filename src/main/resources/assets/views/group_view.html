@@ -90,7 +90,13 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="remind-users-container">
+                    <button type="button" ng-click="goToToday()" class="btn btn-primary remind-users-button">
+                        <span class="glyphicon glyphicon-envelope">&nbsp;</span>
+                        <span class="remind-span">Remind</span>
+                        <span class="users-span"> Users</span>
+                    </button>
+                </div>
             </div>
             <div class="right-bar">
                 <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
