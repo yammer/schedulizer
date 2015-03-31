@@ -1,4 +1,5 @@
-App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, extAppApi, DateUtils) {
+App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, extAppApi,
+                                                      DateUtils, RemindUsersGroup) {
     $scope.group = data.group;
     $scope.days = data.days;
     $scope.groupInput = {};
@@ -8,7 +9,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         top: 10,
         left: 20,
         el: undefined
-    }
+    };
+
+    $scope.extAppGroup = RemindUsersGroup.load($scope.group.id);
+    $scope.groupChosen = $scope.extAppGroup != undefined;
 
     var employeeNameMap = {};
 
@@ -260,6 +264,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             $scope.groupInput.shake();
             return;
         }
+        RemindUsersGroup.save($scope.group.id, $scope.extAppGroup);
         checkNameTags();
         removeStyle();
         var tagList = [];

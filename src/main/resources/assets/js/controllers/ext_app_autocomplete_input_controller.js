@@ -25,10 +25,18 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
         $scope.placeholder = "Name";
     }
 
-
+    var isInitialValue = false;
+    if ($scope.initialValue) {
+        $scope.inputValue = $scope.initialValue;
+        isInitialValue = true;
+    }
     var timeout;
     var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // in order not to send too many queries
     $scope.$watch('inputValue', function(prefix) {
+        if (isInitialValue) {
+            isInitialValue = false;
+            return;
+        }
         if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
             return;
         }
@@ -91,7 +99,8 @@ App.directive('extAppAutocompleteInput', function() {
             api: "=exposeApiTo",
             displayAbove: "@",
             autocompleteType: "@?",
-            placeholder: "@?"
+            placeholder: "@?",
+            initialValue: "@?"
         },
         templateUrl: 'views/ext_app_autocomplete_input.html',
         controller: 'ExtAppAutocompleteInputController'
