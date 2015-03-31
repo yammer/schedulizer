@@ -1,4 +1,4 @@
-App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, DateUtils) {
+App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, extAppApi, DateUtils) {
     $scope.group = data.group;
     $scope.days = data.days;
     $scope.groupInput = {};
@@ -10,12 +10,11 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         el: undefined
     }
 
-    var employeeNameToExtAppIdMap = {};
+    var employeeNameMap = {};
 
     $scope.remindUsersTextArea = {
         el: undefined,
-        text: "",
-        lastText: ""
+        text: ""
     };
 
     function generateDefaultText() {
@@ -50,18 +49,21 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
                 summary += period.startDay.toLocaleString().split(" ")[0] +
                            " - " + period.endDay.toLocaleString().split(" ")[0] + "\n";
             } else {
-                summary += period.startDay.toLocaleString().split(" ")[0];
+                summary += period.startDay.toLocaleString().split(" ")[0] + "\n";
             }
             $scope.group.assignmentTypes.forEach(function(assignmentType) {
                 var assignments = period.days[0].content.assignments[assignmentType.id];
                 if (undefinedOrEmpty(assignments)) {
                     return;
                 }
-                summary += "  " + assignmentType.name + ":";
+                summary += "- " + assignmentType.name + ":";
                 assignments.sort();
                 assignments.forEach(function(employee) {
                     summary+=  " <b>" + employee.name + "</b>\u200C,"; // &zwnj; marks the end of the string
-                    employeeNameToExtAppIdMap[employee.name] = employee.extAppId;
+                    employeeNameMap[employee.name] = {
+                        id: employee.extAppId,
+                        full_name: employee.name
+                    };
                 });
                 summary = summary.slice(0, -1); // remove last comma
                 summary += "\n";
@@ -103,25 +105,43 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     }
 
     var regexTag = /\<b\>([^\n(<\/b>)]+)\<\/b\>/g; // <b>Name</b>
-    var regexInvalid = /\<b\>([^\n(<\/b>)]+)\<\/b\>[^\u200C]/g; // <b>Name</b> \u200C is the unicode to &zwnj;
-
-    function forEachMatch(regex, text, func) {
-        var match = regex.exec(text);
-        while (match != null) {
-            func(match);
-            match = regex.exec(text);
-        }
-    }
+    var regexInvalid = /\<b\>([^\n(<\/b>)]+)\<\/b\>(?=([^\u200C]|$))/g; // <b>Name</b> \u200C is the unicode to &zwnj;
 
     function checkNameTags() {
         var text = $scope.remindUsersTextArea.text;
-        forEachMatch(regexTag, text, function(match) {
-            if (employeeNameToExtAppIdMap[match[1]] == undefined) {
-                text = text.replace(match[0], match[1]);
+        text = text.replace(regexTag, function(match0, match1) {
+            if (employeeNameMap[match1] == undefined) {
+                return match1;
             }
+            return match0;
         });
-        forEachMatch(regexInvalid, text, function(match) {
-            text = text.replace(match[0], match[1] + "\n");
+
+        text = text.replace(regexInvalid, function(match0, match1) {
+            return match1;
+        });
+        $scope.remindUsersTextArea.text = text;
+    }
+
+    var styleRegex = /\sstyle\=\"[^\n\"]+\;\"/g;
+    function removeStyle() {
+        var text = $scope.remindUsersTextArea.text;
+        text = text.replace(styleRegex, "");
+        if ($scope.remindUsersTextArea.text != text) {
+            $scope.remindUsersTextArea.text = text;
+            return true;
+        }
+        return false;
+    }
+
+    var htmlTagRegex = /\<\/?((span)|(i)|(strong))(\s)*\>/g;
+    function removeHtmlTags(text) {
+        return text.replace(htmlTagRegex, "");
+    }
+
+    function addTagDelimiters() {
+        var text = $scope.remindUsersTextArea.text;
+        text = text.replace(regexInvalid, function(match) {
+            return match + '\u200C';
         });
         $scope.remindUsersTextArea.text = text;
     }
@@ -168,20 +188,8 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         }
     }
 
-    function lastTypedCharIndex() {
-        var i = 0;
-        while  (i < $scope.remindUsersTextArea.text.length && i < $scope.remindUsersTextArea.lastText.length &&
-                $scope.remindUsersTextArea.text[i] == $scope.remindUsersTextArea.lastText[i]) {
-            i++;
-        }
-        return i;
-    }
-
-
     $scope.onKeyPress = function(e) {
-        if ($scope.remindUsersTextArea.lastText != $scope.remindUsersTextArea.text) {
-            $scope.remindUsersTextArea.lastText = $scope.remindUsersTextArea.text;
-        }
+
         $timeout(function() {
             if (e.keyCode == 64 /* @ */) {
                 saveCursor();
@@ -202,6 +210,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
              *  a custom ngModel, which only works on keyup events. So we need this timeout to allow the binding to work
              */
             $timeout(function(){
+                if(removeStyle()) { // user pasted something
+                    document.execCommand('insertHTML', false, '\u200C'); // isolate pasted content
+                }
+                $scope.remindUsersTextArea.text = removeHtmlTags($scope.remindUsersTextArea.text);
                 checkNameTags();
             }, 10);
         }
@@ -234,7 +246,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         $scope.clearTagInput();
         document.execCommand('delete'); // delete @
         if ($scope.taggedUser) {
-            employeeNameToExtAppIdMap[$scope.taggedUser.full_name] = $scope.taggedUser.id;
+            employeeNameMap[$scope.taggedUser.full_name] = {
+                id: $scope.taggedUser.id,
+                full_name: $scope.taggedUser.full_name
+            }
             var tag = "<b>" + $scope.taggedUser.full_name + "</b>\u200C";
             document.execCommand('insertHTML', false, tag); // insert tag
         }
@@ -245,8 +260,22 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             $scope.groupInput.shake();
             return;
         }
+        checkNameTags();
+        removeStyle();
+        var tagList = [];
+        var i = 0;
+        var message = $scope.remindUsersTextArea.text.replace(regexTag, function(match, name) {
+            tagList[i] = employeeNameMap[name];
+            var str = "{" + i + "}";
+            i++;
+            return str;
+        }).replace(/\u200C/g, "");
 
-        $modalInstance.close();
+        message = removeHtmlTags(message);
+
+        extAppApi.post($scope.extAppGroup.id, message, tagList, function(){
+            $modalInstance.close();
+        });
     };
 
     $scope.cancel = function() {

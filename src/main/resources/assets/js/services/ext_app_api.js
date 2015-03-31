@@ -3,8 +3,17 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
     var extAppApi = {
         getLoginStatus: notImplemented,
         login: notImplemented,
-        autocomplete: notImplemented
+        autocomplete: notImplemented,
+        post: notImplemented
     };
+
+    function formatString(message, tags, mapper) {
+        return message.replace(/{(\d+)}/g, function(match, i) {
+            return typeof tags[i] != 'undefined'
+                ? mapper(tags[i])
+                : match;
+        });
+    }
 
     switch (EXT_APP) {
         case EXT_APP_TYPES.yammer:
@@ -45,6 +54,26 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                                 items: response[autocompleteType]
                             };
                             autocompleteCache[cacheKey(prefix)] = response;
+                            callback(response);
+                        }
+                    });
+                },
+                /**
+                 *  Message contains message with {0}, {1) ... representing the tags in the tagList respectively
+                 */
+                post: function(groupId, message, tagList, callback) {
+                    var body = formatString(message, tagList, function(tag) {
+                        return "[[user:" + tag.id + "]]";
+                    });
+                    yam.platform.request({
+                        url: "messages.json",
+                        method: "POST",
+                        data: {
+                            "body": body,
+                            "group_id": groupId
+                        },
+                        success: function (response) {
+                            console.log(response);
                             callback(response);
                         }
                     });
