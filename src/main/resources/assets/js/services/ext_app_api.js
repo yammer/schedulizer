@@ -20,10 +20,13 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                 login: function(callback){
                     yam.platform.login(callback);
                 },
-                autocomplete: function(prefix, callback) {
-                    if (autocompleteCache[prefix]) {
+                autocomplete: function(prefix, callback, autocompleteType) {
+                    function cacheKey(str) {
+                        return autocompleteType + "###" + str;
+                    }
+                    if (autocompleteCache[cacheKey(prefix)]) {
                         $window.setTimeout(function() {
-                            callback(autocompleteCache[prefix])
+                            callback(autocompleteCache[cacheKey(prefix)])
                         }, 0); // async because the callback is supposed to be async
                         return;
                     }
@@ -32,14 +35,17 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                         method: "GET",
                         data: {
                             "prefix": prefix,
-                            "models": "user:20"
+                            "models": autocompleteType + ":20"
                         },
-                        success: function (user) { //print message response information to the console
+                        success: function (response) { //print message response information to the console
                             if (Object.keys(autocompleteCache).length > 50) {
                                 autocompleteCache = {}; // flushing cache if it gets too big
                             }
-                            autocompleteCache[prefix] = user;
-                            callback(user);
+                            response = {
+                                items: response[autocompleteType]
+                            };
+                            autocompleteCache[cacheKey(prefix)] = response;
+                            callback(response);
                         }
                     });
                 }
