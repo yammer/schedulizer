@@ -1,0 +1,66 @@
+<div class="tag-autocomplete-input-holder"
+     ng-show="tagAutocomplete.show"
+     style="top:{{tagAutocomplete.top}}px; left: {{tagAutocomplete.left}}px;">
+    <ext-app-autocomplete-input
+            st-name="tagAutocomplete.el"
+            on-select-autocomplete="onSelectAutocompleteTag"
+            placeholder=""
+            on-key-up="onKeyUpTag"
+            on-enter="onEnterTag"
+            on-blur="clearTagInput"
+            expose-api-to="tagInput"
+            autocomplete-type="user">
+    </ext-app-autocomplete-input>
+</div>
+
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    Send Notification
+                </h4>
+            </div>
+            <div class="modal-body group-settings">
+                <div>
+                    <label>Group</label>
+                    <ext-app-autocomplete-input
+                            ng-class="{'group-autocomplete-input': groupChosen}"
+                            on-select-autocomplete="onSelectAutocompleteGroupName"
+                            on-key-down="onKeyDownGroupName"
+                            on-enter="onEnterGroupName"
+                            expose-api-to="groupInput"
+                            autocomplete-type="group">
+                    </ext-app-autocomplete-input>
+                </div>
+                <div>
+                    <label class="remind-users-message-label">
+                        Message
+                        <span class="glyphicon glyphicon-question-sign custom-stat-question-sign"
+                              st-tooltip="true"
+                              title="You can tag people by typing @ and their name"
+                              my="left-20 bottom"
+                              at="left top-10"></span>
+                    </label>
+                    <div contenteditable="true"
+                         ng-model="remindUsersTextArea.text"
+                         st-name="remindUsersTextArea.el"
+                         class="remind-users-text-area"
+                         ng-keypress="onKeyPress($event)"
+                         ng-keyup="onKeyUp($event)"
+                         st-autocomplete>
+                    </div>
+                </div>
+             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" ng-click="ok()">
+                    Ok
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="cancel()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -226,6 +226,12 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         Utils.animate('tada', today);
     }
 
+    $scope.openRemindUsersModal = function() {
+        var dlg = $dialogs.create('/views/remind_users_modal.html','RemindUsersModalController',
+                                  {group: $scope.selectedGroup, days: $scope.calendar.getDays($scope.selectedDates)},
+                                  {key: false, back: 'static'});
+    }
+
     $scope.dayStamp = DateUtils.TODAY;
 
     $scope.onHoverDay = function(day) {
@@ -503,7 +509,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.groupSettingsModal = function() {
-        dlg = $dialogs.create('/views/group_settings_modal.html','GroupSettingsModalController',{group: $scope.selectedGroup},{key: false, back: 'static'});
+        var dlg = $dialogs.create('/views/group_settings_modal.html','GroupSettingsModalController',{group: $scope.selectedGroup},{key: false, back: 'static'});
         dlg.result.then(function(group) {
             if (group) {
                 if (group.name != $scope.selectedGroup.name) {

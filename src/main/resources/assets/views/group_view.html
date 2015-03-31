@@ -90,8 +90,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="remind-users-container">
-                    <button type="button" ng-click="goToToday()" class="btn btn-primary remind-users-button">
+                <div st-if="isGroupAdmin(selectedGroup)"
+                     class="remind-users-container"
+                     title="First select some dates in the calendar and then press this button"
+                     st-tooltip="{{selectedDates == undefined || selectedDates.length == 0}}">
+                    <button
+                            type="button"
+                            ng-click="openRemindUsersModal()"
+                            class="btn btn-primary remind-users-button"
+                            ng-class="{'disabled': selectedDates == undefined || selectedDates.length == 0}">
                         <span class="glyphicon glyphicon-envelope">&nbsp;</span>
                         <span class="remind-span">Remind</span>
                         <span class="users-span"> Users</span>
@@ -245,7 +252,7 @@
                             ng-click="setStatRangeIfEditMode()"
                             >
                             <div ng-if="!isStatEditMode()" class="st-tooltip-title">
-                                First selected a RANGE of days on the calendar then press this button.
+                                First select a RANGE of days on the calendar then press this button.
                             </div>
                             <span class="glyphicon glyphicon-pencil"></span>
                         </div>
