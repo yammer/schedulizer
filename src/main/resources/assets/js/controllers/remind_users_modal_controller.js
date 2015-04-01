@@ -195,7 +195,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     $scope.onKeyPress = function(e) {
 
         $timeout(function() {
-            if (e.keyCode == 64 /* @ */) {
+            if (e.keyCode == 64 /* @ */ || e.key == "@") {
                 saveCursor();
                 var clientRect = window.getSelection().getRangeAt(0).getClientRects()[0]; // get cursor position
                 $scope.tagAutocomplete.show = true;
