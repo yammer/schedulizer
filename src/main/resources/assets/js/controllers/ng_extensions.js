@@ -386,3 +386,24 @@ App.directive('stTooltip', function($timeout){
         }
     };
 });
+
+// Two way binding with divs that have contenteditable
+App.directive('contenteditable', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, el, attrs, controller) {
+            controller.$render = function() {
+                if (typeof controller.$viewValue != typeof "") {
+                    return;
+                }
+                el.html(controller.$viewValue.replace(/\n/g, "<br>").replace(/\s/g, "&nbsp;"));
+            };
+            el.bind('blur keyup', function(e) {
+                scope.$apply(function() {
+                    controller.$setViewValue(el.html().replace(/\<br\>/g, "\n").replace(/\&nbsp\;/g, " "));
+                });
+            });
+            controller.$render();
+        }
+    };
+});

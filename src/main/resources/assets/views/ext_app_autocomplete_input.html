@@ -3,13 +3,15 @@
         type="text"
         st-name="autocompleteInput"
         ng-model="inputValue"
-        placeholder="Name"
+        placeholder="{{placeholder}}"
         st-autocomplete
         item-class="employee-autocomplete-item"
         tags="autocompleteList"
         get-custom-template="getAutocompleteItem"
         autocomplete-select="onSelectAutocomplete"
         ng-change="onKeyDown()"
+        ng-keyup="onKeyUp($event)"
         ng-enter="onEnter()"
+        ng-blur="onBlur()"
         display-above="{{displayAbove}}"
         />

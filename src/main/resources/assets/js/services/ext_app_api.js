@@ -3,8 +3,17 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
     var extAppApi = {
         getLoginStatus: notImplemented,
         login: notImplemented,
-        autocomplete: notImplemented
+        autocomplete: notImplemented,
+        post: notImplemented
     };
+
+    function formatString(message, tags, mapper) {
+        return message.replace(/{(\d+)}/g, function(match, i) {
+            return typeof tags[i] != 'undefined'
+                ? mapper(tags[i])
+                : match;
+        });
+    }
 
     switch (EXT_APP) {
         case EXT_APP_TYPES.yammer:
@@ -20,10 +29,13 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                 login: function(callback){
                     yam.platform.login(callback);
                 },
-                autocomplete: function(prefix, callback) {
-                    if (autocompleteCache[prefix]) {
+                autocomplete: function(prefix, callback, autocompleteType) {
+                    function cacheKey(str) {
+                        return autocompleteType + "###" + str;
+                    }
+                    if (autocompleteCache[cacheKey(prefix)]) {
                         $window.setTimeout(function() {
-                            callback(autocompleteCache[prefix])
+                            callback(autocompleteCache[cacheKey(prefix)])
                         }, 0); // async because the callback is supposed to be async
                         return;
                     }
@@ -32,14 +44,37 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                         method: "GET",
                         data: {
                             "prefix": prefix,
-                            "models": "user:20"
+                            "models": autocompleteType + ":20"
                         },
-                        success: function (user) { //print message response information to the console
+                        success: function (response) { //print message response information to the console
                             if (Object.keys(autocompleteCache).length > 50) {
                                 autocompleteCache = {}; // flushing cache if it gets too big
                             }
-                            autocompleteCache[prefix] = user;
-                            callback(user);
+                            response = {
+                                items: response[autocompleteType]
+                            };
+                            autocompleteCache[cacheKey(prefix)] = response;
+                            callback(response);
+                        }
+                    });
+                },
+                /**
+                 *  Message contains message with {0}, {1) ... representing the tags in the tagList respectively
+                 */
+                post: function(groupId, message, tagList, callback) {
+                    var body = formatString(message, tagList, function(tag) {
+                        return "[[user:" + tag.id + "]]";
+                    });
+                    yam.platform.request({
+                        url: "messages.json",
+                        method: "POST",
+                        data: {
+                            "body": body,
+                            "group_id": groupId
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            callback(response);
                         }
                     });
                 }

@@ -307,3 +307,20 @@ services.factory('CustomStat', ['$window', function($window) {
         }
     }
 }]);
+
+
+services.factory('RemindUsersGroup', ['$window', function($window) {
+    return {
+        load: function(groupId) {
+            var value = $window.localStorage.getItem("remind-user-group-" + groupId);
+            if(value == undefined) {
+                return undefined;
+            }
+            return JSON.parse(value);
+
+        },
+        save: function(groupId, extAppGroup) {
+            $window.localStorage.setItem("remind-user-group-" + groupId, JSON.stringify(extAppGroup));
+        }
+    }
+}]);
