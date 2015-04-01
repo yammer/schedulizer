@@ -58,134 +58,135 @@
     <calendar-progress-bar expose-api-to="progressBar" calendar="calendar">
     </calendar-progress-bar>
 
-    <div class="calendar-wrap align-parent-bottom" discount-height="70">
-        <div class="left-bar">
-            <div class="tools">
-                <button type="button" ng-click="goToToday()" class="btn btn-primary">
-                    <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                    &nbsp; Today
-                </button>
-            </div>
-            <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
-                <div class="sub-label">{{getMonthName(dayStamp)}}</div>
-                <div class="main-label">{{dayStamp.getDate()}}</div>
-            </div>
-            <div ng-if="hasAssignment(hoveredDay)" class="day-assignments">
-                <div
-                    ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey: orderHoveredDayBy"
-                    class="day-assignment"
-                    ng-if="showHoveredDayEmployees(hoveredDay, employees)"
-                    >
-                    <div class="day-assignment-role">
-                        <span class="assignment-color-{{index % 10}}">
-                            {{selectedGroup.assignmentTypeFor(employees.key).name}}
-                        </span>
-                    </div>
-                    <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
-                        <img
-                            ng-repeat="employee in employees | orderBy: 'name'"
-                            ng-src="{{employee.imageUrlTemplate}}"
-                            />
+    <div class="group-view-content align-parent-bottom">
+        <div class="calendar-wrap align-parent-bottom" discount-height="70">
+            <div class="left-bar">
+                <div class="tools">
+                    <button type="button" ng-click="goToToday()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                        &nbsp; Today
+                    </button>
+                </div>
+                <div class="stamp day-stamp" ng-class="{'today': dayStamp.isToday()}">
+                    <div class="sub-label">{{getMonthName(dayStamp)}}</div>
+                    <div class="main-label">{{dayStamp.getDate()}}</div>
+                </div>
+                <div ng-if="hasAssignment(hoveredDay)" class="day-assignments">
+                    <div
+                        ng-repeat="(index, employees) in hoveredDay.content.assignments | orderByExpressionAppliedOnTheKey: orderHoveredDayBy"
+                        class="day-assignment"
+                        ng-if="showHoveredDayEmployees(hoveredDay, employees)"
+                        >
+                        <div class="day-assignment-role">
+                            <span class="assignment-color-{{index % 10}}">
+                                {{selectedGroup.assignmentTypeFor(employees.key).name}}
+                            </span>
+                        </div>
+                        <div class="day-assignment-avatars" ng-if="!availabilityCalendarMode">
+                            <img
+                                ng-repeat="employee in employees | orderBy: 'name'"
+                                ng-src="{{employee.imageUrlTemplate}}"
+                                />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-        <div class="right-bar">
-            <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
-                <div ng-click="clearSelection()" class="stamp selection-stamp" >
-                    <div class="main-label">{{selectedDates.length}}</div>
-                    <div class="sub-label">Days Selected</div>
-                </div>
-                <div class="clear"></div>
-                <div class="assignment-type-buckets">
-                    <div class="bucket"
-                         ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.id'"
-                         ng-droppable="isGroupAdmin(selectedGroup)"
-                         ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
-                        <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
-                        <div class="bucket-content">
-                            <div
-                                ng-repeat="employee in assignmentTypeBucket.employeeList | orderObjectBy: 'employee.name'"
-                                class="assigned-employee"
-                                ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
-                                ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
-                                st-tooltip="true"
-                                ng-attr-title="{{employee.employee.name}}"
-                                my="left bottom-5"
-                                at="left-10 top"
-                                >
-                                <img
-                                    ng-src="{{employee.employee.imageUrlTemplate}}"
-                                    width="100%"
-                                    height="100%"/>
-                                <span
-                                    st-if="isGroupAdmin(selectedGroup)"
-                                    class="minus-span">-</span>
+            </div>
+            <div class="right-bar">
+                <div ng-if="!availabilityCalendarMode && selectedDates.length > 0">
+                    <div ng-click="clearSelection()" class="stamp selection-stamp" >
+                        <div class="main-label">{{selectedDates.length}}</div>
+                        <div class="sub-label">Days Selected</div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="assignment-type-buckets">
+                        <div class="bucket"
+                             ng-repeat="assignmentTypeBucket in assignmentTypeBuckets | orderObjectBy: 'assignmentType.id'"
+                             ng-droppable="isGroupAdmin(selectedGroup)"
+                             ng-on-drop="addAssignment(data, assignmentTypeBucket.assignmentType)">
+                            <div class="bucket-name">{{assignmentTypeBucket.assignmentType.name}}</div>
+                            <div class="bucket-content">
+                                <div
+                                    ng-repeat="employee in assignmentTypeBucket.employeeList | orderObjectBy: 'employee.name'"
+                                    class="assigned-employee"
+                                    ng-class="{'is-admin': isGroupAdmin(selectedGroup)}"
+                                    ng-click="deleteAssignmentsIfHasPrivileges(employee, assignmentTypeBucket.employeeList)"
+                                    st-tooltip="true"
+                                    ng-attr-title="{{employee.employee.name}}"
+                                    my="left bottom-5"
+                                    at="left-10 top"
+                                    >
+                                    <img
+                                        ng-src="{{employee.employee.imageUrlTemplate}}"
+                                        width="100%"
+                                        height="100%"/>
+                                    <span
+                                        st-if="isGroupAdmin(selectedGroup)"
+                                        class="minus-span">-</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <table
-                ng-init="legendToggle = false"
-                class="legend legend-hint"
-                ng-mouseenter="legendToggle = true"
-                ng-hide="legendToggle"
-                >
-                <tr>
-                    <td class="cf-day cf-today"></td>
-                    <td class="description">Legend</td>
-                </tr>
-            </table>
-
-            <table
-                class="legend legend-full"
-                ng-mouseleave="legendToggle = false"
-                ng-show="legendToggle"
-                >
-                <tr ng-if="!availabilityCalendarMode">
-                    <td class="cf-day cf-odd"></td>
-                    <td class="cf-day cf-even"></td>
-                    <td class="description">Empty days</td>
-                </tr>
-                <tr ng-click="goToToday()">
-                    <td class="cf-day cf-today"></td>
-                    <td class="description" colspan="2">Today</td>
-                </tr>
-                <tr ng-if="!availabilityCalendarMode">
-                    <td class="cf-day cf-hover"></td>
-                    <td class="description" colspan="2">Selected</td>
-                </tr>
-                <tr ng-if="!availabilityCalendarMode">
-                    <td class="cf-day mid-assigned"></td>
-                    <td class="description" colspan="2">Partially Assigned</td>
-                </tr>
-                <tr ng-if="!availabilityCalendarMode">
-                    <td class="cf-day assigned"></td>
-                    <td class="description" colspan="2">Fully Assigned</td>
-                </tr>
-                <tr ng-if="availabilityCalendarMode" ng-repeat="availabilityState in availabilityStates">
-                    <td class="cf-day {{availabilityState.label}}"></td>
-                    <td class="description" colspan="2">{{availabilityState.title}}</td>
-                </tr>
-            </table>
-        </div>
-        <div style="overflow: hidden;" class="align-parent-bottom" discount-height="66">
-            <calendar
-                    class="calendar"
-                    on-select-days="onSelectDays"
-                    on-hover-day="onHoverDay"
-                    on-load-day-content="onLoadDayContent"
-                    expose-api-to="calendar"
-                    cell-class="getCellClass(day)"
-                    get-day-tooltip="getDayTooltip"
-                    show-hover="!availabilityCalendarMode"
+                <table
+                    ng-init="legendToggle = false"
+                    class="legend legend-hint"
+                    ng-mouseenter="legendToggle = true"
+                    ng-hide="legendToggle"
                     >
-            </calendar>
+                    <tr>
+                        <td class="cf-day cf-today"></td>
+                        <td class="description">Legend</td>
+                    </tr>
+                </table>
+
+                <table
+                    class="legend legend-full"
+                    ng-mouseleave="legendToggle = false"
+                    ng-show="legendToggle"
+                    >
+                    <tr ng-if="!availabilityCalendarMode">
+                        <td class="cf-day cf-odd"></td>
+                        <td class="cf-day cf-even"></td>
+                        <td class="description">Empty days</td>
+                    </tr>
+                    <tr ng-click="goToToday()">
+                        <td class="cf-day cf-today"></td>
+                        <td class="description" colspan="2">Today</td>
+                    </tr>
+                    <tr ng-if="!availabilityCalendarMode">
+                        <td class="cf-day cf-hover"></td>
+                        <td class="description" colspan="2">Selected</td>
+                    </tr>
+                    <tr ng-if="!availabilityCalendarMode">
+                        <td class="cf-day mid-assigned"></td>
+                        <td class="description" colspan="2">Partially Assigned</td>
+                    </tr>
+                    <tr ng-if="!availabilityCalendarMode">
+                        <td class="cf-day assigned"></td>
+                        <td class="description" colspan="2">Fully Assigned</td>
+                    </tr>
+                    <tr ng-if="availabilityCalendarMode" ng-repeat="availabilityState in availabilityStates">
+                        <td class="cf-day {{availabilityState.label}}"></td>
+                        <td class="description" colspan="2">{{availabilityState.title}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div style="overflow: hidden;" class="align-parent-bottom calendar-container" discount-height="66">
+                <calendar
+                        class="calendar"
+                        on-select-days="onSelectDays"
+                        on-hover-day="onHoverDay"
+                        on-load-day-content="onLoadDayContent"
+                        expose-api-to="calendar"
+                        cell-class="getCellClass(day)"
+                        get-day-tooltip="getDayTooltip"
+                        show-hover="!availabilityCalendarMode"
+                        >
+                </calendar>
+            </div>
         </div>
     </div>
-
 </div>
 <div class="col-md-3 sidebar right-sidebar align-parent-bottom" discount-height="70">
     <div style="height: 100%;">

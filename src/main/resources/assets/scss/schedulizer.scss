@@ -167,6 +167,9 @@ $inner-padding: 15px;
 .left-bar { margin: 0 $inner-padding 0 0; }
 .right-bar { margin: 0 0 0 $inner-padding; }
 
+$left-bar-width: 144px;
+$right-bar-width: 150px;
+
 /* Calendar */
 
 $light-fg: #FFFFFF;
@@ -272,8 +275,17 @@ $mid-assigned-bg: #EFC932;
 
 /* Group tab */
 
+.group-view-content {
+    text-align: center;
+}
+
+.calendar-container {
+    display: inline-block;
+}
+
 .calendar-wrap {
-    display: table;
+    display: inline-block;
+    text-align: initial;
     margin: 0 auto;
     position: relative;
     padding-top: $inner-padding;
@@ -281,13 +293,13 @@ $mid-assigned-bg: #EFC932;
 
 .left-bar {
     float: left;
-    width: 144px;
+    width: $left-bar-width;
 }
 
 .right-bar {
     float: right;
+    width: $right-bar-width;
     /* Making up space for the legend */
-    width: 150px;
     height: 50px;
 }
 
@@ -1121,7 +1133,7 @@ $progress-bar-bg: transparent;
 
 .my-calendar-left-bar {
     float: left;
-    width: 144px;
+    width: $left-bar-width;
     height: 50px;
     margin: 0 10px;
 }
@@ -1455,7 +1467,7 @@ $not-available-input-bg: #DA4B4B;
     top: 54px;
   }
 
-  .cf-calendar-container {
+    .cf-calendar-container, .calendar-container {
     width: 541px;
   }
 }
@@ -1467,7 +1479,7 @@ $not-available-input-bg: #DA4B4B;
   .cf-view-calendar-wrapper {
     top: 51px;
   }
-  .cf-calendar-container {
+  .cf-calendar-container, .calendar-container  {
     width: 506px;
   }
 }
@@ -1479,7 +1491,7 @@ $not-available-input-bg: #DA4B4B;
   .cf-view-calendar-wrapper {
     top: 42px;
   }
-  .cf-calendar-container {
+  .cf-calendar-container, .calendar-container  {
     width: 436px;
   }
 }
@@ -1497,7 +1509,7 @@ $not-available-input-bg: #DA4B4B;
   .cf-view-calendar-wrapper {
     top: 37px;
   }
-  .cf-calendar-container {
+  .cf-calendar-container, .calendar-container  {
     width: 377px;
   }
 }
@@ -1510,9 +1522,7 @@ $not-available-input-bg: #DA4B4B;
   .cf-view-calendar-wrapper {
     top: 32px;
   }
-  .cf-calendar-container {
+  .cf-calendar-container, .calendar-container  {
     width: 335px;
   }
 }
-
-
