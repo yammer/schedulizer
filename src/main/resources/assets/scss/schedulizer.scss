@@ -1120,20 +1120,24 @@ $progress-bar-bg: transparent;
 
 /* My Calendar */
 
+.my-calender-view-content {
+    text-align: center;
+}
+
 .my-calendar-header {
     padding-left: 30px;
 }
 
 .my-calendar-right-bar {
     float: right;
-    width: 207px;
+    width: 208px;
     height: 50px;
     margin: 0 15px;
 }
 
 .my-calendar-left-bar {
     float: left;
-    width: $left-bar-width;
+    width: 208px; /* left bar and right bar have the same width for my calendar tab */
     height: 50px;
     margin: 0 10px;
 }

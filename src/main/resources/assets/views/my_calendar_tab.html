@@ -6,136 +6,137 @@
 
         <calendar-progress-bar calendar="calendar" expose-api-to="progressBar">
         </calendar-progress-bar>
-
-        <div class="calendar-wrap align-parent-bottom" discount-height="70">
-            <div class="my-calendar-left-bar">
-                <div class="tools">
-                    <button type="button" ng-click="goToToday()" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-                        &nbsp; Today
-                    </button>
-                </div>
-                <div class="stamp day-stamp" ng-class="{'cf-today': dayStamp.isToday()}">
-                    <div class="sub-label">{{getMonthName(dayStamp)}}</div>
-                    <div class="main-label">{{dayStamp.getDate()}}</div>
-                </div>
-                <div ng-if="hasAssignment(hoveredDay)" class="day-assignments assignment-hover-text-group">
-                    <div
-                            ng-repeat="assignment in hoveredDay.content.assignments"
-                            class="day-assignment"
-                            >
-                        <div class="day-assignment-role">
-                            <span class="assignment-hover-text">
-                                {{assignment.getFullName()}}
-                            </span>
-                        </div>
-
+        <div class="my-calender-view-content align-parent-bottom">
+            <div class="calendar-wrap align-parent-bottom" discount-height="70">
+                <div class="my-calendar-left-bar">
+                    <div class="tools">
+                        <button type="button" ng-click="goToToday()" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+                            &nbsp; Today
+                        </button>
                     </div>
-                </div>
-            </div>
-
-            <div class="my-calendar-right-bar">
-
-                <div ng-if="selectedDays.length > 0">
-                    <div ng-click="clearSelection()" class="stamp selection-stamp" >
-                        <div class="main-label">{{selectedDays.length}}</div>
-                        <div class="sub-label">Days Selected</div>
+                    <div class="stamp day-stamp" ng-class="{'cf-today': dayStamp.isToday()}">
+                        <div class="sub-label">{{getMonthName(dayStamp)}}</div>
+                        <div class="main-label">{{dayStamp.getDate()}}</div>
                     </div>
-                    <div class="clear"></div>
-
-                    <div class="panel panel-default availability-inputs-panel">
-                        <div class="panel-body">
-                            <div class="availability-inputs-container">
-                                <div
-                                    ng-repeat="state in availabilityStates"
-                                    ng-click="onCheckRestriction(state)"
-                                    class="availability-input {{state.label}}"
-                                    ng-class="{
-                                        'active': isStateToggleActive(state.label),
-                                        'invalid': availability.state == null
-                                    }"
-                                    >
-                                    <span class="glyphicon {{state.glyphicon}}"></span>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <div>
-                                <textarea
-                                    class="availability-comment form-control"
-                                    ng-model="availability.comment.text"
-                                    ng-trim="false"
-                                    ng-change="onComment()"
-                                    ng-class="{'invalid': !availability.comment.valid}"
-                                    placeholder="{{getCommentPlaceholder()}}"
-                                    >
-                                </textarea>
-                                <div class="clear"></div>
-                            </div>
-
-                            <button
-                                type="button"
-                                class="btn btn-primary availability-confirm-button"
-                                ng-class="{'disabled': !canSubmitChange()}"
-                                ng-click="submitAvailabilityChange()"
+                    <div ng-if="hasAssignment(hoveredDay)" class="day-assignments assignment-hover-text-group">
+                        <div
+                                ng-repeat="assignment in hoveredDay.content.assignments"
+                                class="day-assignment"
                                 >
-                                Ok
-                            </button>
-                            <p ng-if="canSubmitChange()" class="submit-message">
-                                {{selectedDays.length}} days will change
-                            </p>
-                            <p ng-if="!canSubmitChange()" class="submit-message">
-                                Change
-                                <span ng-if="!availability.comment.valid">comments</span>
-                                <span ng-if="!availability.comment.valid && availability.state == null">and</span>
-                                <span ng-if="availability.state == null">label</span>
-                            </p>
+                            <div class="day-assignment-role">
+                                <span class="assignment-hover-text">
+                                    {{assignment.getFullName()}}
+                                </span>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
-                <table
-                        ng-init="legendToggle = false"
-                        class="legend legend-hint"
-                        ng-mouseenter="legendToggle = true"
-                        ng-hide="legendToggle"
-                        >
-                    <tr>
-                        <td class="cf-day cf-today"></td>
-                        <td class="description">Legend</td>
-                    </tr>
-                </table>
+                <div class="my-calendar-right-bar">
 
-                <table
-                        class="legend full"
-                        ng-mouseleave="legendToggle = false"
-                        ng-show="legendToggle"
-                        >
-                    <tr ng-click="goToToday()">
-                        <td class="cf-day cf-today"></td>
-                        <td class="description" colspan="2">Today</td>
-                    </tr>
-                    <tr>
-                        <td class="cf-day cf-hover"></td>
-                        <td class="description" colspan="2">Selected</td>
-                    </tr>
-                    <tr ng-repeat="availabilityState in availabilityStates">
-                        <td class="cf-day {{availabilityState.label}}"></td>
-                        <td class="description" colspan="2">{{availabilityState.title}}</td>
-                    </tr>
-                </table>
-            </div>
+                    <div ng-if="selectedDays.length > 0">
+                        <div ng-click="clearSelection()" class="stamp selection-stamp" >
+                            <div class="main-label">{{selectedDays.length}}</div>
+                            <div class="sub-label">Days Selected</div>
+                        </div>
+                        <div class="clear"></div>
 
-            <div style="overflow: hidden;" class="align-parent-bottom" discount-height="66">
-                <calendar
-                        class="calendar"
-                        on-select-days="onSelectDays"
-                        on-hover-day="onHoverDay"
-                        on-load-day-content="onLoadDayContent"
-                        expose-api-to="calendar"
-                        cell-class="getCellClass(day)"
-                        get-day-tooltip="getDayTooltip"
-                        >
-                </calendar>
+                        <div class="panel panel-default availability-inputs-panel">
+                            <div class="panel-body">
+                                <div class="availability-inputs-container">
+                                    <div
+                                        ng-repeat="state in availabilityStates"
+                                        ng-click="onCheckRestriction(state)"
+                                        class="availability-input {{state.label}}"
+                                        ng-class="{
+                                            'active': isStateToggleActive(state.label),
+                                            'invalid': availability.state == null
+                                        }"
+                                        >
+                                        <span class="glyphicon {{state.glyphicon}}"></span>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                                <div>
+                                    <textarea
+                                        class="availability-comment form-control"
+                                        ng-model="availability.comment.text"
+                                        ng-trim="false"
+                                        ng-change="onComment()"
+                                        ng-class="{'invalid': !availability.comment.valid}"
+                                        placeholder="{{getCommentPlaceholder()}}"
+                                        >
+                                    </textarea>
+                                    <div class="clear"></div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary availability-confirm-button"
+                                    ng-class="{'disabled': !canSubmitChange()}"
+                                    ng-click="submitAvailabilityChange()"
+                                    >
+                                    Ok
+                                </button>
+                                <p ng-if="canSubmitChange()" class="submit-message">
+                                    {{selectedDays.length}} days will change
+                                </p>
+                                <p ng-if="!canSubmitChange()" class="submit-message">
+                                    Change
+                                    <span ng-if="!availability.comment.valid">comments</span>
+                                    <span ng-if="!availability.comment.valid && availability.state == null">and</span>
+                                    <span ng-if="availability.state == null">label</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table
+                            ng-init="legendToggle = false"
+                            class="legend legend-hint"
+                            ng-mouseenter="legendToggle = true"
+                            ng-hide="legendToggle"
+                            >
+                        <tr>
+                            <td class="cf-day cf-today"></td>
+                            <td class="description">Legend</td>
+                        </tr>
+                    </table>
+
+                    <table
+                            class="legend full"
+                            ng-mouseleave="legendToggle = false"
+                            ng-show="legendToggle"
+                            >
+                        <tr ng-click="goToToday()">
+                            <td class="cf-day cf-today"></td>
+                            <td class="description" colspan="2">Today</td>
+                        </tr>
+                        <tr>
+                            <td class="cf-day cf-hover"></td>
+                            <td class="description" colspan="2">Selected</td>
+                        </tr>
+                        <tr ng-repeat="availabilityState in availabilityStates">
+                            <td class="cf-day {{availabilityState.label}}"></td>
+                            <td class="description" colspan="2">{{availabilityState.title}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="overflow: hidden;" class="calendar-container align-parent-bottom" discount-height="66">
+                    <calendar
+                            class="calendar"
+                            on-select-days="onSelectDays"
+                            on-hover-day="onHoverDay"
+                            on-load-day-content="onLoadDayContent"
+                            expose-api-to="calendar"
+                            cell-class="getCellClass(day)"
+                            get-day-tooltip="getDayTooltip"
+                            >
+                    </calendar>
+                </div>
             </div>
         </div>
     </div>
