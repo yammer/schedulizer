@@ -1,4 +1,4 @@
-App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, yammer, Session, AuthService,
+App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
                                                CustomStat, DateUtils) {
 
@@ -58,13 +58,13 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             if (yid == undefined || yid == "") {
                 return false;
             }
-            if (_.find(group.employees, function(e){ return e.yammerId == yid; })) {
+            if (_.find(group.employees, function(e){ return e.extAppId == yid; })) {
                 $scope.employeeInput.setValue("");
                 return false;
             }
 
             var employee = new GroupEmployee({groupId: group.id});
-            employee.yammerId = yid;
+            employee.extAppId = yid;
             employee.name = yEmployee.full_name;
             employee.imageUrlTemplate = yEmployee.photo;
             employee.$save({}, function(response) {

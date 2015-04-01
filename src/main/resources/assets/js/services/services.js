@@ -43,45 +43,6 @@ var SHARED_HEADERS = {
     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
 };
 
-services.factory('yammer', ['$window', function($window) {
-    var yam = $window.yam;
-    if (!yam) throw new Error('Yammer did not load');
-    var autocompleteCache = {};
-
-    return {
-        // a me function
-        getLoginStatus: function(callback) {
-            yam.getLoginStatus(callback);
-        },
-        login: function(callback){
-            yam.platform.login(callback);
-        },
-        autocomplete: function(prefix, callback) {
-            if (autocompleteCache[prefix]) {
-                $window.setTimeout(function() {
-                    callback(autocompleteCache[prefix])
-                }, 0); // async because the callback is supposed to be async
-                return;
-            }
-            yam.platform.request({
-                url: "autocomplete/ranked",     //this is one of many REST endpoints that are available
-                method: "GET",
-                data: {
-                    "prefix": prefix,
-                    "models": "user:20"
-                },
-                success: function (user) { //print message response information to the console
-                    if (Object.keys(autocompleteCache).length > 50) {
-                        autocompleteCache = {}; // flushing cache if it gets too big
-                    }
-                    autocompleteCache[prefix] = user;
-                    callback(user);
-                }
-            });
-        }
-    }
-}]);
-
 services.factory('Group', ['$resource', 'Employee', function($resource, Employee) {
     var Group = $resource(PREFIX + 'groups/:group_id', {group_id: "@id"}, {
         save: {

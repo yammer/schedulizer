@@ -43,7 +43,7 @@ public class AuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
                         "Scheme not supported in authorization header.");
                 checkArgument(header.hasParameter(Authentication.Param.ACCESS_TOKEN),
                         "Param access-token not provided in header.");
-                checkArgument(header.hasParameter(Authentication.Param.YAMMER_ID),
+                checkArgument(header.hasParameter(Authentication.Param.EXT_APP_ID),
                         "Param yammer-id not provided in header.");
             } catch (IllegalArgumentException | NullPointerException e) {
                 throw new SchedulizerException(e, Response
@@ -53,7 +53,7 @@ public class AuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
                         .build());
             }
             String accessToken = header.getParameter(Authentication.Param.ACCESS_TOKEN);
-            String yammerId = header.getParameter(Authentication.Param.YAMMER_ID);
+            String yammerId = header.getParameter(Authentication.Param.EXT_APP_ID);
             credentials = new Credentials(accessToken, yammerId, roles);
         } else {
             credentials = Credentials.absent(roles);

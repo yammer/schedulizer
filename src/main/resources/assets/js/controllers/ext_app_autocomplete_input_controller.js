@@ -1,9 +1,9 @@
-App.controller("YammerAutocompleteInputController", function($scope, $timeout, yammer, Utils) {
+App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, extAppApi, Utils) {
     $scope.autocompleteList = [];
     window.autocompleteScope = $scope;
 
     var timeout;
-    var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // as suggested by yammers api
+    var AUTOCOMPLETE_QUERY_WAIT_TIME = 300; // in order not to send too many queries
     $scope.$watch('inputValue', function(prefix) {
         if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
             return;
@@ -12,7 +12,7 @@ App.controller("YammerAutocompleteInputController", function($scope, $timeout, y
             $timeout.cancel(timeout);
         }
         timeout = $timeout(function() {
-            yammer.autocomplete(prefix, function(response) {
+            extAppApi.autocomplete(prefix, function(response) {
                 if (response == undefined) {
                     return;
                 }
@@ -52,7 +52,7 @@ App.controller("YammerAutocompleteInputController", function($scope, $timeout, y
     }
 });
 
-App.directive('yammerAutocompleteInput', function() {
+App.directive('extAppAutocompleteInput', function() {
     return {
         restrict: 'E',
         scope: {
@@ -62,7 +62,7 @@ App.directive('yammerAutocompleteInput', function() {
             api: "=exposeApiTo",
             displayAbove: "@"
         },
-        templateUrl: 'views/yammer_autocomplete_input.html',
-        controller: 'YammerAutocompleteInputController'
+        templateUrl: 'views/ext_app_autocomplete_input.html',
+        controller: 'ExtAppAutocompleteInputController'
     };
 });
