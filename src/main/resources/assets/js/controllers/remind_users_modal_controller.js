@@ -79,6 +79,17 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
 
         function hasSameAssignments(day1, day2) {
             return _.every($scope.group.assignmentTypes, function(assignmentType) {
+                if (day1.content == undefined) {
+                    day1.content = {
+                        assignments: []
+                    };
+                }
+                if (day2.content == undefined) {
+                    day2.content = {
+                        assignments: []
+                    };
+                }
+
                 if(undefinedOrEmpty(day1.content.assignments[assignmentType.id]) &&
                    undefinedOrEmpty(day2.content.assignments[assignmentType.id])){
                     return true;
