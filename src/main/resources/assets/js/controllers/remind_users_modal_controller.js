@@ -126,8 +126,8 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
 
     }
 
-    var regexTag = /\<b\>([^\n(<\/b>)]+)\<\/b\>/g; // <b>Name</b>
-    var regexInvalid = /\<b\>([^\n(<\/b>)]+)\<\/b\>(?=([^\u200C]|$))/g; // <b>Name</b> \u200C is the unicode to &zwnj;
+    var regexTag = /\<b\>((?:[^\n](?:(?!\<\/b\>)))+[^n])\<\/b\>/g; // <b>Name</b>
+    var regexInvalid = /\<b\>((?:[^\n](?:(?!\<\/b\>)))+[^n])\<\/b\>(?=([^\u200C]|$))/g; // <b>Name</b> \u200C is the unicode to &zwnj;
 
     function checkNameTags() {
         var text = $scope.remindUsersTextArea.text;
