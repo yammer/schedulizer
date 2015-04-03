@@ -22,23 +22,32 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
             var autocompleteCache = {};
 
             extAppApi =  {
-                // a me function
+                // A me function
                 getLoginStatus: function(callback) {
-                    yam.getLoginStatus(callback);
+                    yam.getLoginStatus(function(response) {
+                        callback({
+                            access_token: response.access_token.token,
+                            user: {
+                                id: response.access_token.user_id,
+                                photo_url: response.user.mugshot_url,
+                                full_name: response.user.full_name
+                            }
+                        });
+                    });
                 },
+                /* Should return the access token */
                 login: function(callback){
-                    yam.platform.login(callback);
+                    yam.platform.login(function(response) {
+                        callback({
+                            access_token: response.access_token.token,
+                            user: {
+                                id: response.access_token.user_id
+                            }
+                        });
+                    });
                 },
+                /*  Don't worry about caching... it is handled later */
                 autocomplete: function(prefix, callback, autocompleteType) {
-                    function cacheKey(str) {
-                        return autocompleteType + "###" + str;
-                    }
-                    if (autocompleteCache[cacheKey(prefix)]) {
-                        $window.setTimeout(function() {
-                            callback(autocompleteCache[cacheKey(prefix)])
-                        }, 0); // async because the callback is supposed to be async
-                        return;
-                    }
                     yam.platform.request({
                         url: "autocomplete/ranked",     //this is one of many REST endpoints that are available
                         method: "GET",
@@ -47,19 +56,14 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                             "models": autocompleteType + ":20"
                         },
                         success: function (response) { //print message response information to the console
-                            if (Object.keys(autocompleteCache).length > 50) {
-                                autocompleteCache = {}; // flushing cache if it gets too big
-                            }
-                            response = {
+                            callback({
                                 items: response[autocompleteType]
-                            };
-                            autocompleteCache[cacheKey(prefix)] = response;
-                            callback(response);
+                            });
                         }
                     });
                 },
                 /**
-                 *  Message contains message with {0}, {1) ... representing the tags in the tagList respectively
+                 *  Message contains the text with {0}, {1) ... representing the tags in the tagList respectively
                  */
                 post: function(groupId, message, tagList, callback) {
                     var body = formatString(message, tagList, function(tag) {
@@ -73,8 +77,11 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                             "group_id": groupId
                         },
                         success: function (response) {
-                            console.log(response);
-                            callback(response);
+                            var url = "";
+                            if (response.messages && response.messages.length > 0 && response.messages[0].web_url) {
+                                url = response.messages[0].web_url;
+                            }
+                            callback(url);
                         }
                     });
                 }
@@ -82,6 +89,28 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
             break;
         // Integrate with other external apps here by following the examples above
     }
+
+    // Insert cache for the autocomplete
+    var innerAutocomplete = extAppApi.autocomplete;
+    extAppApi.autocomplete = function(prefix, callback, autocompleteType) {
+        function cacheKey(str) {
+            return autocompleteType + "###" + str;
+        }
+        if (autocompleteCache[cacheKey(prefix)]) {
+            $window.setTimeout(function() {
+                callback(autocompleteCache[cacheKey(prefix)])
+            }, 0); // async because the callback is supposed to be async
+            return;
+        }
+        innerAutocomplete(prefix, function(response){
+            if (Object.keys(autocompleteCache).length > 50) {
+                autocompleteCache = {}; // flushing cache if it gets too big
+            }
+            autocompleteCache[cacheKey(prefix)] = response;
+            callback(response);
+        }, autocompleteType);
+    }
+
     return extAppApi;
 
 }]);
