@@ -187,8 +187,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     }
 
     var savedCursor;
+    var savedScroll;
     function saveCursor()
     {
+        savedScroll = $scope.remindUsersTextArea.el.scrollTop();
         savedCursor = window.getSelection().getRangeAt(0);
     }
 
@@ -207,7 +209,9 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             {
                 window.getSelection().addRange(savedCursor);
             }
+            $scope.remindUsersTextArea.el.scrollTop(savedScroll);
         }
+
     }
 
     $scope.onKeyPress = function(e) {
