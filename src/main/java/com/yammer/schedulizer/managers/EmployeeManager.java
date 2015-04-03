@@ -13,14 +13,14 @@ public class EmployeeManager extends EntityManager<Employee> {
         super(sessionFactory, Employee.class);
     }
 
-    public Employee safeGetByYammerId(String yammerId) {
+    public Employee safeGetByExtAppId(String extAppId) {
         return getUnique(currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("extAppId", yammerId)));
+                .add(Restrictions.eq("extAppId", extAppId)));
     }
 
-    public Employee getByYammerId(String yammerId) {
-        Employee employee = safeGetByYammerId(yammerId);
+    public Employee getByExtAppId(String extAppId) {
+        Employee employee = safeGetByExtAppId(extAppId);
         return checkFound(employee);
     }
 
@@ -33,17 +33,17 @@ public class EmployeeManager extends EntityManager<Employee> {
     }
 
     /**
-     * Try to find an employee with the provided yammerId, if not found create one with the yammerId,
+     * Try to find an employee with the provided extAppId, if not found create one with the extAppId,
      * in which case the callback is called before saving.
      *
-     * @param yammerId The yammer id to look for or to initialize the new employee with.
+     * @param extAppId The external app id to look for or to initialize the new employee with.
      * @param callback It's called if no employee is found with the new employee as parameter before saving.
      * @return The found or newly created employee
      */
-    public Employee getOrCreateByYammerId(String yammerId, Consumer<Employee> callback) {
-        Employee employee = safeGetByYammerId(yammerId);
+    public Employee getOrCreateByExtAppId(String extAppId, Consumer<Employee> callback) {
+        Employee employee = safeGetByExtAppId(extAppId);
         if (employee == null) {
-            employee = new Employee(yammerId);
+            employee = new Employee(extAppId);
             callback.accept(employee);
             save(employee);
         }

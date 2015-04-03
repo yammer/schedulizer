@@ -28,15 +28,16 @@ public class Authenticator extends AbstractAuthenticator {
         if (!credentials.isPresent()) {
             user = User.guest();
         } else {
-            String yammerId = credentials.getYammerId();
-            Employee employee = employeeManager.safeGetByYammerId(yammerId);
+            String extAppId = credentials.getExtAppId();
+            Employee employee = employeeManager.safeGetByExtAppId(extAppId);
             if (employee == null) {
                 employee = getTokenOwner(credentials);
-                if (employee == null || !employee.getExtAppId().equals(yammerId)) {
+
+                if (employee == null || !employee.getExtAppId().equals(extAppId)) {
                     return Optional.absent();
                 }
                 if (employeeManager.count() == 0) {
-                    // First employee to login with yammer is a global admin
+                    // First employee to login with the external app is a global admin
                     employee.setGlobalAdmin(true);
                 }
                 // User verified successfully

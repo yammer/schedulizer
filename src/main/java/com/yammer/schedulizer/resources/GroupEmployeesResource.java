@@ -40,7 +40,7 @@ public class GroupEmployeesResource {
     public Response joinGroup(
             @Authorize({Role.ADMIN, Role.MEMBER}) User user,
             @PathParam("group_id") long groupId,
-            @FormParam("extAppId") String yammerId,
+            @FormParam("extAppId") String extAppId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
 
@@ -48,7 +48,7 @@ public class GroupEmployeesResource {
 
         ResourceUtils.checkGroupAdminOrGlobalAdmin(group, user.getEmployee());
 
-        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {
+        Employee employee = employeeManager.getOrCreateByExtAppId(extAppId, (Employee e) -> {
             e.setName(name);
             e.setImageUrlTemplate(imageUrlTemplate);
         });

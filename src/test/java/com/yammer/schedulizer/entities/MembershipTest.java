@@ -28,7 +28,7 @@ public class MembershipTest extends DatabaseTest {
 
     @Test
     public void testMembershipUniqueness() throws Exception {
-        Employee employee = new Employee("John Doe", TestUtils.nextYammerId());
+        Employee employee = new Employee("John Doe", TestUtils.nextExtAppId());
         Group group = new Group("Core Services");
         employeeManager.save(employee);
         groupManager.save(group);

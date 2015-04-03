@@ -13,10 +13,10 @@ public class UserManager extends EntityManager<User> {
         super(sessionFactory, User.class);
     }
 
-    public User safeGetByYammerId(String yammerId) {
+    public User safeGetByExtAppId(String extAppId) {
         Employee employee = getUnique(currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("extAppId", yammerId)), Employee.class);
+                .add(Restrictions.eq("extAppId", extAppId)), Employee.class);
         return employee.getUser();
     }
 

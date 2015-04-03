@@ -11,14 +11,14 @@ public class GlobalAdminsResourceTest extends GetCreateDeleteResourceTest<Employ
 
     private String employeeName = "Luiz Filipe";
     private String imageUrlTemplate = "imageUrlTemplate";
-    private String yammerId = TestUtils.nextYammerId();
+    private String extAppId = TestUtils.nextExtAppId();
     private Group group;
 
     @Override
     protected MultivaluedMap getSamplePostForm() {
         MultivaluedMapImpl values = new MultivaluedMapImpl();
         values.add("name",  employeeName);
-        values.add("extAppId", yammerId);
+        values.add("extAppId", extAppId);
         values.add("imageUrlTemplate", imageUrlTemplate);
         return values;
     }
@@ -32,7 +32,7 @@ public class GlobalAdminsResourceTest extends GetCreateDeleteResourceTest<Employ
     protected boolean checkCreatedEntity(Employee entity) {
         return entity.getName().equals(employeeName) &&
                 entity.getImageUrlTemplate().equals(imageUrlTemplate) &&
-                entity.getExtAppId().equals(yammerId);
+                entity.getExtAppId().equals(extAppId);
     }
 
     @Override

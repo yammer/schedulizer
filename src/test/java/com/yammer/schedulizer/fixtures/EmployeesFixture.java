@@ -15,9 +15,9 @@ public class EmployeesFixture {
 
     public EmployeesFixture() {
         saved = false;
-        employees = Lists.newArrayList(new Employee("John", TestUtils.nextYammerId()),
-                new Employee("Mary", TestUtils.nextYammerId()),
-                new Employee("Louise", TestUtils.nextYammerId()));
+        employees = Lists.newArrayList(new Employee("John", TestUtils.nextExtAppId()),
+                new Employee("Mary", TestUtils.nextExtAppId()),
+                new Employee("Louise", TestUtils.nextExtAppId()));
     }
 
     public void save(SessionFactory sessionFactory) {

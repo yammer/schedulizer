@@ -34,10 +34,10 @@ public class GlobalAdminsResource {
     @UnitOfWork
     public Response addGlobalAdmin(
             @Authorize({Role.ADMIN}) User user,
-            @FormParam("extAppId") String yammerId,
+            @FormParam("extAppId") String extAppId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
-        Employee employee = employeeManager.getOrCreateByYammerId(yammerId, (Employee e) -> {
+        Employee employee = employeeManager.getOrCreateByExtAppId(extAppId, (Employee e) -> {
             e.setName(name);
             e.setImageUrlTemplate(imageUrlTemplate);
         });

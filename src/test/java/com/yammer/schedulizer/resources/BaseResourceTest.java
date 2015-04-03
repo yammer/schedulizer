@@ -18,7 +18,7 @@ public class BaseResourceTest  extends DatabaseTest {
 
     public BaseResourceTest() {
         client = new Client();
-        globalAdmin = new Employee("Global Admin", TestUtils.nextYammerId());
+        globalAdmin = new Employee("Global Admin", TestUtils.nextExtAppId());
         globalAdmin.setGlobalAdmin(true);
         Session session = getSessionFactory().openSession();;
         session.save(globalAdmin);

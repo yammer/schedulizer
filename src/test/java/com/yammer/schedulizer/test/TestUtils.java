@@ -28,9 +28,8 @@ public class TestUtils {
         return counter.getAndIncrement();
     }
 
-    public static String nextYammerId() {
-        /* TODO: Create yammer id own counter to prevent premature overflow (really?) */
-        return "<yid-" + nextInt() + ">";
+    public static String nextExtAppId() {
+        return "<xid-" + nextInt() + ">";
     }
 
     public static String nextRandomString() {

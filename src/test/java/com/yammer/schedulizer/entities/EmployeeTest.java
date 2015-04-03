@@ -25,7 +25,7 @@ public class EmployeeTest extends DatabaseTest {
 
     @Test
     public void testNewHasEmptyAssignmentsAfterRetrievedFromDb() {
-        Employee employee = new Employee("John Doe", TestUtils.nextYammerId());
+        Employee employee = new Employee("John Doe", TestUtils.nextExtAppId());
         employeeManager.save(employee);
         refresh(employee);
 
@@ -37,7 +37,7 @@ public class EmployeeTest extends DatabaseTest {
 
     @Test
     public void testEmployeeUniqueness() throws Exception {
-        String yammerId = TestUtils.nextYammerId();
+        String yammerId = TestUtils.nextExtAppId();
         Employee employee = new Employee("John Doe", yammerId);
         employeeManager.save(employee);
 
