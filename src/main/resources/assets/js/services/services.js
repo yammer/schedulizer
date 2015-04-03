@@ -263,7 +263,7 @@ services.factory('CustomStat', ['$window', function($window) {
     return {
         load: function(id) {
             var value = $window.localStorage.getItem("customStat-" + id);
-            if(value == undefined) {
+            if(value == undefined || value == "\"0\"") {
                 return undefined;
             }
             return JSON.parse(value);
