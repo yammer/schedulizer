@@ -4,6 +4,13 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     $scope.days = data.days;
     $scope.groupInput = {};
 
+    var ua = window.navigator.userAgent;
+    $scope.enableTags = ua.indexOf('MSIE ') == -1 && ua.indexOf('Trident/') == -1; // check if IE
+    $scope.messageTooltip = "You can tag people by typing @ and their name";
+    if (!$scope.enableTags) {
+        $scope.messageTooltip = "Tagging is not supported for Internet Explorer";
+    }
+
     $scope.tagAutocomplete = {
         show: false,
         top: 10,
@@ -204,7 +211,9 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     }
 
     $scope.onKeyPress = function(e) {
-
+        if (!$scope.enableTags) {
+            return;
+        }
         $timeout(function() {
             if (e.keyCode == 64 /* @ */ || e.key == "@") {
                 saveCursor();
