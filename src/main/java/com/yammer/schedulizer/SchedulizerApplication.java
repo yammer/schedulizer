@@ -1,9 +1,7 @@
 package com.yammer.schedulizer;
 
 import com.sun.jersey.api.client.Client;
-import com.yammer.schedulizer.auth.AbstractAuthenticator;
-import com.yammer.schedulizer.auth.Authenticator;
-import com.yammer.schedulizer.auth.AuthorizeProvider;
+import com.yammer.schedulizer.auth.*;
 import com.yammer.schedulizer.config.SchedulizerConfiguration;
 import com.yammer.schedulizer.entities.*;
 import com.yammer.schedulizer.managers.*;
@@ -37,6 +35,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     private AssignmentManager assignmentManager;
     private AssignableDayManager assignableDayManager;
     private DayRestrictionManager dayRestrictionManager;
+    private ExtAppAuthenticator extAppAuthenticator;
 
     public static void main(String[] args) throws Exception {
         new SchedulizerApplication().run(args);
@@ -72,7 +71,8 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager);
+        extAppAuthenticator = new YammerAuthenticator(client);
+        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator);
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
 

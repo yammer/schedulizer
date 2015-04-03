@@ -7,13 +7,25 @@ import com.yammer.schedulizer.managers.UserManager;
 import io.dropwizard.auth.AuthenticationException;
 
 public class MockAuthenticator extends Authenticator {
-
     public MockAuthenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
-        super(client, userManager, employeeManager);
+        super(client, userManager, employeeManager, new MockExtAppAuthenticator(client));
     }
 
     @Override
     protected Employee getTokenOwner(Credentials credentials) throws AuthenticationException {
         return employeeManager.safeGetByYammerId(credentials.getYammerId());
+    }
+}
+
+class MockExtAppAuthenticator extends ExtAppAuthenticator {
+
+    public MockExtAppAuthenticator(Client client) {
+        super(client);
+    }
+
+    // will never be called because getTokenOwner from MockAuthenticator was overridden
+    @Override
+    public Employee getTokenOwner(String accessToken) {
+        return null;
     }
 }
