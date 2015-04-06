@@ -71,7 +71,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        extAppAuthenticator = new YammerAuthenticator(client);
+        extAppAuthenticator = new FacebookAuthenticator(client);
         AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator);
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }

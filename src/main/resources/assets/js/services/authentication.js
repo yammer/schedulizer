@@ -174,7 +174,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
 
     function updateUserInformation(employeeId, extAppResponse) {
         var employee = new Employee({employeeId: employeeId});
-        employee.imageUrlTemplate = extAppResponse.user.photo_url;
+        employee.imageUrlTemplate = extAppResponse.user.photo;
         employee.name = extAppResponse.user.full_name;
         employee.$save();
     }
@@ -224,7 +224,9 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
         deferred.resolve();
         destroyAuthorizationHeader();
         Session.destroy();
+        ExtAppSession.destroy();
         SessionStorage.save("session", Session);
+        SessionStorage.save("extAppSession", Session);
         return deferred.promise;
     }
 

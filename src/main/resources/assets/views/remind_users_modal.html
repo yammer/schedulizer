@@ -19,11 +19,12 @@
             <div class="modal-header">
                 <h4 class="modal-title">
                     <span class="glyphicon glyphicon-cog"></span>
-                    Send Notification
+                    <span st-if="!onlySummary">Send Notification</span>
+                    <span st-if="onlySummary">Summary</span>
                 </h4>
             </div>
             <div class="modal-body group-settings">
-                <div>
+                <div st-if="!onlySummary">
                     <label>Group</label>
                     <ext-app-autocomplete-input
                             ng-class="{'group-autocomplete-input': groupChosen}"

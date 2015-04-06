@@ -27,12 +27,13 @@ var USER_ROLES_CONSTANT = {
 
 // Same here... we need to inject this constant into EXT_APP
 var EXT_APP_TYPES_CONSTANT = {
-    yammer: "yammer"
+    yammer: "yammer",
+    facebook: "facebook"
 };
 
 App.constant('USER_ROLES', USER_ROLES_CONSTANT);
 
-App.constant('EXT_APP', EXT_APP_TYPES_CONSTANT.yammer);
+App.constant('EXT_APP', EXT_APP_TYPES_CONSTANT.facebook);
 App.constant('EXT_APP_TYPES', EXT_APP_TYPES_CONSTANT);
 
 App.constant('NAV_TABS', {

@@ -15,21 +15,25 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
         });
     }
 
+    var autocompleteCache = {};
+
     switch (EXT_APP) {
         case EXT_APP_TYPES.yammer:
             var yam = $window.yam;
             if (!yam) throw new Error('Could not load yammer api');
-            var autocompleteCache = {};
-
             extAppApi =  {
                 // A me function
                 getLoginStatus: function(callback) {
                     yam.getLoginStatus(function(response) {
+                        if(response.authResponse == undefined) {
+                            callback({});
+                            return;
+                        }
                         callback({
                             access_token: response.access_token.token,
                             user: {
                                 id: response.access_token.user_id,
-                                photo_url: response.user.mugshot_url,
+                                photo: response.user.mugshot_url,
                                 full_name: response.user.full_name
                             }
                         });
@@ -85,6 +89,108 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                         }
                     });
                 }
+            }
+            break;
+        case EXT_APP_TYPES.facebook:
+            var fb = $window.FB;
+            if (!fb) throw new Error('Could not load facebook api');
+            fb.init({
+                appId      : '617709521696922',
+                xfbml      : true,
+                version    : 'v2.3'
+            });
+            extAppApi =  {
+                // A me function
+                getLoginStatus: function(callback) {
+                    fb.getLoginStatus(function(response) {
+                        console.log(response);
+                        if(response.authResponse == undefined) {
+                            callback({});
+                            return;
+                        }
+                        fb.api('/me', {
+                            fields: ['name', 'picture']
+                        }, function(meResponse) {
+                            console.log(meResponse);
+                            callback({
+                                access_token: response.authResponse.accessToken,
+                                user: {
+                                    id: response.authResponse.userID,
+                                    photo: meResponse.picture.data.url,
+                                    full_name: meResponse.name
+                                }
+                            });
+                        });
+
+                    });
+                },
+                /* Should return the access token */
+                login: function(callback){
+                    fb.login(function(response){
+                        callback({
+                            access_token: response.authResponse.accessToken,
+                            user: {
+                                id: response.authResponse.userID
+                            }
+                        });
+                    }, {
+                        scope: ['user_friends']
+                    });
+                },
+                /*  Don't worry about caching... it is handled later */
+                autocomplete: function(prefix, callback, autocompleteType) {
+                    if (autocompleteType == 'user') {
+                        function getFriends(callback, offset) {
+                            var OFFSET_DIFF = 100;
+                            if (offset == undefined) {
+                                offset = 0;
+                            }
+                            fb.api('/me/friends', {
+                                limit: OFFSET_DIFF,
+                                offset: offset,
+                                fields: [
+                                    'name',
+                                    'picture{url}',
+                                    'id'
+                                ]
+                            }, function (response) {
+                                if (response.data == undefined || response.data.length == 0) {
+                                    fb.api('/me', {
+                                        fields: ['id', 'name', 'picture']
+                                    }, function (meResponse) {
+                                        callback([{
+                                            photo: meResponse.picture.data.url,
+                                            full_name: meResponse.name,
+                                            id: meResponse.id
+                                        }]);
+                                    });
+                                    return;
+                                }
+                                getFriends(function (friends) {
+                                    callback(_.union(response.data.map(function (el) {
+                                        el.full_name = el.name;
+                                        return el;
+                                    }), friends));
+                                }, offset + OFFSET_DIFF);
+                            });
+                        }
+
+                        getFriends(function (friends) {
+                            callback({
+                                items: friends
+                            });
+                        });
+                    } else if (autocompleteType == 'group') {
+                        // Facebook's API does not allow this feature
+                        callback({
+                            items: []
+                        });
+                    }
+                },
+                /**
+                 *  Facebook's API does not allow this feature
+                 */
+                post: undefined
             }
             break;
         // Integrate with other external apps here by following the examples above
