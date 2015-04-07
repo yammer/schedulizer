@@ -93,6 +93,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
             break;
         case EXT_APP_TYPES.facebook:
             var fb = $window.FB;
+            var friends = undefined;
             if (!fb) throw new Error('Could not load facebook api');
             fb.init({
                 appId      : '617709521696922',
@@ -136,9 +137,12 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                         scope: ['user_friends']
                     });
                 },
-                /*  Don't worry about caching... it is handled later */
                 autocomplete: function(prefix, callback, autocompleteType) {
+                    prefix = prefix.toLowerCase();
                     if (autocompleteType == 'user') {
+                        function prefixFilter(s) {
+                            return s.full_name.toLowerCase().indexOf(prefix) != -1;
+                        }
                         function getFriends(callback, offset) {
                             var OFFSET_DIFF = 100;
                             if (offset == undefined) {
@@ -176,12 +180,19 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                                 }, offset + OFFSET_DIFF);
                             });
                         }
-
-                        getFriends(function (friends) {
-                            callback({
-                                items: friends
+                        if (friends == undefined) {
+                            getFriends(function (data) {
+                                friends = data;
+                                callback({
+                                    items: friends.filter(prefixFilter)
+                                });
                             });
-                        });
+                        } else {
+                            callback({
+                                items: friends.filter(prefixFilter)
+                            });
+                        }
+
                     } else if (autocompleteType == 'group') {
                         // Facebook's API does not allow this feature
                         callback({
