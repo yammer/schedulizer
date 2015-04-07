@@ -1,6 +1,7 @@
 package com.yammer.schedulizer.resources;
 
 import com.yammer.schedulizer.auth.Authorize;
+import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
 import com.yammer.schedulizer.auth.Role;
 import com.yammer.schedulizer.entities.Group;
 import com.yammer.schedulizer.entities.Membership;
@@ -12,14 +13,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Path("/current")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
+
+    private final String extAppType;
+
+    public AuthorizationResource(String extAppType) {
+        this.extAppType = extAppType;
+    }
 
     @GET
     @UnitOfWork
@@ -39,5 +45,26 @@ public class AuthorizationResource {
         }
 
         return Response.ok().entity(response).build();
+    }
+
+    @GET
+    @Path("ext-api.js")
+    @UnitOfWork
+    public Response getExternalApp() {
+        List<String> types = Arrays.asList(ExtAppAuthenticatorFactory.ExtAppType.values()).stream()
+                .map(x -> x.toString())
+                .collect(Collectors.toList());
+
+        String javascript = "var EXT_APP_TYPES_CONSTANT = { ";
+        for (int i = 0; i < types.size(); i++) {
+            if (i != 0) {
+                javascript += ", ";
+            }
+            javascript += types.get(i) + ": \"" + types.get(i) + "\"";
+        }
+        javascript += " }; var EXT_APP_CONSTANT = EXT_APP_TYPES_CONSTANT.";
+        javascript += extAppType + ";";
+
+        return Response.ok().entity(javascript).build();
     }
 }

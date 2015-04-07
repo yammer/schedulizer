@@ -103,13 +103,12 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                 // A me function
                 getLoginStatus: function(callback) {
                     fb.getLoginStatus(function(response) {
-                        console.log(response);
                         if(response.authResponse == undefined) {
                             callback({});
                             return;
                         }
                         fb.api('/me', {
-                            fields: ['name', 'picture']
+                            fields: ['name', 'picture{url}']
                         }, function(meResponse) {
                             console.log(meResponse);
                             callback({
@@ -168,8 +167,11 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                                 }
                                 getFriends(function (friends) {
                                     callback(_.union(response.data.map(function (el) {
-                                        el.full_name = el.name;
-                                        return el;
+                                        return {
+                                            full_name: el.name,
+                                            id: el.id,
+                                            photo: el.picture.data.url
+                                        };
                                     }), friends));
                                 }, offset + OFFSET_DIFF);
                             });

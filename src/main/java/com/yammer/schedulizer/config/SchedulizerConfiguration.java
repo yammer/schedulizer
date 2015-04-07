@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 public class SchedulizerConfiguration extends Configuration {
 
     private final String rootPath;
+    private final String extApp;
 
     @Valid @NotNull @JsonProperty
     private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
@@ -19,8 +20,9 @@ public class SchedulizerConfiguration extends Configuration {
     private DataSourceFactory database = new DataSourceFactory();
 
     public SchedulizerConfiguration(@JsonProperty("rootPath") String rootPath,
-                                    @JsonProperty("authenticatorClass") String authenticatorClass) {
+                                    @JsonProperty("extApp") String extApp) {
         this.rootPath = rootPath;
+        this.extApp = extApp;
     }
 
     public String getRootPath() {
@@ -34,4 +36,6 @@ public class SchedulizerConfiguration extends Configuration {
     public DataSourceFactory getDataSourceFactory() {
         return database;
     }
+
+    public String getExtApp() { return extApp; }
 }

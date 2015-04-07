@@ -62,7 +62,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
-        env.jersey().register(new AuthorizationResource());
+        env.jersey().register(new AuthorizationResource(config.getExtApp()));
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
     }
@@ -71,7 +71,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        extAppAuthenticator = new FacebookAuthenticator(client);
+        extAppAuthenticator = ExtAppAuthenticatorFactory.getExtAppAuthenticator(config.getExtApp(), client);
         AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator);
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
