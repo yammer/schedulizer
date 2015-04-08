@@ -57,8 +57,8 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().setUrlPattern(config.getRootPath());
         env.jersey().register(new GroupsResource(groupManager));
         env.jersey().register(new GroupDayRestrictionsResource(groupManager, dayRestrictionManager));
-        env.jersey().register(new GroupEmployeesResource(employeeManager, groupManager, membershipManager));
-        env.jersey().register(new GlobalAdminsResource(employeeManager));
+        env.jersey().register(new GroupEmployeesResource(employeeManager, groupManager, membershipManager, extAppType));
+        env.jersey().register(new GlobalAdminsResource(employeeManager, extAppType));
         env.jersey().register(new EmployeesResource(employeeManager));
         env.jersey().register(new EmployeeAssignmentsResource(employeeManager, assignmentManager));
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
@@ -82,6 +82,9 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     @Override
     public void run(SchedulizerConfiguration config, Environment env) throws Exception {
         SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
+
+        extAppType = ExtAppType.valueOf(config.getExtApp());
+
         userManager = new UserManager(sessionFactory);
         groupManager = new GroupManager(sessionFactory);
         employeeManager = new EmployeeManager(sessionFactory);
@@ -90,8 +93,6 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         assignmentManager = new AssignmentManager(sessionFactory);
         assignableDayManager = new AssignableDayManager(sessionFactory);
         dayRestrictionManager = new DayRestrictionManager(sessionFactory);
-
-        extAppType = ExtAppType.valueOf(config.getExtApp());
 
         registerResources(config, env);
         registerAuthenticator(config, env);

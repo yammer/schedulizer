@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-    public static User fresh(Employee employee, String accessToken, ExtAppType extAppType) {
-        User user = new User(employee, accessToken, extAppType);
+    public static User fresh(Employee employee, String accessToken) {
+        User user = new User(employee, accessToken);
         user.renew();
         return user;
     }
@@ -34,9 +34,6 @@ public class User extends BaseEntity {
     @Column(name = "access_token")
     private String accessToken;
 
-    @Column(name = "ext_app_type")
-    private String extAppType;
-
     @Column(name = "expiration_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate expirationDate;
@@ -45,10 +42,9 @@ public class User extends BaseEntity {
         // Required by Hibernate
     }
 
-    public User(Employee employee, String accessToken, ExtAppType extAppType) {
+    public User(Employee employee, String accessToken) {
         this.employee = employee;
         this.accessToken = accessToken;
-        this.extAppType = extAppType.toString();
     }
 
     public Employee getEmployee() {
@@ -62,10 +58,6 @@ public class User extends BaseEntity {
     public String getAccessToken() {
         return accessToken;
     }
-
-    public ExtAppType getExtAppType() { return ExtAppType.valueOf(extAppType); }
-
-    public void setExtAppType(ExtAppType extAppType) { this.extAppType = extAppType.toString(); }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;

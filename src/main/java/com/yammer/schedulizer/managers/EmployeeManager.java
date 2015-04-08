@@ -1,7 +1,10 @@
 package com.yammer.schedulizer.managers;
 
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.entities.Employee;
+import com.yammer.schedulizer.entities.User;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
@@ -13,14 +16,15 @@ public class EmployeeManager extends EntityManager<Employee> {
         super(sessionFactory, Employee.class);
     }
 
-    public Employee safeGetByExtAppId(String extAppId) {
+    public Employee safeGetByExtAppId(String extAppId, ExtAppType extAppType) {
         return getUnique(currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("extAppId", extAppId)));
+                .add(Restrictions.eq("extAppId", extAppId))
+                .add(Restrictions.eq("extAppType", extAppType.toString())));
     }
 
-    public Employee getByExtAppId(String extAppId) {
-        Employee employee = safeGetByExtAppId(extAppId);
+    public Employee getByExtAppId(String extAppId, ExtAppType extAppType) {
+        Employee employee = safeGetByExtAppId(extAppId, extAppType);
         return checkFound(employee);
     }
 
@@ -40,10 +44,10 @@ public class EmployeeManager extends EntityManager<Employee> {
      * @param callback It's called if no employee is found with the new employee as parameter before saving.
      * @return The found or newly created employee
      */
-    public Employee getOrCreateByExtAppId(String extAppId, Consumer<Employee> callback) {
-        Employee employee = safeGetByExtAppId(extAppId);
+    public Employee getOrCreateByExtAppId(String extAppId, ExtAppType extAppType, Consumer<Employee> callback) {
+        Employee employee = safeGetByExtAppId(extAppId, extAppType);
         if (employee == null) {
-            employee = new Employee(extAppId);
+            employee = new Employee(extAppId, extAppType);
             callback.accept(employee);
             save(employee);
         }
@@ -56,5 +60,14 @@ public class EmployeeManager extends EntityManager<Employee> {
             callback.accept(employee);
             save(employee);
         }
+    }
+
+    public long count(ExtAppType extAppType) {
+        return ((Number) currentSession()
+                .createCriteria(Employee.class)
+                .add(Restrictions.eq("extAppType", extAppType.toString()))
+                .setProjection(Projections.rowCount())
+                .uniqueResult())
+                .longValue();
     }
 }

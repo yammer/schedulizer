@@ -26,7 +26,7 @@ public class YammerAuthenticator extends ExtAppAuthenticator {
         String name = response.get("full_name").asText();
         String imageUrlTemplate = response.get("mugshot_url").asText();
 
-        Employee employee = new Employee(name, yammerId);
+        Employee employee = new Employee(name, yammerId, ExtAppType.yammer);
         employee.setImageUrlTemplate(imageUrlTemplate);
         return employee;
     }

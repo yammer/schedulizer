@@ -13,7 +13,7 @@ public class MockAuthenticator extends Authenticator {
 
     @Override
     protected Employee getTokenOwner(Credentials credentials) throws AuthenticationException {
-        return employeeManager.safeGetByExtAppId(credentials.getExtAppId());
+        return employeeManager.safeGetByExtAppId(credentials.getExtAppId(), ExtAppType.yammer);
     }
 }
 

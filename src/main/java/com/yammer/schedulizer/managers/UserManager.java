@@ -29,13 +29,4 @@ public class UserManager extends EntityManager<User> {
         super.save(user);
         currentSession().refresh(user.getEmployee());
     }
-
-    public long count(ExtAppType extAppType) {
-        return ((Number) currentSession()
-                .createCriteria(User.class)
-                .add(Restrictions.eq("extAppType", extAppType.toString()))
-                .setProjection(Projections.rowCount())
-                .uniqueResult())
-                .longValue();
-    }
 }

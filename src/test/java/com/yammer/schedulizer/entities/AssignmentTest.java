@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.entities;
 
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.managers.*;
 import com.yammer.schedulizer.managers.exceptions.SchedulizerException;
 import com.yammer.schedulizer.test.DatabaseTest;
@@ -72,7 +73,7 @@ public class AssignmentTest extends DatabaseTest {
 
     private Assignment createAssignment() {
         Group group = new Group("Core Services");
-        Employee employee = new Employee("John Doe", "<yid>");
+        Employee employee = new Employee("John Doe", "<yid>", ExtAppType.yammer);
         AssignableDay assignableDay = new AssignableDay(group, new LocalDate(2015, 2, 2));
         AssignmentType assignmentType = new AssignmentType("Primary", group);
         Assignment assignment = new Assignment(employee, assignableDay, assignmentType);

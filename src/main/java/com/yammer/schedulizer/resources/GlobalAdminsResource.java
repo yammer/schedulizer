@@ -1,6 +1,7 @@
 package com.yammer.schedulizer.resources;
 
 import com.yammer.schedulizer.auth.Authorize;
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.auth.Role;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.entities.User;
@@ -11,15 +12,19 @@ import io.dropwizard.hibernate.UnitOfWork;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Path("/employees/admins")
 @Produces(MediaType.APPLICATION_JSON)
 public class GlobalAdminsResource {
 
     private EmployeeManager employeeManager;
+    private ExtAppType extAppType;
 
-    public GlobalAdminsResource(EmployeeManager employeeManager) {
+    public GlobalAdminsResource(EmployeeManager employeeManager, ExtAppType extAppType) {
         this.employeeManager = employeeManager;
+        this.extAppType = extAppType;
     }
 
     @GET
@@ -27,7 +32,10 @@ public class GlobalAdminsResource {
     public Response getGlobalAdmins(
             @Authorize({Role.ADMIN}) User user,
             @PathParam("employee_id") long employeeId) {
-        return Response.ok().entity(employeeManager.getGlobalAdmins()).build();
+        List<Employee> globalAdmins = employeeManager.getGlobalAdmins().stream()
+                .filter(e -> e.getExtAppType().equals(extAppType))
+                .collect(Collectors.toList()); // only show global admins from the same app
+        return Response.ok().entity(globalAdmins).build();
     }
 
     @POST
@@ -37,7 +45,7 @@ public class GlobalAdminsResource {
             @FormParam("extAppId") String extAppId,
             @FormParam("name") String name,
             @FormParam("imageUrlTemplate") String imageUrlTemplate) {
-        Employee employee = employeeManager.getOrCreateByExtAppId(extAppId, (Employee e) -> {
+        Employee employee = employeeManager.getOrCreateByExtAppId(extAppId, extAppType, (Employee e) -> {
             e.setName(name);
             e.setImageUrlTemplate(imageUrlTemplate);
         });

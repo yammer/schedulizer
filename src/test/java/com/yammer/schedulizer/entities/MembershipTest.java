@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.entities;
 
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.managers.EmployeeManager;
 import com.yammer.schedulizer.managers.GroupManager;
 import com.yammer.schedulizer.managers.MembershipManager;
@@ -28,7 +29,7 @@ public class MembershipTest extends DatabaseTest {
 
     @Test
     public void testMembershipUniqueness() throws Exception {
-        Employee employee = new Employee("John Doe", TestUtils.nextExtAppId());
+        Employee employee = new Employee("John Doe", TestUtils.nextExtAppId(), ExtAppType.yammer);
         Group group = new Group("Core Services");
         employeeManager.save(employee);
         groupManager.save(group);

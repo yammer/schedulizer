@@ -37,7 +37,7 @@ public class UserManagerTest extends BaseManagerTest<User> {
         EmployeesFixture employeesFixture = new EmployeesFixture();
         employeesFixture.save(getSessionFactory());
         employees = employeesFixture.getEmployees();
-        testUsers = employees.stream().map(e -> new User(e, null, ExtAppType.yammer)).collect(Collectors.toList());
+        testUsers = employees.stream().map(e -> new User(e, null)).collect(Collectors.toList());
     }
 
     @Override

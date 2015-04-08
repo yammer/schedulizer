@@ -3,6 +3,7 @@ package com.yammer.schedulizer.resources;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.yammer.schedulizer.TestSuite;
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.test.DatabaseTest;
 import com.yammer.schedulizer.test.TestUtils;
@@ -18,7 +19,7 @@ public class BaseResourceTest  extends DatabaseTest {
 
     public BaseResourceTest() {
         client = new Client();
-        globalAdmin = new Employee("Global Admin", TestUtils.nextExtAppId());
+        globalAdmin = new Employee("Global Admin", TestUtils.nextExtAppId(), ExtAppType.yammer);
         globalAdmin.setGlobalAdmin(true);
         Session session = getSessionFactory().openSession();;
         session.save(globalAdmin);

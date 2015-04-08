@@ -30,7 +30,7 @@ public class FacebookAuthenticator extends ExtAppAuthenticator {
         String name = response.get("name").asText();
         String imageUrlTemplate = response.get("picture").get("data").get("url").asText();
 
-        Employee employee = new Employee(name, yammerId);
+        Employee employee = new Employee(name, yammerId, ExtAppType.facebook);
         employee.setImageUrlTemplate(imageUrlTemplate);
         return employee;
     }

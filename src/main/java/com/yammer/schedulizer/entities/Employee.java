@@ -3,6 +3,7 @@ package com.yammer.schedulizer.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
+import com.yammer.schedulizer.auth.ExtAppType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
@@ -60,15 +61,15 @@ public class Employee extends BaseEntity {
         // Required by Hibernate
     }
 
-    public Employee(String name, String extAppId) {
+    public Employee(String name, String extAppId, ExtAppType extAppType) {
         this.name = name;
         this.extAppId = extAppId;
-        this.extAppType = "yammer";
+        this.extAppType = extAppType.toString();
     }
 
-    public Employee(String extAppId) {
+    public Employee(String extAppId, ExtAppType extAppType) {
         this.extAppId = extAppId;
-        this.extAppType = "yammer";
+        this.extAppType = extAppType.toString();
     }
 
     public long getId() {
@@ -143,7 +144,7 @@ public class Employee extends BaseEntity {
         this.dayRestrictions = ImmutableSet.copyOf(dayRestrictions);
     }
 
-    public String getExtAppType() { return extAppType; }
+    public ExtAppType getExtAppType() { return ExtAppType.valueOf(extAppType); }
 
-    public void setExtAppType(String extAppType) { this.extAppType = extAppType; }
+    public void setExtAppType(ExtAppType extAppType) { this.extAppType = extAppType.toString(); }
 }
