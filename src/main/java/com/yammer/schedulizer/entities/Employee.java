@@ -23,9 +23,6 @@ public class Employee extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "yammer_id")
-    private String yammerId;
-
     @Column(name = "ext_app_id")
     @NotEmpty
     private String extAppId;
@@ -63,12 +60,10 @@ public class Employee extends BaseEntity {
     public Employee(String name, String extAppId) {
         this.name = name;
         this.extAppId = extAppId;
-        yammerId = extAppId;
     }
 
     public Employee(String extAppId) {
         this.extAppId = extAppId;
-        yammerId = extAppId;
     }
 
     public long getId() {
