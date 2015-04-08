@@ -86,7 +86,9 @@ public class Authenticator extends AbstractAuthenticator {
                 Optional<UniformInterfaceException> cause =
                         CoreUtils.getCause(exception, UniformInterfaceException.class);
                 if (cause.isPresent() &&
-                        cause.get().getResponse().getStatus() == Response.Status.UNAUTHORIZED.getStatusCode()) {
+                        (cause.get().getResponse().getStatus() == Response.Status.UNAUTHORIZED.getStatusCode() ||
+                            cause.get().getResponse().getStatus() == Response.Status.BAD_REQUEST.getStatusCode())) {
+                    // yammer returns unauthorized but facebook returns bad request
                     return null;
                 }
                 last = exception;

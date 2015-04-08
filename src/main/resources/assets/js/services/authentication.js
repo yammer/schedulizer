@@ -226,9 +226,21 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
         Session.destroy();
         ExtAppSession.destroy();
         SessionStorage.save("session", Session);
-        SessionStorage.save("extAppSession", Session);
+        SessionStorage.save("extAppSession", ExtAppSession);
         return deferred.promise;
     }
+
+    var loginRetries = 3;
+    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(){
+        loginRetries--;
+        if (loginRetries <= 0) {
+            authService.logout();
+            return;
+        }
+        ExtAppSession.destroy();
+        SessionStorage.save("extAppSession", ExtAppSession);
+        initializeAuthService();
+    });
 
     authService.isAuthenticated = function () {
         return !!Session.userId;

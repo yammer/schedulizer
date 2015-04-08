@@ -16,6 +16,6 @@ public class UnauthorizedAccessException extends SchedulizerException {
     }
 
     public UnauthorizedAccessException() {
-        this("You are not authorized to perform this action.");
+        this("{ \"message\": \"You are not authorized to perform this action.\" }");
     }
 }
