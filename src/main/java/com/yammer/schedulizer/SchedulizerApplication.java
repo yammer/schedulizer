@@ -37,6 +37,8 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     private DayRestrictionManager dayRestrictionManager;
     private ExtAppAuthenticator extAppAuthenticator;
 
+    private ExtAppType extAppType;
+
     public static void main(String[] args) throws Exception {
         new SchedulizerApplication().run(args);
     }
@@ -62,7 +64,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
-        env.jersey().register(new AuthorizationResource(config.getExtApp()));
+        env.jersey().register(new AuthorizationResource(extAppType));
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
     }
@@ -71,9 +73,9 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        extAppAuthenticator = ExtAppAuthenticatorFactory.getExtAppAuthenticator(config.getExtApp(), client);
+        extAppAuthenticator = ExtAppAuthenticatorFactory.getExtAppAuthenticator(extAppType, client);
         AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator,
-                ExtAppAuthenticatorFactory.ExtAppType.valueOf(config.getExtApp()));
+                ExtAppType.valueOf(config.getExtApp()));
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
 
@@ -88,6 +90,8 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         assignmentManager = new AssignmentManager(sessionFactory);
         assignableDayManager = new AssignableDayManager(sessionFactory);
         dayRestrictionManager = new DayRestrictionManager(sessionFactory);
+
+        extAppType = ExtAppType.valueOf(config.getExtApp());
 
         registerResources(config, env);
         registerAuthenticator(config, env);

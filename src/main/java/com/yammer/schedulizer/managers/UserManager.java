@@ -1,6 +1,7 @@
 package com.yammer.schedulizer.managers;
 
 import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.entities.User;
 import org.hibernate.SessionFactory;
@@ -29,7 +30,7 @@ public class UserManager extends EntityManager<User> {
         currentSession().refresh(user.getEmployee());
     }
 
-    public long count(ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+    public long count(ExtAppType extAppType) {
         return ((Number) currentSession()
                 .createCriteria(User.class)
                 .add(Restrictions.eq("extAppType", extAppType.toString()))

@@ -2,9 +2,7 @@ package com.yammer.schedulizer.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.schedulizer.auth.Authentication;
-import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
-import com.yammer.schedulizer.auth.Role;
+import com.yammer.schedulizer.auth.*;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -14,7 +12,7 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-    public static User fresh(Employee employee, String accessToken, ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+    public static User fresh(Employee employee, String accessToken, ExtAppType extAppType) {
         User user = new User(employee, accessToken, extAppType);
         user.renew();
         return user;
@@ -47,7 +45,7 @@ public class User extends BaseEntity {
         // Required by Hibernate
     }
 
-    public User(Employee employee, String accessToken, ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+    public User(Employee employee, String accessToken, ExtAppType extAppType) {
         this.employee = employee;
         this.accessToken = accessToken;
         this.extAppType = extAppType.toString();
@@ -65,9 +63,9 @@ public class User extends BaseEntity {
         return accessToken;
     }
 
-    public String getExtAppType() { return extAppType; }
+    public ExtAppType getExtAppType() { return ExtAppType.valueOf(extAppType); }
 
-    public void setExtAppType(String extAppType) { this.extAppType = extAppType; }
+    public void setExtAppType(ExtAppType extAppType) { this.extAppType = extAppType.toString(); }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;

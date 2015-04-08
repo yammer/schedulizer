@@ -19,7 +19,7 @@ public class Authenticator extends AbstractAuthenticator {
 
     public Authenticator(Client client, UserManager userManager,
                          EmployeeManager employeeManager, ExtAppAuthenticator extAppAuthenticator,
-                         ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+                         ExtAppType extAppType) {
         super(client, userManager, employeeManager, extAppAuthenticator, extAppType);
     }
 

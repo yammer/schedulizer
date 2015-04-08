@@ -2,6 +2,7 @@ package com.yammer.schedulizer.resources;
 
 import com.yammer.schedulizer.auth.Authorize;
 import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.auth.Role;
 import com.yammer.schedulizer.entities.Group;
 import com.yammer.schedulizer.entities.Membership;
@@ -21,9 +22,9 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
 
-    private final String extAppType;
+    private final ExtAppType extAppType;
 
-    public AuthorizationResource(String extAppType) {
+    public AuthorizationResource(ExtAppType extAppType) {
         this.extAppType = extAppType;
     }
 
@@ -51,7 +52,7 @@ public class AuthorizationResource {
     @Path("ext-api.js")
     @UnitOfWork
     public Response getExternalApp() {
-        List<String> types = Arrays.asList(ExtAppAuthenticatorFactory.ExtAppType.values()).stream()
+        List<String> types = Arrays.asList(ExtAppType.values()).stream()
                 .map(x -> x.toString())
                 .collect(Collectors.toList());
 
@@ -63,7 +64,7 @@ public class AuthorizationResource {
             javascript += types.get(i) + ": \"" + types.get(i) + "\"";
         }
         javascript += " }; var EXT_APP_CONSTANT = EXT_APP_TYPES_CONSTANT.";
-        javascript += extAppType + ";";
+        javascript += extAppType.toString() + ";";
 
         return Response.ok().entity(javascript).build();
     }
