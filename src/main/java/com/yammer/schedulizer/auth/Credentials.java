@@ -12,15 +12,15 @@ public class Credentials {
 
     private Set<Role> acceptedRoles; // Roles here, seriously?
     private String accessToken;
-    private String yammerId;
+    private String extAppId;
 
     private Credentials(Set<Role> acceptedRoles) {
         this.acceptedRoles = acceptedRoles;
     }
 
-    public Credentials(String accessToken, String yammerId, Set<Role> acceptedRoles) {
+    public Credentials(String accessToken, String extAppId, Set<Role> acceptedRoles) {
         this.accessToken = accessToken;
-        this.yammerId = yammerId;
+        this.extAppId = extAppId;
         this.acceptedRoles = acceptedRoles;
     }
 
@@ -28,8 +28,8 @@ public class Credentials {
         return accessToken;
     }
 
-    public String getYammerId() {
-        return yammerId;
+    public String getExtAppId() {
+        return extAppId;
     }
 
     public Set<Role> getAcceptedRoles() {
@@ -37,14 +37,14 @@ public class Credentials {
     }
 
     public boolean isPresent() {
-        return accessToken != null && yammerId != null;
+        return accessToken != null && extAppId != null;
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(Credentials.class)
                 .add("accessToken", accessToken)
-                .add("extAppId", yammerId)
+                .add("extAppId", extAppId)
                 .add("acceptedRoles", acceptedRoles)
                 .toString();
     }

@@ -1,5 +1,7 @@
 package com.yammer.schedulizer.managers;
 
+import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.entities.User;
 import com.yammer.schedulizer.fixtures.EmployeesFixture;
@@ -45,7 +47,7 @@ public class UserManagerTest extends BaseManagerTest<User> {
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
         User user = testUsers.get(0);
         userManager.save(user);
-        User found = userManager.safeGetByYammerId(user.getEmployee().getExtAppId());
+        User found = userManager.safeGetByExtAppId(user.getEmployee().getExtAppId());
         assertNotNull(found);
         assertThat(found, equalTo(user));
         userManager.delete(user);

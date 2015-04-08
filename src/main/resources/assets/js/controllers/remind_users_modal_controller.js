@@ -1,5 +1,8 @@
 App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, extAppApi,
                                                       DateUtils, RemindUsersGroup) {
+    // when the ext app does not allow the website to post in his behalf, only the summary is presented
+    $scope.onlySummary = extAppApi.post == undefined;
+
     $scope.group = data.group;
     $scope.days = data.days;
     $scope.groupInput = {};
@@ -9,6 +12,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     $scope.messageTooltip = "You can tag people by typing @ and their name";
     if (!$scope.enableTags) {
         $scope.messageTooltip = "Tagging is not supported for Internet Explorer";
+    }
+
+    if ($scope.onlySummary) {
+        $scope.messageTooltip += "<br>This is only a summary as posting from an external app is not supported.";
     }
 
     $scope.tagAutocomplete = {
@@ -284,6 +291,10 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     }
 
     $scope.ok = function(){
+        if ($scope.onlySummary) {
+            $modalInstance.close();
+            return;
+        }
         if ($scope.extAppGroup == undefined) {
             $scope.groupInput.shake();
             return;

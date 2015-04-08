@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.managers;
 
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.fixtures.EmployeesFixture;
 import com.yammer.schedulizer.test.TestUtils;
@@ -37,11 +38,11 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
     protected void clean() {}
 
     @Test
-    public void testFindByYammerIdRetrievesTheCorrectRecord() {
+    public void testFindByExtAppIdRetrievesTheCorrectRecord() {
         Employee employee = testEmployees.get(0);
         employeeManager.save(employee);
         refresh(employee);
-        Employee found = employeeManager.getByYammerId(employee.getExtAppId());
+        Employee found = employeeManager.getByExtAppId(employee.getExtAppId(), ExtAppType.yammer);
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
@@ -50,13 +51,13 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
 
     @Test
     public void testGetGlobalAdminsRetrievesTheCorrectRecord() {
-        String gloalAdminYammerId = TestUtils.nextYammerId();
-        Employee globalAdmin = new Employee("John Doe", gloalAdminYammerId);
+        String gloalAdminExtAppId = TestUtils.nextExtAppId();
+        Employee globalAdmin = new Employee("John Doe", gloalAdminExtAppId, ExtAppType.yammer);
         globalAdmin.setGlobalAdmin(true);
         employeeManager.save(globalAdmin);
         refresh(globalAdmin);
-        String yammerId = TestUtils.nextYammerId();
-        Employee employee = new Employee("Mary", yammerId);
+        String extAppId = TestUtils.nextExtAppId();
+        Employee employee = new Employee("Mary", extAppId, ExtAppType.yammer);
         employeeManager.save(employee);
         List<Employee> globalAdmins = employeeManager.getGlobalAdmins();
         assertNotNull(globalAdmins);
@@ -68,18 +69,19 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
     }
 
     @Test
-    public void testGetOrCreateByYammerId() {
-        String yammerId = TestUtils.nextYammerId();
-        Employee employee = new Employee("John Doe", yammerId);
+    public void testGetOrCreateByExtAppId() {
+        String extAppId = TestUtils.nextExtAppId();
+        Employee employee = new Employee("John Doe", extAppId, ExtAppType.yammer);
         employeeManager.save(employee);
-        Employee found = employeeManager.getOrCreateByYammerId(employee.getExtAppId(), (Employee e) -> {});
+        Employee found = employeeManager.getOrCreateByExtAppId(employee.getExtAppId(), ExtAppType.yammer, (Employee e) -> {
+        });
         assertNotNull(found);
         assertThat(found, equalTo(employee));
-        Employee newEmployee = employeeManager.getOrCreateByYammerId(TestUtils.nextYammerId(), (Employee e) -> {
+        Employee newEmployee = employeeManager.getOrCreateByExtAppId(TestUtils.nextExtAppId(), ExtAppType.yammer,(Employee e) -> {
             e.setName("Amanda");
             e.setImageUrlTemplate("lol");
         });
-        Employee newFound = employeeManager.getByYammerId(newEmployee.getExtAppId());
+        Employee newFound = employeeManager.getByExtAppId(newEmployee.getExtAppId(), ExtAppType.yammer);
         assertNotNull(newFound);
         assertThat(newFound, equalTo(newEmployee));
     }

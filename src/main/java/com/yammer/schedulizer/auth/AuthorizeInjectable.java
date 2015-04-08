@@ -53,8 +53,8 @@ public class AuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
                         .build());
             }
             String accessToken = header.getParameter(Authentication.Param.ACCESS_TOKEN);
-            String yammerId = header.getParameter(Authentication.Param.EXT_APP_ID);
-            credentials = new Credentials(accessToken, yammerId, roles);
+            String extAppId = header.getParameter(Authentication.Param.EXT_APP_ID);
+            credentials = new Credentials(accessToken, extAppId, roles);
         } else {
             credentials = Credentials.absent(roles);
         }

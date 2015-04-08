@@ -20,7 +20,7 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
 
     private String employeeName = "Luiz Filipe";
     private String imageUrlTemplate = "imageUrlTemplate";
-    private String yammerId = TestUtils.nextYammerId();
+    private String extAppId = TestUtils.nextExtAppId();
     private Group group;
     private Group otherGroup;
 
@@ -29,7 +29,7 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
     protected MultivaluedMap getSamplePostForm() {
         MultivaluedMapImpl values = new MultivaluedMapImpl();
         values.add("name",  employeeName);
-        values.add("extAppId", yammerId);
+        values.add("extAppId", extAppId);
         values.add("imageUrlTemplate", imageUrlTemplate);
         return values;
     }
@@ -43,7 +43,7 @@ public class GroupEmployeesResourceTest extends GetCreateDeleteResourceTest<Empl
     protected boolean checkCreatedEntity(Employee entity) {
         return entity.getName().equals(employeeName) &&
                 entity.getImageUrlTemplate().equals(imageUrlTemplate) &&
-                entity.getExtAppId().equals(yammerId);
+                entity.getExtAppId().equals(extAppId);
     }
 
     @Override

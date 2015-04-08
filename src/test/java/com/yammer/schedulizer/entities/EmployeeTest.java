@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.entities;
 
+import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.managers.EmployeeManager;
 import com.yammer.schedulizer.test.DatabaseTest;
 import com.yammer.schedulizer.test.TestUtils;
@@ -25,7 +26,7 @@ public class EmployeeTest extends DatabaseTest {
 
     @Test
     public void testNewHasEmptyAssignmentsAfterRetrievedFromDb() {
-        Employee employee = new Employee("John Doe", TestUtils.nextYammerId());
+        Employee employee = new Employee("John Doe", TestUtils.nextExtAppId(), ExtAppType.yammer);
         employeeManager.save(employee);
         refresh(employee);
 
@@ -37,11 +38,11 @@ public class EmployeeTest extends DatabaseTest {
 
     @Test
     public void testEmployeeUniqueness() throws Exception {
-        String yammerId = TestUtils.nextYammerId();
-        Employee employee = new Employee("John Doe", yammerId);
+        String yammerId = TestUtils.nextExtAppId();
+        Employee employee = new Employee("John Doe", yammerId, ExtAppType.yammer);
         employeeManager.save(employee);
 
-        Employee clone = new Employee("Barak Obama", yammerId);
+        Employee clone = new Employee("Barak Obama", yammerId, ExtAppType.yammer);
 
         assertCauses(ConstraintViolationException.class, () -> employeeManager.save(clone));
 

@@ -150,8 +150,8 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     }
 
     function updateExtAppSession(extAppResponse) {
-        if (extAppResponse.authResponse) {
-            ExtAppSession.create(extAppResponse.access_token.token, extAppResponse.access_token.user_id);
+        if (extAppResponse.access_token) {
+            ExtAppSession.create(extAppResponse.access_token, extAppResponse.user.id);
             SessionStorage.save("extAppSession", ExtAppSession);
         } else {
             ExtAppSession.destroy();
@@ -174,7 +174,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
 
     function updateUserInformation(employeeId, extAppResponse) {
         var employee = new Employee({employeeId: employeeId});
-        employee.imageUrlTemplate = extAppResponse.user.mugshot_url;
+        employee.imageUrlTemplate = extAppResponse.user.photo;
         employee.name = extAppResponse.user.full_name;
         employee.$save();
     }
@@ -224,9 +224,23 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
         deferred.resolve();
         destroyAuthorizationHeader();
         Session.destroy();
+        ExtAppSession.destroy();
         SessionStorage.save("session", Session);
+        SessionStorage.save("extAppSession", ExtAppSession);
         return deferred.promise;
     }
+
+    var loginRetries = 3;
+    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(){
+        loginRetries--;
+        if (loginRetries <= 0) {
+            authService.logout();
+            return;
+        }
+        ExtAppSession.destroy();
+        SessionStorage.save("extAppSession", ExtAppSession);
+        initializeAuthService();
+    });
 
     authService.isAuthenticated = function () {
         return !!Session.userId;

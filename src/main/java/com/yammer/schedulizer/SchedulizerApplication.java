@@ -1,9 +1,7 @@
 package com.yammer.schedulizer;
 
 import com.sun.jersey.api.client.Client;
-import com.yammer.schedulizer.auth.AbstractAuthenticator;
-import com.yammer.schedulizer.auth.Authenticator;
-import com.yammer.schedulizer.auth.AuthorizeProvider;
+import com.yammer.schedulizer.auth.*;
 import com.yammer.schedulizer.config.SchedulizerConfiguration;
 import com.yammer.schedulizer.entities.*;
 import com.yammer.schedulizer.managers.*;
@@ -37,6 +35,9 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     private AssignmentManager assignmentManager;
     private AssignableDayManager assignableDayManager;
     private DayRestrictionManager dayRestrictionManager;
+    private ExtAppAuthenticator extAppAuthenticator;
+
+    private ExtAppType extAppType;
 
     public static void main(String[] args) throws Exception {
         new SchedulizerApplication().run(args);
@@ -56,14 +57,14 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().setUrlPattern(config.getRootPath());
         env.jersey().register(new GroupsResource(groupManager));
         env.jersey().register(new GroupDayRestrictionsResource(groupManager, dayRestrictionManager));
-        env.jersey().register(new GroupEmployeesResource(employeeManager, groupManager, membershipManager));
-        env.jersey().register(new GlobalAdminsResource(employeeManager));
+        env.jersey().register(new GroupEmployeesResource(employeeManager, groupManager, membershipManager, extAppType));
+        env.jersey().register(new GlobalAdminsResource(employeeManager, extAppType));
         env.jersey().register(new EmployeesResource(employeeManager));
         env.jersey().register(new EmployeeAssignmentsResource(employeeManager, assignmentManager));
         env.jersey().register(new AssignmentTypesResource(assignmentTypeManager, groupManager));
         env.jersey().register(new AssignmentsResource(assignmentManager, groupManager, employeeManager,
                 assignmentTypeManager, assignableDayManager));
-        env.jersey().register(new AuthorizationResource());
+        env.jersey().register(new AuthorizationResource(extAppType));
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
     }
@@ -72,13 +73,18 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         Client client = new JerseyClientBuilder(env)
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
-        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager);
+        extAppAuthenticator = ExtAppAuthenticatorFactory.getExtAppAuthenticator(extAppType, client);
+        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator,
+                ExtAppType.valueOf(config.getExtApp()));
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
 
     @Override
     public void run(SchedulizerConfiguration config, Environment env) throws Exception {
         SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
+
+        extAppType = ExtAppType.valueOf(config.getExtApp());
+
         userManager = new UserManager(sessionFactory);
         groupManager = new GroupManager(sessionFactory);
         employeeManager = new EmployeeManager(sessionFactory);

@@ -11,10 +11,17 @@ public abstract class AbstractAuthenticator implements io.dropwizard.auth.Authen
     protected final Client client;
     protected final UserManager userManager;
     protected final EmployeeManager employeeManager;
+    protected final ExtAppAuthenticator extAppAuthenticator;
+    protected final ExtAppType extAppType;
 
-    public AbstractAuthenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
+    public AbstractAuthenticator(Client client, UserManager userManager,
+                                 EmployeeManager employeeManager,
+                                 ExtAppAuthenticator extAppAuthenticator,
+                                 ExtAppType extAppType) {
         this.client = client;
         this.userManager = userManager;
         this.employeeManager = employeeManager;
+        this.extAppAuthenticator = extAppAuthenticator;
+        this.extAppType = extAppType;
     }
 }

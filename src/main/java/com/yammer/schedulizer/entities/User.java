@@ -2,8 +2,7 @@ package com.yammer.schedulizer.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.schedulizer.auth.Authentication;
-import com.yammer.schedulizer.auth.Role;
+import com.yammer.schedulizer.auth.*;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
@@ -35,9 +34,6 @@ public class User extends BaseEntity {
     @Column(name = "access_token")
     private String accessToken;
 
-    @Column(name = "ext_app_type")
-    private String extAppType;
-
     @Column(name = "expiration_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate expirationDate;
@@ -49,7 +45,6 @@ public class User extends BaseEntity {
     public User(Employee employee, String accessToken) {
         this.employee = employee;
         this.accessToken = accessToken;
-        this.extAppType = "yammer";
     }
 
     public Employee getEmployee() {
@@ -63,10 +58,6 @@ public class User extends BaseEntity {
     public String getAccessToken() {
         return accessToken;
     }
-
-    public String getExtAppType() { return extAppType; }
-
-    public void setExtAppType(String extAppType) { this.extAppType = extAppType; }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;

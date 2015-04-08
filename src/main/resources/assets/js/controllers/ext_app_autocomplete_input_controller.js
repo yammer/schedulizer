@@ -77,14 +77,16 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
         return "" +
             "<div class=\"employee-image\"><img src=\"" + item.photo + "\"/></div>" +
             "<div class=\"employee-name\">" + item.label + "</div>";
-        }
+    }
+
     if ($scope.api == undefined) $scope.api = {};
+
     $scope.api.setValue = function (value) {
         $scope.inputValue = value;
-    }
+    };
     $scope.api.shake = function() {
         Utils.shakeOnError($scope.autocompleteInput);
-    }
+    };
 });
 
 App.directive('extAppAutocompleteInput', function() {
