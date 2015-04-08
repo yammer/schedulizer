@@ -63,10 +63,12 @@ public class Employee extends BaseEntity {
     public Employee(String name, String extAppId) {
         this.name = name;
         this.extAppId = extAppId;
+        this.extAppType = "yammer";
     }
 
     public Employee(String extAppId) {
         this.extAppId = extAppId;
+        this.extAppType = "yammer";
     }
 
     public long getId() {
