@@ -27,6 +27,9 @@ public class Employee extends BaseEntity {
     @NotEmpty
     private String extAppId;
 
+    @Column(name = "ext_app_type")
+    private String extAppType;
+
     @Column(name = "name")
     @NotBlank
     private String name;
@@ -137,4 +140,8 @@ public class Employee extends BaseEntity {
     public void setDayRestrictions(Set<DayRestriction> dayRestrictions) {
         this.dayRestrictions = ImmutableSet.copyOf(dayRestrictions);
     }
+
+    public String getExtAppType() { return extAppType; }
+
+    public void setExtAppType(String extAppType) { this.extAppType = extAppType; }
 }
