@@ -66,6 +66,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().register(new AuthorizationResource());
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
+        env.jersey().register(new Migrations(userManager, employeeManager));
     }
 
     protected void registerAuthenticator(SchedulizerConfiguration config, Environment env) {

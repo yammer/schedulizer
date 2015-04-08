@@ -27,6 +27,9 @@ public class Employee extends BaseEntity {
     @NotEmpty
     private String yammerId;
 
+    @Column(name = "ext_app_id")
+    private String extAppId;
+
     @Column(name = "name")
     @NotBlank
     private String name;
@@ -69,8 +72,7 @@ public class Employee extends BaseEntity {
     public long getId() {
         return id;
     }
-
-    @JsonProperty("extAppId")
+    
     public String getYammerId() {
         return yammerId;
     }
@@ -78,6 +80,10 @@ public class Employee extends BaseEntity {
     public void setYammerId(String yammerId) {
         this.yammerId = yammerId;
     }
+
+    public String getExtAppId() { return extAppId; }
+
+    public void setExtAppId(String extAppId) { this.extAppId = extAppId; }
 
     public String getName() {
         return name;

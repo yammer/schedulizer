@@ -35,6 +35,9 @@ public class User extends BaseEntity {
     @Column(name = "access_token")
     private String accessToken;
 
+    @Column(name = "ext_app_type")
+    private String extAppType;
+
     @Column(name = "expiration_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate expirationDate;
@@ -59,6 +62,10 @@ public class User extends BaseEntity {
     public String getAccessToken() {
         return accessToken;
     }
+
+    public String getExtAppType() { return extAppType; }
+
+    public void setExtAppType(String extAppType) { this.extAppType = extAppType; }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
