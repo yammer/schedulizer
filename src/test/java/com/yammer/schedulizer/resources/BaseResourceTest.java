@@ -47,6 +47,6 @@ public class BaseResourceTest  extends DatabaseTest {
     }
 
     private String getAuthorizationHeader() {
-        return String.format("SC-AUTH access-token = \"\", ext-app-id = \"%s\"", currentUser.getYammerId());
+        return String.format("SC-AUTH access-token = \"\", ext-app-id = \"%s\"", currentUser.getExtAppId());
     }
 }

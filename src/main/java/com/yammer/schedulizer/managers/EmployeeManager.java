@@ -16,7 +16,7 @@ public class EmployeeManager extends EntityManager<Employee> {
     public Employee safeGetByYammerId(String yammerId) {
         return getUnique(currentSession()
                 .createCriteria(Employee.class)
-                .add(Restrictions.eq("yammerId", yammerId)));
+                .add(Restrictions.eq("extAppId", yammerId)));
     }
 
     public Employee getByYammerId(String yammerId) {

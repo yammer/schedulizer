@@ -49,6 +49,7 @@ public class User extends BaseEntity {
     public User(Employee employee, String accessToken) {
         this.employee = employee;
         this.accessToken = accessToken;
+        this.extAppType = "yammer";
     }
 
     public Employee getEmployee() {

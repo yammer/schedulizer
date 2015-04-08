@@ -32,7 +32,7 @@ public class GlobalAdminsResourceTest extends GetCreateDeleteResourceTest<Employ
     protected boolean checkCreatedEntity(Employee entity) {
         return entity.getName().equals(employeeName) &&
                 entity.getImageUrlTemplate().equals(imageUrlTemplate) &&
-                entity.getYammerId().equals(yammerId);
+                entity.getExtAppId().equals(yammerId);
     }
 
     @Override

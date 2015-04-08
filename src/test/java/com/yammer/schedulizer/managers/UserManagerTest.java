@@ -45,7 +45,7 @@ public class UserManagerTest extends BaseManagerTest<User> {
     public void testFindByYammerIdRetrievesTheCorrectRecord() {
         User user = testUsers.get(0);
         userManager.save(user);
-        User found = userManager.safeGetByYammerId(user.getEmployee().getYammerId());
+        User found = userManager.safeGetByYammerId(user.getEmployee().getExtAppId());
         assertNotNull(found);
         assertThat(found, equalTo(user));
         userManager.delete(user);

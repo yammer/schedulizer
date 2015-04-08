@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "employees",
         uniqueConstraints = @UniqueConstraint(columnNames =
-                {"yammer_id"}))
+                {"ext_app_id"}))
 public class Employee extends BaseEntity {
 
     @Id
@@ -24,10 +24,10 @@ public class Employee extends BaseEntity {
     private long id;
 
     @Column(name = "yammer_id")
-    @NotEmpty
     private String yammerId;
 
     @Column(name = "ext_app_id")
+    @NotEmpty
     private String extAppId;
 
     @Column(name = "name")
@@ -60,25 +60,19 @@ public class Employee extends BaseEntity {
         // Required by Hibernate
     }
 
-    public Employee(String name, String yammerId) {
+    public Employee(String name, String extAppId) {
         this.name = name;
-        this.yammerId = yammerId;
+        this.extAppId = extAppId;
+        yammerId = extAppId;
     }
 
-    public Employee(String yammerId) {
-        this.yammerId = yammerId;
+    public Employee(String extAppId) {
+        this.extAppId = extAppId;
+        yammerId = extAppId;
     }
 
     public long getId() {
         return id;
-    }
-    
-    public String getYammerId() {
-        return yammerId;
-    }
-
-    public void setYammerId(String yammerId) {
-        this.yammerId = yammerId;
     }
 
     public String getExtAppId() { return extAppId; }

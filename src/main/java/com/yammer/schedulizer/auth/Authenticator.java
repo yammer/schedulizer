@@ -36,7 +36,7 @@ public class Authenticator extends AbstractAuthenticator {
             Employee employee = employeeManager.safeGetByYammerId(yammerId);
             if (employee == null) {
                 employee = getTokenOwner(credentials);
-                if (employee == null || !employee.getYammerId().equals(yammerId)) {
+                if (employee == null || !employee.getExtAppId().equals(yammerId)) {
                     return Optional.absent();
                 }
                 if (employeeManager.count() == 0) {
@@ -66,7 +66,7 @@ public class Authenticator extends AbstractAuthenticator {
             if (!user.isUpToDate()) {
                 // Don't need to save the employee, just verify identity
                 Employee tokenOwner = getTokenOwner(credentials);
-                if (tokenOwner != null && tokenOwner.getYammerId().equals(user.getEmployee().getYammerId())) {
+                if (tokenOwner != null && tokenOwner.getExtAppId().equals(user.getEmployee().getExtAppId())) {
                     user.renew();
                 } else {
                     return Optional.absent();

@@ -41,7 +41,7 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
         Employee employee = testEmployees.get(0);
         employeeManager.save(employee);
         refresh(employee);
-        Employee found = employeeManager.getByYammerId(employee.getYammerId());
+        Employee found = employeeManager.getByYammerId(employee.getExtAppId());
 
         assertNotNull(found);
         assertThat(found, equalTo(employee));
@@ -72,14 +72,14 @@ public class EmployeeManagerTest extends BaseManagerTest<Employee> {
         String yammerId = TestUtils.nextYammerId();
         Employee employee = new Employee("John Doe", yammerId);
         employeeManager.save(employee);
-        Employee found = employeeManager.getOrCreateByYammerId(employee.getYammerId(), (Employee e) -> {});
+        Employee found = employeeManager.getOrCreateByYammerId(employee.getExtAppId(), (Employee e) -> {});
         assertNotNull(found);
         assertThat(found, equalTo(employee));
         Employee newEmployee = employeeManager.getOrCreateByYammerId(TestUtils.nextYammerId(), (Employee e) -> {
             e.setName("Amanda");
             e.setImageUrlTemplate("lol");
         });
-        Employee newFound = employeeManager.getByYammerId(newEmployee.getYammerId());
+        Employee newFound = employeeManager.getByYammerId(newEmployee.getExtAppId());
         assertNotNull(newFound);
         assertThat(newFound, equalTo(newEmployee));
     }
