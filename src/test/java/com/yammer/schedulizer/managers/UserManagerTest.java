@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.managers;
 
+import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.entities.User;
 import com.yammer.schedulizer.fixtures.EmployeesFixture;
@@ -35,7 +36,7 @@ public class UserManagerTest extends BaseManagerTest<User> {
         EmployeesFixture employeesFixture = new EmployeesFixture();
         employeesFixture.save(getSessionFactory());
         employees = employeesFixture.getEmployees();
-        testUsers = employees.stream().map(e -> new User(e, null)).collect(Collectors.toList());
+        testUsers = employees.stream().map(e -> new User(e, null, ExtAppAuthenticatorFactory.ExtAppType.yammer)).collect(Collectors.toList());
     }
 
     @Override

@@ -18,8 +18,9 @@ public class Authenticator extends AbstractAuthenticator {
     private static final int EXT_APP_REQUEST_RETRIES = 3;
 
     public Authenticator(Client client, UserManager userManager,
-                         EmployeeManager employeeManager, ExtAppAuthenticator extAppAuthenticator) {
-        super(client, userManager, employeeManager, extAppAuthenticator);
+                         EmployeeManager employeeManager, ExtAppAuthenticator extAppAuthenticator,
+                         ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+        super(client, userManager, employeeManager, extAppAuthenticator, extAppType);
     }
 
     @Override
@@ -36,17 +37,17 @@ public class Authenticator extends AbstractAuthenticator {
                 if (employee == null || !employee.getExtAppId().equals(extAppId)) {
                     return Optional.absent();
                 }
-                if (employeeManager.count() == 0) {
+                if (userManager.count(extAppType) == 0) {
                     // First employee to login with the external app is a global admin
                     employee.setGlobalAdmin(true);
                 }
                 // User verified successfully
                 employeeManager.save(employee);
-                user = User.fresh(employee, credentials.getAccessToken());
+                user = User.fresh(employee, credentials.getAccessToken(), extAppType);
             } else {
                 user = employee.getUser();
                 if (user == null) {
-                    user = new User(employee, credentials.getAccessToken());
+                    user = new User(employee, credentials.getAccessToken(), extAppType);
                 } else if (!credentials.getAccessToken().equals(user.getAccessToken())) {
                     user.setAccessToken(credentials.getAccessToken());
                     user.expire();

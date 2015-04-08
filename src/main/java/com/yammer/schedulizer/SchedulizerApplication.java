@@ -72,7 +72,8 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
                 .using(config.getJerseyClientConfiguration())
                 .build(getName());
         extAppAuthenticator = ExtAppAuthenticatorFactory.getExtAppAuthenticator(config.getExtApp(), client);
-        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator);
+        AbstractAuthenticator authenticator = new Authenticator(client, userManager, employeeManager, extAppAuthenticator,
+                ExtAppAuthenticatorFactory.ExtAppType.valueOf(config.getExtApp()));
         env.jersey().register(new AuthorizeProvider<>(authenticator));
     }
 

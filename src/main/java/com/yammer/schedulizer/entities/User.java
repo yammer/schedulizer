@@ -3,6 +3,7 @@ package com.yammer.schedulizer.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.schedulizer.auth.Authentication;
+import com.yammer.schedulizer.auth.ExtAppAuthenticatorFactory;
 import com.yammer.schedulizer.auth.Role;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -13,8 +14,8 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User extends BaseEntity {
 
-    public static User fresh(Employee employee, String accessToken) {
-        User user = new User(employee, accessToken);
+    public static User fresh(Employee employee, String accessToken, ExtAppAuthenticatorFactory.ExtAppType extAppType) {
+        User user = new User(employee, accessToken, extAppType);
         user.renew();
         return user;
     }
@@ -46,10 +47,10 @@ public class User extends BaseEntity {
         // Required by Hibernate
     }
 
-    public User(Employee employee, String accessToken) {
+    public User(Employee employee, String accessToken, ExtAppAuthenticatorFactory.ExtAppType extAppType) {
         this.employee = employee;
         this.accessToken = accessToken;
-        this.extAppType = "yammer";
+        this.extAppType = extAppType.toString();
     }
 
     public Employee getEmployee() {

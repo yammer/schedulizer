@@ -8,7 +8,7 @@ import io.dropwizard.auth.AuthenticationException;
 
 public class MockAuthenticator extends Authenticator {
     public MockAuthenticator(Client client, UserManager userManager, EmployeeManager employeeManager) {
-        super(client, userManager, employeeManager, new MockExtAppAuthenticator(client));
+        super(client, userManager, employeeManager, new MockExtAppAuthenticator(client), ExtAppAuthenticatorFactory.ExtAppType.yammer);
     }
 
     @Override
