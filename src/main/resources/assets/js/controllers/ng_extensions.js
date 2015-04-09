@@ -378,9 +378,16 @@ App.directive('stTooltip', function($timeout){
             }
             scope.$watch('stTooltip', function () {
                 if (scope.stTooltip == "true") {
-                    $(element).tooltip('enable');
+                    // TODO: find out specific reason why this exception is being thrown
+                    try{ // avoid annoying exception
+                        $(element).tooltip('enable');
+                    } catch (e) {}
+
                 } else {
-                    $(element).tooltip('disable');
+                    // TODO: find out specific reason why this exception is being thrown
+                    try { // avoid annoying exception
+                        $(element).tooltip('disable');
+                    } catch (e) {}
                 }
             });
         }
