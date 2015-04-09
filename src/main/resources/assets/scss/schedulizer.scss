@@ -1431,6 +1431,10 @@ $not-available-input-bg: #DA4B4B;
     display: inline-block;
     font-size: 20px;
     cursor: pointer;
+
+    &:hover {
+        color: lighten($grey-3, 10%);
+    }
     .glyphicon {
         position: relative;
         top: 3px;
