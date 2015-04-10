@@ -176,6 +176,23 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>sass-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-css</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>update-stylesheets</goal>
+                        </goals>
+                        <configuration>
+                            <sassSourceDirectory>${basedir}/src/main/resources/assets/scss/schedulizer</sassSourceDirectory>
+                            <destination>${basedir}/src/main/resources/assets/css/out/</destination>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

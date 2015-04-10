@@ -1,7 +1,7 @@
-@import "bootstrap/_bootstrap-schedulizer.scss";
-@import "bootstrap/_bootstrap.scss";
-@import "animate/animate.scss";
-@import "hover/hover.scss";
+@import "../bootstrap/bootstrap-schedulizer";
+@import "../bootstrap/bootstrap";
+@import "../animate/animate";
+@import "../hover/hover";
 
 /* TODO: Extract this */
 @mixin select($value) {
