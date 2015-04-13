@@ -1,3 +1,5 @@
+'use strict';
+
 services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($window, EXT_APP, EXT_APP_TYPES) {
     function notImplemented() { throw new Error('Ext App Api not implemented'); }
     var extAppApi = {
@@ -9,9 +11,9 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
 
     function formatString(message, tags, mapper) {
         return message.replace(/{(\d+)}/g, function(match, i) {
-            return typeof tags[i] != 'undefined'
-                ? mapper(tags[i])
-                : match;
+            return typeof tags[i] !== 'undefined' ?
+                mapper(tags[i]) :
+                match;
         });
     }
 
@@ -20,12 +22,12 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
     switch (EXT_APP) {
         case EXT_APP_TYPES.yammer:
             var yam = $window.yam;
-            if (!yam) throw new Error('Could not load yammer api');
+            if (!yam) { throw new Error('Could not load yammer api'); }
             extAppApi =  {
                 // A me function
                 getLoginStatus: function(callback) {
                     yam.getLoginStatus(function(response) {
-                        if(response.authResponse == undefined) {
+                        if(response.authResponse === undefined) {
                             callback({});
                             return;
                         }
@@ -89,12 +91,12 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                         }
                     });
                 }
-            }
+            };
             break;
         case EXT_APP_TYPES.facebook:
             var fb = $window.FB;
-            var friends = undefined;
-            if (!fb) throw new Error('Could not load facebook api');
+            var friends;
+            if (!fb) { throw new Error('Could not load facebook api'); }
             fb.init({
                 appId      : '617709521696922',
                 xfbml      : true,
@@ -104,7 +106,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                 // A me function
                 getLoginStatus: function(callback) {
                     fb.getLoginStatus(function(response) {
-                        if(response.authResponse == undefined) {
+                        if(response.authResponse === undefined) {
                             callback({});
                             return;
                         }
@@ -138,49 +140,49 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                     });
                 },
                 autocomplete: function(prefix, callback, autocompleteType) {
-                    prefix = prefix.toLowerCase();
-                    if (autocompleteType == 'user') {
-                        function prefixFilter(s) {
-                            return s.full_name.toLowerCase().indexOf(prefix) != -1;
+                    function prefixFilter(s) {
+                        return s.full_name.toLowerCase().indexOf(prefix) !== -1;
+                    }
+                    function getFriends(callback, offset) {
+                        var OFFSET_DIFF = 100;
+                        if (offset === undefined) {
+                            offset = 0;
                         }
-                        function getFriends(callback, offset) {
-                            var OFFSET_DIFF = 100;
-                            if (offset == undefined) {
-                                offset = 0;
+                        fb.api('/me/friends', {
+                            limit: OFFSET_DIFF,
+                            offset: offset,
+                            fields: [
+                                'name',
+                                'picture{url}',
+                                'id'
+                            ]
+                        }, function (response) {
+                            if (response.data === undefined || response.data.length === 0) {
+                                fb.api('/me', {
+                                    fields: ['id', 'name', 'picture']
+                                }, function (meResponse) {
+                                    callback([{
+                                        photo: meResponse.picture.data.url,
+                                        full_name: meResponse.name,
+                                        id: meResponse.id
+                                    }]);
+                                });
+                                return;
                             }
-                            fb.api('/me/friends', {
-                                limit: OFFSET_DIFF,
-                                offset: offset,
-                                fields: [
-                                    'name',
-                                    'picture{url}',
-                                    'id'
-                                ]
-                            }, function (response) {
-                                if (response.data == undefined || response.data.length == 0) {
-                                    fb.api('/me', {
-                                        fields: ['id', 'name', 'picture']
-                                    }, function (meResponse) {
-                                        callback([{
-                                            photo: meResponse.picture.data.url,
-                                            full_name: meResponse.name,
-                                            id: meResponse.id
-                                        }]);
-                                    });
-                                    return;
-                                }
-                                getFriends(function (friends) {
-                                    callback(_.union(response.data.map(function (el) {
-                                        return {
-                                            full_name: el.name,
-                                            id: el.id,
-                                            photo: el.picture.data.url
-                                        };
-                                    }), friends));
-                                }, offset + OFFSET_DIFF);
-                            });
-                        }
-                        if (friends == undefined) {
+                            getFriends(function (friends) {
+                                callback(_.union(response.data.map(function (el) {
+                                    return {
+                                        full_name: el.name,
+                                        id: el.id,
+                                        photo: el.picture.data.url
+                                    };
+                                }), friends));
+                            }, offset + OFFSET_DIFF);
+                        });
+                    }
+                    prefix = prefix.toLowerCase();
+                    if (autocompleteType === 'user') {
+                        if (friends === undefined) {
                             getFriends(function (data) {
                                 friends = data;
                                 callback({
@@ -193,7 +195,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                             });
                         }
 
-                    } else if (autocompleteType == 'group') {
+                    } else if (autocompleteType === 'group') {
                         // Facebook's API does not allow this feature
                         callback({
                             items: []
@@ -204,7 +206,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
                  *  Facebook's API does not allow this feature
                  */
                 post: undefined
-            }
+            };
             break;
         // Integrate with other external apps here by following the examples above
     }
@@ -217,7 +219,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
         }
         if (autocompleteCache[cacheKey(prefix)]) {
             $window.setTimeout(function() {
-                callback(autocompleteCache[cacheKey(prefix)])
+                callback(autocompleteCache[cacheKey(prefix)]);
             }, 0); // async because the callback is supposed to be async
             return;
         }
@@ -228,7 +230,7 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
             autocompleteCache[cacheKey(prefix)] = response;
             callback(response);
         }, autocompleteType);
-    }
+    };
 
     return extAppApi;
 

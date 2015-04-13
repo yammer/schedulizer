@@ -5,6 +5,7 @@
  */
 var SchedulizerApp = {};
 
+/*global App: true*/
 var App = angular.module('SchedulizerApp', ['ngAnimate', 'ui.bootstrap', 'services', 'calendar-flow', 'ui.router', 'dialogs', 'truncate']);
 
 App.constant('AUTH_EVENTS', {
@@ -23,7 +24,7 @@ var USER_ROLES_CONSTANT = {
     admin: 'MEMBER', // TODO: merge admin and user into a single role called member
     user: 'MEMBER',
     guest: 'GUEST'
-}
+};
 
 App.constant('USER_ROLES', USER_ROLES_CONSTANT);
 
@@ -101,7 +102,7 @@ App.config(['$stateProvider', '$urlRouterProvider', 'NAV_TABS', 'NESTED_VIEWS',
 
         angular.forEach(NAV_TABS, function(tab, id) {
             $stateProvider
-                .state(tab.stateName, angular.copy(tab))
+                .state(tab.stateName, angular.copy(tab));
         });
         angular.forEach(NESTED_VIEWS, function(view, id) {
             $stateProvider

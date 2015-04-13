@@ -1,3 +1,5 @@
+'use strict';
+
 var guid = (function() {
     function s4() {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -9,6 +11,7 @@ var guid = (function() {
             s4() + '-' + s4() + s4() + s4();
     };
 })();
+
 $.event.props.push('dataTransfer');
 
 App.directive('ngDraggable', ['$rootScope', function($rootScope) {
@@ -19,7 +22,7 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
             dragData: '=',
             ngDraggable: '='
         },
-        link: function(scope, el, attrs, controller) {
+        link: function(scope, el) {
             function dragStartFunc(e) {
                 if (scope.ghostElement) {
                     try {
@@ -36,14 +39,14 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
                 $rootScope.$emit("DRAG-START");
             }
 
-            function dragEndFunc(e) {
+            function dragEndFunc() {
                 $rootScope.$emit("DRAG-END");
             }
 
             var id = angular.element(el).attr("id");
 
             if (!id) {
-                id = guid()
+                id = guid();
                 angular.element(el).attr("id", id);
             }
 
@@ -64,7 +67,7 @@ App.directive('ngDraggable', ['$rootScope', function($rootScope) {
             });
 
         }
-    }
+    };
 }]);
 
 App.directive('ngDroppable', ['$rootScope', function($rootScope) {
@@ -74,7 +77,7 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
             ngOnDrop: '&',
             ngDroppable: '='
         },
-        link: function($scope, el, attrs, controller) {
+        link: function($scope, el) {
             function dragoverFunc(e) {
                 if (e.preventDefault) {
                     e.preventDefault(); // Necessary. Allows us to drop.
@@ -117,7 +120,7 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
 
             var id = angular.element(el).attr("id");
             if (!id) {
-                id = guid()
+                id = guid();
                 angular.element(el).attr("id", id);
             }
 
@@ -127,12 +130,12 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
                     el.bind("dragenter", dragenterFunc);
                     el.bind("dragleave", dragleaveFunc);
                     el.bind("drop", dropFunc);
-                    dragStartOff = $rootScope.$on("DRAG-START", function(e) {
+                    dragStartOff = $rootScope.$on("DRAG-START", function() {
                         var el = document.getElementById(id);
                         angular.element(el).addClass("drop-target");
                         angular.element(el).addClass('drag-in-progress');
                     });
-                    dragEndOff = $rootScope.$on("DRAG-END", function(e) {
+                    dragEndOff = $rootScope.$on("DRAG-END", function() {
                         var el = document.getElementById(id);
                         angular.element(el).removeClass("drop-target");
                         angular.element(el).removeClass("drag-over");
@@ -150,5 +153,5 @@ App.directive('ngDroppable', ['$rootScope', function($rootScope) {
             });
 
         }
-    }
+    };
 }]);

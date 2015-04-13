@@ -1,3 +1,5 @@
+'use strict';
+
 App.controller('AvailableDayController', function ($scope) {
 
 });

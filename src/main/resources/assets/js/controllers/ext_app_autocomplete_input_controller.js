@@ -1,27 +1,29 @@
+'use strict';
+
 App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, extAppApi, Utils) {
     $scope.autocompleteList = [];
     window.autocompleteScope = $scope;
-    if ($scope.autocompleteType == undefined) {
+    if ($scope.autocompleteType === undefined) {
         $scope.autocompleteType = "user";
     }
 
-    if ($scope.onEnter == undefined) {
+    if ($scope.onEnter === undefined) {
         $scope.onEnter = function() {};
     }
 
-    if ($scope.onKeyDown == undefined) {
+    if ($scope.onKeyDown === undefined) {
         $scope.onKeyDown = function() {};
     }
 
-    if ($scope.onKeyUp == undefined) {
+    if ($scope.onKeyUp === undefined) {
         $scope.onKeyUp = function() {};
     }
 
-    if ($scope.onBlur == undefined) {
+    if ($scope.onBlur === undefined) {
         $scope.onKoeyUp = function() {};
     }
 
-    if ($scope.placeholder == undefined) {
+    if ($scope.placeholder === undefined) {
         $scope.placeholder = "Name";
     }
 
@@ -37,22 +39,22 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
             isInitialValue = false;
             return;
         }
-        if (prefix == undefined || prefix == "" || $scope.newEmployee != undefined) {
+        if (prefix === undefined || prefix === "" || $scope.newEmployee != null) {
             return;
         }
-        if (timeout != undefined) {
+        if (timeout !== undefined) {
             $timeout.cancel(timeout);
         }
         timeout = $timeout(function() {
             extAppApi.autocomplete(prefix, function(response) {
-                if (response == undefined) {
+                if (response === undefined) {
                     return;
                 }
                 var users = response.items;
                 $timeout(function(){
                     $scope.autocompleteList =
                         (users.map(function(item) {
-                            if (item.full_name == undefined) { // test user
+                            if (item.full_name === undefined) { // test user
                                 item.full_name = "";
                             }
                             if ($scope.autocompleteType == "user") {
@@ -64,7 +66,7 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
                             return {
                                 label: item.label,
                                 value: item
-                            }
+                            };
                         }));
                     $scope.autocompleteList = _.unique($scope.autocompleteList, function(e) { return e.label; } );
                 });
@@ -77,9 +79,9 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
         return "" +
             "<div class=\"employee-image\"><img src=\"" + item.photo + "\"/></div>" +
             "<div class=\"employee-name\">" + item.label + "</div>";
-    }
+    };
 
-    if ($scope.api == undefined) $scope.api = {};
+    if ($scope.api === undefined) { $scope.api = {}; }
 
     $scope.api.setValue = function (value) {
         $scope.inputValue = value;

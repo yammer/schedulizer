@@ -1,4 +1,6 @@
-var groupTabStateChangeSuccessOff = undefined;
+'use strict';
+
+var groupTabStateChangeSuccessOff;
 
 App.controller('GroupTabController', function(
         $scope, $timeout, $location, $state, $rootScope, $dialogs, Utils, Session, $interval,
@@ -8,16 +10,16 @@ App.controller('GroupTabController', function(
     $scope.newGroupName = "";
 
     function selectGroup() {
-        if ($scope.selectedGroup && $scope.selectedGroup.id == parseInt($state.params.groupId)) return;
+        if ($scope.selectedGroup && $scope.selectedGroup.id == parseInt($state.params.groupId)) { return; }
 
         $scope.selectedGroup = _.find($scope.groups, function(g) {
             return g.id == parseInt($state.params.groupId);
         });
         if ($scope.selectedGroup == null) {
-            if ($scope.groups.length == 0) {
+            if ($scope.groups.length === 0) {
                 // Changing the location path instead of $state.go because
                 // I want to go to a parent state, so it wouldn't change the url
-                $location.path('groups')
+                $location.path('groups');
             }
             else {
                 $state.go('groups.view', {groupId: $scope.groups[0].id});
@@ -81,7 +83,7 @@ App.controller('GroupTabController', function(
                 group.$delete({}, function() {
                     $scope.groups = _.without($scope.groups, group);
                     if ($scope.isSelectedGroup(group)) {
-                        if ($scope.groups.length == 0) {
+                        if ($scope.groups.length === 0) {
                             $location.path('groups');
                         } else {
                             $state.go('.', {groupId: $scope.groups[0].id});
@@ -99,7 +101,7 @@ App.controller('GroupTabController', function(
     };
 
     $scope.anyGroupThat = function(condition) {
-        return _.any($scope.groups, condition)
+        return _.any($scope.groups, condition);
     };
 });
 

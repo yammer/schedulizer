@@ -1,3 +1,5 @@
+'use strict';
+
 App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope, Session, DayRestriction, DateUtils,
                                                     Utils, EmployeeAssignmentsResource, AVAILABILITY_STATES) {
 
@@ -8,18 +10,18 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var classMap = {
             'available': !day.content || day.content.isAvailable(),
             'mid-available': day.content && day.content.isMidAvailable(),
-            'not-available': day.content && day.content.isNotAvailable(),
+            'not-available': day.content && day.content.isNotAvailable()
         };
         if (day.content && day.content.assignments.length > 0) {
             classMap["assignment-count-" + day.content.assignments.length] = true;
         }
         return classMap;
-    }
+    };
 
     $scope.getDayTooltip = function(day) {
-        if (day.content == undefined) return undefined;
-        if (day.content.dayRestriction == undefined) return undefined;
-        if (day.content.dayRestriction.comment == "") return undefined;
+        if (day.content == null) { return undefined; }
+        if (day.content.dayRestriction == null) { return undefined; }
+        if (day.content.dayRestriction.comment === "") { return undefined; }
         return day.content.dayRestriction.comment;
     };
 
@@ -86,9 +88,9 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var comments = _.chain(days)
             .map('content')
             .map(function(content) {
-                return (content && content.dayRestriction && content.dayRestriction.comment)
-                    ? content.dayRestriction.comment
-                    : "";
+                return (content && content.dayRestriction && content.dayRestriction.comment) ?
+                    content.dayRestriction.comment :
+                    "";
             })
             .value();
         var uniq = _.uniq(comments).length == 1;
@@ -109,7 +111,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     }
 
     function isAnySelectedDayInState(stateLabel) {
-        return _.any($scope.selectedDays, function(day) {return getDayState(day) == stateLabel});
+        return _.any($scope.selectedDays, function(day) { return getDayState(day) == stateLabel; });
     }
 
     $scope.getCommentPlaceholder = function() {
@@ -117,9 +119,9 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     };
 
     $scope.isStateToggleActive = function(stateLabel) {
-        return ($scope.availability.state != null)
-            ? $scope.availability.state == stateLabel
-            : isAnySelectedDayInState(stateLabel);
+        return ($scope.availability.state != null) ?
+            $scope.availability.state == stateLabel :
+            isAnySelectedDayInState(stateLabel);
     };
 
     $scope.canSubmitChange = function() {
@@ -127,7 +129,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     };
 
     $scope.submitAvailabilityChange = function() {
-        if (!$scope.canSubmitChange()) return;
+        if (!$scope.canSubmitChange()) { return; }
 
         var dates = _.map($scope.selectedDays, function(day){
             return DateUtils.toISOLocalDateString(day.date);
@@ -175,7 +177,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var totalError = false;
         var wrappedTerminate = function(error) {
             totalError = totalError || error;
-            if (--i == 0) terminate(totalError);
+            if (--i === 0) { terminate(totalError); }
         };
 
         DayRestriction.query({
@@ -185,7 +187,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
             }).$promise.then(function(dayRestrictions) {
                 updateDayRestrictions(dayRestrictions);
                 wrappedTerminate();
-            }).catch(function(e) {
+            }).catch(function() {
                 wrappedTerminate(true);
         });
 
@@ -195,8 +197,8 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
                 end_date: DateUtils.toISOLocalDateString(endDate)
             }).$promise.then(function(assignments) {
                 updateAssignments(assignments);
-                wrappedTerminate()
-            }).catch(function(e) {
+                wrappedTerminate();
+            }).catch(function() {
                 wrappedTerminate(true);
         });
     };
@@ -209,7 +211,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var dates = _.map(dayRestrictions, function(d) {return d.getDate();});
         var daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
         _.each(dayRestrictions, function(dayRestriction) {
-            if (daysMap[dayRestriction.date].content == undefined) {
+            if (daysMap[dayRestriction.date].content == null) {
                 daysMap[dayRestriction.date].content = new MyCalendarDayContent();
             }
             daysMap[dayRestriction.date].content.dayRestriction = dayRestriction;
@@ -220,7 +222,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
         var dates = _.map(assignments, function(a) {return a.getDate();});
         var daysMap = indexDaysByISOString($scope.calendar.getDays(dates));
         _.each(assignments, function(assignment) {
-            if (daysMap[assignment.date].content == undefined) {
+            if (daysMap[assignment.date].content == null) {
                 daysMap[assignment.date].content = new MyCalendarDayContent();
             }
             daysMap[assignment.date].content.assignments.push(assignment);
@@ -250,7 +252,7 @@ App.controller('MyCalendarTabController', function ($scope, $timeout, $rootScope
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
             return DateUtils.toISOLocalDateString(day.date);
-        })
+        });
     }
 
     $scope.getMonthName = DateUtils.getMonthName;
