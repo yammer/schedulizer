@@ -1,8 +1,9 @@
+'use strict';
+
 App.controller('GroupViewController', function($scope, $timeout, $rootScope, $dialogs, Utils, Session, GroupRestrictionsResource,
                                                Group, AssignmentType, AssignableDay, CustomStat, DateUtils,
                                                EMPTY_GROUP, AVAILABILITY_STATES) {
 
-    var NEW_EMPLOYEE = {name: undefined, image: undefined}
     $scope.availabilityStates = AVAILABILITY_STATES;
 
     // Will hold the calendar api
@@ -28,7 +29,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }, debouncedReloadView, true);
 
     $scope.getCellClass = function(day) {
-        if (day.content == undefined) {
+        if (day.content == null) {
             return {
                 'available': $scope.availabilityCalendarMode
             };
@@ -40,7 +41,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             'available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isAvailable($scope.selectedEmployee.id),
             'mid-available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isMidAvailable($scope.selectedEmployee.id),
             'not-available': $scope.availabilityCalendarMode && $scope.selectedEmployee && day.content.isNotAvailable($scope.selectedEmployee.id)
-        }
+        };
 
         if ($scope.availabilityCalendarMode && day.content.assignments && $scope.selectedEmployee) {
             var assignmentCount = getSelectedEmployeeAssignmentsCount(day);
@@ -49,21 +50,21 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }
         }
         return cellClass;
-    }
+    };
 
     function getSelectedEmployeeAssignmentsCount(day) {
         var assignments = _.filter(_.flatten(_.values(day.content.assignments)), function(a) { return a.id == $scope.selectedEmployee.id; });
-        return assignments == undefined ? 0 : assignments.length;
+        return assignments === undefined ? 0 : assignments.length;
     }
 
     $scope.clearEmployeeSelection = function() {
         $scope.availabilityCalendarMode = false;
         $scope.selectedEmployee = undefined;
-    }
+    };
 
     $scope.$watch('selectedGroup.employees.length', function() {
-        if ($scope.selectedEmployee == undefined) { return; }
-        if (_.find($scope.selectedGroup.employees, function(e) { return e.id == $scope.selectedEmployee.id; }) == undefined) {
+        if ($scope.selectedEmployee == null) { return; }
+        if (_.find($scope.selectedGroup.employees, function(e) { return e.id == $scope.selectedEmployee.id; }) === undefined) {
             $scope.clearEmployeeSelection();
         }
     });
@@ -79,10 +80,10 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
 
         $scope.selectedEmployee = employee;
         $scope.availabilityCalendarMode = true;
-    }
+    };
 
     $scope.$watch('availabilityCalendarMode', function(availabilityCalendarMode) {
-        if (availabilityCalendarMode == false && savedSelection) {
+        if (availabilityCalendarMode === false && savedSelection) {
             $scope.clearSelection();
             $scope.calendar.selectDates(savedSelection);
             savedSelection = null;
@@ -93,7 +94,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }
             $scope.clearSelection();
         }
-    })
+    });
 
 
     $scope.$watchCollection('selectedDates', function(value) {
@@ -103,14 +104,14 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     });
 
     $scope.getDayTooltip = function(day) {
-        if (!$scope.availabilityCalendarMode || day.content == undefined) {
+        if (!$scope.availabilityCalendarMode || day.content == null) {
             return undefined;
         }
         var restriction = _.find(day.content.restrictions, function(r) {
             return r.employeeId == $scope.selectedEmployee.id;
         });
-        return (restriction != undefined && restriction.comment != "") ? restriction.comment : undefined;
-    }
+        return (restriction != null && restriction.comment !== "") ? restriction.comment : undefined;
+    };
 
     function tryInvalidateCalendarContent() {
         if ($scope.calendar.invalidateContent != null) {
@@ -119,7 +120,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
     }
 
     $scope.$watchCollection('selectedGroup.assignmentTypes', function(assignmentTypes) {
-        if (assignmentTypes == null || assignmentTypes.$resolved == false) return;
+        if (assignmentTypes == null || assignmentTypes.$resolved === false) { return; }
         tryInvalidateCalendarContent();
     });
 
@@ -136,14 +137,14 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             group.setAssignmentTypes(assignmentTypes);
             // HACK: Angular does not trigger watch when we return an empty list of assignment types bc it
             // was empty before as well)
-            if (oldAssignments.length == 0 && assignmentTypes.length == 0) {
+            if (oldAssignments.length === 0 && assignmentTypes.length === 0) {
                 tryInvalidateCalendarContent();
             }
         });
     }
 
     $scope.$watch('selectedGroup', function() {
-        if ($scope.selectedGroup == null) return;
+        if ($scope.selectedGroup == null) { return; }
         getAssignmentTypeData($scope.selectedGroup);
     });
 
@@ -161,17 +162,17 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         } else {
             $scope.isCreatingAssignmentType = true;
         }
-    }
+    };
 
     $scope.assignmentTypeInputEnter = function() {
         if (!$scope.addAssignmentType()) {
             Utils.shakeOnError($scope.assignmentTypeInput);
         }
-    }
+    };
 
     $scope.addAssignmentType = function () {
         var name = $scope.newAssignmentTypeName;
-        if (name == null || name == "") {
+        if (name == null || name === "") {
             return false;
         }
         var group = $scope.selectedGroup;
@@ -184,13 +185,13 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             CustomStat.save($scope.selectedGroup.id, ""); // Force default
         });
         return true;
-    }
+    };
 
     $scope.onInputBlur = function() {
         hideInput = $timeout(function(){
             $scope.isCreatingAssignmentType = false;
         }, 200);
-    }
+    };
 
     function focusOnAssignmentTypeInput() {
         $timeout.cancel(hideInput);
@@ -204,10 +205,10 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                                        'because this operation can not be undone!<br>' +
                                        'All the assignments related to this assignment type will also be deleted.');
 
-        confirm.result.then(function(btn){
+        confirm.result.then(function(){
             var doubleConfirm = $dialogs.confirm('Please confirm again',
                                                  'Are you really sure?');
-            doubleConfirm.result.then(function(btn2) {
+            doubleConfirm.result.then(function() {
                 var group = $scope.selectedGroup;
                 assignmentType.groupId = group.id;
                 assignmentType.$delete({}, function() {
@@ -217,20 +218,20 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 focusOnAssignmentTypeInput();
             });
         });
-    }
+    };
 
     $scope.goToToday = function() {
         $scope.calendar.goToToday();
         $scope.dayStamp = DateUtils.TODAY;
         var today = $(".cf-view-calendar .cf-day.cf-today");
         Utils.animate('tada', today);
-    }
+    };
 
     $scope.openRemindUsersModal = function() {
-        var dlg = $dialogs.create('/views/remind_users_modal.html','RemindUsersModalController',
-                                  {group: $scope.selectedGroup, days: $scope.calendar.getDays($scope.selectedDates)},
-                                  {key: false, back: 'static'});
-    }
+        $dialogs.create('/views/remind_users_modal.html','RemindUsersModalController',
+                        {group: $scope.selectedGroup, days: $scope.calendar.getDays($scope.selectedDates)},
+                        {key: false, back: 'static'});
+    };
 
     $scope.dayStamp = DateUtils.TODAY;
 
@@ -240,31 +241,31 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         // Adding empty assignments when there is no assignment in a given assignment type
         if ($scope.hasAssignment($scope.hoveredDay)) {
             angular.forEach($scope.selectedGroup.assignmentTypes, function(assignmentType) {
-                if ($scope.hoveredDay.content.assignments[assignmentType.id] == undefined) {
+                if ($scope.hoveredDay.content.assignments[assignmentType.id] == null) {
                     $scope.hoveredDay.content.assignments[assignmentType.id] = [];
                 }
             });
         }
-    }
+    };
 
     $scope.showHoveredDayEmployees = function(hoveredDay, employees) {
         return  (!$scope.availabilityCalendarMode && employees.length > 0) ||
                 ($scope.availabilityCalendarMode && _.find(employees, function(e){return e.id==$scope.selectedEmployee.id; }));
-    }
+    };
 
     $scope.hasAssignment = function(day) {
         return day && day.content && day.content.assignments && Object.keys(day.content.assignments).length > 0;
-    }
+    };
 
     $scope.orderHoveredDayBy = function(key){
         return $scope.selectedGroup.assignmentTypeFor(key).id;
-    }
+    };
 
     $scope.clearSelection = function() {
         $scope.calendar.clearSelectedDays();
         $scope.selectedDates = [];
         $scope.employeeRestrictions = {};
-    }
+    };
 
     $scope.selectedDates = [];
     $scope.selectedDay = undefined;
@@ -289,7 +290,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 var assignmentTypeId = assignableDays[i].assignments[j].assignmentTypeId;
                 var employeeId = assignableDays[i].assignments[j].employeeId;
                 var employee = $scope.selectedGroup.employeeFor(employeeId);
-                if ($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == undefined) {
+                if ($scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] == null) {
                     $scope.assignmentTypeBuckets[assignmentTypeId].employeeList[employeeId] = {
                         employee: employee,
                         assignments: []
@@ -312,36 +313,36 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         initAssignmentBuckets();
 
         var assignableDays = _.filter(selection.days, function(day){
-            return day.content != null && day.content.assignableDay != null
+            return day.content != null && day.content.assignableDay != null;
         }).map(function(day){
             return day.content.assignableDay;
         });
-        updateAssignmentTypeBuckets(assignableDays)
+        updateAssignmentTypeBuckets(assignableDays);
 
         var restrictions = _.flatten(_.filter(selection.days, function(day){
-            return day.content != null && day.content.restrictions != null && day.content.restrictions.length > 0
+            return day.content != null && day.content.restrictions != null && day.content.restrictions.length > 0;
         }).map(function(day){
             return day.content.restrictions;
         }));
         updateEmployeeRestrictions(restrictions);
-    }
+    };
 
     function updateEmployeeRestrictions(restrictions) {
         $scope.employeeRestrictions = {};
         angular.forEach(restrictions, function(restriction) {
             var currRestriction = $scope.employeeRestrictions[restriction.employeeId];
-            if (currRestriction == undefined ||
+            if (currRestriction == null ||
                 restriction.restrictionLevel > currRestriction) {
                 $scope.employeeRestrictions[restriction.employeeId] = restriction.restrictionLevel;
             }
         });
     }
 
-    var GroupViewDayContent = function(assignableDay) {
+    var GroupViewDayContent = function() {
         this.assignableDay = undefined;
         this.restrictions = [];
         this.assignments = {};
-    }
+    };
 
     GroupViewDayContent.prototype.assignableDay = null;
 
@@ -357,28 +358,28 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             var employees = _.uniq(_.map(assignments, function(assignment) {
                 return $scope.selectedGroup.employeeFor(assignment.employeeId);
             }));
-            return [id, employees]
+            return [id, employees];
         }));
         this.assignableDay = assignableDay;
-    }
+    };
 
     GroupViewDayContent.prototype.numberOfRoles = function() {
         var self = this;
-        return Object.keys(this.assignments).filter(function(x){return self.assignments[x].length>0}).length;
-    }
+        return Object.keys(this.assignments).filter(function(x) { return self.assignments[x].length>0; }).length;
+    };
 
     GroupViewDayContent.prototype.isMidAssigned = function() {
         var roles = this.numberOfRoles();
         return 0 < roles && roles < $scope.selectedGroup.assignmentTypes.length;
-    }
+    };
 
     GroupViewDayContent.prototype.isAssigned = function() {
         var roles = this.numberOfRoles();
-        return roles != 0 && roles == $scope.selectedGroup.assignmentTypes.length;
-    }
+        return roles !== 0 && roles == $scope.selectedGroup.assignmentTypes.length;
+    };
 
     GroupViewDayContent.prototype.assign = function() {
-    }
+    };
 
     GroupViewDayContent.prototype.restrictionLevel = function(employee_id) {
         var restriction = _.find(this.restrictions, function(r) {
@@ -387,14 +388,14 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         return (restriction != null) ? restriction.restrictionLevel : 0;
     };
 
-    GroupViewDayContent.prototype.isAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 0;};
+    GroupViewDayContent.prototype.isAvailable = function(employee_id) {return this.restrictionLevel(employee_id) === 0;};
     GroupViewDayContent.prototype.isMidAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 1;};
     GroupViewDayContent.prototype.isNotAvailable = function(employee_id) {return this.restrictionLevel(employee_id) == 2;};
 
     function indexDaysByISOString(days) {
         return _.indexBy(days, function(day) {
             return DateUtils.toISOLocalDateString(day.date);
-        })
+        });
     }
 
     $scope.progressBar = {trigger: function() {console.log('empty trigger()');}};
@@ -413,7 +414,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         var totalError = false;
         var wrappedTerminate = function(error) {
             totalError = totalError || error;
-            if (--i == 0) terminate(totalError);
+            if (--i === 0) { terminate(totalError); }
         };
 
         AssignableDay.query({
@@ -423,7 +424,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }).$promise.then(function(assignableDays) {
                 updateDayAssignments(assignableDays, daysMap);
                 wrappedTerminate();
-            }).catch(function(e) {
+            }).catch(function() {
                 wrappedTerminate(true);
         });
 
@@ -436,10 +437,10 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             }).$promise.then(function(restrictions) {
                 updateDayRestrictions(restrictions, daysMap);
                 wrappedTerminate();
-            }).catch(function(e) {
+            }).catch(function() {
                 wrappedTerminate(true);
         });
-    }
+    };
 
     function updateDayAssignments(assignableDays, daysMap) {
         if (daysMap == null) {
@@ -448,7 +449,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
 
         _.each(assignableDays, function(assignableDay) {
-            if (daysMap[assignableDay.date].content == undefined) {
+            if (daysMap[assignableDay.date].content == null) {
                 daysMap[assignableDay.date].content = new GroupViewDayContent();
             }
             daysMap[assignableDay.date].content.setAssignments(assignableDay);
@@ -462,7 +463,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
         }
 
         _.each(restrictions, function(restriction) {
-            if (daysMap[restriction.date].content == undefined) {
+            if (daysMap[restriction.date].content == null) {
                 daysMap[restriction.date].content = new GroupViewDayContent();
             }
             daysMap[restriction.date].content.restrictions.push(restriction);
@@ -483,13 +484,13 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
             updateDayAssignments(assignableDays);
             updateAssignmentTypeBuckets(assignableDays);
         });
-    }
+    };
 
     $scope.deleteAssignmentsIfHasPrivileges = function(bucketEmployee, bucketEmployeeList) {
         if ($scope.isGroupAdmin($scope.selectedGroup)) {
             $scope.deleteAssignments(bucketEmployee, bucketEmployeeList);
         }
-    }
+    };
 
     $scope.deleteAssignments = function(bucketEmployee, bucketEmployeeList) {
         var count = 0;
@@ -506,7 +507,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 }
             });
         });
-    }
+    };
 
     $scope.groupSettingsModal = function() {
         var dlg = $dialogs.create('/views/group_settings_modal.html','GroupSettingsModalController',{group: $scope.selectedGroup},{key: false, back: 'static'});
@@ -518,7 +519,7 @@ App.controller('GroupViewController', function($scope, $timeout, $rootScope, $di
                 $scope.selectedGroup = group;
             }
         });
-    }
+    };
 
     $scope.getMonthName = DateUtils.getMonthName;
 

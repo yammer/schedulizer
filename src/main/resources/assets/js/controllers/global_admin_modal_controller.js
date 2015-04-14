@@ -1,3 +1,5 @@
+'use strict';
+
 App.controller("GlobalAdminModalController", function($scope, $modalInstance, $dialogs, GlobalAdminsResource, AuthService, Session) {
     $scope.newGlobalAdmin = undefined;
     $scope.globalAdminInput = {};
@@ -10,11 +12,11 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
 
     $scope.onSelectAutocomplete = function(user){
         $scope.newGlobalAdmin = user;
-    }
+    };
 
     $scope.onKeyDown = function(){
         $scope.newGlobalAdmin = undefined;
-    }
+    };
 
     function getGlobalAdminsData() {
         $scope.globalAdmins = GlobalAdminsResource.query({});
@@ -30,7 +32,7 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
             employee.name = yEmployee.full_name;
             employee.imageUrlTemplate = yEmployee.photo;
             employee.$save({}, function(employee) {
-                if (_.find($scope.groupAdmins, function(e) {return e.id == employee.id}) == undefined) {
+                if (_.find($scope.groupAdmins, function(e) { return e.id == employee.id; }) === undefined) {
                     $scope.globalAdmins.push(employee);
                     changed = true;
                 }
@@ -66,7 +68,7 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
                 });
             }
         });
-    }
+    };
 
     $scope.triggerAddGlobalAdmin = function() {
         if ($scope.newGlobalAdmin) {
@@ -75,7 +77,7 @@ App.controller("GlobalAdminModalController", function($scope, $modalInstance, $d
         } else {
             $scope.globalAdminInput.shake();
         }
-    }
+    };
 
     getGlobalAdminsData();
 

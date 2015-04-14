@@ -1,6 +1,8 @@
+'use strict';
+
 App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
 
-    $scope.progressBar = {inner: null/* .st-progress */, outer: null/* .st-progress-bar */}
+    $scope.progressBar = { inner: null/* .st-progress */, outer: null/* .st-progress-bar */ };
 
     // After errorThreshold number of errors that we consider an error worth displaying the user
     var errorHits = 0;
@@ -17,9 +19,8 @@ App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
         } else {
             errorHits = 0;
             var d = $scope.progressBar.previousLoadedWeeks;
-            if (status.weeks.total - d <= 0) return 1;
-            var p = Math.max(0, status.weeks.loaded - d) / Math.max(0, status.weeks.total - d);
-            return p;
+            if (status.weeks.total - d <= 0) { return 1; }
+            return Math.max(0, status.weeks.loaded - d) / Math.max(0, status.weeks.total - d);
         }
     }
 
@@ -30,9 +31,9 @@ App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
 
     var progressBar = null;
 
-    $scope.$watchGroup(['progressBar.inner', 'progressBar.outer'], function(values) {
+    $scope.$watchGroup(['progressBar.inner', 'progressBar.outer'], function() {
         var bar = $scope.progressBar;
-        if (bar.inner == null || bar.outer == null) return;
+        if (bar.inner == null || bar.outer == null) { return; }
         progressBar = new ProgressBar(bar.inner, bar.outer, progressWatcher, {
             onBeforeWatch: onBeforeWatch
         });
@@ -42,7 +43,7 @@ App.controller('CalendarProgressBarController', function ($scope, ProgressBar) {
         if (progressBar) {
             progressBar.trigger();
         }
-    }
+    };
 });
 
 

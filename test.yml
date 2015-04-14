@@ -1,5 +1,6 @@
 rootPath: /service/*
 extApp: yammer
+extAppClientId: yammer-client-id
 
 server:
   applicationConnectors:

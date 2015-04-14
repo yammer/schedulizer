@@ -1,3 +1,5 @@
+'use strict';
+
 App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope, $animate, $timeout) {
     return {
         animate: function(type, element) {
@@ -19,20 +21,20 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
         },
         // Angular-friendly ($timeout) versions of _.debounce()
         preventBurst: function(func, threshold) {
-            if (threshold) func._burstThreshold = threshold;
-            if (!func._burstThreshold) func._burstThreshold = 50;
+            if (threshold) { func._burstThreshold = threshold; }
+            if (!func._burstThreshold) { func._burstThreshold = 50; }
 
             return function() {
-                if (!func._okToIssue) return func._lastValue;
+                if (!func._okToIssue) { return func._lastValue; }
                 func._okToIssue = false;
                 $timeout(function() {func._okToIssue = true;}, func._burstThreshold);
                 func._lastValue = func();
                 return func._lastValue;
-            }
+            };
         },
         lastOfBurst: function(func, threshold) {
-            if (threshold) func._lastOfBurstThreshold = threshold;
-            if (!func._lastOfBurstThreshold) func._lastOfBurstThreshold = 50;
+            if (threshold) { func._lastOfBurstThreshold = threshold; }
+            if (!func._lastOfBurstThreshold) { func._lastOfBurstThreshold = 50; }
 
             func._burstTimeout = null;
             return function() {
@@ -43,14 +45,14 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
                     func._burstTimeout = null;
                     func();
                 }, func._lastOfBurstThreshold);
-            }
+            };
         },
         onInitialization: function (variableName, scope, callback) {
             var unwatch = scope.$watch(variableName, function(variable) {
-                if (variable == undefined || variable.$resolved == false) return;
+                if (variable === undefined || variable.$resolved === false) { return; }
                 callback();
                 unwatch();
-            })
+            });
         },
         Objects: {
             deepField: function(object, deepField, value) {
@@ -59,7 +61,7 @@ App.factory('Utils', ['$rootScope', '$animate', '$timeout', function($rootScope,
                var previous = _.reduce(fields, function(proxy, field) {
                    return proxy[field];
                }, object);
-               if (arguments.length == 3) {
+               if (arguments.length === 3) {
                    previous[last] = value;
                    return value;
                } else {
@@ -118,7 +120,7 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 var autocomplete = $(element).autocomplete({
                     source: availableTags,
                     open: function(event, ui){
-                        if (scope.displayAbove == "true") {
+                        if (scope.displayAbove === "true") {
                             var input = $(event.target);
                             var results = input.autocomplete("widget");
                             var top = results.position().top;
@@ -153,13 +155,13 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 autocomplete.data("ui-autocomplete")._resizeMenu = function () {
                     var ul = this.menu.element;
                     ul.outerWidth(element.outerWidth());
-                }
+                };
             });
 
             scope.$watch("tags", function(value) {
-                if (value == null) return;
+                if (value == null) { return; }
 
-                if (scope.displayAbove == "true") {
+                if (scope.displayAbove === "true") {
                     availableTags = value.reverse();
                 }
                 else {
@@ -170,7 +172,7 @@ App.directive('stAutocomplete', function($timeout, $compile) {
                 $(element).autocomplete("search");
             });
         }
-    }
+    };
 });
 
 App.directive('stTryBackgroundImage', function($timeout) {
@@ -178,15 +180,15 @@ App.directive('stTryBackgroundImage', function($timeout) {
         restrict: 'A',
         link: function(scope, element, attrs) {
             scope.$watch(attrs.stTryBackgroundImage, function(value) {
-                if(value == undefined) {
+                if(value == null) {
                     $(element)[0].style.backgroundImage = "";
                     return;
                 }
                 $(element)[0].style.backgroundImage = "url(" + value + ")";
             });
         }
-    }
-})
+    };
+});
 
 App.directive('stName', function(Utils) {
     return {
@@ -198,7 +200,7 @@ App.directive('stName', function(Utils) {
         link: function(scope, element, attrs) {
             Utils.Objects.deepField(scope, attrs.stName, element);
         }
-    }
+    };
 });
 
 App.directive('stIf', ['$animate', function($animate) {
@@ -222,9 +224,9 @@ App.directive('stIf', ['$animate', function($animate) {
             });
           }
         });
-      }
+      };
     }
-  }
+  };
 }]);
 
 App.filter('orderObjectBy', function() {
@@ -234,21 +236,21 @@ App.filter('orderObjectBy', function() {
         angular.forEach(items, function(item) {
              filtered.push(item);
         });
-        if (filtered.length <= 1) return filtered;
+        if (filtered.length <= 1) { return filtered; }
         filtered.sort(function(a, b) {
             for (var i = 0; i < deepField.length; i++) {
                 a = a[deepField[i]];
                 b = b[deepField[i]];
             }
-            if (typeof a == 'string') {
+            if (typeof a === 'string') {
                 a = a.toLowerCase();
             }
-            if (typeof b == 'string') {
+            if (typeof b === 'string') {
                 b = b.toLowerCase();
             }
             return (a > b ? 1 : -1);
         });
-        if (reverse) filtered.reverse();
+        if (reverse) { filtered.reverse(); }
         return filtered;
     };
 });
@@ -260,11 +262,11 @@ App.filter('orderByExpressionAppliedOnTheKey', function() {
              item.key = key;
              filtered.push(item);
         });
-        if (filtered.length <= 1) return filtered;
+        if (filtered.length <= 1) { return filtered; }
         filtered.sort(function (a, b) {
             return (func(a.key) > func(b.key) ? 1 : -1);
         });
-        if (reverse) filtered.reverse();
+        if (reverse) { filtered.reverse(); }
         return filtered;
     };
 });
@@ -278,12 +280,12 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
         this.inner = $(inner);
         this.outer = $(outer);
         this.watcher = watcher;
-        if (options && options.interval) this.interval = options.interval;
-        if (options && options.delay) this.interval = options.delay;
-        if (options && options.onBeforeWatch) this.onBeforeWatch = options.onBeforeWatch;
-        if (options && options.timeout) this.timeout = options.timeout;
-        if (options && options.headstart) this.headstart = option.headstart;
-        this.promise = null
+        if (options && options.interval) { this.interval = options.interval; }
+        if (options && options.delay) { this.interval = options.delay; }
+        if (options && options.onBeforeWatch) { this.onBeforeWatch = options.onBeforeWatch; }
+        if (options && options.timeout) { this.timeout = options.timeout; }
+        if (options && options.headstart) { this.headstart = options.headstart; }
+        this.promise = null;
     }
 
     ProgressBar.prototype.promise = null;
@@ -309,15 +311,15 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
                 this.dismiss();
             }
         }
-    }
+    };
 
     /* public */
 
     ProgressBar.prototype.trigger = function() {
-        if (this.promise != null) return;
+        if (this.promise != null) { return; }
         this.onBeforeWatch();
         this.inner.css({visibility: 'visible'});
-        this.promise = $interval(this.wrappedWatcher.bind(this), this.interval)
+        this.promise = $interval(this.wrappedWatcher.bind(this), this.interval);
 
         // timeout
         $timeout(function() {
@@ -325,7 +327,7 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
                 this.dismiss();
             }
         }.bind(this), this.timeout);
-    }
+    };
 
     ProgressBar.prototype.dismiss = function() {
         $interval.cancel(this.promise);
@@ -334,7 +336,7 @@ App.factory('ProgressBar', ['$timeout', '$interval', function($timeout, $interva
             this.inner.removeClass('error');
             this.inner.css({visibility: 'hidden', width: '0%'});
         }.bind(this), this.delay);
-    }
+    };
 
     return ProgressBar;
 }]);
@@ -377,7 +379,7 @@ App.directive('stTooltip', function($timeout){
                 }, 100);
             }
             scope.$watch('stTooltip', function () {
-                if (scope.stTooltip == "true") {
+                if (scope.stTooltip === "true") {
                     // TODO: find out specific reason why this exception is being thrown
                     try{ // avoid annoying exception
                         $(element).tooltip('enable');
@@ -400,14 +402,14 @@ App.directive('contenteditable', function() {
         require: 'ngModel',
         link: function(scope, el, attrs, controller) {
             controller.$render = function() {
-                if (typeof controller.$viewValue != typeof "") {
+                if (typeof controller.$viewValue !== typeof "") {
                     return;
                 }
                 el.html(controller.$viewValue.replace(/\n/g, "<br>").replace(/\s/g, "&nbsp;"));
             };
             el.bind('blur keyup', function(e) {
                 scope.$apply(function() {
-                    controller.$setViewValue(el.html().replace(/\<br\>/g, "\n").replace(/\&nbsp\;/g, " "));
+                    controller.$setViewValue(el.html().replace(/<br\>/g, "\n").replace(/\&nbsp\;/g, " "));
                 });
             });
             controller.$render();

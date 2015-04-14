@@ -1,3 +1,5 @@
+'use strict';
+
 App.controller("GroupSettingsModalController", function($scope, $modalInstance, $dialogs, Utils, AuthService, Session, data, CustomStat, Group, AssignmentType) {
     $scope.newGlobalAdmin = undefined;
     $scope.globalAdminInput = {};
@@ -13,12 +15,12 @@ App.controller("GroupSettingsModalController", function($scope, $modalInstance, 
             help += "$" + i + " -> " + $scope.group.assignmentTypes[i].name + "<br>";
         }
         return help;
-    }
+    };
 
     $scope.customStat =  {
         value: CustomStat.load($scope.group.id),
         input: {}
-    }
+    };
 
     function saveCustomStat(callback) {
         if (CustomStat.validate($scope.customStat.value, $scope.group)) {
@@ -31,7 +33,7 @@ App.controller("GroupSettingsModalController", function($scope, $modalInstance, 
     }
 
     function updateGroupName(callback) {
-        if ($scope.group.name == "") {
+        if ($scope.group.name === "") {
             Utils.shakeOnError($scope.groupName.input);
         }
         else {
@@ -42,14 +44,14 @@ App.controller("GroupSettingsModalController", function($scope, $modalInstance, 
 
     function updateAssignmentStatsName(callback) {
         var count = 0;
-        if ($scope.group.assignmentTypes.length == 0) {
+        if ($scope.group.assignmentTypes.length === 0) {
             callback();
             return;
         }
 
         function wrappedCallback() {
             count++;
-            if (count == $scope.group.assignmentTypes.length) callback();
+            if (count == $scope.group.assignmentTypes.length) { callback(); }
         }
         _.each($scope.group.assignmentTypes, function(a) {
             a.$save({group_id: $scope.group.id}).then(wrappedCallback);
@@ -68,5 +70,5 @@ App.controller("GroupSettingsModalController", function($scope, $modalInstance, 
 
     $scope.cancel = function() {
         $modalInstance.close();
-    }
+    };
 });

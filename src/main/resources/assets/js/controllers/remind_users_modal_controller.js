@@ -1,7 +1,9 @@
+'use strict';
+
 App.controller("RemindUsersModalController", function($scope, $timeout, $modalInstance, $dialogs, data, extAppApi,
                                                       DateUtils, RemindUsersGroup) {
     // when the ext app does not allow the website to post in his behalf, only the summary is presented
-    $scope.onlySummary = extAppApi.post == undefined;
+    $scope.onlySummary = extAppApi.post === undefined;
 
     $scope.group = data.group;
     $scope.days = data.days;
@@ -26,7 +28,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     };
 
     $scope.extAppGroup = RemindUsersGroup.load($scope.group.id);
-    $scope.groupChosen = $scope.extAppGroup != undefined;
+    $scope.groupChosen = $scope.extAppGroup != null;
 
     var employeeNameMap = {};
 
@@ -36,7 +38,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     };
 
     function generateDefaultText() {
-        if ($scope.days.length == 0) { // this is not supposed to happen
+        if ($scope.days.length === 0) { // this is not supposed to happen
             console.log("Error: something went wrong. No days selected");
             $modalInstance.close();
         }
@@ -52,13 +54,14 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         };
 
         function undefinedOrEmpty(a) {
-            return a == undefined || a == null || a.length == 0;
+            return a == null || a.length === 0;
         }
 
         function generatePeriodSummary(period) {
             var summary = "";
 
             if (_.every($scope.group.assignmentTypes, function(assignmentType) {
+                if (period.days[0].content == null || period.days[0].content.assignments == null) { return true; }
                 return undefinedOrEmpty(period.days[0].content.assignments[assignmentType.id]);
             })) {
                 return summary;
@@ -93,12 +96,12 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
 
         function hasSameAssignments(day1, day2) {
             return _.every($scope.group.assignmentTypes, function(assignmentType) {
-                if (day1.content == undefined) {
+                if (day1.content == null) {
                     day1.content = {
                         assignments: []
                     };
                 }
-                if (day2.content == undefined) {
+                if (day2.content == null) {
                     day2.content = {
                         assignments: []
                     };
@@ -122,7 +125,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             }
             else {
                 $scope.remindUsersTextArea.text += generatePeriodSummary(period);
-                var period = {
+                period = {
                     startDay: sortedDays[i].date,
                     endDay: sortedDays[i].date,
                     days: [sortedDays[i]]
@@ -133,13 +136,13 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
 
     }
 
-    var regexTag = /\<b\>((?:[^\n](?:(?!\<\/b\>)))+[^n])\<\/b\>/g; // <b>Name</b>
-    var regexInvalid = /\<b\>((?:[^\n](?:(?!\<\/b\>)))+[^n])\<\/b\>(?=([^\u200C]|$))/g; // <b>Name</b> \u200C is the unicode to &zwnj;
+    var regexTag = /<b\>((?:[^\n](?:(?!<\/b\>)))+[^n])<\/b\>/g; // <b>Name</b>
+    var regexInvalid = /<b\>((?:[^\n](?:(?!<\/b\>)))+[^n])<\/b\>(?=([^\u200C]|$))/g; // <b>Name</b> \u200C is the unicode to &zwnj;
 
     function checkNameTags() {
         var text = $scope.remindUsersTextArea.text;
         text = text.replace(regexTag, function(match0, match1) {
-            if (employeeNameMap[match1] == undefined) {
+            if (employeeNameMap[match1] == null) {
                 return match1;
             }
             return match0;
@@ -162,17 +165,9 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         return false;
     }
 
-    var htmlTagRegex = /\<\/?((span)|(i)|(strong))(\s)*\>/g;
+    var htmlTagRegex = /<\/?((span)|(i)|(strong))(\s)*\>/g;
     function removeHtmlTags(text) {
         return text.replace(htmlTagRegex, "");
-    }
-
-    function addTagDelimiters() {
-        var text = $scope.remindUsersTextArea.text;
-        text = text.replace(regexInvalid, function(match) {
-            return match + '\u200C';
-        });
-        $scope.remindUsersTextArea.text = text;
     }
 
     $timeout(generateDefaultText);
@@ -180,18 +175,18 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
     $scope.onKeyDownGroupName = function(){
         $scope.extAppGroup = undefined;
         $scope.groupChosen = false;
-    }
+    };
 
     $scope.onSelectAutocompleteGroupName = function(group){
         $scope.extAppGroup = group;
-    }
+    };
 
     $scope.onEnterGroupName = function() {
-        if($scope.extAppGroup != undefined) {
+        if($scope.extAppGroup != null) {
             $scope.groupChosen = true;
         }
         $scope.remindUsersTextArea.el.focus();
-    }
+    };
 
     var savedCursor;
     var savedScroll;
@@ -208,8 +203,9 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             if (window.getSelection)
             {
                 var s = window.getSelection();
-                if (s.rangeCount > 0)
+                if (s.rangeCount > 0) {
                     s.removeAllRanges();
+                }
                 s.addRange(savedCursor);
             }
             else if (document.createRange())
@@ -237,9 +233,9 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
                 }, 10); // timeout to allow angularjs to show el before focusing
             }
         }, 10);
-    }
+    };
 
-    $scope.onKeyUp = function(e) {
+    $scope.onKeyUp = function() {
             /**
              *  Hack: as content editable divs don't have angularjs two way binding support via ngModel, I had to write
              *  a custom ngModel, which only works on keyup events. So we need this timeout to allow the binding to work
@@ -251,11 +247,11 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
                 $scope.remindUsersTextArea.text = removeHtmlTags($scope.remindUsersTextArea.text);
                 checkNameTags();
             }, 10);
-        }
+        };
 
     var backcount = 0;
     $scope.onKeyUpTag = function(e) {
-        if (e.keyCode == 8 && $scope.tagAutocomplete.el.find("input").val() == "") { // backspace
+        if (e.keyCode == 8 && $scope.tagAutocomplete.el.find("input").val() === "") { // backspace
             backcount++;
             if (backcount == 2) { // exit tag mode with 2 backspaces
                 restoreCursor();
@@ -265,16 +261,16 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
         } else {
             backcount = 0;
         }
-    }
+    };
 
     $scope.onSelectAutocompleteTag = function(user){
         $scope.taggedUser = user;
-    }
+    };
 
     $scope.clearTagInput = function() {
         $scope.tagAutocomplete.el.find("input").val("");
         $scope.tagAutocomplete.show = false;
-    }
+    };
 
     $scope.onEnterTag = function() {
         restoreCursor();
@@ -284,18 +280,18 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             employeeNameMap[$scope.taggedUser.full_name] = {
                 id: $scope.taggedUser.id,
                 full_name: $scope.taggedUser.full_name
-            }
+            };
             var tag = "<b>" + $scope.taggedUser.full_name + "</b>\u200C";
             document.execCommand('insertHTML', false, tag); // insert tag
         }
-    }
+    };
 
     $scope.ok = function(){
         if ($scope.onlySummary) {
             $modalInstance.close();
             return;
         }
-        if ($scope.extAppGroup == undefined) {
+        if ($scope.extAppGroup == null) {
             $scope.groupInput.shake();
             return;
         }
@@ -320,7 +316,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
 
     $scope.cancel = function() {
         $modalInstance.close();
-    }
+    };
 
     /* The contenteditable div create child divs every time the user presses enter... this prevents this behaviour */
     function preventContentEditableDivs() {

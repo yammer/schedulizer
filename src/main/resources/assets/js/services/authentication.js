@@ -1,3 +1,5 @@
+'use strict';
+
 App.run(function($rootScope, $state, $timeout, AuthService, AUTH_EVENTS, NAV_TABS, NESTED_VIEWS, Session) {
 
     function checkAuthorized(authorizedRoles) {
@@ -17,8 +19,8 @@ App.run(function($rootScope, $state, $timeout, AuthService, AUTH_EVENTS, NAV_TAB
     function iAmNotAuthorizedToBeHere() {
         // If I am already in an unauthorized state
         var allStates = _.extend(NESTED_VIEWS, NAV_TABS);
-        var allStatesArray = Object.keys(allStates).map(function(k){return allStates[k]});
-        var currentState = _.find( allStatesArray, function(s) { return s.stateName == $state.current.name; });
+        var allStatesArray = Object.keys(allStates).map(function(k) { return allStates[k]; });
+        var currentState = _.find( allStatesArray, function(s) { return s.stateName === $state.current.name; });
         return !checkAuthorized(currentState.data.authorizedRoles);
     }
 
@@ -42,7 +44,7 @@ App.run(function($rootScope, $state, $timeout, AuthService, AUTH_EVENTS, NAV_TAB
         var numberRetries = 0;
         function retryAuthorizationCheck() {
             numberRetries++;
-            if (numberRetries > 20) return;
+            if (numberRetries > 20) { return; }
             try {
                 if (iAmNotAuthorizedToBeHere()) {
                     $state.go(NAV_TABS.group.stateName, {});
@@ -115,14 +117,14 @@ App.factory('SessionStorage', ['$window', function($window) {
 
     SessionStorage.save = function(key, value) {
         $window.localStorage.setItem(key, JSON.stringify(value));
-    }
+    };
     SessionStorage.load = function(key) {
         var value = $window.localStorage.getItem(key);
         if (value) {
             return JSON.parse(value);
         }
         return undefined;
-    }
+    };
     return SessionStorage;
 
 }]);
@@ -162,7 +164,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     function loginSchedulizer(extAppSession) {
         createAuthorizationHeader($http, extAppSession);
         return getSchedulizerUserStatus().then(function(userStatus) {
-            if (userStatus.role ==  USER_ROLES.guest) {
+            if (userStatus.role ===  USER_ROLES.guest) {
                 console.error("Something is wrong with the Authorization header. Logged user can not be a guest.");
                 return;
             }
@@ -184,7 +186,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
             updateExtAppSession(response);
             var session = SessionStorage.load('session');
             if (ExtAppSession.token && session) {
-                if (session.userRole == USER_ROLES.guest) {
+                if (session.userRole === USER_ROLES.guest) {
                     Session.create(session.token, session.userId, session.userRole, session.groupsAdmin);
                     $rootScope.$broadcast(AUTH_EVENTS.authServiceInitialized);
                 } else {
@@ -228,7 +230,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
         SessionStorage.save("session", Session);
         SessionStorage.save("extAppSession", ExtAppSession);
         return deferred.promise;
-    }
+    };
 
     var loginRetries = 3;
     $rootScope.$on(AUTH_EVENTS.notAuthenticated, function(){
@@ -253,7 +255,7 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
         if (authorizedRoles.indexOf(Session.userRole) === -1) {
             return false;
         }
-        if (groupId == undefined) { // no further conditions
+        if (groupId === undefined) { // no further conditions
             return true;
         }
         return Session.groupsAdmin && Session.groupsAdmin.indexOf(groupId) !== -1;
@@ -262,20 +264,20 @@ App.factory('AuthService', function($rootScope, $http, $q, $timeout, Session, Ex
     authService.belongsToGroup = function(group) {
         // Are we sure about querying the employeeMap? From employeeFor() function
         // it seems that employeeMap can contain employees that don't belong to the group
-        return group.employeeMap != undefined && group.employeeMap[Session.userId] != undefined;
-    }
+        return group.employeeMap != null && group.employeeMap[Session.userId] != null;
+    };
 
     authService.removeGroupAdminPrivileges = function(groupId) {
         Session.groupsAdmin = _.without(Session.groupsAdmin, groupId);
         SessionStorage.save("session", Session);
-    }
+    };
 
     authService.removeGlobalAdminPrivileges = function() {
-        if (Session.userRole == USER_ROLES.globalAdmin) {
+        if (Session.userRole === USER_ROLES.globalAdmin) {
             Session.userRole = USER_ROLES.user;
         }
         SessionStorage.save("session", Session);
-    }
+    };
 
     initializeAuthService();
     return authService;

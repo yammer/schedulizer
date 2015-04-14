@@ -47,25 +47,4 @@ public class AuthorizationResource {
 
         return Response.ok().entity(response).build();
     }
-
-    @GET
-    @Path("ext-api.js")
-    @UnitOfWork
-    public Response getExternalApp() {
-        List<String> types = Arrays.asList(ExtAppType.values()).stream()
-                .map(x -> x.toString())
-                .collect(Collectors.toList());
-
-        String javascript = "var EXT_APP_TYPES_CONSTANT = { ";
-        for (int i = 0; i < types.size(); i++) {
-            if (i != 0) {
-                javascript += ", ";
-            }
-            javascript += types.get(i) + ": \"" + types.get(i) + "\"";
-        }
-        javascript += " }; var EXT_APP_CONSTANT = EXT_APP_TYPES_CONSTANT.";
-        javascript += extAppType.toString() + ";";
-
-        return Response.ok().entity(javascript).build();
-    }
 }

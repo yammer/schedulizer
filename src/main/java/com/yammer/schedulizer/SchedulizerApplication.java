@@ -13,6 +13,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 import org.hibernate.SessionFactory;
 
 public class SchedulizerApplication extends Application<SchedulizerConfiguration> {
@@ -38,6 +39,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     private ExtAppAuthenticator extAppAuthenticator;
 
     private ExtAppType extAppType;
+    private String extAppClientId;
 
     public static void main(String[] args) throws Exception {
         new SchedulizerApplication().run(args);
@@ -47,6 +49,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
     public void initialize(Bootstrap<SchedulizerConfiguration> bootstrap) {
         bootstrap.addBundle(new AssetsBundle("/assets/", "/", "index.html"));
         bootstrap.addBundle(HIBERNATE_BUNDLE);
+        bootstrap.addBundle(new ViewBundle());
     }
 
     public String getName() {
@@ -67,6 +70,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         env.jersey().register(new AuthorizationResource(extAppType));
         env.jersey().register(new AdminsResource(groupManager, membershipManager));
         env.jersey().register(new DayRestrictionsResource(employeeManager, dayRestrictionManager));
+        env.jersey().register(new ExtAppConfigResource(extAppType, extAppClientId));
     }
 
     protected void registerAuthenticator(SchedulizerConfiguration config, Environment env) {
@@ -84,6 +88,10 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         SessionFactory sessionFactory = HIBERNATE_BUNDLE.getSessionFactory();
 
         extAppType = ExtAppType.valueOf(config.getExtApp());
+        extAppClientId = config.getExtAppClientId();
+        if (extAppClientId == null || extAppClientId == "") {
+            throw new IllegalStateException("The external app client id should not be null");
+        }
 
         userManager = new UserManager(sessionFactory);
         groupManager = new GroupManager(sessionFactory);

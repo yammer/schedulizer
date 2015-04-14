@@ -1,0 +1,34 @@
+{
+    "passfail"      : false,
+    "maxerr"        : 10,
+    "browser"       : true, 
+    "jquery"        : true,
+    "predef"        : [
+        "EXT_APP_CONSTANT",
+        "EXT_APP_TYPES_CONSTANT",
+        "angular",
+        "App",
+        "_",
+        "console",
+        "services"
+    ],
+    "strict"        : true,
+    "globalstrict"  : true,
+    "curly"         : true,
+    "eqeqeq"        : false,
+    "eqnull"        : true,
+    "evil"          : true,
+    "forin"         : false,
+    "immed"         : true,
+    "latedef"       : true,
+    "loopfunc"      : true,
+    "regexp"        : true,
+    "scripturl"     : true,
+    "shadow"        : false,
+    "supernew"      : false,
+    "undef"         : true,
+ 
+    "newcap"        : true,
+    "nonew"         : true, 
+    "onevar"        : false
+}

@@ -1,3 +1,6 @@
+'use strict';
+
+/*global services: true*/
 var services = angular.module('services', ['ngResource', 'calendar-flow']);
 
 // Got from http://victorblog.com/2012/12/20/make-angularjs-http-service-behave-like-jquery-ajax/
@@ -7,7 +10,7 @@ var param = function(obj) {
     for(name in obj) {
         value = obj[name];
 
-        if(value instanceof Array) {
+        if (value instanceof Array) {
             for(i=0; i<value.length; ++i) {
                 subValue = value[i];
                 fullSubName = name + '[' + i + ']';
@@ -16,9 +19,9 @@ var param = function(obj) {
                 query += param(innerObj) + '&';
             }
         }
-        else if(value instanceof Object) {
+        else if (value instanceof Object) {
             for(subName in value) {
-                if (!value.hasOwnProperty(subName)) continue;
+                if (!value.hasOwnProperty(subName)) { continue; }
                 subValue = value[subName];
                 fullSubName = name + '[' + subName + ']';
                 innerObj = {};
@@ -26,8 +29,9 @@ var param = function(obj) {
                 query += param(innerObj) + '&';
             }
         }
-        else if(value !== undefined && value !== null)
+        else if (value != null) {
             query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+        }
     }
 
     return query.length ? query.substr(0, query.length - 1) : query;
@@ -61,7 +65,7 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
     Group.prototype.employeeMap = {};
     Group.prototype.employeeFor = function(id) {
         return this.employeeMap[id] || (this.employeeMap[id] = Employee.get({employee_id: id}));
-    }
+    };
 
     Group.prototype.assignmentTypes = [];
     Group.prototype.assignmentTypeFor = function(id) {
@@ -72,19 +76,19 @@ services.factory('Group', ['$resource', 'Employee', function($resource, Employee
 
     Group.prototype.addAssignmentType = function(assignmentType) {
         this.setAssignmentTypes(_.union(this.assignmentTypes, [assignmentType]));
-    }
+    };
 
     Group.prototype.setAssignmentTypes = function(assignmentTypes) {
         this.assignmentTypes = _.chain(assignmentTypes)
             .sortBy(function(a) {return a.name.toLowerCase();})
             .value();
-    }
+    };
 
     Group.prototype.addEmployee = function(employee) {
         // TODO: Fix flash when adding new employee in different order
         this.employees.push(employee);
         this.employeeMap[employee.id] = employee;
-    }
+    };
 
     return Group;
 }]);
@@ -108,8 +112,8 @@ services.factory('GroupEmployee', ['$resource', function($resource) {
     GroupEmployee.prototype.statisticsFor = function(assignmentTypeId) {
         return _.find(this.statistics, function(s, id) {
             return id == assignmentTypeId;
-        })
-    }
+        });
+    };
 
     return GroupEmployee;
 }]);
@@ -213,7 +217,7 @@ services.factory('AdminsResource', ['$resource', 'DateUtils', function($resource
 
     AssignableDay.prototype.getDate = function() {
         return DateUtils.fromISOLocalString(this.date);
-    }
+    };
 
     return AssignableDay;
 }]);
@@ -244,7 +248,7 @@ services.factory('EmployeeAssignmentsResource', ['$resource', 'DateUtils', funct
 
     EmployeeAssignmentsResource.prototype.getFullName = function() {
         return this.group.name + " - " + this.assignmentTypeName;
-    }
+    };
 
     return EmployeeAssignmentsResource;
 }]);
@@ -263,7 +267,7 @@ services.factory('CustomStat', ['$window', function($window) {
     return {
         load: function(id) {
             var value = $window.localStorage.getItem("customStat-" + id);
-            if(value == undefined || value == "\"0\"") {
+            if(value === undefined || value == "\"0\"") {
                 return undefined;
             }
             return JSON.parse(value);
@@ -277,27 +281,28 @@ services.factory('CustomStat', ['$window', function($window) {
                 // replace all $i with its stats count
                 string = string.split("$" + i).join("stats[" + group.assignmentTypes[i].id + "].count");
             }
+            var f;
             try {
-                eval("var f = function(stats){ return " + string + "; };");
+                eval("f = function(stats){ return " + string + "; };");
             } catch(e) {
                 return undefined;
             }
             return f;
         },
         validate: function(string, group) {
-            if (string == undefined || string == "") return false;
+            if (string === undefined || string === "") { return false; }
             // Only numbers operators and $ allowed
             var match = /[\$\+\-*\/\s\(\)0-9]+/.exec(string);
-            if (match != string) return false;
+            if (match != string) { return false; }
             var testStats = {}; // to test function
             for (var i = 0; i < group.assignmentTypes.length; i++) {
                 testStats[group.assignmentTypes[i].id] = {count: 1};
             }
             var f = this.evaluate(string, group);
-            if (f == undefined) return false;
+            if (f === undefined) { return false; }
             try {
                 var result = f(testStats);
-                if(result == undefined || isNaN(result)) {
+                if(result === undefined || isNaN(result)) {
                     return false;
                 }
             } catch(e) {
@@ -305,7 +310,7 @@ services.factory('CustomStat', ['$window', function($window) {
             }
             return true;
         }
-    }
+    };
 }]);
 
 
@@ -313,7 +318,7 @@ services.factory('RemindUsersGroup', ['$window', function($window) {
     return {
         load: function(groupId) {
             var value = $window.localStorage.getItem("remind-user-group-" + groupId);
-            if(value == undefined) {
+            if(value === undefined) {
                 return undefined;
             }
             return JSON.parse(value);
@@ -322,5 +327,5 @@ services.factory('RemindUsersGroup', ['$window', function($window) {
         save: function(groupId, extAppGroup) {
             $window.localStorage.setItem("remind-user-group-" + groupId, JSON.stringify(extAppGroup));
         }
-    }
+    };
 }]);

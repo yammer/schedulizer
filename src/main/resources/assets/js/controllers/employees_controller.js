@@ -1,3 +1,5 @@
+'use strict';
+
 App.controller('EmployeesController', function($scope, $timeout, $dialogs, $rootScope, Session, AuthService,
                                                Utils, GroupEmployee, AssignmentStats, AdminsResource, EMPTY_GROUP,
                                                CustomStat, DateUtils) {
@@ -7,29 +9,30 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         $scope.customOrder = {
             id: $scope.CUSTOM_STAT_ID,
             desc: false
-        }
+        };
 
-        var usersCustomStatFunction = undefined;
+        var usersCustomStatFunction;
 
         function loadUsersCustomStatFunction() {
             $scope.selectedGroup.assignmentTypes = _.sortBy($scope.selectedGroup.assignmentTypes, "id");
             var string = CustomStat.load($scope.selectedGroup.id);
-            if (string == undefined || CustomStat.validate(string, $scope.selectedGroup) == false) {
+            var i;
+            if (string === undefined || CustomStat.validate(string, $scope.selectedGroup) === false) {
                 string = "";
-                for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
-                    if (i != 0) {
+                for (i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+                    if (i !== 0) {
                         string = string + " + ";
                     }
                     string = string + "$" + i;
                 }
-                if (string == "") { // No assignment types
+                if (string === "") { // No assignment types
                     string = "0";
                 }
                 CustomStat.save($scope.selectedGroup.id, string);
             }
 
             usersCustomStatFunction = CustomStat.evaluate(string, $scope.selectedGroup);
-            for (var i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
+            for (i = 0; i < $scope.selectedGroup.assignmentTypes.length; i++) {
                 // replace all $i with its stats count
                 string = string.split("$" + i).join("stats[" + $scope.selectedGroup.assignmentTypes[i].id + "].count");
             }
@@ -38,16 +41,16 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         }
 
         var customStatFunction = function(stats) {
-            if (stats == undefined) return 0;
+            if (stats === undefined) { return 0; }
             return usersCustomStatFunction(stats);
-        }
+        };
 
         function getGroupEmployeesData(group) {
             if (group == EMPTY_GROUP || group == null) {
                 group.employees = [];
                 return;
             }
-            group.employees = GroupEmployee.query({group_id: group.id}, function(response) {
+            group.employees = GroupEmployee.query({group_id: group.id}, function() {
                 group.employeeMap = _.indexBy(group.employees, 'id');
             });
         }
@@ -55,7 +58,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         function addEmployee(yEmployee) {
             var group = $scope.selectedGroup;
             var yid = yEmployee.id;
-            if (yid == undefined || yid == "") {
+            if (yid === undefined || yid === "") {
                 return false;
             }
             if (_.find(group.employees, function(e){ return e.extAppId == yid; })) {
@@ -67,7 +70,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             employee.extAppId = yid;
             employee.name = yEmployee.full_name;
             employee.imageUrlTemplate = yEmployee.photo;
-            employee.$save({}, function(response) {
+            employee.$save({}, function() {
                 group.addEmployee(employee);
                 $scope.employeeInput.setValue("");
             });
@@ -78,7 +81,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         $scope.deleteEmployee = function(employee) {
             var confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to remove this employee from this group? <br>');
-            confirm.result.then(function(btn) {
+            confirm.result.then(function() {
                 var group = $scope.selectedGroup;
                 employee.groupId = group.id;
                 employee.$delete().then(function() {
@@ -106,9 +109,9 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         };
 
         $scope.setStatRangeIfEditMode = function() {
-            if (!$scope.isStatEditMode()) return;
-            var min = _.min($scope.selectedDates, DateUtils.SORT_BY)
-            var max = _.max($scope.selectedDates, DateUtils.SORT_BY)
+            if (!$scope.isStatEditMode()) { return; }
+            var min = _.min($scope.selectedDates, DateUtils.SORT_BY);
+            var max = _.max($scope.selectedDates, DateUtils.SORT_BY);
             $scope.stat.range.from = min;
             $scope.stat.range.to = max;
             $scope.from = min;
@@ -121,11 +124,11 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
 
 
         $scope.dateInputChanged = function() {
-            if ($scope.from==undefined) {
+            if ($scope.from == null) {
                 $scope.from = $scope.stat.range.from;
                 return;
             }
-            if ($scope.to == undefined) {
+            if ($scope.to == null) {
                 $scope.to = $scope.stat.range.to;
                 return;
             }
@@ -138,7 +141,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             $scope.stat.range.to = $scope.to;
 
             $scope.getAssignmentStats();
-        }
+        };
 
         $scope.getAssignmentStats = function() {
             var group = $scope.selectedGroup;
@@ -153,7 +156,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             }, function(assignmentStats) {
                 _.each(group.employees, function(e) {
                     e.statistics = {};
-                    if (!assignmentStats[e.id]) return;
+                    if (!assignmentStats[e.id]) { return; }
                     e.statistics = _.chain(assignmentStats[e.id])
                         .each(function(s) {s.assignmentType = group.assignmentTypeFor(s.assignmentTypeId);})
                         .indexBy('assignmentTypeId')
@@ -162,7 +165,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 // complete with "count: 0" for other assignment types
                 _.each(group.employees, function(e) {
                     _.each(group.assignmentTypes, function(a) {
-                        if (e.statisticsFor(a.id)) return;
+                        if (e.statisticsFor(a.id)) { return; }
                         e.statistics[a.id] = {
                             assignmentTypeId: a.id,
                             assignmentType: a,
@@ -180,10 +183,10 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                             id: $scope.CUSTOM_STAT_ID
                         },
                         count: customStatFunction(e.statistics)
-                    }
+                    };
                 });
             });
-        }
+        };
 
         $scope.$watch('assignmentsChange', $scope.getAssignmentStats);
 
@@ -201,14 +204,14 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             };
         };
 
-        $scope.employeeOrder = []
-        $scope.employeeOrderKey = []
+        $scope.employeeOrder = [];
+        $scope.employeeOrderKey = [];
 
         function computeEmployeeOrderKey(employeeOrder) {
             return _.map(employeeOrder, function(id) {
                 var prefix = (id < 0) ? '-' : '+';
                 return prefix + 'statistics[' + Math.abs(id) + '].count';
-            })
+            });
         }
 
         function getOrderedId(assignmentType) {
@@ -216,15 +219,15 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         }
 
         function tryUpdateOrder(newOrder) {
-            if (_.isEqual(newOrder, $scope.employeeOrder)) return;
+            if (_.isEqual(newOrder, $scope.employeeOrder)) { return; }
             $scope.employeeOrder = newOrder;
             $scope.employeeOrderKey = computeEmployeeOrderKey(newOrder);
         }
 
         function tryComputeEmployeeOrder() {
-            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) { return; }
             var assignmentTypes = $scope.selectedGroup.assignmentTypes;
-            if (assignmentTypes == null || assignmentTypes.length <= 0) return;
+            if (assignmentTypes == null || assignmentTypes.length <= 0) { return; }
             var map = _.indexBy(assignmentTypes, 'id');
             var newIds = _.map(assignmentTypes, 'id');
 
@@ -256,7 +259,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 .value();
 
             tryUpdateOrder(newOrder);
-        }
+        };
 
         $scope.employeeInput = {}; // <input/>
 
@@ -267,19 +270,19 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             } else {
                 $scope.employeeInput.shake();
             }
-        }
+        };
 
         $scope.userInputKeyDown = function() {
             $scope.newEmployee = undefined;
-        }
+        };
 
         $scope.userInputEnter = function() {
             $scope.triggerAddEmployee();
-        }
+        };
 
         $scope.onSelectAutocomplete = function(user) {
             $scope.newEmployee = user;
-        }
+        };
 
         $scope.toggleAdmin = function(employee) {
             if (employee.groupAdmin) {
@@ -287,13 +290,13 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
             } else {
                 $scope.addAdmin(employee);
             }
-        }
+        };
 
         $scope.addAdmin = function(employee) {
             var confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to make this user an admin? <br>' +
                                            'He will be able to edit this group as much as he wants');
-            confirm.result.then(function(btn){
+            confirm.result.then(function(){
                 var groupId = $scope.selectedGroup.id;
                 AdminsResource.save({groupId: groupId, employeeId: employee.id}, function() {
                     employee.groupAdmin = true;
@@ -302,7 +305,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                     }
                 });
             });
-        }
+        };
 
         $scope.deleteAdmin = function(employee) {
             var confirm;
@@ -314,7 +317,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                 confirm = $dialogs.confirm('Please confirm',
                                            'Are you sure you want to revoke admin privileges from this user? <br>');
             }
-            confirm.result.then(function(btn){
+            confirm.result.then(function(){
                 AdminsResource.delete({group_id: $scope.selectedGroup.id, employee_id: employee.id}, function() {
                     employee.groupAdmin = false;
                     if (employee.id == Session.userId) {
@@ -322,10 +325,10 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
                     }
                 });
             });
-        }
+        };
 
         $scope.$watch('selectedGroup', function() {
-            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) { return; }
             getGroupEmployeesData($scope.selectedGroup);
             $scope.getAssignmentStats();
         });
@@ -334,7 +337,7 @@ App.controller('EmployeesController', function($scope, $timeout, $dialogs, $root
         $scope.assignmentsChange = 0;
 
         function touchAssignments() {
-            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) return;
+            if ($scope.selectedGroup == null || $scope.selectedGroup == EMPTY_GROUP) { return; }
             $scope.assignmentsChange++;
         }
 
