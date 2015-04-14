@@ -17,7 +17,6 @@
     "curly"         : true,
     "eqeqeq"        : false,
     "eqnull"        : true,
-    "equndefined"        : true,
     "evil"          : true,
     "forin"         : false,
     "immed"         : true,

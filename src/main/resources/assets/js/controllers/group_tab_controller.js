@@ -54,7 +54,7 @@ App.controller('GroupTabController', function(
 
     $scope.createNewGroup = function() {
         var groupName = $scope.newGroupName;
-        if (groupName == null || groupName == "") {
+        if (groupName == null || groupName === "") {
             Utils.shakeOnError($scope.groupInput);
             return;
         }
