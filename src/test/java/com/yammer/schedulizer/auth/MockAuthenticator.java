@@ -1,5 +1,6 @@
 package com.yammer.schedulizer.auth;
 
+import com.google.common.base.Optional;
 import com.sun.jersey.api.client.Client;
 import com.yammer.schedulizer.entities.Employee;
 import com.yammer.schedulizer.managers.EmployeeManager;
@@ -12,8 +13,8 @@ public class MockAuthenticator extends Authenticator {
     }
 
     @Override
-    protected Employee getTokenOwner(Credentials credentials) throws AuthenticationException {
-        return employeeManager.safeGetByExtAppId(credentials.getExtAppId(), ExtAppType.yammer);
+    protected Optional<Employee> getTokenOwner(Credentials credentials) throws AuthenticationException {
+        return Optional.fromNullable(employeeManager.safeGetByExtAppId(credentials.getExtAppId(), ExtAppType.yammer));
     }
 }
 
