@@ -1,6 +1,6 @@
 # Schedulizer
 
-Schedulizer is a powerful and ease to use schedule manager tool.
+Schedulizer is a powerful and easy to use schedule manager tool.
 It was built to use a third party app authentication.
 It currently supports Facebook or Yammer integration.
 <br>
