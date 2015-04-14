@@ -86,6 +86,9 @@ You can choose to use IntelliJ or run from the terminal
 **(12)** If everything went fine, you should be able to see the website at [localhost:8080](http://localhost:8080)
 
 
+## Troubleshooting
+- If you have the env variable GEM_PATH set on Mac you can run in [this](https://github.com/Jasig/sass-maven-plugin/issues/47) sass issue. Just unset it to fix the problem.
+
 ## Contribution Guide
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
