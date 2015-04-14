@@ -97,11 +97,6 @@ services.factory('extAppApi', ['$window', 'EXT_APP', 'EXT_APP_TYPES', function($
             var fb = $window.FB;
             var friends;
             if (!fb) { throw new Error('Could not load facebook api'); }
-            fb.init({
-                appId      : '617709521696922',
-                xfbml      : true,
-                version    : 'v2.3'
-            });
             extAppApi =  {
                 // A me function
                 getLoginStatus: function(callback) {
