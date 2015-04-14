@@ -26,11 +26,11 @@ public class FacebookAuthenticator extends ExtAppAuthenticator {
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(JsonNode.class);
 
-        String yammerId = response.get("id").asText().trim();
+        String facebookId = response.get("id").asText().trim();
         String name = response.get("name").asText();
         String imageUrlTemplate = response.get("picture").get("data").get("url").asText();
 
-        Employee employee = new Employee(name, yammerId, ExtAppType.facebook);
+        Employee employee = new Employee(name, facebookId, ExtAppType.facebook);
         employee.setImageUrlTemplate(imageUrlTemplate);
         return employee;
     }
