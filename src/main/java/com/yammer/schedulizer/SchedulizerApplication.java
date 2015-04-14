@@ -1,5 +1,6 @@
 package com.yammer.schedulizer;
 
+import com.google.common.base.Strings;
 import com.sun.jersey.api.client.Client;
 import com.yammer.schedulizer.auth.*;
 import com.yammer.schedulizer.config.SchedulizerConfiguration;
@@ -14,7 +15,6 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.fest.util.Strings;
 import org.hibernate.SessionFactory;
 
 public class SchedulizerApplication extends Application<SchedulizerConfiguration> {
