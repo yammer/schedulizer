@@ -26,11 +26,11 @@ You can choose to use IntelliJ or run from the terminal
 
 **(3)** Choose one of the authentication methods (either yammer or facebook)
 
-**(4)** Go to the `app.yml` located at the root of the project and set the `extApp` property to the app you chose. For example: `extApp: yammer`.
+**(4)** Go to the [app.yml](app.yml) located at the root of the project and set the `extApp` property to the app you chose. For example: `extApp: yammer`.
 
 **(5)** Create your own app at [yammer](https://developer.yammer.com/v1.0/docs/getting-started) or [facebook](https://developers.facebook.com/quickstarts/?platform=web) to get an app id.
 
-**(6)** Add your app id for schedulizer by setting the property `extAppClientId` at the `app.yml` file. For example: `extAppClientId: YOUR_APP_CLIENT_ID`
+**(6)** Add your app id for schedulizer by setting the property `extAppClientId` at the [app.yml](app.yml) file. For example: `extAppClientId: YOUR_APP_CLIENT_ID`
 
 **(7)** Make sure you don't have any other service running on the ports 8080 and 8081
 
@@ -59,27 +59,12 @@ You can choose to use IntelliJ or run from the terminal
 
 **(6)** Choose one of the authentication methods (either yammer or facebook)
 
-**(7)** Go to the `app.yml` located at the root of the project and set the `extApp` property to the app you chose. For example: `extApp: yammer`.
+**(7)** Go to the [app.yml](app.yml) located at the root of the project and set the `extApp` property to the app you chose. For example: `extApp: yammer`.
 
 **(8)** Create your own app at [yammer](https://developer.yammer.com/v1.0/docs/getting-started) or [facebook](https://developers.facebook.com/quickstarts/?platform=web) to get an app id.
 
-**(9)** Add your app id for schedulizer
+**(9)** Add your app id for schedulizer by setting the property `extAppClientId` at the [app.yml](app.yml) file. For example: `extAppClientId: YOUR_APP_CLIENT_ID`
 
-**Yammer:** At `src/main/resources/assets/index.html` change the `data-app-id` to your app id.
-```html
-<script type="text/javascript" data-app-id="YOUR_APP_ID" src="https://c64.assets-yammer.com/assets/platform_js_sdk.js"></script>
-
-```
-
-**Facebook:** At `src/main/resources/assets/js/services/ext_app_api.js`  at the fb.init change the appId to your id.
-```javascript
-fb.init({
-    appId      : 'YOUR_APP_ID',
-    xfbml      : true,
-    version    : 'v2.3'
-});
-
-```
 
 **(10)** Make sure you don't have any other service running on the ports 8080 and 8081
 
