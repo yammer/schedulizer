@@ -10,7 +10,7 @@ public class Credentials {
         return new Credentials(acceptedRoles);
     }
 
-    private Set<Role> acceptedRoles; // Roles here, seriously?
+    private Set<Role> acceptedRoles;
     private String accessToken;
     private String extAppId;
 
