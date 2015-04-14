@@ -14,6 +14,7 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import org.fest.util.Strings;
 import org.hibernate.SessionFactory;
 
 public class SchedulizerApplication extends Application<SchedulizerConfiguration> {
@@ -52,6 +53,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         bootstrap.addBundle(new ViewBundle());
     }
 
+    @Override
     public String getName() {
         return "schedulizer";
     }
@@ -89,7 +91,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
 
         extAppType = ExtAppType.valueOf(config.getExtApp());
         extAppClientId = config.getExtAppClientId();
-        if (extAppClientId == null || extAppClientId == "") {
+        if(Strings.isNullOrEmpty(extAppClientId)) {
             throw new IllegalStateException("The external app client id should not be null");
         }
 
