@@ -2,10 +2,11 @@ package com.yammer.schedulizer.managers.exceptions;
 
 import com.yammer.schedulizer.auth.Authentication;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
-public class UnauthorizedAccessException extends SchedulizerException {
+public class UnauthorizedAccessException extends WebApplicationException {
 
     public UnauthorizedAccessException(String message) {
         super(Response

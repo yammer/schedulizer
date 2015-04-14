@@ -2,7 +2,6 @@ package com.yammer.schedulizer.entities;
 
 import com.yammer.schedulizer.auth.ExtAppType;
 import com.yammer.schedulizer.managers.*;
-import com.yammer.schedulizer.managers.exceptions.SchedulizerException;
 import com.yammer.schedulizer.test.DatabaseTest;
 import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.LocalDate;
@@ -61,11 +60,11 @@ public class AssignmentTest extends DatabaseTest {
         assignmentTypeManager.save(assignmentType);
         assignment.setAssignmentType(assignmentType);
 
-        assertCauses(SchedulizerException.class,
+        assertCauses(Exception.class,
                 () -> assignment.setAssignableDay(new AssignableDay(otherGroup, new LocalDate(2015, 1, 1))));
-        assertCauses(SchedulizerException.class,
+        assertCauses(Exception.class,
                 () -> assignment.setAssignmentType(new AssignmentType("AT 2", otherGroup)));
-        assertCauses(SchedulizerException.class,
+        assertCauses(Exception.class,
                 () -> new Assignment(assignment.getEmployee(),
                         assignment.getAssignableDay(),
                         new AssignmentType("AT 3", otherGroup)));

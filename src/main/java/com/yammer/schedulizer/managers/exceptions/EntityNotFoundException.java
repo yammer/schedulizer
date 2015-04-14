@@ -1,8 +1,9 @@
 package com.yammer.schedulizer.managers.exceptions;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class EntityNotFoundException extends SchedulizerException {
+public class EntityNotFoundException extends WebApplicationException {
 
     public EntityNotFoundException(Class<?> klass) {
         super(Response

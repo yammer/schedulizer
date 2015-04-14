@@ -4,11 +4,11 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
-import com.yammer.schedulizer.managers.exceptions.SchedulizerException;
 import com.yammer.schedulizer.managers.exceptions.UnauthorizedAccessException;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.util.Set;
@@ -46,7 +46,7 @@ public class AuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
                 checkArgument(header.hasParameter(Authentication.Param.EXT_APP_ID),
                         "Param yammer-id not provided in header.");
             } catch (IllegalArgumentException | NullPointerException e) {
-                throw new SchedulizerException(e, Response
+                throw new WebApplicationException(e, Response
                         .status(Response.Status.BAD_REQUEST)
                         .header(HttpHeaders.WWW_AUTHENTICATE, Authentication.SCHEME)
                         .entity((includeErrorMessage) ? e.getMessage() : "Could not decode authorization header")
@@ -63,7 +63,7 @@ public class AuthorizeInjectable<T> extends AbstractHttpContextInjectable<T> {
         try {
             principal = authenticator.authenticate(credentials);
         } catch (AuthenticationException e) {
-            throw new SchedulizerException(Response.serverError().build());
+            throw new WebApplicationException(Response.serverError().build());
         }
 
         if (!principal.isPresent()) {

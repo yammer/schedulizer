@@ -1,8 +1,9 @@
 package com.yammer.schedulizer.managers.exceptions;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class EntityNonUniqueException extends SchedulizerException {
+public class EntityNonUniqueException extends WebApplicationException {
 
     public EntityNonUniqueException(Class<?> klass) {
         this(null, klass);

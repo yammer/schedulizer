@@ -5,17 +5,19 @@ import com.yammer.schedulizer.entities.BaseEntity;
 import com.yammer.schedulizer.managers.exceptions.EntityNonUniqueException;
 import com.yammer.schedulizer.managers.exceptions.EntityNotFoundException;
 import com.yammer.schedulizer.managers.exceptions.HibernateUncaughtException;
-import com.yammer.schedulizer.managers.exceptions.SchedulizerException;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class EntityManager<E extends BaseEntity> extends AbstractDAO<E> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EntityManager.class);
     private final Class<? extends E> entityClass;
     private static final int MAX_BATCH_SIZE = 20; // should be the same as hibernate.jdbc.batch_size property in app.yml
 
@@ -70,8 +72,8 @@ public class EntityManager<E extends BaseEntity> extends AbstractDAO<E> {
         try {
             save(entity);
             return true;
-        } catch (SchedulizerException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.warn("Unable to save {}.", entity, e);
             return false;
         }
     }
@@ -96,8 +98,8 @@ public class EntityManager<E extends BaseEntity> extends AbstractDAO<E> {
         try {
             delete(entity);
             return true;
-        } catch (SchedulizerException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.warn("Unable to delete {}.", entity, e);
             return false;
         }
     }
@@ -123,8 +125,8 @@ public class EntityManager<E extends BaseEntity> extends AbstractDAO<E> {
         try {
             deleteById(id);
             return true;
-        } catch (SchedulizerException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.warn("Unable to delete entity with id {}.", id, e);
             return false;
         }
     }

@@ -1,8 +1,9 @@
 package com.yammer.schedulizer.managers.exceptions;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class InvalidStateException extends SchedulizerException {
+public class InvalidStateException extends WebApplicationException {
     public InvalidStateException(String message) {
         super(Response
                 .status(Response.Status.BAD_REQUEST)

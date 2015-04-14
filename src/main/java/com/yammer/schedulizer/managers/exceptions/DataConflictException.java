@@ -1,8 +1,9 @@
 package com.yammer.schedulizer.managers.exceptions;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class DataConflictException extends SchedulizerException {
+public class DataConflictException extends WebApplicationException {
 
     public DataConflictException() {
         super(Response
