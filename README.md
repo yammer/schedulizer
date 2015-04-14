@@ -87,7 +87,7 @@ You can choose to use IntelliJ or run from the terminal
 
 
 ## Troubleshooting
-- If you have the env variable GEM_PATH set on Mac you can run in [this](https://github.com/Jasig/sass-maven-plugin/issues/47) sass issue. Just unset it to fix the problem.
+- If you have the env variable GEM_PATH set on Mac you can run into [this](https://github.com/Jasig/sass-maven-plugin/issues/47) sass issue. Just unset it to fix the problem.
 
 ## Contribution Guide
 
