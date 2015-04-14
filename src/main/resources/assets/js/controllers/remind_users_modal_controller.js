@@ -61,6 +61,7 @@ App.controller("RemindUsersModalController", function($scope, $timeout, $modalIn
             var summary = "";
 
             if (_.every($scope.group.assignmentTypes, function(assignmentType) {
+                if (period.days[0].content == null || period.days[0].content.assignments == null) { return true; }
                 return undefinedOrEmpty(period.days[0].content.assignments[assignmentType.id]);
             })) {
                 return summary;
