@@ -1,10 +1,21 @@
 # Schedulizer
 
-- Schedulizer is a powerful and ease to use schedule manager tool.
-It was built to use a third app authentication.
+Schedulizer is a powerful and ease to use schedule manager tool.
+It was built to use a third party app authentication.
 It currently supports Facebook or Yammer integration.
 <br>
-You can create groups and add people to the groups. Then you create assignment types and assign people to days. Each user can specify in which days he is not available or partially available.
+The admin can create groups and add people to the groups. Then he can create assignment types and assign people to days. The image below shows how the admin interacts with the app.
+
+<img src="https://github.int.yammer.com/github-enterprise-assets/0000/0423/0000/0457/3bfc946e-e2e7-11e4-94ed-d2b57ea9c00f.png" alt="Schedulizer admin view" width="400px;"/>
+
+Each user can specify in which days he is not available or partially available. The user can also see his own calendar to find out when he was scheduled, as you can see in the image below.
+
+<img src="https://github.int.yammer.com/github-enterprise-assets/0000/0423/0000/0458/3bfece0a-e2e7-11e4-8501-aba59333ec66.png" alt="Schedulizer admin view" width="400px;"/>
+
+The admin can visualize the users' calendars to figure out the best way to manage the schedule.
+
+<img src="https://github.int.yammer.com/github-enterprise-assets/0000/0423/0000/0459/648c6a34-e2e8-11e4-8ccb-8aa81fac1914.png" alt="Schedulizer admin view" width="400px;"/>
+
 <br>
 
 ## Support

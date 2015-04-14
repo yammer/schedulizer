@@ -54,7 +54,7 @@ App.controller("ExtAppAutocompleteInputController", function($scope, $timeout, e
                 $timeout(function(){
                     $scope.autocompleteList =
                         (users.map(function(item) {
-                            if (item.full_name === undefined) { // test user
+                            if (item.full_name == null) { // test user
                                 item.full_name = "";
                             }
                             if ($scope.autocompleteType == "user") {
