@@ -5,9 +5,6 @@ public abstract class BaseEntity extends JsonAnnotatedEntity {
 
     @Override
     public boolean equals(Object other) {
-        if (!other.getClass().equals(this.getClass())) {
-            return false;
-        }
-        return getId() == ((BaseEntity)other).getId();
+        return other.getClass().equals(this.getClass()) && getId() == ((BaseEntity) other).getId();
     }
 }
