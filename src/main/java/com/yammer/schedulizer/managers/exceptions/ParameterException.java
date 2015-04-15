@@ -1,8 +1,9 @@
 package com.yammer.schedulizer.managers.exceptions;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-public class ParameterException extends SchedulizerException {
+public class ParameterException extends WebApplicationException {
 
     public ParameterException(String parameter) {
         super(Response

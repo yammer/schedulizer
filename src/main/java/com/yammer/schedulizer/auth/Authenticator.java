@@ -32,11 +32,13 @@ public class Authenticator extends AbstractAuthenticator {
             String extAppId = credentials.getExtAppId();
             Employee employee = employeeManager.safeGetByExtAppId(extAppId, extAppType);
             if (employee == null) {
-                employee = getTokenOwner(credentials);
 
-                if (employee == null || !employee.getExtAppId().equals(extAppId)) {
+                final Optional<Employee> tokenOwner = getTokenOwner(credentials);
+                if(!tokenOwner.isPresent() || !tokenOwner.get().getExtAppId().equals(extAppId)) {
                     return Optional.absent();
                 }
+                employee = tokenOwner.get();
+
                 if (employeeManager.count(extAppType) == 0) {
                     // First employee to login with the external app is a global admin
                     employee.setGlobalAdmin(true);
@@ -63,8 +65,8 @@ public class Authenticator extends AbstractAuthenticator {
         if (!user.isGuest()) {
             if (!user.isUpToDate()) {
                 // Don't need to save the employee, just verify identity
-                Employee tokenOwner = getTokenOwner(credentials);
-                if (tokenOwner != null && tokenOwner.getExtAppId().equals(user.getEmployee().getExtAppId())) {
+                Optional<Employee> tokenOwner = getTokenOwner(credentials);
+                if (tokenOwner.isPresent() && tokenOwner.get().getExtAppId().equals(user.getEmployee().getExtAppId())) {
                     user.renew();
                 } else {
                     return Optional.absent();
@@ -76,13 +78,13 @@ public class Authenticator extends AbstractAuthenticator {
         return (authorized) ? Optional.of(user) : Optional.absent();
     }
 
-    // Return null means unauthorized
-    protected Employee getTokenOwner(Credentials credentials) throws AuthenticationException {
+    // Optional.absent() means unauthorized
+    protected Optional<Employee> getTokenOwner(Credentials credentials) throws AuthenticationException {
         String accessToken = credentials.getAccessToken();
         Exception last = null;
         for (int i = 0; i < EXT_APP_REQUEST_RETRIES; i++) {
             try {
-                return extAppAuthenticator.getTokenOwner(accessToken);
+                return Optional.of(extAppAuthenticator.getTokenOwner(accessToken));
             } catch (Exception exception) {
                 Optional<UniformInterfaceException> cause =
                         CoreUtils.getCause(exception, UniformInterfaceException.class);
@@ -90,10 +92,9 @@ public class Authenticator extends AbstractAuthenticator {
                         (cause.get().getResponse().getStatus() == Response.Status.UNAUTHORIZED.getStatusCode() ||
                             cause.get().getResponse().getStatus() == Response.Status.BAD_REQUEST.getStatusCode())) {
                     // yammer returns unauthorized but facebook returns bad request
-                    return null;
+                    return Optional.absent();
                 }
                 last = exception;
-                exception.printStackTrace();
             }
         }
         throw new AuthenticationException(last);

@@ -1,5 +1,6 @@
 package com.yammer.schedulizer;
 
+import com.google.common.base.Strings;
 import com.sun.jersey.api.client.Client;
 import com.yammer.schedulizer.auth.*;
 import com.yammer.schedulizer.config.SchedulizerConfiguration;
@@ -52,6 +53,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
         bootstrap.addBundle(new ViewBundle());
     }
 
+    @Override
     public String getName() {
         return "schedulizer";
     }
@@ -89,7 +91,7 @@ public class SchedulizerApplication extends Application<SchedulizerConfiguration
 
         extAppType = ExtAppType.valueOf(config.getExtApp());
         extAppClientId = config.getExtAppClientId();
-        if (extAppClientId == null || extAppClientId == "") {
+        if(Strings.isNullOrEmpty(extAppClientId)) {
             throw new IllegalStateException("The external app client id should not be null");
         }
 
