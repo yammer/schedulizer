@@ -8,6 +8,8 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.WebApplicationException;
+
 import static com.yammer.schedulizer.test.TestUtils.assertCauses;
 
 public class AssignmentTest extends DatabaseTest {
@@ -60,11 +62,11 @@ public class AssignmentTest extends DatabaseTest {
         assignmentTypeManager.save(assignmentType);
         assignment.setAssignmentType(assignmentType);
 
-        assertCauses(Exception.class,
+        assertCauses(WebApplicationException.class,
                 () -> assignment.setAssignableDay(new AssignableDay(otherGroup, new LocalDate(2015, 1, 1))));
-        assertCauses(Exception.class,
+        assertCauses(WebApplicationException.class,
                 () -> assignment.setAssignmentType(new AssignmentType("AT 2", otherGroup)));
-        assertCauses(Exception.class,
+        assertCauses(WebApplicationException.class,
                 () -> new Assignment(assignment.getEmployee(),
                         assignment.getAssignableDay(),
                         new AssignmentType("AT 3", otherGroup)));

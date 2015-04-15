@@ -78,6 +78,7 @@ public class Authenticator extends AbstractAuthenticator {
         return (authorized) ? Optional.of(user) : Optional.absent();
     }
 
+    // Optional.absent() means unauthorized
     protected Optional<Employee> getTokenOwner(Credentials credentials) throws AuthenticationException {
         String accessToken = credentials.getAccessToken();
         Exception last = null;
