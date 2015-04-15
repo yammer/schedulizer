@@ -11,3 +11,5 @@
 **(5)** Run jshint by executing the script `checkStyle.sh` and make sure there are no style errors.
 
 **(6)** Commit your changes and create a pull request
+
+**(7)** You can get more information about the code at our [wiki](../../wiki).
