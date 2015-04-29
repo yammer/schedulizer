@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+
+<!--[if lte IE 8]>
+Your browser is not supported. Please upgrade to a
+<a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie"> newer version of Internet Explorer </a>,
+or <a href="https://www.google.com/chrome/browser/desktop/index.html"> download Google Chrome </a> .
+<![endif]-->
+<!--[if IE 9]><!-->
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="refresh" content="120"> -->
+    <title>Schedulizer</title>
+
+    <!-- The order of the css links is extremely important -->
+    <!-- For the tooltips to work, we need jquery-ui before schedulizer -->
+    <!-- For the dialogs to work, we need dialogs after schedulizer -->
+    <!-- For the colors in the calendar to be good, calendar has to come before schedulizer -->
+
+    <link rel="shortcut icon" href="/img/favicon.ico" />
+
+    <!-- Animations -->
+    <link href="/css/animate.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/jquery-ui.css">
+
+    <link href="/css/calendar-flow.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/out/schedulizer.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/dialog.css">
+
+    <script src="/js/underscore-min.js"></script>
+    <script src="/js/jquery1.11.0.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/angular-resource.min.js"></script>
+    <script src="/js/angular-animate.min.js"></script>
+    <script src="/js/angular-ui-router.min.js"></script>
+    <script src="/js/angular-sanitize.min.js"></script>
+    <script src="/js/dialog.min.js"></script>
+    <script src="/js/calendar-flow.min.js"></script>
+</head>
+<body ng-app="SchedulizerApp" ng-controller="MainController">
+<script src="/js/ext/initialize_ext_app.js"></script>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" ui-sref="{{tabs.calendar.stateName}}">Schedulizer</a>
+            <img class="loading-spinner" ng-show="pendingRequests() > 0" src="/img/spinner.gif"/>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+
+                <li ng-repeat="tab in tabs" ng-if="isAuthorized(tab.data.authorizedRoles)" ng-class="{active: isActiveTab(tab)}">
+                    <a ui-sref="{{tab.stateName}}">{{tab.title}}</a>
+                </li>
+                <li ng-if="isAuthorized(userRoles.globalAdmin)">
+                    <a class="with-icon">
+                        <span class="glyphicon glyphicon-cog global-admins-icon" ng-click="globalAdminModal()"></span>
+                    </a>
+                </li>
+                <li ng-controller="LoginController"><!-- Change this -->
+                    <button  ng-click="doLogin()" ng-hide="isAuthenticated()" type="button" class="btn btn-default login-button">
+                        Login
+                    </button>
+                    <button  ng-click="doLogout()" ng-show="isAuthenticated()" type="button" class="btn btn-default login-button">
+                        Logout
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" ui-view>
+</div>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+
+<script src="/js/ui-bootstrap-tpls-0.6.0.min.js"></script>
+<script src="/js/ext/truncate.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/ext/dynamic_css.js"></script>
+<script src="/js/services/services.js"></script>
+<script src="/js/services/ext_app_api.js"></script>
+<script src="/js/controllers/main_controller.js"></script>
+<script src="/js/controllers/my_calendar_tab_controller.js"></script>
+<script src="/js/controllers/group_tab_controller.js"></script>
+<script src="/js/controllers/employee_card_controller.js"></script>
+<script src="/js/controllers/ng_extensions.js"></script>
+<script src="/js/controllers/group_view_controller.js"></script>
+<script src="/js/controllers/dragdrop.js"></script>
+<script src="/js/controllers/login_controller.js"></script>
+<script src="/js/services/authentication.js"></script>
+<script src="/js/controllers/employees_controller.js"></script>
+<script src="/js/controllers/ext_app_autocomplete_input_controller.js"></script>
+<script src="/js/controllers/global_admin_modal_controller.js"></script>
+<script src="/js/controllers/calendar_progress_bar_controller.js"></script>
+<script src="/js/controllers/group_settings_modal_controller.js"></script>
+<script src="/js/controllers/remind_users_modal_controller.js"></script>
+
+</body>
+</html>
+
+<!--<![endif]-->
