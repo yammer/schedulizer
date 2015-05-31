@@ -28,9 +28,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.int.yammer.com/yammer/schedulizer.git</connection>
-        <developerConnection>scm:git:git@github.int.yammer.com:yammer/schedulizer.git</developerConnection>
-        <url>http://github.int.yammer.com/yammer/schedulizer/</url>
+        <connection>scm:git:git://github.com/yammer/schedulizer.git</connection>
+        <developerConnection>scm:git:git@github.com:yammer/schedulizer.git</developerConnection>
+        <url>http://github.com/yammer/schedulizer/</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -47,31 +47,6 @@
             <timezone>-8</timezone>
         </developer>
     </developers>
-
-    <distributionManagement>
-        <repository>
-            <id>maven.int.yammer.com-releases</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>maven.int.yammer.com-snapshots</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>maven.int.yammer.com-releases</id>
-            <name>Yammer Maven Releases</name>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>maven.int.yammer.com-snapshots</id>
-            <name>Yammer Maven Snapshots</name>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
 
     <dependencies>
         <dependency>
